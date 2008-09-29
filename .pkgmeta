@@ -1,0 +1,27 @@
+package-as: Baggins
+
+externals:
+    /LibPeriodicTable-3.1-TradeskillResultMats: http://svn.wowace.com/wowace/trunk/LibPeriodicTable-3.1/LibPeriodicTable-3.1-TradeskillResultMats
+    /AceDebug-2.0: http://svn.wowace.com/wowace/trunk/Ace2/AceDebug-2.0/
+    /AceEvent-2.0: http://svn.wowace.com/wowace/trunk/Ace2/AceEvent-2.0/
+    /LibPeriodicTable-3.1-Tradeskill: http://svn.wowace.com/wowace/trunk/LibPeriodicTable-3.1/LibPeriodicTable-3.1-Tradeskill
+    /LibPeriodicTable-3.1-Misc: http://svn.wowace.com/wowace/trunk/LibPeriodicTable-3.1/LibPeriodicTable-3.1-Misc
+    /LibPeriodicTable-3.1: http://svn.wowace.com/wowace/trunk/LibPeriodicTable-3.1/LibPeriodicTable-3.1/
+    /Gratuity-2.0: http://svn.wowace.com/wowace/trunk/GratuityLib/Gratuity-2.0/
+    /AceOO-2.0: http://svn.wowace.com/wowace/trunk/Ace2/AceOO-2.0/
+    /AceAddon-2.0: http://svn.wowace.com/wowace/trunk/Ace2/AceAddon-2.0/
+    /LibPeriodicTable-3.1-GearSet: http://svn.wowace.com/wowace/trunk/LibPeriodicTable-3.1/LibPeriodicTable-3.1-GearSet
+    /LibPeriodicTable-3.1-Gear: http://svn.wowace.com/wowace/trunk/LibPeriodicTable-3.1/LibPeriodicTable-3.1-Gear
+    /AceLocale-2.2: http://svn.wowace.com/wowace/trunk/Ace2/AceLocale-2.2/
+    /LibPeriodicTable-3.1-Consumable: http://svn.wowace.com/wowace/trunk/LibPeriodicTable-3.1/LibPeriodicTable-3.1-Consumable
+    /LibPeriodicTable-3.1-Reputation: http://svn.wowace.com/wowace/trunk/LibPeriodicTable-3.1/LibPeriodicTable-3.1-Reputation
+    /Dewdrop-2.0: http://svn.wowace.com/wowace/trunk/DewdropLib/Dewdrop-2.0/
+    /LibPeriodicTable-3.1-InstanceLoot: http://svn.wowace.com/wowace/trunk/LibPeriodicTable-3.1/LibPeriodicTable-3.1-InstanceLoot
+    /AceConsole-2.0: http://svn.wowace.com/wowace/trunk/Ace2/AceConsole-2.0/
+    /AceDB-2.0: http://svn.wowace.com/wowace/trunk/Ace2/AceDB-2.0/
+    /FuBarPlugin-2.0: http://svn.wowace.com/wowace/trunk/FuBarPlugin-2.0/FuBarPlugin-2.0/
+    /LibPeriodicTable-3.1-InstanceLootHeroic: http://svn.wowace.com/wowace/trunk/LibPeriodicTable-3.1/LibPeriodicTable-3.1-InstanceLootHeroic
+    /AceLibrary: http://svn.wowace.com/wowace/trunk/Ace2/AceLibrary/
+    /AceHook-2.1: http://svn.wowace.com/wowace/trunk/Ace2/AceHook-2.1/
+    /Waterfall-1.0: http://svn.wowace.com/wowace/trunk/Waterfall-1.0/Waterfall-1.0
+    /Tablet-2.0: http://svn.wowace.com/wowace/trunk/TabletLib/Tablet-2.0/
