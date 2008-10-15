@@ -760,6 +760,8 @@ local firstbagupdate = true
 local bagupdatebucket = {}
 
 function Baggins:OnBagUpdate(bagid)
+	--ignore bags -4 ( currency ) and -3 (unknown)
+	if bagid <= -3 then return end
 	bagupdatebucket[bagid] = true
 	if self:IsWhateverOpen() then
 		self:ScheduleEvent("Baggins_RunBagUpdates",self.RunBagUpdates,0,self)
