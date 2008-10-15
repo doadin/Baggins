@@ -19,7 +19,9 @@
 ## X-Localizations: enUS, enGB, deDE, frFR, esES, esMX, zhCN, zhTW, koKR, ruRU
 ## X-CompatibleLocales: enUS, enGB, deDE, frFR, esES, esMX, zhCN, zhTW, koKR, ruRU
 
+#@no-lib-strip@
 embeds.xml
+#@end-no-lib-strip@
 
 Baggins-enUS.lua
 Baggins-deDE.lua
