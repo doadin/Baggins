@@ -230,9 +230,9 @@ function Baggins:Baggins_CategoriesChanged()
 	self.doInitialBankUpdate = true
 end
 
-function Baggins:BankFrame_OnEvent(event)
+function Baggins:BankFrame_OnEvent(...)
 	if not self:IsActive() or not self.db.profile.hidedefaultbank then
-		self.hooks.BankFrame_OnEvent(event)
+		self.hooks.BankFrame_OnEvent(...)
 	end
 end
 
@@ -2348,7 +2348,7 @@ function Baggins:ReallyLayoutBagFrames()
 		vdir = -1
 		nextcorner = "BOTTOMLEFT"
 		xOffset = p.leftoffset
-		yOffset = p.bottomoffset
+		yOffset = p.topoffset
 		availableScreenHeight = screenHeight - yOffset - p.bottomoffset
 	end
 	-- Adjust the start anchor for bags depending on the multibars

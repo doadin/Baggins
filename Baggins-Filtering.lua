@@ -255,14 +255,14 @@ elseif GetLocale() == "frFR" then
 	ITEMTYPE["Consumable"] = "Consommable"
 		ITEMSUBTYPE["Consumable"] = "Consommables"
 		--New in 2.3
---		ITEMSUBTYPE["Food & Drink"] = "Food & Drink"
---		ITEMSUBTYPE["Potion"] = "Potion"
---		ITEMSUBTYPE["Elixir"] = "Elixir"
---		ITEMSUBTYPE["Flask"] = "Flask"
---		ITEMSUBTYPE["Bandage"] = "Bandage"
---		ITEMSUBTYPE["Item Enhancement"] = "Item Enhancement"
---		ITEMSUBTYPE["Scroll"] = "Scroll"
---		ITEMSUBTYPE["Other"] = "Other"
+		ITEMSUBTYPE["Food & Drink"] = "Nourriture & boissons"
+		ITEMSUBTYPE["Potion"] = "Potion"
+		ITEMSUBTYPE["Elixir"] = "Elixir"
+		ITEMSUBTYPE["Flask"] = "Flacon"
+		ITEMSUBTYPE["Bandage"] = "Bandage"
+		ITEMSUBTYPE["Item Enhancement"] = "Am\195\169lioration d'objet"
+		ITEMSUBTYPE["Scroll"] = "Parchemin"
+		ITEMSUBTYPE["Other"] = "Autre"
 
 	ITEMTYPE["Container"] = "Conteneur"
 		ITEMSUBTYPE["Bag"] = "Conteneur"
@@ -303,27 +303,26 @@ elseif GetLocale() == "frFR" then
 		ITEMSUBTYPE["Parts"] = "El\195\169ments"
 		ITEMSUBTYPE["Gems"] = "Gemmes"
 --New in 2.3
---		ITEMSUBTYPE["Elemental"] = "Elemental"
---		ITEMSUBTYPE["Cloth"] = "Cloth"
---		ITEMSUBTYPE["Leather"] = "Leather"
---		ITEMSUBTYPE["Metal & Stone"] = "Metal & Stone"
---		ITEMSUBTYPE["Meat"] = "Meat"
---		ITEMSUBTYPE["Herb"] = "Herb"
---		ITEMSUBTYPE["Enchanting"] = "Enchanting"
---		ITEMSUBTYPE["Jewelcrafting"] = "Jewelcrafting"
---		ITEMSUBTYPE["Devices"] = "Devices"
---		ITEMSUBTYPE["Other"] = "Other"
-
---	ITEMTYPE["Gem"] = "Gem"
---		ITEMSUBTYPE["Blue"] = "Blue"
---		ITEMSUBTYPE["Green"] = "Green"
---		ITEMSUBTYPE["Orange"] = "Orange"
---		ITEMSUBTYPE["Meta"] = "Meta"
---		ITEMSUBTYPE["Prismatic"] = "Prismatic"
---		ITEMSUBTYPE["Purple"] = "Purple"
---		ITEMSUBTYPE["Red"] = "Red"
---		ITEMSUBTYPE["Simple"] = "Simple"
---		ITEMSUBTYPE["Yellow"] = "Yellow"
+		ITEMSUBTYPE["Elemental"] = "\195\137l\195\169mentaire"
+		ITEMSUBTYPE["Cloth"] = "Tissu"
+		ITEMSUBTYPE["Leather"] = "Cuir"
+		ITEMSUBTYPE["Metal & Stone"] = "M\195\169tal & pierre"
+		ITEMSUBTYPE["Meat"] = "Viande"
+		ITEMSUBTYPE["Herb"] = "Herbe" -- to check !
+		ITEMSUBTYPE["Enchanting"] = "Enchantement"
+		ITEMSUBTYPE["Jewelcrafting"] = "Joaillerie"
+		ITEMSUBTYPE["Devices"] = "Appareils"
+		ITEMSUBTYPE["Other"] = "Autre"
+	ITEMTYPE["Gem"] = "Gemme"
+		ITEMSUBTYPE["Blue"] = "Bleue"
+		ITEMSUBTYPE["Green"] = "Verte"
+		ITEMSUBTYPE["Orange"] = "Orange"
+		ITEMSUBTYPE["Meta"] = "M\195\169ta"
+		ITEMSUBTYPE["Prismatic"] = "Prismatique"
+		ITEMSUBTYPE["Purple"] = "Violette"
+		ITEMSUBTYPE["Red"] = "Rouge"
+		ITEMSUBTYPE["Simple"] = "Simple"
+		ITEMSUBTYPE["Yellow"] = "Jaune"
 	ITEMTYPE["Weapon"] = "Arme"
 		ITEMSUBTYPE["Bows"] = "Arcs"
 		ITEMSUBTYPE["Crossbows"] = "Arbal\195\168tes"
@@ -813,7 +812,7 @@ local QualityNames = {
 local ItemTypes = { 
 	["Armor"] = { "Cloth", "Idols", "Leather", "Librams", "Mail", "Miscellaneous", "Shields", "Totems", "Plate"},
 	["Consumable"] = { "Consumable", "Food & Drink", "Potion", "Elixir", "Flask", "Bandage", "Item Enhancement", "Scroll", "Other" },
-	["Container"]  = {"Bag", "Enchanting Bag", "Engineering Bag", "Herb Bag", "Soul Bag", "Mining Bag", "Gem Bag" },
+	["Container"]  = {"Bag", "Enchanting Bag", "Engineering Bag", "Herb Bag", "Soul Bag", "Mining Bag", "Gem Bag", "Leatherworking Bag" },
 	["Key"] = { "Key" },
 	["Miscellaneous"] = { "Junk", "Reagent","Pet", "Holiday", "Other" },
 	["Reagent"]  = { "Reagent" },
@@ -1554,6 +1553,10 @@ function Baggins:IsSpecialBag(bag)
 			if SubType == ITEMSUBTYPE["Gem Bag"] then
 				return prefix.."g"
 			end
+			if SubType == ITEMSUBTYPE["Leatherworking Bag"] then
+				return prefix.."l"
+			end
+
 		end
 	end
 	if prefix ~= "" then
