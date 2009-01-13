@@ -1262,6 +1262,10 @@ RuleTypes = {
 			local _,_,_, itemLevel, itemMinLevel = GetItemInfo(link)
 			local lvl = rule.useminlvl and itemMinLevel or itemLevel
 			
+			if not lvl then	-- can happen if itemcache hasn't been updated yet
+				return false
+			end
+			
 			if rule.include0 and lvl==0 then
 				return true
 			end
