@@ -194,7 +194,7 @@ function Baggins:OnEnable(firstload)
 	self:Hook("CloseBackpack", true)
 	self:UpdateBagHooks()
 	self:Hook("CloseSpecialWindows", true)
-	self:Hook("BankFrame_OnEvent", true)
+	self:HookScript(BankFrame,"OnEvent","BankFrame_OnEvent")
 	--force an update of all bags on first opening
 	self.doInitialUpdate = true
 	self.doInitialBankUpdate = true
@@ -232,7 +232,7 @@ end
 
 function Baggins:BankFrame_OnEvent(...)
 	if not self:IsActive() or not self.db.profile.hidedefaultbank then
-		self.hooks.BankFrame_OnEvent(...)
+		self.hooks[BankFrame].OnEvent(...)
 	end
 end
 
