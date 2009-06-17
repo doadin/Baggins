@@ -165,11 +165,11 @@ L:RegisterTranslations("ruRU", function()
 		["None"] = "Ни один",
 		["All"] = "Все",
 		
-		["Item Type"] = "Тип Предмета",
+		["Item Type"] = "Тип предмета",
 		["Filter by Item type and sub-type as returned by GetItemInfo"] = "Фильтр по Типу предмета или подтипу как обратный Показ инфо Предмета",
-		["ItemType - "] = "Предмет Тип - ",
-		["Item Type Options"] = "Опции Типа Предмета",
-		["Item Subtype"] = "Предмет Подтип",
+		["ItemType - "] = "Тип предмета - ",
+		["Item Type Options"] = "Опции типа предмета",
+		["Item Subtype"] = "Подтип предмета",
 
 		["Container Type"] = "Тип сумки",
 		["Filter by the type of container the item is in."] = "Фильтр по типу сумки в котором находиться предмет.",
@@ -249,7 +249,7 @@ L:RegisterTranslations("ruRU", function()
 		["Bank"] = "Банк",
 		["Sections"] = "Секции",
 		["Categories"] = "Категории",
-		["Add Category"] = "Добавить категорию?",
+		["Add Category"] = "Добавить категорию",
 		["New Section"] = "Новая секция",
 		["New Bag"] = "Новая сумка",
 		["Close"] = "Закрыть",
@@ -261,7 +261,7 @@ L:RegisterTranslations("ruRU", function()
 		["Apply"] = "Обратиться",
 		["Click on an entry to open. Ctrl-Click to delete."] = "Нажмите на ввод, чтобы открыть. Ctrl-Click, чтобы удалить.",
 		
-		["Editing Rule"] = "Редактировать Правило",
+		["Editing Rule"] = "Редактировать правило",
 		["Type"] = "Тип",
 		["Select a rule type to create the rule"] = "Выберите тип правила, чтобы создать правило",
 		["Operation"] = "Операции",
@@ -350,7 +350,7 @@ L:RegisterTranslations("ruRU", function()
 		["Change order and layout of sections in order to save display space."] = "Настройки изменения и расположение секций, чтобы оставить свободное место на экране",
 		
 		["All In One Sorted"]= "Сортировка, все в одном",
-		["A single bag containing your whole inventory, sorted into categories"]= "Единственная сумка, содержащая весь Ваш инвентарь, сортированный по категориям",
+		["A single bag containing your whole inventory, sorted into categories"]= "Единственная сумка, содержащая весь ваш инвентарь, сортированный по категориям",
 		
 		["Compress Stackable Items"]= "Сжать складируемы предметы",
 		["Show stackable items as a single button with a count on it"]= "Показ складируемых предметов как одиночная кнопка с их количеством",
@@ -363,7 +363,7 @@ L:RegisterTranslations("ruRU", function()
 		["Shrink bag title"]= "Сократить название сумки",
 		["Mangle bag title to fit to content width"]= " Сокращает Название сумки , чтобы соответствовать названию сумки по ширине",
 		["Sections"]= "Секции",
-		["Bag sections display and layout settings."]= "??????????",
+		["Bag sections display and layout settings."]= "Отображение секций сумок и настройки слоя.",
 		["Items"]= "Предметы",
 		["Item display settings"]= "Предметы опции Показа",
 		["Bag Skin"]= "Шкурка сумок",
@@ -373,8 +373,8 @@ L:RegisterTranslations("ruRU", function()
 		["Split %d"]= "Раскол %d",
 		["Split_tooltip"] = "Раскол_подсказки",
 		
-		["PT3 LoD Modules"] = "Загр Модуль PT3",
-		["Choose PT3 LoD Modules to load at startup, Will load immediately when checked"] = "Выберите PT3 LoD Модули, чтобы загрузить при запуске, он загрузит немедленно когда все проверено",
+		["PT3 LoD Modules"] = "Загр модуль PT3",
+		["Choose PT3 LoD Modules to load at startup, Will load immediately when checked"] = "Выберите PT3 LoD модули, чтобы загрузить при запуске, он загрузит немедленно когда все проверено",
 		["Load %s at Startup"] = "Загружать %s при запуске",
 		
 		["Disable Compression Temporarily"] = "Отключить временное сжатие",
