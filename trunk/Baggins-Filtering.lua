@@ -308,7 +308,7 @@ elseif GetLocale() == "frFR" then
 		ITEMSUBTYPE["Leather"] = "Cuir"
 		ITEMSUBTYPE["Metal & Stone"] = "M\195\169tal & pierre"
 		ITEMSUBTYPE["Meat"] = "Viande"
-		ITEMSUBTYPE["Herb"] = "Herbe" -- to check !
+		ITEMSUBTYPE["Herb"] = "Herbes"
 		ITEMSUBTYPE["Enchanting"] = "Enchantement"
 		ITEMSUBTYPE["Jewelcrafting"] = "Joaillerie"
 		ITEMSUBTYPE["Devices"] = "Appareils"
@@ -328,7 +328,7 @@ elseif GetLocale() == "frFR" then
 		ITEMSUBTYPE["Crossbows"] = "Arbal\195\168tes"
 		ITEMSUBTYPE["Daggers"] = "Dagues"
 		ITEMSUBTYPE["Guns"] = "Fusils"
-		ITEMSUBTYPE["Fishing Poles"] = "Canne \195\160 p\195\170che" --Needs fix for 2.3 ?
+		ITEMSUBTYPE["Fishing Poles"] = "Cannes \195\160 p\195\170che"
 		ITEMSUBTYPE["Fist Weapons"] = "Armes de pugilat"
 		ITEMSUBTYPE["Miscellaneous"] = "Divers"
 		ITEMSUBTYPE["One-Handed Axes"] = "Haches \195\160 une main"
