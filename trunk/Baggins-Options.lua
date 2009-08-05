@@ -915,19 +915,10 @@ local function deepCopy(to, from)
 	end
 end
 
-local new, del
-do
-	local tablePool = Baggins.tablePool
-	function new()
-		return tremove(tablePool) or {}
-	end
-	function del(tab)
-		for k in pairs(tab) do
-			tab[k] = nil
-		end
-		tinsert(tablePool,tab)
-	end
-end
+local wipe=wipe
+local function new() return {} end
+local function del(t) wipe(t) end
+local rdel = del
 
 
 ---------------------

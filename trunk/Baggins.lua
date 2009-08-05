@@ -50,26 +50,17 @@ local currentcategory
 
 local catsorttable = {}
 Baggins.itemcounts = {}
-Baggins.tablePool = {}
-local new, del
-do
-	local tablePool = Baggins.tablePool
-	function new()
-		return tremove(tablePool) or {}
-	end
-	function del(tab)
-		for k in pairs(tab) do
-			tab[k] = nil
-		end
-		tinsert(tablePool,tab)
-	end
-end
+
+local wipe=wipe
+local function new() return {} end
+local function del(t) wipe(t) end
+local rdel = del
+
 
 
 -- internal signalling minilibrary
 
 local signals = {}
-Baggins.signals = signals; -- TODO: debugging only, remove
 
 function Baggins:RegisterSignal(name, handler, arg1)		-- Example: RegisterSignal("MySignal", self.SomeHandler, self)
 	assert(arg1);

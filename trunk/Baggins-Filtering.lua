@@ -1,33 +1,16 @@
 local Baggins = Baggins
 local pt = LibStub("LibPeriodicTable-3.1", true)
-local gratuity = AceLibrary("Gratuity-2.0")
+local gratuity = LibStub("LibGratuity-3.0")
 local L = AceLibrary("AceLocale-2.2"):new("Baggins")
 local dewdrop = AceLibrary("Dewdrop-2.0")
 
 local RuleTypes = nil
 
-local new, del, rdel
-do
-	local tablePool = {}
-	function new()
-		return tremove(tablePool) or {}
-	end
-	function del(tab)
-		for k in pairs(tab) do
-			tab[k] = nil
-		end
-		tinsert(tablePool,tab)
-	end
-	function rdel(tab)
-		for k in pairs(tab) do
-			if type(tab[k]) == "table" then
-				rdel(tab[k])
-			end
-			tab[k] = nil
-		end
-		tinsert(tablePool,tab)
-	end
-end
+local wipe=wipe
+local function new() return {} end
+local function del(t) wipe(t) end
+local rdel = del
+
 
 --Localization of item types and subtypes, must match the return values of GetItemInfo()
 local ITEMTYPE = {}
