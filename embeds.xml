@@ -27,7 +27,6 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 <script file="libs\LibPeriodicTable-3.1-Tradeskill\LibPeriodicTable-3.1-Tradeskill.lua"/>
 <script file="libs\LibPeriodicTable-3.1-TradeskillResultMats\LibPeriodicTable-3.1-TradeskillResultMats.lua"/>
 
-<script file="libs\Gratuity-2.0\Gratuity-2.0.lua"/>
-<script file="libs\Waterfall-1.0\Waterfall-1.0.lua"/>
+<Include file="libs\LibGratuity-3.0\lib.xml"/>
 
 </Ui>
