@@ -1,6 +1,10 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 
+<script file="libs\LibStub\LibStub.lua"/>
+<script file="libs\CallBackHandler-1.0\CallbackHandler-1.0.lua"/>
+<include file="libs\AceLocale-3.0\AceLocale-3.0.xml"/>
+
 <script file="libs\AceLibrary\AceLibrary.lua"/>
 <script file="libs\AceOO-2.0\AceOO-2.0.lua"/>
 <script file="libs\AceAddon-2.0\AceAddon-2.0.lua"/>
@@ -28,5 +32,6 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 <script file="libs\LibPeriodicTable-3.1-TradeskillResultMats\LibPeriodicTable-3.1-TradeskillResultMats.lua"/>
 
 <Include file="libs\LibGratuity-3.0\lib.xml"/>
+<Include file="libs\LibBagUtils-1.0\LibBagUtils-1.0.xml"/>
 
 </Ui>
