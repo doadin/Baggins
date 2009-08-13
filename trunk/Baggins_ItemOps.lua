@@ -8,6 +8,7 @@ local Baggins = Baggins
 
 local L = AceLibrary("AceLocale-2.2"):new("Baggins")
 local dewdrop = AceLibrary("Dewdrop-2.0")
+local LBU = LibStub("LibBagUtils-1.0")
 
 
 
@@ -279,7 +280,7 @@ Baggins:RegisterSignal("Baggins_ItemButtonMenu",
 			local b;
 			
 			-- "Use"
-			if not Baggins:IsBankBag(bag) then
+			if not LBU:IsBank(bag) then
 				dewdrop:AddLine("text",L["Use"], "secure", { type="item", item=itemstring },
 					"closeWhenClicked",true, "tooltipText", L["Use/equip the item rather than bank/sell it"]);
 				b=true;
