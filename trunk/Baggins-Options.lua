@@ -589,20 +589,9 @@ function Baggins:InitOptions()
 							self:UpdateText()
 						end,
 					},
-					Combine = {
-						name = L["Combine Counts"],
-						type = "toggle",
-						order = 40,
-						desc = L["Show only one count with all the seclected types included"],
-						get = function() return p.combinecounts end,
-						set = function(value)
-							p.combinecounts = value
-							self:UpdateText()
-						end,
-					},
 					spacer = {
 						type = 'header',
-						order = 45,
+						order = 49,
 					},
 					ShowAmmo = {
 						name = L["Show Ammo Bags Count"],
@@ -634,6 +623,21 @@ function Baggins:InitOptions()
 						get = function() return p.showspecialcount end,
 						set = function(value)
 							p.showspecialcount = value
+							self:UpdateText()
+						end,
+					},
+					spacer2 = {
+						type = 'header',
+						order = 98,
+					},
+					Combine = {
+						name = L["Combine Counts"],
+						type = "toggle",
+						order = 99,
+						desc = L["Show only one count with all the seclected types included"],
+						get = function() return p.combinecounts end,
+						set = function(value)
+							p.combinecounts = value
 							self:UpdateText()
 						end,
 					},
@@ -669,7 +673,6 @@ function Baggins:InitOptions()
 				get = function() return p.overridedefaultbags end,
 				set = function(value) p.overridedefaultbags = value self:UpdateBagHooks() end,
 			},
-		
 		}
 	}
 end
@@ -1178,7 +1181,7 @@ function Baggins:CreateRulesDewdrop(ruleindex, rule, level, value, valueN_1, val
 			end
 		end
 	elseif level == 2 and value == "Type" then
-		for ruletype, ruledef in Baggins:RuleTypeIterator() do
+		for ruletype, ruledef in Baggins:RuleTypeIterator(true) do
 			dewdrop:AddLine('text', ruledef.DisplayName, "checked", rule.type == ruletype,
 				"tooltipTitle", ruledef.DisplayName, "tooltipText", ruledef.Description,
 				"func",self.setRuleType, "arg1", self, "arg2", rule, "arg3", ruletype)

@@ -10,819 +10,7 @@ local wipe=wipe
 local function new() return {} end
 local function del(t) wipe(t) end
 local rdel = del
-
-
---Localization of item types and subtypes, must match the return values of GetItemInfo()
-local ITEMTYPE = {}
-local ITEMSUBTYPE = {}
-Baggins.ITEMTYPE = ITEMTYPE
-Baggins.ITEMSUBTYPE = ITEMSUBTYPE
-	ITEMTYPE["Armor"] = "Armor"
-		ITEMSUBTYPE["Cloth"] = "Cloth"
-		ITEMSUBTYPE["Idols"] = "Idols"
-		ITEMSUBTYPE["Leather"] = "Leather"
-		ITEMSUBTYPE["Librams"] = "Librams"
-		ITEMSUBTYPE["Mail"] = "Mail"
-		ITEMSUBTYPE["Miscellaneous"] = "Miscellaneous"
-		ITEMSUBTYPE["Shields"] = "Shields"
-		ITEMSUBTYPE["Totems"] = "Totems"
-		ITEMSUBTYPE["Plate"] = "Plate"
-	ITEMTYPE["Consumable"] = "Consumable"
-		ITEMSUBTYPE["Consumable"] = "Consumable"
-		--New in 2.3
-		ITEMSUBTYPE["Food & Drink"] = "Food & Drink"
-		ITEMSUBTYPE["Potion"] = "Potion"
-		ITEMSUBTYPE["Elixir"] = "Elixir"
-		ITEMSUBTYPE["Flask"] = "Flask"
-		ITEMSUBTYPE["Bandage"] = "Bandage"
-		ITEMSUBTYPE["Item Enhancement"] = "Item Enhancement"
-		ITEMSUBTYPE["Scroll"] = "Scroll"
-		ITEMSUBTYPE["Other"] = "Other"
-		
-	ITEMTYPE["Container"] = "Container"
-		ITEMSUBTYPE["Bag"] = "Bag"
-		ITEMSUBTYPE["Enchanting Bag"] = "Enchanting Bag"
-		ITEMSUBTYPE["Engineering Bag"] = "Engineering Bag"
-		ITEMSUBTYPE["Herb Bag"] = "Herb Bag"
-		ITEMSUBTYPE["Soul Bag"] = "Soul Bag"
-		ITEMSUBTYPE["Mining Bag"] = "Mining Bag"
-		ITEMSUBTYPE["Gem Bag"] = "Gem Bag"
-		--New in 2.3
-		ITEMSUBTYPE["Leatherworking Bag"] = "Leatherworking Bag"
-		
-	ITEMTYPE["Key"] = "Key"
-		ITEMSUBTYPE["Key"] = "Key"
-	ITEMTYPE["Miscellaneous"] = "Miscellaneous"
-		ITEMSUBTYPE["Junk"] = "Junk"
-		--New in 2.3
-		ITEMSUBTYPE["Reagent"] = "Reagent"
-		ITEMSUBTYPE["Pet"] = "Pet"
-		ITEMSUBTYPE["Holiday"] = "Holiday"
-		ITEMSUBTYPE["Other"] = "Other"
-		
-	ITEMTYPE["Reagent"] = "Reagent"
-		ITEMSUBTYPE["Reagent"] = "Reagent"
-	ITEMTYPE["Recipe"] = "Recipe"
-		ITEMSUBTYPE["Alchemy"] = "Alchemy"
-		ITEMSUBTYPE["Blacksmithing"] = "Blacksmithing"
-		ITEMSUBTYPE["Book"] = "Book"
-		ITEMSUBTYPE["Cooking"] = "Cooking"
-		ITEMSUBTYPE["Enchanting"] = "Enchanting"
-		ITEMSUBTYPE["Engineering"] = "Engineering"
-		ITEMSUBTYPE["First Aid"] = "First Aid"
-		ITEMSUBTYPE["Leatherworking"] = "Leatherworking"
-		ITEMSUBTYPE["Tailoring"] = "Tailoring"
-	ITEMTYPE["Projectile"] = "Projectile"
-		ITEMSUBTYPE["Arrow"] = "Arrow"
-		ITEMSUBTYPE["Bullet"] = "Bullet"
-	ITEMTYPE["Quest"] = "Quest"
-		ITEMSUBTYPE["Quest"] = "Quest"
-	ITEMTYPE["Quiver"] = "Quiver"
-		ITEMSUBTYPE["Ammo Pouch"] = "Ammo Pouch"
-		ITEMSUBTYPE["Quiver"] = "Quiver"
-	ITEMTYPE["Trade Goods"] = "Trade Goods"
-		ITEMSUBTYPE["Trade Goods"] = "Trade Goods"
-		ITEMSUBTYPE["Devices"] = "Devices"
-		ITEMSUBTYPE["Explosives"] = "Explosives"
-		ITEMSUBTYPE["Parts"] = "Parts"
-		--New in 2.3
-		ITEMSUBTYPE["Elemental"] = "Elemental"
-		ITEMSUBTYPE["Cloth"] = "Cloth"
-		ITEMSUBTYPE["Leather"] = "Leather"
-		ITEMSUBTYPE["Metal & Stone"] = "Metal & Stone"
-		ITEMSUBTYPE["Meat"] = "Meat"
-		ITEMSUBTYPE["Herb"] = "Herb"
-		ITEMSUBTYPE["Enchanting"] = "Enchanting"
-		ITEMSUBTYPE["Jewelcrafting"] = "Jewelcrafting"
-		ITEMSUBTYPE["Devices"] = "Devices"
-		ITEMSUBTYPE["Other"] = "Other"
-
-	ITEMTYPE["Gem"] = "Gem"
-		ITEMSUBTYPE["Blue"] = "Blue"
-		ITEMSUBTYPE["Green"] = "Green"
-		ITEMSUBTYPE["Orange"] = "Orange"
-		ITEMSUBTYPE["Meta"] = "Meta"
-		ITEMSUBTYPE["Prismatic"] = "Prismatic"
-		ITEMSUBTYPE["Purple"] = "Purple"
-		ITEMSUBTYPE["Red"] = "Red"
-		ITEMSUBTYPE["Simple"] = "Simple"
-		ITEMSUBTYPE["Yellow"] = "Yellow"
-	ITEMTYPE["Weapon"] = "Weapon"
-		ITEMSUBTYPE["Bows"] = "Bows"
-		ITEMSUBTYPE["Crossbows"] = "Crossbows"
-		ITEMSUBTYPE["Daggers"] = "Daggers"
-		ITEMSUBTYPE["Guns"] = "Guns"
-		ITEMSUBTYPE["Fishing Poles"] = "Fishing Poles" --Changed in 2.3
-		ITEMSUBTYPE["Fist Weapons"] = "Fist Weapons"
-		ITEMSUBTYPE["Miscellaneous"] = "Miscellaneous"
-		ITEMSUBTYPE["One-Handed Axes"] = "One-Handed Axes"
-		ITEMSUBTYPE["One-Handed Maces"] = "One-Handed Maces"
-		ITEMSUBTYPE["One-Handed Swords"] = "One-Handed Swords"
-		ITEMSUBTYPE["Polearms"] = "Polearms"
-		ITEMSUBTYPE["Staves"] = "Staves"
-		ITEMSUBTYPE["Thrown"] = "Thrown"
-		ITEMSUBTYPE["Two-Handed Axes"] = "Two-Handed Axes"
-		ITEMSUBTYPE["Two-Handed Maces"] = "Two-Handed Maces"
-		ITEMSUBTYPE["Two-Handed Swords"] = "Two-Handed Swords"
-		ITEMSUBTYPE["Wands"] = "Wands"
-
-if GetLocale() == "deDE" then
-	ITEMTYPE["Armor"] = "Rüstung"
-		ITEMSUBTYPE["Cloth"] = "Stoff"
-		ITEMSUBTYPE["Idols"] = "Götze"
-		ITEMSUBTYPE["Leather"] = "Leder"
-		ITEMSUBTYPE["Librams"] = "Buchband"
-		ITEMSUBTYPE["Mail"] = "Schwere Rüstung"
-		ITEMSUBTYPE["Miscellaneous"] = "Verschiedenes"
-		ITEMSUBTYPE["Shields"] = "Schilde"
-		ITEMSUBTYPE["Totems"] = "Totem"
-		ITEMSUBTYPE["Plate"] = "Platte"
-	ITEMTYPE["Consumable"] = "Verbrauchbar"
-		ITEMSUBTYPE["Consumable"] = "Verbrauchbar"
---New in 2.3
---		ITEMSUBTYPE["Food & Drink"] = "Food & Drink"
---		ITEMSUBTYPE["Potion"] = "Potion"
---		ITEMSUBTYPE["Elixir"] = "Elixir"
---		ITEMSUBTYPE["Flask"] = "Flask"
---		ITEMSUBTYPE["Bandage"] = "Bandage"
---		ITEMSUBTYPE["Item Enhancement"] = "Item Enhancement"
---		ITEMSUBTYPE["Scroll"] = "Scroll"
---		ITEMSUBTYPE["Other"] = "Other"
-	ITEMTYPE["Container"] = "Behälter"
-		ITEMSUBTYPE["Bag"] = "Tasche"
-		ITEMSUBTYPE["Enchanting Bag"] = "Verzauberertasche"
-		ITEMSUBTYPE["Engineering Bag"] = "Ingenieurstasche"
-		ITEMSUBTYPE["Herb Bag"] = "Kräutertasche"
-		ITEMSUBTYPE["Soul Bag"] = "Seelentasche"
-		ITEMSUBTYPE["Mining Bag"] = "Bergbautasche"
-	ITEMTYPE["Key"] = "Schlüssel"
-		ITEMSUBTYPE["Key"] = "Schlüssel"
-	ITEMTYPE["Miscellaneous"] = "Verschiedenes"
-		ITEMSUBTYPE["Junk"] = "Plunder"
-	ITEMTYPE["Reagent"] = "Reagenz"
-		ITEMSUBTYPE["Reagent"] = "Reagenz"
-	ITEMTYPE["Recipe"] = "Rezept"
-		ITEMSUBTYPE["Alchemy"] = "Alchemie"
-		ITEMSUBTYPE["Blacksmithing"] = "Schmiedekunst"
-		ITEMSUBTYPE["Book"] = "Buch"
-		ITEMSUBTYPE["Cooking"] = "Kochkunst"
-		ITEMSUBTYPE["Enchanting"] = "Verzauberungskunst"
-		ITEMSUBTYPE["Engineering"] = "Ingenierskunst"
-		ITEMSUBTYPE["First Aid"] = "Erste Hilfe"
-		ITEMSUBTYPE["Leatherworking"] = "Lederverarbeitung"
-		ITEMSUBTYPE["Tailoring"] = "Schneiderrei"
-	ITEMTYPE["Projectile"] = "Projektil"
-		ITEMSUBTYPE["Arrow"] = "Pfeil"
-		ITEMSUBTYPE["Bullet"] = "Kugel"
-	ITEMTYPE["Quest"] = "Quest"
-		ITEMSUBTYPE["Quest"] = "Quest"
-	ITEMTYPE["Quiver"] = "Köcher"
-		ITEMSUBTYPE["Ammo Pouch"] = "Munitionsbeutel"
-		ITEMSUBTYPE["Quiver"] = "Köcher"
-	ITEMTYPE["Trade Goods"] = "Handwerkswaren"
-		ITEMSUBTYPE["Devices"] = "Geräte"
-		ITEMSUBTYPE["Explosives"] = "Sprengstoff"
-		ITEMSUBTYPE["Parts"] = "Teile"
-		
-		--New in 2.3
---		ITEMSUBTYPE["Elemental"] = "Elemental"
---		ITEMSUBTYPE["Cloth"] = "Cloth"
---		ITEMSUBTYPE["Leather"] = "Leather"
---		ITEMSUBTYPE["Metal & Stone"] = "Metal & Stone"
---		ITEMSUBTYPE["Meat"] = "Meat"
---		ITEMSUBTYPE["Herb"] = "Herb"
---		ITEMSUBTYPE["Enchanting"] = "Enchanting"
---		ITEMSUBTYPE["Jewelcrafting"] = "Jewelcrafting"
---		ITEMSUBTYPE["Devices"] = "Devices"
---		ITEMSUBTYPE["Other"] = "Other"
-		
---	ITEMTYPE["Gem"] = "Gem"
---		ITEMSUBTYPE["Blue"] = "Blue"
---		ITEMSUBTYPE["Green"] = "Green"
---		ITEMSUBTYPE["Orange"] = "Orange"
---		ITEMSUBTYPE["Meta"] = "Meta"
---		ITEMSUBTYPE["Prismatic"] = "Prismatic"
---		ITEMSUBTYPE["Purple"] = "Purple"
---		ITEMSUBTYPE["Red"] = "Red"
---		ITEMSUBTYPE["Simple"] = "Simple"
---		ITEMSUBTYPE["Yellow"] = "Yellow"
-	ITEMTYPE["Weapon"] = "Waffe"
-		ITEMSUBTYPE["Bows"] = "Bögen"
-		ITEMSUBTYPE["Crossbows"] = "Armbrüste"
-		ITEMSUBTYPE["Daggers"] = "Dolche"
-		ITEMSUBTYPE["Guns"] = "Schusswaffen"
-		ITEMSUBTYPE["Fishing Poles"] = "Angel" --Needs fix for 2.3 ?
-		ITEMSUBTYPE["Fist Weapons"] = "Faustkampfwaffen"
-		ITEMSUBTYPE["Miscellaneous"] = "Verschiedenes"
-		ITEMSUBTYPE["One-Handed Axes"] = "Einhandäxte"
-		ITEMSUBTYPE["One-Handed Maces"] = "Einhandstreitkolben"
-		ITEMSUBTYPE["One-Handed Swords"] = "Einhandschwerter"
-		ITEMSUBTYPE["Polearms"] = "Stangenwaffen"
-		ITEMSUBTYPE["Staves"] = "Stäbe"
-		ITEMSUBTYPE["Thrown"] = "Wurfwaffe"
-		ITEMSUBTYPE["Two-Handed Axes"] = "Zweihandäxte"
-		ITEMSUBTYPE["Two-Handed Maces"] = "Zweihandstreitkolben"
-		ITEMSUBTYPE["Two-Handed Swords"] = "Zweihandschwerter"
-		ITEMSUBTYPE["Wands"] = "Zauberstäbe"
-elseif GetLocale() == "frFR" then
-	ITEMTYPE["Armor"] = "Armure"
-		ITEMSUBTYPE["Cloth"] = "Tissu"
-		ITEMSUBTYPE["Idols"] = "Idoles"
-		ITEMSUBTYPE["Leather"] = "Cuir"
-		ITEMSUBTYPE["Librams"] = "Librams"
-		ITEMSUBTYPE["Mail"] = "Mailles"
-		ITEMSUBTYPE["Miscellaneous"] = "Divers"
-		ITEMSUBTYPE["Shields"] = "Boucliers"
-		ITEMSUBTYPE["Totems"] = "Totems"
-		ITEMSUBTYPE["Plate"] = "Plaques"
-	ITEMTYPE["Consumable"] = "Consommable"
-		ITEMSUBTYPE["Consumable"] = "Consommables"
-		--New in 2.3
-		ITEMSUBTYPE["Food & Drink"] = "Nourriture & boissons"
-		ITEMSUBTYPE["Potion"] = "Potion"
-		ITEMSUBTYPE["Elixir"] = "Elixir"
-		ITEMSUBTYPE["Flask"] = "Flacon"
-		ITEMSUBTYPE["Bandage"] = "Bandage"
-		ITEMSUBTYPE["Item Enhancement"] = "Am\195\169lioration d'objet"
-		ITEMSUBTYPE["Scroll"] = "Parchemin"
-		ITEMSUBTYPE["Other"] = "Autre"
-
-	ITEMTYPE["Container"] = "Conteneur"
-		ITEMSUBTYPE["Bag"] = "Conteneur"
-		ITEMSUBTYPE["Enchanting Bag"] = "Sac d'enchanteur"
-		ITEMSUBTYPE["Engineering Bag"] = "Sac d'ing\195\169nieur"
-		ITEMSUBTYPE["Herb Bag"] = "Sac d'herbes"
-		ITEMSUBTYPE["Soul Bag"] = "Sac d'\195\162me"
-		ITEMSUBTYPE["Mining Bag"] = "Sac de mineur"
-		ITEMSUBTYPE["Gem Bag"] = "Sac de gemmes"
-	ITEMTYPE["Key"] = "Cl\195\169"
-		ITEMSUBTYPE["Key"] = "Cl\195\169"
-	ITEMTYPE["Miscellaneous"] = "Divers"
-		ITEMSUBTYPE["Junk"] = "Camelote"
-	ITEMTYPE["Reagent"] = "Composant"
-		ITEMSUBTYPE["Reagent"] = "Composant"
-	ITEMTYPE["Recipe"] = "Recette"
-		ITEMSUBTYPE["Alchemy"] = "Alchimie"
-		ITEMSUBTYPE["Blacksmithing"] = "Forge"
-		ITEMSUBTYPE["Book"] = "Livre"
-		ITEMSUBTYPE["Cooking"] = "Cuisine"
-		ITEMSUBTYPE["Enchanting"] = "Enchantement"
-		ITEMSUBTYPE["Engineering"] = "Ing\195\169nierie"
-		ITEMSUBTYPE["First Aid"] = "Secourisme"
-		ITEMSUBTYPE["Leatherworking"] = "Travail du cuir"
-		ITEMSUBTYPE["Tailoring"] = "Couture"
-	ITEMTYPE["Projectile"] = "Projectile"
-		ITEMSUBTYPE["Arrow"] = "Fl\195\168che"
-		ITEMSUBTYPE["Bullet"] = "Balle"
-	ITEMTYPE["Quest"] = "Qu\195\170te"
-		ITEMSUBTYPE["Quest"] = "Qu\195\170te"
-	ITEMTYPE["Quiver"] = "Carquois"
-		ITEMSUBTYPE["Ammo Pouch"] = "Giberne"
-		ITEMSUBTYPE["Quiver"] = "Carquois"
-	ITEMTYPE["Trade Goods"] = "Artisanat"
-		ITEMSUBTYPE["Trade Goods"] = "Artisanat"
-		ITEMSUBTYPE["Devices"] = "Appareils"
-		ITEMSUBTYPE["Explosives"] = "Explosifs"
-		ITEMSUBTYPE["Parts"] = "El\195\169ments"
-		ITEMSUBTYPE["Gems"] = "Gemmes"
---New in 2.3
-		ITEMSUBTYPE["Elemental"] = "\195\137l\195\169mentaire"
-		ITEMSUBTYPE["Cloth"] = "Tissu"
-		ITEMSUBTYPE["Leather"] = "Cuir"
-		ITEMSUBTYPE["Metal & Stone"] = "M\195\169tal & pierre"
-		ITEMSUBTYPE["Meat"] = "Viande"
-		ITEMSUBTYPE["Herb"] = "Herbes"
-		ITEMSUBTYPE["Enchanting"] = "Enchantement"
-		ITEMSUBTYPE["Jewelcrafting"] = "Joaillerie"
-		ITEMSUBTYPE["Devices"] = "Appareils"
-		ITEMSUBTYPE["Other"] = "Autre"
-	ITEMTYPE["Gem"] = "Gemme"
-		ITEMSUBTYPE["Blue"] = "Bleue"
-		ITEMSUBTYPE["Green"] = "Verte"
-		ITEMSUBTYPE["Orange"] = "Orange"
-		ITEMSUBTYPE["Meta"] = "M\195\169ta"
-		ITEMSUBTYPE["Prismatic"] = "Prismatique"
-		ITEMSUBTYPE["Purple"] = "Violette"
-		ITEMSUBTYPE["Red"] = "Rouge"
-		ITEMSUBTYPE["Simple"] = "Simple"
-		ITEMSUBTYPE["Yellow"] = "Jaune"
-	ITEMTYPE["Weapon"] = "Arme"
-		ITEMSUBTYPE["Bows"] = "Arcs"
-		ITEMSUBTYPE["Crossbows"] = "Arbal\195\168tes"
-		ITEMSUBTYPE["Daggers"] = "Dagues"
-		ITEMSUBTYPE["Guns"] = "Fusils"
-		ITEMSUBTYPE["Fishing Poles"] = "Cannes \195\160 p\195\170che"
-		ITEMSUBTYPE["Fist Weapons"] = "Armes de pugilat"
-		ITEMSUBTYPE["Miscellaneous"] = "Divers"
-		ITEMSUBTYPE["One-Handed Axes"] = "Haches \195\160 une main"
-		ITEMSUBTYPE["One-Handed Maces"] = "Maces \195\160 une main"
-		ITEMSUBTYPE["One-Handed Swords"] = "Ep\195\169es \195\160 une main"
-		ITEMSUBTYPE["Polearms"] = "Armes d'hast"
-		ITEMSUBTYPE["Staves"] = "B\195\162tons"
-		ITEMSUBTYPE["Thrown"] = "Armes de jet"
-		ITEMSUBTYPE["Two-Handed Axes"] = "Haches \195\160 deux mains"
-		ITEMSUBTYPE["Two-Handed Maces"] = "Maces \195\160 deux mains"
-		ITEMSUBTYPE["Two-Handed Swords"] = "Ep\195\169es \195\160 deux mains"
-		ITEMSUBTYPE["Wands"] = "Baguettes"
-elseif GetLocale() == "koKR" then
-   ITEMTYPE["Armor"] = "방어구"
-		ITEMSUBTYPE["Cloth"] = "천"
-		ITEMSUBTYPE["Idols"] = "우상"
-		ITEMSUBTYPE["Leather"] = "가죽"
-		ITEMSUBTYPE["Librams"] = "성서"
-		ITEMSUBTYPE["Mail"] = "사슬"
-		ITEMSUBTYPE["Miscellaneous"] = "기타"
-		ITEMSUBTYPE["Shields"] = "방패"
-		ITEMSUBTYPE["Totems"] = "토템"
-		ITEMSUBTYPE["Plate"] = "판금"
-	ITEMTYPE["Consumable"] = "소비 용품"
-		ITEMSUBTYPE["Consumable"] = "소비 용품"
-		--New in 2.3
---		ITEMSUBTYPE["Food & Drink"] = "Food & Drink"
---		ITEMSUBTYPE["Potion"] = "Potion"
---		ITEMSUBTYPE["Elixir"] = "Elixir"
---		ITEMSUBTYPE["Flask"] = "Flask"
---		ITEMSUBTYPE["Bandage"] = "Bandage"
---		ITEMSUBTYPE["Item Enhancement"] = "Item Enhancement"
---		ITEMSUBTYPE["Scroll"] = "Scroll"
---		ITEMSUBTYPE["Other"] = "Other"
-	ITEMTYPE["Container"] = "가방"
-		ITEMSUBTYPE["Bag"] = "가방"
-		ITEMSUBTYPE["Enchanting Bag"] = "마법부여 가방 "
-		ITEMSUBTYPE["Engineering Bag"] = "기계공학 가방"
-		ITEMSUBTYPE["Herb Bag"] = "약초 가방"
-		ITEMSUBTYPE["Soul Bag"] = "영혼의 가방"
-		ITEMSUBTYPE["Mining Bag"] = "채광 가방"
-	ITEMTYPE["Key"] = "열쇠"
-		ITEMSUBTYPE["Key"] = "열쇠"
-	ITEMTYPE["Miscellaneous"] = "기타"
-		ITEMSUBTYPE["Junk"] = "잡동사니"
-	ITEMTYPE["Reagent"] = "재료"
-		ITEMSUBTYPE["Reagent"] = "재료"
-	ITEMTYPE["Recipe"] = "제조법"
-		ITEMSUBTYPE["Alchemy"] = "연금술"
-		ITEMSUBTYPE["Blacksmithing"] = "대장기술"
-		ITEMSUBTYPE["Book"] = "책"
-		ITEMSUBTYPE["Cooking"] = "요리"
-		ITEMSUBTYPE["Enchanting"] = "마법부여"
-		ITEMSUBTYPE["Engineering"] = "기겨공학"
-		ITEMSUBTYPE["First Aid"] = "응급치료"
-		ITEMSUBTYPE["Leatherworking"] = "가죽세공"
-		ITEMSUBTYPE["Tailoring"] = "재봉술"
-	ITEMTYPE["Projectile"] = "투사체"
-		ITEMSUBTYPE["Arrow"] = "화살"
-		ITEMSUBTYPE["Bullet"] = "탄환"
-	ITEMTYPE["Quest"] = "퀘스트"
-		ITEMSUBTYPE["Quest"] = "퀘스트"
-	ITEMTYPE["Quiver"] = "화살통"
-		ITEMSUBTYPE["Ammo Pouch"] = "탄약 주머니"
-		ITEMSUBTYPE["Quiver"] = "화살통"
-	ITEMTYPE["Trade Goods"] = "직업 용품"
-		ITEMSUBTYPE["Trade Goods"] = "직업 용품"
-		ITEMSUBTYPE["Devices"] = "장치"
-		ITEMSUBTYPE["Explosives"] = "폭발물"
-		ITEMSUBTYPE["Parts"] = "부품"
-		ITEMSUBTYPE["Gems"] = "보석"
-		--New in 2.3
---		ITEMSUBTYPE["Elemental"] = "Elemental"
---		ITEMSUBTYPE["Cloth"] = "Cloth"
---		ITEMSUBTYPE["Leather"] = "Leather"
---		ITEMSUBTYPE["Metal & Stone"] = "Metal & Stone"
---		ITEMSUBTYPE["Meat"] = "Meat"
---		ITEMSUBTYPE["Herb"] = "Herb"
---		ITEMSUBTYPE["Enchanting"] = "Enchanting"
---		ITEMSUBTYPE["Jewelcrafting"] = "Jewelcrafting"
---		ITEMSUBTYPE["Devices"] = "Devices"
---		ITEMSUBTYPE["Other"] = "Other"
-
---	ITEMTYPE["Gem"] = "Gem"
---		ITEMSUBTYPE["Blue"] = "Blue"
---		ITEMSUBTYPE["Green"] = "Green"
---		ITEMSUBTYPE["Orange"] = "Orange"
---		ITEMSUBTYPE["Meta"] = "Meta"
---		ITEMSUBTYPE["Prismatic"] = "Prismatic"
---		ITEMSUBTYPE["Purple"] = "Purple"
---		ITEMSUBTYPE["Red"] = "Red"
---		ITEMSUBTYPE["Simple"] = "Simple"
---		ITEMSUBTYPE["Yellow"] = "Yellow"
-	ITEMTYPE["Weapon"] = "무기"
-		ITEMSUBTYPE["Bows"] = "활류"
-		ITEMSUBTYPE["Crossbows"] = "석궁류"
-		ITEMSUBTYPE["Daggers"] = "단검류"
-		ITEMSUBTYPE["Guns"] = "총류"
-		ITEMSUBTYPE["Fishing Poles"] = "낚싯대" --Needs fix for 2.3 ?
-		ITEMSUBTYPE["Fist Weapons"] = "장착 무기류"
-		ITEMSUBTYPE["Miscellaneous"] = "기타"
-		ITEMSUBTYPE["One-Handed Axes"] = "한손 도끼류"
-		ITEMSUBTYPE["One-Handed Maces"] = "한손 둔기류"
-		ITEMSUBTYPE["One-Handed Swords"] = "한손 도검류"
-		ITEMSUBTYPE["Polearms"] = "장창류"
-		ITEMSUBTYPE["Staves"] = "지팡이류"
-		ITEMSUBTYPE["Thrown"] = "투척 무기류"
-		ITEMSUBTYPE["Two-Handed Axes"] = "양손 도끼류"
-		ITEMSUBTYPE["Two-Handed Maces"] = "양손 둔기류"
-		ITEMSUBTYPE["Two-Handed Swords"] = "양손 도검류"
-		ITEMSUBTYPE["Wands"] = "마법봉류"
-elseif GetLocale() == "esES" then
-	ITEMTYPE["Armor"] = "Armadura"
-		ITEMSUBTYPE["Cloth"] = "Tela"
-		ITEMSUBTYPE["Idols"] = "Ídolos"
-		ITEMSUBTYPE["Leather"] = "Cuero"
-		ITEMSUBTYPE["Librams"] = "Tratados"
-		ITEMSUBTYPE["Mail"] = "Malla"
-		ITEMSUBTYPE["Miscellaneous"] = "Misceláneo"
-		ITEMSUBTYPE["Shields"] = "Escudos"
-		ITEMSUBTYPE["Totems"] = "Tótems"
-		ITEMSUBTYPE["Plate"] = "Placas"
-	ITEMTYPE["Consumable"] = "Consumible"
-		ITEMSUBTYPE["Consumable"] = "Consumible"
-		--New in 2.3
---		ITEMSUBTYPE["Food & Drink"] = "Food & Drink"
---		ITEMSUBTYPE["Potion"] = "Potion"
---		ITEMSUBTYPE["Elixir"] = "Elixir"
---		ITEMSUBTYPE["Flask"] = "Flask"
---		ITEMSUBTYPE["Bandage"] = "Bandage"
---		ITEMSUBTYPE["Item Enhancement"] = "Item Enhancement"
---		ITEMSUBTYPE["Scroll"] = "Scroll"
---		ITEMSUBTYPE["Other"] = "Other"
-	ITEMTYPE["Container"] = "Contenedor"
-		ITEMSUBTYPE["Bag"] = "Bolsa"
-		ITEMSUBTYPE["Enchanting Bag"] = "Bolsa de encantamiento"
-		ITEMSUBTYPE["Engineering Bag"] = "Bolsa de ingeniería"
-		ITEMSUBTYPE["Herb Bag"] = "Bolsa de hierbas"
-		ITEMSUBTYPE["Soul Bag"] = "Bolsa de almas"
-		ITEMSUBTYPE["Mining Bag"] = "Bolsa de minería"
-	ITEMTYPE["Key"] = "Llave"
-		ITEMSUBTYPE["Key"] = "Llave"
-	ITEMTYPE["Miscellaneous"] = "Misceláneo"
-		ITEMSUBTYPE["Junk"] = "Basura"
-	ITEMTYPE["Reagent"] = "Componente"
-		ITEMSUBTYPE["Reagent"] = "Componente"
-	ITEMTYPE["Recipe"] = "Receta"
-		ITEMSUBTYPE["Alchemy"] = "Alquimia"
-		ITEMSUBTYPE["Blacksmithing"] = "Herrería"
-		ITEMSUBTYPE["Book"] = "Libro"
-		ITEMSUBTYPE["Cooking"] = "Cocina"
-		ITEMSUBTYPE["Enchanting"] = "Encantamiento"
-		ITEMSUBTYPE["Engineering"] = "Ingeniería"
-		ITEMSUBTYPE["First Aid"] = "Primeros auxilios"
-		ITEMSUBTYPE["Leatherworking"] = "Peletería"
-		ITEMSUBTYPE["Tailoring"] = "Sastrería"
-	ITEMTYPE["Projectile"] = "Proyectil"
-		ITEMSUBTYPE["Arrow"] = "Flecha"
-		ITEMSUBTYPE["Bullet"] = "Bala"
-	ITEMTYPE["Quest"] = "Misión"
-		ITEMSUBTYPE["Quest"] = "Misión"
-	ITEMTYPE["Quiver"] = "Carcaj"
-		ITEMSUBTYPE["Ammo Pouch"] = "Bolsa de munición"
-		ITEMSUBTYPE["Quiver"] = "Carcaj"
-	ITEMTYPE["Trade Goods"] = "Objeto comerciable"
-		ITEMSUBTYPE["Devices"] = "Aparatos"
-		ITEMSUBTYPE["Explosives"] = "Explosivos"
-		ITEMSUBTYPE["Parts"] = "Partes"
-		--New in 2.3
---		ITEMSUBTYPE["Elemental"] = "Elemental"
---		ITEMSUBTYPE["Cloth"] = "Cloth"
---		ITEMSUBTYPE["Leather"] = "Leather"
---		ITEMSUBTYPE["Metal & Stone"] = "Metal & Stone"
---		ITEMSUBTYPE["Meat"] = "Meat"
---		ITEMSUBTYPE["Herb"] = "Herb"
---		ITEMSUBTYPE["Enchanting"] = "Enchanting"
---		ITEMSUBTYPE["Jewelcrafting"] = "Jewelcrafting"
---		ITEMSUBTYPE["Devices"] = "Devices"
---		ITEMSUBTYPE["Other"] = "Other"
-	ITEMTYPE["Gem"] = "Gema"
-		ITEMSUBTYPE["Blue"] = "Azul"
-		ITEMSUBTYPE["Green"] = "Verde"
-		ITEMSUBTYPE["Orange"] = "Naranja"
-		ITEMSUBTYPE["Meta"] = "Meta"
-		ITEMSUBTYPE["Prismatic"] = "Centelleante"
-		ITEMSUBTYPE["Purple"] = "Morado"
-		ITEMSUBTYPE["Red"] = "Rojo"
-		ITEMSUBTYPE["Simple"] = "Simple"
-		ITEMSUBTYPE["Yellow"] = "Amarillo"
-	ITEMTYPE["Weapon"] = "Arma"
-		ITEMSUBTYPE["Bows"] = "Arcos"
-		ITEMSUBTYPE["Crossbows"] = "Ballestas"
-		ITEMSUBTYPE["Daggers"] = "Dagas"
-		ITEMSUBTYPE["Guns"] = "Armas de fuego"
-		ITEMSUBTYPE["Fishing Poles"] = "Cañas de pescar" --Needs fix for 2.3 ?
-		ITEMSUBTYPE["Fist Weapons"] = "Armas de puño"
-		ITEMSUBTYPE["Miscellaneous"] = "Miscelánea"
-		ITEMSUBTYPE["One-Handed Axes"] = "Hachas de una mano"
-		ITEMSUBTYPE["One-Handed Maces"] = "Mazas de una mano"
-		ITEMSUBTYPE["One-Handed Swords"] = "Espadas de una mano"
-		ITEMSUBTYPE["Polearms"] = "Armas de asta"
-		ITEMSUBTYPE["Staves"] = "Bastones"
-		ITEMSUBTYPE["Thrown"] = "Armas arrojadizas"
-		ITEMSUBTYPE["Two-Handed Axes"] = "Hachas de dos manos"
-		ITEMSUBTYPE["Two-Handed Maces"] = "Mazas de dos manos"
-		ITEMSUBTYPE["Two-Handed Swords"] = "Espadas de dos manos"
-		ITEMSUBTYPE["Wands"] = "Varitas"
-elseif GetLocale() == "zhCN" then
-	ITEMTYPE["Armor"] = "护甲"
-		ITEMSUBTYPE["Cloth"] = "布甲"
-		ITEMSUBTYPE["Idols"] = "神像"
-		ITEMSUBTYPE["Leather"] = "皮甲"
-		ITEMSUBTYPE["Librams"] = "圣契"
-		ITEMSUBTYPE["Mail"] = "锁甲"
-		ITEMSUBTYPE["Miscellaneous"] = "其它"
-		ITEMSUBTYPE["Shields"] = "盾牌"
-		ITEMSUBTYPE["Totems"] = "图腾"
-		ITEMSUBTYPE["Plate"] = "板甲"
-	ITEMTYPE["Consumable"] = "消耗品"
-		ITEMSUBTYPE["Consumable"] = "消耗品"
-		--New in 2.3
---		ITEMSUBTYPE["Food & Drink"] = "Food & Drink"
---		ITEMSUBTYPE["Potion"] = "Potion"
---		ITEMSUBTYPE["Elixir"] = "Elixir"
---		ITEMSUBTYPE["Flask"] = "Flask"
---		ITEMSUBTYPE["Bandage"] = "Bandage"
---		ITEMSUBTYPE["Item Enhancement"] = "Item Enhancement"
---		ITEMSUBTYPE["Scroll"] = "Scroll"
---		ITEMSUBTYPE["Other"] = "Other"
-	ITEMTYPE["Container"] = "容器"
-		ITEMSUBTYPE["Bag"] = "容器"
-		ITEMSUBTYPE["Enchanting Bag"] = "附魔材料袋"
-		ITEMSUBTYPE["Engineering Bag"] = "工程学材料袋"
-		ITEMSUBTYPE["Herb Bag"] = "草药袋"
-		ITEMSUBTYPE["Soul Bag"] = "灵魂袋"
-		ITEMSUBTYPE["Mining Bag"] = "矿石袋"
-		ITEMSUBTYPE["Gem Bag"] = "宝石袋"
-	ITEMTYPE["Key"] = "钥匙"
-		ITEMSUBTYPE["Key"] = "钥匙"
-	ITEMTYPE["Miscellaneous"] = "其它"
-		ITEMSUBTYPE["Junk"] = "垃圾"
-	ITEMTYPE["Reagent"] = "材料"
-		ITEMSUBTYPE["Reagent"] = "材料"
-	ITEMTYPE["Recipe"] = "配方"
-		ITEMSUBTYPE["Alchemy"] = "炼金术"
-		ITEMSUBTYPE["Blacksmithing"] = "锻造"
-		ITEMSUBTYPE["Book"] = "书籍"
-		ITEMSUBTYPE["Cooking"] = "烹饪"
-		ITEMSUBTYPE["Enchanting"] = "附魔"
-		ITEMSUBTYPE["Engineering"] = "工程学"
-		ITEMSUBTYPE["First Aid"] = "急救"
-		ITEMSUBTYPE["Leatherworking"] = "制皮"
-		ITEMSUBTYPE["Tailoring"] = "剥皮"
-	ITEMTYPE["Projectile"] = "弹药"
-		ITEMSUBTYPE["Arrow"] = "箭"
-		ITEMSUBTYPE["Bullet"] = "子弹"
-	ITEMTYPE["Quest"] = "任务"
-		ITEMSUBTYPE["Quest"] = "任务"
-	ITEMTYPE["Quiver"] = "箭袋"
-		ITEMSUBTYPE["Ammo Pouch"] = "弹药袋"
-		ITEMSUBTYPE["Quiver"] = "箭袋"
-	ITEMTYPE["Trade Goods"] = "商品"
-		ITEMSUBTYPE["Trade Goods"] = "商品"
-		ITEMSUBTYPE["Devices"] = "装置"
-		ITEMSUBTYPE["Explosives"] = "爆炸物"
-		ITEMSUBTYPE["Parts"] = "零件"
-		--New in 2.3
---		ITEMSUBTYPE["Elemental"] = "Elemental"
---		ITEMSUBTYPE["Cloth"] = "Cloth"
---		ITEMSUBTYPE["Leather"] = "Leather"
---		ITEMSUBTYPE["Metal & Stone"] = "Metal & Stone"
---		ITEMSUBTYPE["Meat"] = "Meat"
---		ITEMSUBTYPE["Herb"] = "Herb"
---		ITEMSUBTYPE["Enchanting"] = "Enchanting"
---		ITEMSUBTYPE["Jewelcrafting"] = "Jewelcrafting"
---		ITEMSUBTYPE["Devices"] = "Devices"
---		ITEMSUBTYPE["Other"] = "Other"
-	ITEMTYPE["Gem"] = "珠宝"
-		ITEMSUBTYPE["Blue"] = "蓝色"
-		ITEMSUBTYPE["Green"] = "绿色"
-		ITEMSUBTYPE["Orange"] = "橙色"
-		ITEMSUBTYPE["Meta"] = "多彩"
-		ITEMSUBTYPE["Prismatic"] = "棱彩"
-		ITEMSUBTYPE["Purple"] = "紫色"
-		ITEMSUBTYPE["Red"] = "红色"
-		ITEMSUBTYPE["Simple"] = "简易"
-		ITEMSUBTYPE["Yellow"] = "黄色"
-	ITEMTYPE["Weapon"] = "武器"
-		ITEMSUBTYPE["Bows"] = "弓"
-		ITEMSUBTYPE["Crossbows"] = "弩"
-		ITEMSUBTYPE["Daggers"] = "匕首"
-		ITEMSUBTYPE["Guns"] = "枪械"
-		ITEMSUBTYPE["Fishing Poles"] = "鱼竿"--Needs fix for 2.3 ?
-		ITEMSUBTYPE["Fist Weapons"] = "拳套"
-		ITEMSUBTYPE["Miscellaneous"] = "其它"
-		ITEMSUBTYPE["One-Handed Axes"] = "单手斧"
-		ITEMSUBTYPE["One-Handed Maces"] = "单手锤"
-		ITEMSUBTYPE["One-Handed Swords"] = "单手剑"
-		ITEMSUBTYPE["Polearms"] = "长柄武器"
-		ITEMSUBTYPE["Staves"] = "法杖"
-		ITEMSUBTYPE["Thrown"] = "投掷武器"
-		ITEMSUBTYPE["Two-Handed Axes"] = "双手斧"
-		ITEMSUBTYPE["Two-Handed Maces"] = "双手锤"
-		ITEMSUBTYPE["Two-Handed Swords"] = "双手剑"
-		ITEMSUBTYPE["Wands"] = "魔杖"
-elseif GetLocale() == "zhTW" then
-	ITEMTYPE["Armor"] = "護甲"
-		ITEMSUBTYPE["Cloth"] = "布衣"
-		ITEMSUBTYPE["Idols"] = "雕像"
-		ITEMSUBTYPE["Leather"] = "皮甲"
-		ITEMSUBTYPE["Librams"] = "聖契"
-		ITEMSUBTYPE["Mail"] = "鎖甲"
-		ITEMSUBTYPE["Miscellaneous"] = "其他"
-		ITEMSUBTYPE["Shields"] = "盾牌"
-		ITEMSUBTYPE["Totems"] = "圖騰"
-		ITEMSUBTYPE["Plate"] = "鎧甲"
-	ITEMTYPE["Consumable"] = "消耗品"
-		ITEMSUBTYPE["Consumable"] = "消耗品"
-		--New in 2.3
---		ITEMSUBTYPE["Food & Drink"] = "Food & Drink"
---		ITEMSUBTYPE["Potion"] = "Potion"
---		ITEMSUBTYPE["Elixir"] = "Elixir"
---		ITEMSUBTYPE["Flask"] = "Flask"
---		ITEMSUBTYPE["Bandage"] = "Bandage"
---		ITEMSUBTYPE["Item Enhancement"] = "Item Enhancement"
---		ITEMSUBTYPE["Scroll"] = "Scroll"
---		ITEMSUBTYPE["Other"] = "Other"
-	ITEMTYPE["Container"] = "容器"
-		ITEMSUBTYPE["Bag"] = "容器"
-		ITEMSUBTYPE["Enchanting Bag"] = "附魔包"
-		ITEMSUBTYPE["Engineering Bag"] = "工程包"
-		ITEMSUBTYPE["Herb Bag"] = "草藥包"
-		ITEMSUBTYPE["Soul Bag"] = "靈魂碎片背包"
-		ITEMSUBTYPE["Mining Bag"] = "採礦背包"
-	ITEMTYPE["Key"] = "鑰匙"
-		ITEMSUBTYPE["Key"] = "鑰匙"
-	ITEMTYPE["Miscellaneous"] = "其他"
-		ITEMSUBTYPE["Junk"] = "垃圾"
-	ITEMTYPE["Reagent"] = "材料"
-		ITEMSUBTYPE["Reagent"] = "材料"
-	ITEMTYPE["Recipe"] = "配方"
-		ITEMSUBTYPE["Alchemy"] = "鍊金術"
-		ITEMSUBTYPE["Blacksmithing"] = "鍛造"
-		ITEMSUBTYPE["Book"] = "書籍"
-		ITEMSUBTYPE["Cooking"] = "烹飪"
-		ITEMSUBTYPE["Enchanting"] = "附魔"
-		ITEMSUBTYPE["Engineering"] = "工程"
-		ITEMSUBTYPE["First Aid"] = "急救"
-		ITEMSUBTYPE["Leatherworking"] = "制皮"
-		ITEMSUBTYPE["Tailoring"] = "裁縫"
-	ITEMTYPE["Projectile"] = "彈藥"
-		ITEMSUBTYPE["Arrow"] = "彈藥 (箭)"
-		ITEMSUBTYPE["Bullet"] = "彈藥 (子彈)"
-	ITEMTYPE["Quest"] = "任務"
-		ITEMSUBTYPE["Quest"] = "任務"
-	ITEMTYPE["Quiver"] = "箭袋"
-		ITEMSUBTYPE["Ammo Pouch"] = "彈藥袋"
-		ITEMSUBTYPE["Quiver"] = "箭袋"
-	ITEMTYPE["Trade Goods"] = "商品"
-		ITEMSUBTYPE["Devices"] = "裝置"
-		ITEMSUBTYPE["Explosives"] = "爆炸物"
-		ITEMSUBTYPE["Parts"] = "零件"
-		--New in 2.3
---		ITEMSUBTYPE["Elemental"] = "Elemental"
---		ITEMSUBTYPE["Cloth"] = "Cloth"
---		ITEMSUBTYPE["Leather"] = "Leather"
---		ITEMSUBTYPE["Metal & Stone"] = "Metal & Stone"
---		ITEMSUBTYPE["Meat"] = "Meat"
---		ITEMSUBTYPE["Herb"] = "Herb"
---		ITEMSUBTYPE["Enchanting"] = "Enchanting"
---		ITEMSUBTYPE["Jewelcrafting"] = "Jewelcrafting"
---		ITEMSUBTYPE["Devices"] = "Devices"
---		ITEMSUBTYPE["Other"] = "Other"
-	ITEMTYPE["Gem"] = "珠寶"
-		ITEMSUBTYPE["Blue"] = "藍色"
-		ITEMSUBTYPE["Green"] = "綠色"
-		ITEMSUBTYPE["Orange"] = "橘色"
-		ITEMSUBTYPE["Meta"] = "變換"
-		ITEMSUBTYPE["Prismatic"] = "棱石"
-		ITEMSUBTYPE["Purple"] = "紫色"
-		ITEMSUBTYPE["Red"] = "紅色"
-		ITEMSUBTYPE["Simple"] = "簡單"
-		ITEMSUBTYPE["Yellow"] = "黃色"
-	ITEMTYPE["Weapon"] = "武器"
-		ITEMSUBTYPE["Bows"] = "弓"
-		ITEMSUBTYPE["Crossbows"] = "弩"
-		ITEMSUBTYPE["Daggers"] = "匕首"
-		ITEMSUBTYPE["Guns"] = "槍械"
-		ITEMSUBTYPE["Fishing Poles"] = "魚竿"--Needs fix for 2.3 ?
-		ITEMSUBTYPE["Fist Weapons"] = "拳套"
-		ITEMSUBTYPE["Miscellaneous"] = "其他"
-		ITEMSUBTYPE["One-Handed Axes"] = "單手斧"
-		ITEMSUBTYPE["One-Handed Maces"] = "單手錘"
-		ITEMSUBTYPE["One-Handed Swords"] = "單手劍"
-		ITEMSUBTYPE["Polearms"] = "長柄武器"
-		ITEMSUBTYPE["Staves"] = "法杖"
-		ITEMSUBTYPE["Thrown"] = "投擲武器"
-		ITEMSUBTYPE["Two-Handed Axes"] = "雙手斧"
-		ITEMSUBTYPE["Two-Handed Maces"] = "雙手錘"
-		ITEMSUBTYPE["Two-Handed Swords"] = "雙手劍"
-		ITEMSUBTYPE["Wands"] = "魔杖"
-elseif GetLocale() == "ruRU" then
-	ITEMTYPE["Armor"] = "Доспехи"
-		ITEMSUBTYPE["Cloth"] = "Тканевые"
-		ITEMSUBTYPE["Idols"] = "Идолы"
-		ITEMSUBTYPE["Leather"] = "Кожаные"
-		ITEMSUBTYPE["Librams"] = "Манускрипты"
-		ITEMSUBTYPE["Mail"] = "Кольчужные"
-		ITEMSUBTYPE["Miscellaneous"] = "Разное"
-		ITEMSUBTYPE["Shields"] = "Щиты"
-		ITEMSUBTYPE["Totems"] = "Тотемы"
-		ITEMSUBTYPE["Plate"] = "Латные"
-	ITEMTYPE["Consumable"] = "Расходуемое"
-		ITEMSUBTYPE["Consumable"] = "Расходуемое"
-		--New in 2.3
-		ITEMSUBTYPE["Food & Drink"] = "Еда и Напитки"
-		ITEMSUBTYPE["Potion"] = "Зелья"
-		ITEMSUBTYPE["Elixir"] = "Элексиры"
-		ITEMSUBTYPE["Flask"] = "Фляги"
-		ITEMSUBTYPE["Bandage"] = "Бинты"
-		ITEMSUBTYPE["Item Enhancement"] = "Улучшения"
-		ITEMSUBTYPE["Scroll"] = "Свитки"
-		ITEMSUBTYPE["Other"] = "Другое"
-		
-	ITEMTYPE["Container"] = "Сумки"
-		ITEMSUBTYPE["Bag"] = "Сумка"
-		ITEMSUBTYPE["Enchanting Bag"] = "Сумка зачаровывателя"
-		ITEMSUBTYPE["Engineering Bag"] = "Сумка инженера"
-		ITEMSUBTYPE["Herb Bag"] = "Сумка травника"
-		ITEMSUBTYPE["Soul Bag"] = "Сумка Душ"
-		ITEMSUBTYPE["Mining Bag"] = "Шахтерская сумка"
-		ITEMSUBTYPE["Gem Bag"] = "Сумка ювелира"
-		--New in 2.3
-		ITEMSUBTYPE["Leatherworking Bag"] = "Сумка кожевника"
-		
-	ITEMTYPE["Key"] = "Ключи"
-		ITEMSUBTYPE["Key"] = "Ключи"
-	ITEMTYPE["Miscellaneous"] = "Разное"
-		ITEMSUBTYPE["Junk"] = "Хлам"
-		--New in 2.3
-		ITEMSUBTYPE["Reagent"] = "Реагенты"
-		ITEMSUBTYPE["Pet"] = "Питомци"
-		ITEMSUBTYPE["Holiday"] = "Праздники"
-		ITEMSUBTYPE["Other"] = "Другое"
-		
-	ITEMTYPE["Reagent"] = "Реагенты"
-		ITEMSUBTYPE["Reagent"] = "Реагенты"
-	ITEMTYPE["Recipe"] = "Рецепты"
-		ITEMSUBTYPE["Alchemy"] = "Алхимия"
-		ITEMSUBTYPE["Blacksmithing"] = "Кузнечное дело"
-		ITEMSUBTYPE["Book"] = "Книга"
-		ITEMSUBTYPE["Cooking"] = "Кулинария"
-		ITEMSUBTYPE["Enchanting"] = "Наложение чар"
-		ITEMSUBTYPE["Engineering"] = "Инженерия"
-		ITEMSUBTYPE["First Aid"] = "Первая помощь"
-		ITEMSUBTYPE["Leatherworking"] = "Кожевничество"
-		ITEMSUBTYPE["Tailoring"] = "Портняжное дело"
-	ITEMTYPE["Projectile"] = "Боеприпасы"
-		ITEMSUBTYPE["Arrow"] = "Стрелы"
-		ITEMSUBTYPE["Bullet"] = "Пули"
-	ITEMTYPE["Quest"] = "Задания"
-		ITEMSUBTYPE["Quest"] = "Задания"
-	ITEMTYPE["Quiver"] = "Амуниция"
-		ITEMSUBTYPE["Ammo Pouch"] = "Подсумок"
-		ITEMSUBTYPE["Quiver"] = "Колчан"
-	ITEMTYPE["Trade Goods"] = "Хозяйственные товары"
-		ITEMSUBTYPE["Trade Goods"] = "Хозяйственные товары"
-		ITEMSUBTYPE["Devices"] = "Устройства"
-		ITEMSUBTYPE["Explosives"] = "Взрывчатка"
-		ITEMSUBTYPE["Parts"] = "Запчасти"
-		--New in 2.3
-		ITEMSUBTYPE["Elemental"] = "Стихии"
-		ITEMSUBTYPE["Cloth"] = "Тканевые"
-		ITEMSUBTYPE["Leather"] = "Кожаные"
-		ITEMSUBTYPE["Metal & Stone"] = "Металл и камень"
-		ITEMSUBTYPE["Meat"] = "Мясо"
-		ITEMSUBTYPE["Herb"] = "Трава"
-		ITEMSUBTYPE["Enchanting"] = "Наложение чар"
-		ITEMSUBTYPE["Jewelcrafting"] = "Ювелирное дело"
-		ITEMSUBTYPE["Devices"] = "Устройства"
-		ITEMSUBTYPE["Other"] = "Другое"
-
-	ITEMTYPE["Gem"] = "Самоцветы"
-		ITEMSUBTYPE["Blue"] = "Синии"
-		ITEMSUBTYPE["Green"] = "Желтые"
-		ITEMSUBTYPE["Orange"] = "Оранжевые"
-		ITEMSUBTYPE["Meta"] = "Особые"
-		ITEMSUBTYPE["Prismatic"] = "Радужные"
-		ITEMSUBTYPE["Purple"] = "Фиолетовые	"
-		ITEMSUBTYPE["Red"] = "Красные"
-		ITEMSUBTYPE["Simple"] = "Простые"
-		ITEMSUBTYPE["Yellow"] = "Желтые"
-	ITEMTYPE["Weapon"] = "Оружие"
-		ITEMSUBTYPE["Bows"] = "Луки"
-		ITEMSUBTYPE["Crossbows"] = "Арбалеты"
-		ITEMSUBTYPE["Daggers"] = "Кинжалы"
-		ITEMSUBTYPE["Guns"] = "Огнестрельное"
-		ITEMSUBTYPE["Fishing Poles"] = "Удочка" --Changed in 2.3
-		ITEMSUBTYPE["Fist Weapons"] = "Кистевое"
-		ITEMSUBTYPE["Miscellaneous"] = "Разное"
-		ITEMSUBTYPE["One-Handed Axes"] = "Одноручные топоры"
-		ITEMSUBTYPE["One-Handed Maces"] = "Одноручное дробящее"
-		ITEMSUBTYPE["One-Handed Swords"] = "Одноручные мечи"
-		ITEMSUBTYPE["Polearms"] = "Древковое"
-		ITEMSUBTYPE["Staves"] = "Посохи"
-		ITEMSUBTYPE["Thrown"] = "Метательное"
-		ITEMSUBTYPE["Two-Handed Axes"] = "Двуручные топоры"
-		ITEMSUBTYPE["Two-Handed Maces"] = "Двуручное дробящее"
-		ITEMSUBTYPE["Two-Handed Swords"] = "Двуручные мечи"
-		ITEMSUBTYPE["Wands"] = "Жезлы"		
-end
+local band=bit.band
 
 local categorycache = {}
 local useditems = {}
@@ -855,79 +43,123 @@ end
 
 
 local BagNames = {
-	[0] = L["Backpack"],
-	[1] = L["Bag1"],
-	[2] = L["Bag2"],
-	[3] = L["Bag3"],
-	[4] = L["Bag4"],
-	[-1] = L["Bank Frame"],
-	[5] = L["Bank Bag1"],
-	[6] = L["Bank Bag2"],
-	[7] = L["Bank Bag3"],
-	[8] = L["Bank Bag4"],
-	[9] = L["Bank Bag5"],
-	[10] = L["Bank Bag6"],
-	[11] = L["Bank Bag7"],	
-	[-2] = L["KeyRing"],
+	[KEYRING_CONTAINER] = L["KeyRing"],
+	[BANK_CONTAINER] = L["Bank Frame"],
+	[BACKPACK_CONTAINER] = L["Backpack"],
 }
-
 local BagTypes = { 
-	--normal bags
-	[0] = 1,
-	[1] = 1,
-	[2] = 1,
-	[3] = 1,
-	[4] = 1,
-	--bank bags
-	[-1] = 2,
-	[5] = 2,
-	[6] = 2,
-	[7] = 2,
-	[8] = 2,
-	[9] = 2,
-	[10] = 2,
-	[11] = 2,
-	--keyring
-	[-2] = 3,		
+	[BACKPACK_CONTAINER] = 1,
+	[BANK_CONTAINER] = 2,
+	[KEYRING_CONTAINER] = 3,
 }
+for i=1,NUM_BAG_SLOTS do
+	BagNames[i] = L["Bag"..i]
+	BagTypes[i] = 1
+end
+for i=1,NUM_BANKBAGSLOTS do
+	BagNames[NUM_BAG_SLOTS+i] = L["Bank Bag"..i]
+	BagTypes[NUM_BAG_SLOTS+i] = 2
+end
+
 
 local QualityNames = {
-	[0] = "Poor",
-	[1] = "Common",
-	[2] = "Uncommon",
-	[3] = "Rare",
-	[4] = "Epic",
-	[5] = "Legendary",
-	[6] = "Artifact",
+}
+for i=0,99 do
+	QualityNames[i]=_G["ITEM_QUALITY"..i.."_DESC"]
+	if not QualityNames[i] then
+		break
+	end
+end
+	
+
+--------------------------
+-- scanned 08/13/09 16:52:00 - patch 3.2.0
+
+local ItemTypes = {
+  ["Weapon"] = {"One-Handed Axes", "Two-Handed Axes", "Bows", "Guns", "One-Handed Maces", "Two-Handed Maces", "Polearms", "One-Handed Swords", "Two-Handed Swords", "Staves", "Fist Weapons", "Miscellaneous", "Daggers", "Thrown", "Crossbows", "Wands", "Fishing Poles"},
+  ["Armor"] = {"Miscellaneous", "Cloth", "Leather", "Mail", "Plate", "Shields", "Librams", "Idols", "Totems", "Sigils"},
+  ["Container"] = {"Bag", "Soul Bag", "Herb Bag", "Enchanting Bag", "Engineering Bag", "Gem Bag", "Mining Bag", "Leatherworking Bag", "Inscription Bag"},
+  ["Consumable"] = {"Food & Drink", "Potion", "Elixir", "Flask", "Bandage", "Item Enhancement", "Scroll", "Other"},
+  ["Glyph"] = {"Warrior", "Paladin", "Hunter", "Rogue", "Priest", "Death Knight", "Shaman", "Mage", "Warlock", "Druid"},
+  ["Trade Goods"] = {"Elemental", "Cloth", "Leather", "Metal & Stone", "Meat", "Herb", "Enchanting", "Jewelcrafting", "Parts", "Devices", "Explosives", "Materials", "Other", "Armor Enchantment", "Weapon Enchantment"},
+  ["Projectile"] = {"Arrow", "Bullet"},
+  ["Quiver"] = {"Quiver", "Ammo Pouch"},
+  ["Recipe"] = {"Book", "Leatherworking", "Tailoring", "Engineering", "Blacksmithing", "Cooking", "Alchemy", "First Aid", "Enchanting", "Fishing", "Jewelcrafting", "Inscription"},
+  ["Gem"] = {"Red", "Blue", "Yellow", "Purple", "Green", "Orange", "Meta", "Simple", "Prismatic"},
+  ["Miscellaneous"] = {"Junk", "Reagent", "Pet", "Holiday", "Other", "Mount"},
+  ["Quest"] = {},
 }
 
-local ItemTypes = { 
-	["Armor"] = { "Cloth", "Idols", "Leather", "Librams", "Mail", "Miscellaneous", "Shields", "Totems", "Plate"},
-	["Consumable"] = { "Consumable", "Food & Drink", "Potion", "Elixir", "Flask", "Bandage", "Item Enhancement", "Scroll", "Other" },
-	["Container"]  = {"Bag", "Enchanting Bag", "Engineering Bag", "Herb Bag", "Soul Bag", "Mining Bag", "Gem Bag", "Leatherworking Bag" },
-	["Key"] = { "Key" },
-	["Miscellaneous"] = { "Junk", "Reagent","Pet", "Holiday", "Other" },
-	["Reagent"]  = { "Reagent" },
-	["Recipe"]  = { "Alchemy","Blacksmithing","Book","Cooking","Enchanting","Engineering","First Aid","Leatherworking","Tailoring" },
-	["Projectile"]  = {"Arrow","Bullet"},
-	["Quest"]  = { "Quest" },
-	["Quiver"]  = { "Ammo Pouch","Quiver" },
-	["Trade Goods"]  = { "Elemental" ,"Cloth" ,"Leather" ,"Metal & Stone" ,"Meat" ,"Herb" ,"Enchanting" ,"Jewelcrafting" ,"Parts" ,"Devices" ,"Explosives" ,"Devices" ,"Other" ,"Trade Goods" },
-	["Gem"] = { "Blue","Green","Orange","Meta","Prismatic","Purple","Red","Simple","Yellow" },
-	["Weapon"]  = { "Bows","Crossbows","Daggers","Guns","Fishing Poles","Fist Weapons","Miscellaneous","One-Handed Axes","One-Handed Maces","One-Handed Swords","Polearms","Staves","Thrown","Two-Handed Axes","Two-Handed Maces","Two-Handed Swords","Wands"},
-}
+--[[
+SELECTED_CHAT_FRAME:AddMessage("--------------------------")
+SELECTED_CHAT_FRAME:AddMessage("-- scanned "..date("%c").. " - patch "..(GetBuildInfo()))
+SELECTED_CHAT_FRAME:AddMessage("local ItemTypes = {")
+for i,class in pairs{GetAuctionItemClasses()} do
+  local subs={GetAuctionItemSubClasses(i)}
+  if #subs>0 then
+    
+    SELECTED_CHAT_FRAME:AddMessage('  ["'..class..'"] = {"'..
+      table.concat(subs, '", "') ..
+    '"},')
+  else
+    SELECTED_CHAT_FRAME:AddMessage('  ["'..class..'"] = {},')
+  end
+end
+SELECTED_CHAT_FRAME:AddMessage("}")
+--]]
 
---local ItemTypes = {}
---
---local function BuildItemTypes(...)
---	local i
---	for i = 1, select('#', ...) do
---		ItemTypes[select(i,...)] = {GetAuctionItemSubClasses(i)}
---	end
---end
+local AL = LibStub("AceLocale-3.0")
+do	-- Localizations
+	local debug = false
+	--@debug@
+	debug = true
+	--@end-debug@
 
---BuildItemTypes(GetAuctionItemClasses())
+	local L = AL:NewLocale("Baggins-ItemTypes", "enUS", true, debug)
+	--@localization(locale="enUS", format="lua_additive_table", same-key-is-true=true, handle-subnamespaces="none")@
 
+	L = AL:NewLocale("Baggins-ItemTypes", "frFR")
+	if L then 
+	--@localization(locale="frFR", format="lua_additive_table", handle-subnamespaces="none")@
+	end
+
+	L = AL:NewLocale("Baggins-ItemTypes", "deDE")
+	if L then 
+	--@localization(locale="deDE", format="lua_additive_table", handle-subnamespaces="none")@
+	end
+
+	L = AL:NewLocale("Baggins-ItemTypes", "koKR")
+	if L then 
+	--@localization(locale="koKR", format="lua_additive_table", handle-subnamespaces="none")@
+	end
+
+	L = AL:NewLocale("Baggins-ItemTypes", "esMX")
+	if L then 
+	--@localization(locale="esMX", format="lua_additive_table", handle-subnamespaces="none")@
+	end
+
+	L = AL:NewLocale("Baggins-ItemTypes", "ruRU")
+	if L then 
+	--@localization(locale="ruRU", format="lua_additive_table", handle-subnamespaces="none")@
+	end
+
+	L = AL:NewLocale("Baggins-ItemTypes", "zhCN")
+	if L then 
+	--@localization(locale="zhCN", format="lua_additive_table", handle-subnamespaces="none")@
+	end
+
+	L = AL:NewLocale("Baggins-ItemTypes", "esES")
+	if L then 
+	--@localization(locale="esES", format="lua_additive_table", handle-subnamespaces="none")@
+	end
+
+	L = AL:NewLocale("Baggins-ItemTypes", "zhTW")
+	if L then 
+	--@localization(locale="zhTW", format="lua_additive_table", handle-subnamespaces="none")@
+	end
+end
+
+local ITEML = AL:GetLocale("Baggins-ItemTypes")
 
 local EquipLocs = {
 	"INVTYPE_AMMO",
@@ -958,6 +190,12 @@ local EquipLocs = {
 	"INVTYPE_TABARD",
 	"INVTYPE_BAG"
 }
+
+
+
+
+
+
 --removes any fields not used by the current rule type and sets up defaults if needed
 
 function Baggins:AddCustomRule(type,description)
@@ -1017,17 +255,17 @@ RuleTypes = {
 			if link then
 				local Type, SubType = select(6, GetItemInfo(link))
 				if Type and SubType then
-					return Type == ITEMTYPE[rule.itype] and (rule.isubtype == nil or SubType == ITEMSUBTYPE[rule.isubtype] )	
+					return Type == ITEML[rule.itype] and (rule.isubtype == nil or SubType == ITEML[rule.isubtype] )	
 				end
 			end
 		end,
 		GetName = function(rule) 
 			local ltype, lsubtype = "*", "*"
 			if rule.itype then
-				ltype = ITEMTYPE[rule.itype] or "?"
+				ltype = ITEML[rule.itype] or "?"
 			end
 			if rule.isubtype then
-				lsubtype = ITEMSUBTYPE[rule.isubtype] or "?"
+				lsubtype = ITEML[rule.isubtype] or "?"
 			end
 			return L["ItemType - "]..ltype..":"..lsubtype
 		end,
@@ -1039,14 +277,14 @@ RuleTypes = {
 
 			elseif level == 2 and value == "ItemType" then	
 				for k, v in pairs(ItemTypes) do
-					dewdrop:AddLine('text', ITEMTYPE[k], "checked", rule.itype == k,"func",function(k) rule.itype = k rule.isubtype = nil Baggins:OnRuleChanged() end,"arg1",k)
+					dewdrop:AddLine('text', ITEML[k], "checked", rule.itype == k,"func",function(k) rule.itype = k rule.isubtype = nil Baggins:OnRuleChanged() end,"arg1",k)
 				end
 			elseif level == 2 and value == "ItemSubtype" then
 				dewdrop:AddLine('text', L["All"], "checked", rule.isubtype == nil,"func",function() rule.isubtype = nil Baggins:OnRuleChanged() end)
 				dewdrop:AddLine()
 				if rule.itype and ItemTypes[rule.itype] then
 					for k, v in ipairs(ItemTypes[rule.itype]) do
-						dewdrop:AddLine('text', ITEMSUBTYPE[v], "checked", rule.isubtype == v,"func",function(v) rule.isubtype = v Baggins:OnRuleChanged() end,"arg1",v)
+						dewdrop:AddLine('text', ITEML[v], "checked", rule.isubtype == v,"func",function(v) rule.isubtype = v Baggins:OnRuleChanged() end,"arg1",v)
 					end
 				end
 			end
@@ -1062,14 +300,14 @@ RuleTypes = {
 			if link then
 				local SubType = select(7, GetItemInfo(link))
 				if SubType then
-					return SubType == ITEMSUBTYPE[rule.ctype]
+					return SubType == ITEML[rule.ctype]
 				end
 			end
 		end,
 		GetName = function(rule) 
 			local ctype
 			if rule.ctype then
-				ctype = ITEMSUBTYPE[rule.ctype]
+				ctype = ITEML[rule.ctype]
 			else
 				ctype = L["None"]
 			end
@@ -1084,10 +322,10 @@ RuleTypes = {
 				dewdrop:AddLine('text', L["All"], "checked", rule.ctype == nil,"func",function() rule.ctype = nil Baggins:OnRuleChanged() end)
 				dewdrop:AddLine()
 				for k, v in ipairs(ItemTypes["Container"]) do
-					dewdrop:AddLine('text', ITEMSUBTYPE[v], "checked", rule.ctype == v,"func",function(v) rule.ctype = v Baggins:OnRuleChanged() end,"arg1",v)
+					dewdrop:AddLine('text', ITEML[v], "checked", rule.ctype == v,"func",function(v) rule.ctype = v Baggins:OnRuleChanged() end,"arg1",v)
 				end	
 				for k, v in ipairs(ItemTypes["Quiver"]) do
-					dewdrop:AddLine('text', ITEMSUBTYPE[v], "checked", rule.ctype == v,"func",function(v) rule.ctype = v Baggins:OnRuleChanged() end,"arg1",v)
+					dewdrop:AddLine('text', ITEML[v], "checked", rule.ctype == v,"func",function(v) rule.ctype = v Baggins:OnRuleChanged() end,"arg1",v)
 				end		
 			end
 		end,
@@ -1258,14 +496,8 @@ RuleTypes = {
 		DisplayName = L["Ammo Bag"],
 		Description = L["Items in an ammo pouch or quiver"],
 		Matches = function(bag,slot,rule) 
-			if bag < 1 or bag > 4 then return end
-			local link = GetInventoryItemLink("player",19+bag)
-			if link then
-				local Type = select(6, GetItemInfo(link))
-				if Type then
-					return Type == ITEMTYPE["Quiver"]
-				end
-			end
+			local _,fam = GetContainerNumFreeSlots(bag)
+			return fam and band(fam, 3)~=0
 		end,
 		GetName = function(rule) 
 			return L["Ammo Bag Slots"]
@@ -1304,7 +536,7 @@ RuleTypes = {
 				dewdrop:AddLine('text', L["Comparison"], 'hasArrow', true, 'value', "QualComp")
 		
 			elseif level == 2 and value == "Quality" then
-				for i = 0, 6 do
+				for i = 0, #QualityNames do
 					local r,g,b = GetItemQualityColor(i)
 					dewdrop:AddLine('text', QualityNames[i], "checked", rule.quality == i,"func",function() rule.quality = i Baggins:OnRuleChanged() end,
 									'textR',r,'textG',g,'textB',b)
@@ -1589,8 +821,24 @@ function Baggins:OpenRuleDewdrop(rule,...)
 	end
 end
 
-function Baggins:RuleTypeIterator()
-	return pairs(RuleTypes)
+function Baggins:RuleTypeIterator(sorted)
+	if not sorted then
+		return pairs(RuleTypes)
+	end
+	local t = {}
+	for k,v in pairs(RuleTypes) do
+		tinsert(t,k)
+	end
+	table.sort(t, function(a,b) return RuleTypes[a].DisplayName < RuleTypes[b].DisplayName end)
+	local i=0
+	return function(k)
+		i=i+1
+		local rt=t[i]
+		if not rt then
+			return nil,nil
+		end
+		return rt, RuleTypes[rt]
+	end
 end
 
 function Baggins:GetRuleDesc(rule)
@@ -1605,59 +853,50 @@ function Baggins:IsSpecialBag(bag)
 	if not bag then return end
 	if type(bag) == "string" then bag = tonumber(bag) end
 	local prefix = ""
-	if bag == -1 then
-		return "b"
+	if bag == BANK_CONTAINER then
+		return "b", 0
 	end
 	if BagTypes[bag] == 2 then
 		prefix = "b"
 	end
 	if BagTypes[bag] == 3 then
-		return "k"
+		return "k", 256
 	end
-	local link
-	if bag >= 1 and bag <= 11 then
-		link = GetInventoryItemLink("player",ContainerIDToInventoryID(bag))
-	end
-	if link then
-		local Type, SubType = select(6, GetItemInfo(link))
-		if Type == ITEMTYPE["Quiver"] then
-			return prefix.."a"
-		end
-		if Type == ITEMTYPE["Container"] then
-			if SubType == ITEMSUBTYPE["Bag"] then
-			if prefix ~= "" then
-				return prefix
-			else
-				return
-			end
-			end
-			if SubType == ITEMSUBTYPE["Soul Bag"] then 
-				return prefix.."s"
-			end
-			if SubType == ITEMSUBTYPE["Enchanting Bag"] then
-				return prefix.."n"
-			end
-			if SubType == ITEMSUBTYPE["Engineering Bag"] then
-				return prefix.."e"
-			end
-			if SubType == ITEMSUBTYPE["Herb Bag"] then
-				return prefix.."h"
-			end
-			if SubType == ITEMSUBTYPE["Mining Bag"] then
-				return prefix.."m"
-			end
-			if SubType == ITEMSUBTYPE["Gem Bag"] then
-				return prefix.."g"
-			end
-			if SubType == ITEMSUBTYPE["Leatherworking Bag"] then
-				return prefix.."l"
-			end
-
+	if bag>=1 and bag<= 11 then
+		local _,fam = GetContainerNumFreeSlots(bag)
+		if type(fam)~="number" then
+			-- assume normal bag
+		elseif fam==0 then
+			-- normal bag
+		elseif fam==1 or fam==2 then	-- quiver / ammo 
+			return prefix.."a", fam
+		elseif fam==4 then		-- soul
+			return prefix.."s", fam
+		elseif fam==8 then		-- leatherworking
+			return prefix.."l", fam
+		elseif fam==16 then		-- inscription
+			return prefix.."i", fam
+		elseif fam==32 then		-- herb
+			return prefix.."h", fam
+		elseif fam==64 then		-- eNchant
+			return prefix.."n", fam
+		elseif fam==128 then	-- engineering
+			return prefix.."e", fam
+		elseif fam==256 then	-- keyring
+			return prefix.."k", fam
+		elseif fam==512 then	-- gems
+			return prefix.."g", fam
+		elseif fam==1024 then	-- mining
+			return prefix.."m", fam
+		else
+			return prefix.."?", fam
 		end
 	end
+	
 	if prefix ~= "" then
-		return prefix
+		return prefix, 0
 	end
+	return nil,0
 end
 
 --------------------
@@ -1932,90 +1171,7 @@ end
 function Baggins:GetCachedItem(item)
 	return slotcache[item]
 end
------------------
--- Slot Counts --
------------------
-function Baggins:CountEmptySlots(bagtype)
-	local bag, slot
-	local count = 0
-	if bagtype and bagtype:match("b") then
-		return self:CountEmptyBankSlots(bagtype)
-	end
-	if bagtype == "k" then
-		for slot = 1, GetContainerNumSlots(-2) do
-			if not GetContainerItemLink(-2,slot) then
-				count = count + 1
-			end
-		end
-		return count
-	end
-	
-	for bag = 0, 4 do
-		if bagtype == self:IsSpecialBag(bag) or bagtype == "ALL" then
-			for slot = 1, GetContainerNumSlots(bag) do
-				if not GetContainerItemLink(bag,slot) then
-					count = count + 1
-				end
-			end
-		end
-	end
-	return count
-end
 
-function Baggins:CountSlots(bagtype)
-	local bag, slot
-	local count = 0
-	if bagtype == "b" then
-		return self:CountBankSlots()
-	end
-	if bagtype == "k" then
-		for slot = 1, GetContainerNumSlots(-2) do
-			count = count + 1
-		end
-		return count
-	end
-	
-	for bag = 0, 4 do
-		if bagtype == self:IsSpecialBag(bag) or bagtype == "ALL" then
-			for slot = 1, GetContainerNumSlots(bag) do
-				count = count + 1
-			end
-		end
-	end
-	return count
-end
-
-function Baggins:CountEmptyBankSlots(bagtype)
-	local bag, slot
-	local count = 0
-	for bag = -1, 11 do
-		if BagTypes[bag] == 2 and (bagtype == "b" or bagtype == self:IsSpecialBag(bag)) then
-			for slot = 1, GetContainerNumSlots(bag) do
-				if not GetContainerItemLink(bag,slot) then
-					count = count + 1
-				end
-			end
-		end
-	end
-	return count
-end
-
-function Baggins:CountBankSlots()
-	local bag, slot
-	local count = 0
-	for bag = -1, 11 do
-		if BagTypes[bag] == 2 then
-			for slot = 1, GetContainerNumSlots(bag) do
-				count = count + 1
-			end
-		end
-	end
-	return count
-end
-
-function Baggins:IsBankBag(bag)
-	return BagTypes[bag] == 2
-end
 
 ---------------------
 -- PT Set Browser  --

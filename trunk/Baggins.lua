@@ -5,6 +5,8 @@ local pt = LibStub("LibPeriodicTable-3.1", true)
 local L = AceLibrary("AceLocale-2.2"):new("Baggins")
 local tablet = AceLibrary("Tablet-2.0")
 local dewdrop = AceLibrary("Dewdrop-2.0")
+local LBU = LibStub("LibBagUtils-1.0")
+
 
 Baggins.hasIcon = "Interface\\Icons\\INV_Jewelry_Ring_03"
 Baggins.cannotDetachTooltip = true
@@ -51,7 +53,11 @@ local currentcategory
 local catsorttable = {}
 Baggins.itemcounts = {}
 
+local tconcat = table.concat
+local format = string.format
+local band = bit.band
 local wipe=wipe
+local type = type
 local function new() return {} end
 local function del(t) wipe(t) end
 local rdel = del
@@ -259,7 +265,7 @@ function Baggins:SaveItemCounts()
 			local link = GetContainerItemLink(bag, slot)
 			if link then
 				local id = tonumber(link:match("item:(%d+)"))
-				if id then
+				if id and not itemcounts[id] then
 					itemcounts[id] = GetItemCount(id)
 				end
 			end
@@ -269,7 +275,7 @@ function Baggins:SaveItemCounts()
 		local link = GetInventoryItemLink("player",slot)
 		if link then
 			local id = tonumber(link:match("item:(%d+)"))
-			if id then
+			if id and not itemcounts[id] then
 				itemcounts[id] = GetItemCount(id)
 			end
 		end
@@ -294,16 +300,20 @@ function Baggins:IsCompressed(itemID)
 	end
 
 	if type(itemID) == "number" then
-		local iType = select(6, GetItemInfo(itemID))
-		if p.compressshards and itemID == 6265 then
-			return true
+		local itemFamily = GetItemFamily(itemID)
+		if itemFamily then	-- likes to be nil on login
+			if p.compressshards and band(itemFamily,4) then
+				return true
+			end
+			if p.compressammo and band(itemFamily,3) then
+				return true
+			end
 		end
-		if p.compressammo and iType == Baggins.ITEMTYPE["Projectile"] then
-			return true
-		end
-		local stacksize = select(8,GetItemInfo(itemID))
-		if p.compressstackable and stacksize and stacksize > 1 then
-			return true
+		if p.compressstackable then
+			local _, _, _, _, _, _, _, itemStackCount = GetItemInfo(itemID)
+			if itemStackCount and itemStackCount>0 then
+				return true
+			end
 		end
 	end
 end
@@ -404,7 +414,7 @@ local function CheckSection(bagframe, secid)
 	end
 end
 
-function GetSlotInfo(item)
+local function GetSlotInfo(item)
 	local bag, slot = item:match("^(-?%d+):(%d+)$")
 	local bagType = Baggins:IsSpecialBag(bag)
 	local itemID
@@ -749,32 +759,43 @@ end
 local firstbagupdate = true
 
 local bagupdatebucket = {}
+local lastbag=0, lastbagfree,-1
 
 function Baggins:OnBagUpdate(bagid)
 	--ignore bags -4 ( currency ) and -3 (unknown)
 	if bagid <= -3 then return end
 	bagupdatebucket[bagid] = true
 	if self:IsWhateverOpen() then
-		self:ScheduleEvent("Baggins_RunBagUpdates",self.RunBagUpdates,0,self)
+		self:ScheduleEvent("Baggins_RunBagUpdates",self.RunBagUpdates,0.1,self)
+	else
+		-- Update panel text.
+		-- Optimization mostly for hunters - their bags change for every damn arrow they fire:
+		local free=GetContainerNumFreeSlots(bagid)
+		if lastbag==bagid and lastbagfree==free then
+			-- nada!
+		else
+			lastbag=bagid
+			lastbagfree=free
+			self:UpdateText()
+		end
 	end
 end
 
 function Baggins:RunBagUpdates()
-	local count = 0
-	for k in pairs(bagupdatebucket) do
-		count = count + 1
-	end
-	if count == 0 then return end
 	if firstbagupdate then
 		firstbagupdate = false
 		self:SaveItemCounts()
 		self:ForceFullUpdate()
 	end
+	if not next(bagupdatebucket) then
+		return
+	end
 	self:UpdateText()
+	
 	local itemschanged
-
 	for bag in pairs(bagupdatebucket) do
 		itemschanged = Baggins:CheckSlotsChanged(bag) or itemschanged
+		bagupdatebucket[bag] = nil
 	end
 
 	if itemschanged then
@@ -785,10 +806,6 @@ function Baggins:RunBagUpdates()
 	
 	if(self:IsWhateverOpen()) then
 		Baggins:FireSignal("Baggins_BagsUpdatedWhileOpen");
-	end
-	
-	for k in pairs(bagupdatebucket) do
-		bagupdatebucket[k] = nil
 	end
 end
 
@@ -2154,23 +2171,16 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
 	if button.countoverride then
 		local count
 		if not itemid then
-			local bagtype = Baggins:IsSpecialBag(bag)
-			if bagtype then
-				count = bagtype..Baggins:CountEmptySlots(bagtype)
-			else
-				count = Baggins:CountEmptySlots()
-			end
+			local bagtype, itemFamily = Baggins:IsSpecialBag(bag)
+			bagtype = bagtype or ""
+			count = bagtype..LBU:CountSlots(LBU:IsBank(bag) and "BANK" or "BAGS", itemFamily)
 		else
-			if Baggins:IsBankBag(bag) then
-				count = GetItemCount(itemid,true) - GetItemCount(itemid)
-				if IsEquippedItem(itemid) then
-					count = count - 1
-				end
-			else
-				count = GetItemCount(itemid)
-				if IsEquippedItem(itemid) then
-					count = count - 1
-				end
+			count = GetItemCount(itemid)
+			if LBU:IsBank(bag) then
+				count = GetItemCount(itemid,true) - count
+			end
+			if IsEquippedItem(itemid) then
+				count = count - 1
 			end
 		end
 		self:SetItemButtonCount(button, count, itemCount)
@@ -2434,62 +2444,63 @@ function Baggins:OnTooltipUpdate()
 	tablet:SetHint(L["Click a bag to toggle it. Shift-click to move it up. Alt-click to move it down"])
 end
 
+
+
 function Baggins:BuildCountString(empty, total, color)
 	local p = self.db.profile
-	local s
-	local divcolor 
+	color = color or ""
+	local div 
 	if self:IsTextColored() then
-		divcolor = "|r"
+		div = "|r/"
 	else
-		divcolor = ""
-	end
-	if p.showused then
-		s = color..total-empty
-	end
-	if p.showempty then
-		if s then
-			s = s..divcolor.."/"..color..empty
-		else
-			s = color..empty
-		end
+		div = "/"
 	end
 	if p.showtotal then
-		if s then
-			s = s..divcolor.."/"..color..total
-		else
-			s = color..total
+		if p.showused and p.showempty then
+			return format("%s%i%s%s%i%s%s%i", color, total-empty, div, color, empty, div, color, total)
+		elseif p.showused then
+			return format("%s%i%s%s%i", color, total-empty, div, color, total)
+		elseif p.showempty then
+			return format("%s%i%s%s%i", color, empty, div, color, total)
 		end
+		return format("%s%i", color, total)
 	end
-	return s
+	
+	if p.showused and p.showempty then
+		return format("%s%i%s%s%i", color, total-empty, div, color, empty)
+	elseif p.showused then
+		return format("%s%i", color, total-empty)
+	elseif p.showempty then
+		return format("%s%i", color, empty)
+	end
+	return ""
 end
 
+
+local texts={}
 function Baggins:OnTextUpdate()
 	local p = self.db.profile
-	local text, color
-	local allempty, alltotal = Baggins:CountEmptySlots("ALL"), Baggins:CountSlots("ALL")
-	local normalempty, normaltotal = Baggins:CountEmptySlots(), Baggins:CountSlots()
-	local soulempty, soultotal = Baggins:CountEmptySlots("s"), Baggins:CountSlots("s")
-	local ammoempty, ammototal = Baggins:CountEmptySlots("a"), Baggins:CountSlots("a")
+	local color
 	
-	local specialempty = allempty - normalempty - ammoempty - soulempty
-	local specialtotal =  alltotal - normaltotal - ammototal - soultotal
-	
-
 	if p.combinecounts then
-		local empty, total = normalempty, normaltotal
+		local normalempty,normaltotal = LBU:CountSlots("BAGS", 0)
+		local itemFamilies 
+		if p.showspecialcount then
+			itemFamilies = 2047-256-4-2-1   -- all except keyring, ammo, quiver, soul
+		else
+			itemFamilies = 0
+		end
 		if p.showammocount then
-			empty = empty + ammoempty
-			total = total + ammototal
+			itemFamilies = itemFamilies +1 +2
 		end
 		if p.showsoulcount then
-			empty = empty + soulempty
-			total = total + soultotal
-		end
-		if p.showspecialcount then
-			empty = empty + specialempty
-			total = total + specialtotal
+			itemFamilies = itemFamilies +4
 		end
 		
+		local empty, total = LBU:CountSlots("BAGS", itemFamilies)
+		empty=empty+normalempty
+		total=total+normaltotal
+
 		if self:IsTextColored() then
 			local fullness = 1 - (empty/total)
 			local r, g
@@ -2500,71 +2511,66 @@ function Baggins:OnTextUpdate()
 			color = ""
 		end
 		
-		text = self:BuildCountString(empty,total,color)
-		
+		self:SetText(self:BuildCountString(empty,total,color))
+		return
+	end
 
+	-- separate normal/ammo/soul/special counts
+	
+	local n=0	-- count of strings in texts{}
+
+	local normalempty, normaltotal = LBU:CountSlots("BAGS", 0)
+	
+	if self:IsTextColored() then
+		local fullness = 1 - (normalempty/normaltotal)
+		local r, g
+		r = math.min(1,fullness * 2)
+		g = math.min(1,(1-fullness) *2)
+		color = ("|cFF%2X%2X00"):format(r*255,g*255)
 	else
-		local soulcount, ammocount, specialcount
-		
-		if self:IsTextColored() then
-			local fullness = 1 - (normalempty/normaltotal)
-			local r, g
-			r = math.min(1,fullness * 2)
-			g = math.min(1,(1-fullness) *2)
-			color = ("|cFF%2X%2X00"):format(r*255,g*255)
-		else
-			color = ""
-		end
-		
-		text = self:BuildCountString(normalempty,normaltotal,color)
-		
-		if self.db.profile.showsoulcount and soultotal > 0 then
+		color = ""
+	end
+	
+	n=n+1
+	texts[n] = self:BuildCountString(normalempty,normaltotal,color)
+	
+	if self.db.profile.showsoulcount then
+		local soulempty, soultotal = LBU:CountSlots("BAGS", 4)
+		if soultotal>0 then
 			if self:IsTextColored() then
 				color = self.colors.purple.hex
 			end
-			soulcount = self:BuildCountString(soulempty,soultotal,color)
-			if soulcount then
-				if text then
-					text = text.." "..soulcount
-				else
-					text = soulcount
-				end
-			end
-		end
-		
-		if self.db.profile.showammocount and ammototal > 0 then
-			if self:IsTextColored() then
-				color = self.colors.white.hex
-			end
-			ammocount = self:BuildCountString(ammoempty,ammototal,color)
-			if ammocount then
-				if text then
-					text = text.." "..ammocount
-				else
-					text = ammocount
-				end
-			end
-		end
-		
-		if self.db.profile.showspecialcount and specialtotal > 0 then
-			if self:IsTextColored() then
-				color = self.colors.blue.hex
-			end
-			specialcount = self:BuildCountString(specialempty,specialtotal,color)
-			if specialcount then
-				if text then
-					text = text.." "..specialcount
-				else
-					text = specialcount
-				end
-			end
+			n=n+1
+			texts[n] = self:BuildCountString(soulempty,soultotal,color)
 		end
 	end
 	
-	if text then
-		self:SetText(text)
+	if self.db.profile.showammocount then
+		local ammoempty, ammototal = LBU:CountSlots("BAGS", 1+2)
+		if ammototal>0 then
+			if self:IsTextColored() then
+				color = self.colors.white.hex
+			end
+			n=n+1
+			texts[n] = self:BuildCountString(ammoempty,ammototal,color)
+		end
+	end
+	
+	if self.db.profile.showspecialcount then
+		local specialempty, specialtotal = LBU:CountSlots("BAGS", 2047-256-4-2-1)
+		if specialtotal>0 then
+			if self:IsTextColored() then
+				color = self.colors.blue.hex
+			end
+			n=n+1
+			texts[n] = self:BuildCountString(specialempty,specialtotal,color)
+		end
+	end
+
+	if n==1 then 
+		self:SetText(texts[1])
 	else
-		self:SetText("Baggins")
+		self:SetText(tconcat(texts, " ", 1, n))
 	end
 end
 
