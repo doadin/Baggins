@@ -301,19 +301,17 @@ function Baggins:IsCompressed(itemID)
 
 	if type(itemID) == "number" then
 		local itemFamily = GetItemFamily(itemID)
-		if itemFamily then	-- likes to be nil on login
-			if p.compressshards and band(itemFamily,4) then
+		local _, _, _, _, _, _, _, itemStackCount, itemEquipLoc = GetItemInfo(itemID)
+		if itemFamily then	-- likes to be nil during login
+			if p.compressshards and band(itemFamily,4)~=0 and itemEquipLoc~="INVTYPE_BAG" then
 				return true
 			end
-			if p.compressammo and band(itemFamily,3) then
+			if p.compressammo and band(itemFamily,3)~=0 and itemEquipLoc~="INVTYPE_BAG" then
 				return true
 			end
 		end
-		if p.compressstackable then
-			local _, _, _, _, _, _, _, itemStackCount = GetItemInfo(itemID)
-			if itemStackCount and itemStackCount>0 then
-				return true
-			end
+		if p.compressstackable and itemStackCount and itemStackCount>1 then
+			return true
 		end
 	end
 end
@@ -759,7 +757,7 @@ end
 local firstbagupdate = true
 
 local bagupdatebucket = {}
-local lastbag=0, lastbagfree,-1
+local lastbag,lastbagfree=-1,-1
 
 function Baggins:OnBagUpdate(bagid)
 	--ignore bags -4 ( currency ) and -3 (unknown)
@@ -767,6 +765,7 @@ function Baggins:OnBagUpdate(bagid)
 	bagupdatebucket[bagid] = true
 	if self:IsWhateverOpen() then
 		self:ScheduleEvent("Baggins_RunBagUpdates",self.RunBagUpdates,0.1,self)
+		lastbagfree=-1
 	else
 		-- Update panel text.
 		-- Optimization mostly for hunters - their bags change for every damn arrow they fire:
