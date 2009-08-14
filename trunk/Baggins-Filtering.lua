@@ -3,6 +3,7 @@ local pt = LibStub("LibPeriodicTable-3.1", true)
 local gratuity = LibStub("LibGratuity-3.0")
 local L = AceLibrary("AceLocale-2.2"):new("Baggins")
 local dewdrop = AceLibrary("Dewdrop-2.0")
+local BI = LibStub("LibBabble-Inventory-3.0"):GetLookupTable()
 
 local RuleTypes = nil
 
@@ -108,58 +109,6 @@ end
 SELECTED_CHAT_FRAME:AddMessage("}")
 --]]
 
-local AL = LibStub("AceLocale-3.0")
-do	-- Localizations
-	local debug = false
-	--@debug@
-	debug = true
-	--@end-debug@
-
-	local L = AL:NewLocale("Baggins-ItemTypes", "enUS", true, debug)
-	--@localization(locale="enUS", namespace="itemtypes", format="lua_additive_table", same-key-is-true=true, handle-subnamespaces="none")@
-
-	L = AL:NewLocale("Baggins-ItemTypes", "frFR")
-	if L then 
-	--@localization(locale="frFR", namespace="itemtypes", format="lua_additive_table", handle-subnamespaces="none")@
-	end
-
-	L = AL:NewLocale("Baggins-ItemTypes", "deDE")
-	if L then 
-	--@localization(locale="deDE", namespace="itemtypes", format="lua_additive_table", handle-subnamespaces="none")@
-	end
-
-	L = AL:NewLocale("Baggins-ItemTypes", "koKR")
-	if L then 
-	--@localization(locale="koKR", namespace="itemtypes", format="lua_additive_table", handle-subnamespaces="none")@
-	end
-
-	L = AL:NewLocale("Baggins-ItemTypes", "esMX")
-	if L then 
-	--@localization(locale="esMX", namespace="itemtypes", format="lua_additive_table", handle-subnamespaces="none")@
-	end
-
-	L = AL:NewLocale("Baggins-ItemTypes", "ruRU")
-	if L then 
-	--@localization(locale="ruRU", namespace="itemtypes", format="lua_additive_table", handle-subnamespaces="none")@
-	end
-
-	L = AL:NewLocale("Baggins-ItemTypes", "zhCN")
-	if L then 
-	--@localization(locale="zhCN", namespace="itemtypes", format="lua_additive_table", handle-subnamespaces="none")@
-	end
-
-	L = AL:NewLocale("Baggins-ItemTypes", "esES")
-	if L then 
-	--@localization(locale="esES", namespace="itemtypes", format="lua_additive_table", handle-subnamespaces="none")@
-	end
-
-	L = AL:NewLocale("Baggins-ItemTypes", "zhTW")
-	if L then 
-	--@localization(locale="zhTW", namespace="itemtypes", format="lua_additive_table", handle-subnamespaces="none")@
-	end
-end
-
-local ITEML = AL:GetLocale("Baggins-ItemTypes")
 
 local EquipLocs = {
 	"INVTYPE_AMMO",
@@ -255,17 +204,17 @@ RuleTypes = {
 			if link then
 				local Type, SubType = select(6, GetItemInfo(link))
 				if Type and SubType then
-					return Type == ITEML[rule.itype] and (rule.isubtype == nil or SubType == ITEML[rule.isubtype] )	
+					return Type == BI[rule.itype] and (rule.isubtype == nil or SubType == BI[rule.isubtype] )	
 				end
 			end
 		end,
 		GetName = function(rule) 
 			local ltype, lsubtype = "*", "*"
 			if rule.itype then
-				ltype = ITEML[rule.itype] or "?"
+				ltype = BI[rule.itype] or "?"
 			end
 			if rule.isubtype then
-				lsubtype = ITEML[rule.isubtype] or "?"
+				lsubtype = BI[rule.isubtype] or "?"
 			end
 			return L["ItemType - "]..ltype..":"..lsubtype
 		end,
@@ -277,14 +226,14 @@ RuleTypes = {
 
 			elseif level == 2 and value == "ItemType" then	
 				for k, v in pairs(ItemTypes) do
-					dewdrop:AddLine('text', ITEML[k], "checked", rule.itype == k,"func",function(k) rule.itype = k rule.isubtype = nil Baggins:OnRuleChanged() end,"arg1",k)
+					dewdrop:AddLine('text', BI[k], "checked", rule.itype == k,"func",function(k) rule.itype = k rule.isubtype = nil Baggins:OnRuleChanged() end,"arg1",k)
 				end
 			elseif level == 2 and value == "ItemSubtype" then
 				dewdrop:AddLine('text', L["All"], "checked", rule.isubtype == nil,"func",function() rule.isubtype = nil Baggins:OnRuleChanged() end)
 				dewdrop:AddLine()
 				if rule.itype and ItemTypes[rule.itype] then
 					for k, v in ipairs(ItemTypes[rule.itype]) do
-						dewdrop:AddLine('text', ITEML[v], "checked", rule.isubtype == v,"func",function(v) rule.isubtype = v Baggins:OnRuleChanged() end,"arg1",v)
+						dewdrop:AddLine('text', BI[v], "checked", rule.isubtype == v,"func",function(v) rule.isubtype = v Baggins:OnRuleChanged() end,"arg1",v)
 					end
 				end
 			end
@@ -300,14 +249,14 @@ RuleTypes = {
 			if link then
 				local SubType = select(7, GetItemInfo(link))
 				if SubType then
-					return SubType == ITEML[rule.ctype]
+					return SubType == BI[rule.ctype]
 				end
 			end
 		end,
 		GetName = function(rule) 
 			local ctype
 			if rule.ctype then
-				ctype = ITEML[rule.ctype]
+				ctype = BI[rule.ctype]
 			else
 				ctype = L["None"]
 			end
@@ -322,10 +271,10 @@ RuleTypes = {
 				dewdrop:AddLine('text', L["All"], "checked", rule.ctype == nil,"func",function() rule.ctype = nil Baggins:OnRuleChanged() end)
 				dewdrop:AddLine()
 				for k, v in ipairs(ItemTypes["Container"]) do
-					dewdrop:AddLine('text', ITEML[v], "checked", rule.ctype == v,"func",function(v) rule.ctype = v Baggins:OnRuleChanged() end,"arg1",v)
+					dewdrop:AddLine('text', BI[v], "checked", rule.ctype == v,"func",function(v) rule.ctype = v Baggins:OnRuleChanged() end,"arg1",v)
 				end	
 				for k, v in ipairs(ItemTypes["Quiver"]) do
-					dewdrop:AddLine('text', ITEML[v], "checked", rule.ctype == v,"func",function(v) rule.ctype = v Baggins:OnRuleChanged() end,"arg1",v)
+					dewdrop:AddLine('text', BI[v], "checked", rule.ctype == v,"func",function(v) rule.ctype = v Baggins:OnRuleChanged() end,"arg1",v)
 				end		
 			end
 		end,

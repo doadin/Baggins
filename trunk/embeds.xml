@@ -33,5 +33,6 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 
 <Include file="libs\LibGratuity-3.0\lib.xml"/>
 <Include file="libs\LibBagUtils-1.0\LibBagUtils-1.0.xml"/>
+<Include file="libs\LibBabble-Inventory-3.0\lib.xml"/>
 
 </Ui>

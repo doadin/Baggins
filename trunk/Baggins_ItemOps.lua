@@ -135,17 +135,21 @@ function Baggins:MoveToSpecialtyBags(bank,testonly)
 					if link then
 						local itemFamily = GetItemFamily(link)
 						if itemFamily~=0 then
-							for bagFamily,dest in pairs(specialtyTargetBags) do
-								if bit.band(itemFamily,bagFamily)~=0 then
-									if testonly then return true; end
-									compressLoopProtect = compressLoopProtect + 1;
-									if compressLoopProtect > 100 then compressLoopProtect=0; return; end
-									
-									PickupContainerItem(bag,slot);
-									self.compress_target_bag = floor(dest/1000);
-									self.compress_target_slot = dest%1000;
-									self:ScheduleEvent("Baggins_CompressBags", self.MoveToSpecialtyBags, 0.3, self, bank);
-									return;
+							if select(9, GetItemInfo(link))=="INVTYPE_BAG" then
+								-- specialty bags dont go in specialty bags
+							else
+								for bagFamily,dest in pairs(specialtyTargetBags) do
+									if bit.band(itemFamily,bagFamily)~=0 then
+										if testonly then return true; end
+										compressLoopProtect = compressLoopProtect + 1;
+										if compressLoopProtect > 100 then compressLoopProtect=0; return; end
+										
+										PickupContainerItem(bag,slot);
+										self.compress_target_bag = floor(dest/1000);
+										self.compress_target_slot = dest%1000;
+										self:ScheduleEvent("Baggins_CompressBags", self.MoveToSpecialtyBags, 0.3, self, bank);
+										return;
+									end
 								end
 							end
 						end
