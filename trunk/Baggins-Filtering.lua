@@ -116,46 +116,46 @@ do	-- Localizations
 	--@end-debug@
 
 	local L = AL:NewLocale("Baggins-ItemTypes", "enUS", true, debug)
-	--@localization(locale="enUS", format="lua_additive_table", same-key-is-true=true, handle-subnamespaces="none")@
+	--@localization(locale="enUS", namespace="itemtypes", format="lua_additive_table", same-key-is-true=true, handle-subnamespaces="none")@
 
 	L = AL:NewLocale("Baggins-ItemTypes", "frFR")
 	if L then 
-	--@localization(locale="frFR", format="lua_additive_table", handle-subnamespaces="none")@
+	--@localization(locale="frFR", namespace="itemtypes", format="lua_additive_table", handle-subnamespaces="none")@
 	end
 
 	L = AL:NewLocale("Baggins-ItemTypes", "deDE")
 	if L then 
-	--@localization(locale="deDE", format="lua_additive_table", handle-subnamespaces="none")@
+	--@localization(locale="deDE", namespace="itemtypes", format="lua_additive_table", handle-subnamespaces="none")@
 	end
 
 	L = AL:NewLocale("Baggins-ItemTypes", "koKR")
 	if L then 
-	--@localization(locale="koKR", format="lua_additive_table", handle-subnamespaces="none")@
+	--@localization(locale="koKR", namespace="itemtypes", format="lua_additive_table", handle-subnamespaces="none")@
 	end
 
 	L = AL:NewLocale("Baggins-ItemTypes", "esMX")
 	if L then 
-	--@localization(locale="esMX", format="lua_additive_table", handle-subnamespaces="none")@
+	--@localization(locale="esMX", namespace="itemtypes", format="lua_additive_table", handle-subnamespaces="none")@
 	end
 
 	L = AL:NewLocale("Baggins-ItemTypes", "ruRU")
 	if L then 
-	--@localization(locale="ruRU", format="lua_additive_table", handle-subnamespaces="none")@
+	--@localization(locale="ruRU", namespace="itemtypes", format="lua_additive_table", handle-subnamespaces="none")@
 	end
 
 	L = AL:NewLocale("Baggins-ItemTypes", "zhCN")
 	if L then 
-	--@localization(locale="zhCN", format="lua_additive_table", handle-subnamespaces="none")@
+	--@localization(locale="zhCN", namespace="itemtypes", format="lua_additive_table", handle-subnamespaces="none")@
 	end
 
 	L = AL:NewLocale("Baggins-ItemTypes", "esES")
 	if L then 
-	--@localization(locale="esES", format="lua_additive_table", handle-subnamespaces="none")@
+	--@localization(locale="esES", namespace="itemtypes", format="lua_additive_table", handle-subnamespaces="none")@
 	end
 
 	L = AL:NewLocale("Baggins-ItemTypes", "zhTW")
 	if L then 
-	--@localization(locale="zhTW", format="lua_additive_table", handle-subnamespaces="none")@
+	--@localization(locale="zhTW", namespace="itemtypes", format="lua_additive_table", handle-subnamespaces="none")@
 	end
 end
 
