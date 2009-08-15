@@ -13,7 +13,7 @@
 ## SavedVariables: BagginsDB
 ## X-Category: Inventory
 
-## OptionalDeps: Ace2, Ace3, FuBar, LibGratuity-3.0, TabletLib, DewdropLib, LibBagUtils-1.0, LibPeriodicTable-3.1, LibBabble-Inventory-3.0, Waterfall-1.0
+## OptionalDeps: Ace2, Ace3, FuBar, LibGratuity-3.0, TabletLib, DewdropLib, LibBagUtils-1.0, LibPeriodicTable-3.1, LibBabble-Inventory-3.0, Waterfall-1.0, FubarPlugin-2.0
 ## X-Embeds: Ace2, Ace3, LibGratuity-3.0, TabletLib, DewdropLib, LibBagUtils-1.0, LibPeriodicTable-3.1, LibBabble-Inventory-3.0, Waterfall-1.0
 
 ## X-Localizations: enUS, enGB, deDE, frFR, esES, esMX, zhCN, zhTW, koKR, ruRU
