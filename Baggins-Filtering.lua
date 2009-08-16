@@ -4,6 +4,7 @@ local gratuity = LibStub("LibGratuity-3.0")
 local L = AceLibrary("AceLocale-2.2"):new("Baggins")
 local dewdrop = AceLibrary("Dewdrop-2.0")
 local BI = LibStub("LibBabble-Inventory-3.0"):GetLookupTable()
+local LBU = LibStub("LibBagUtils-1.0")
 
 local RuleTypes = {}
 
