@@ -5,11 +5,12 @@ local L = AceLibrary("AceLocale-2.2"):new("Baggins")
 local dewdrop = AceLibrary("Dewdrop-2.0")
 local BI = LibStub("LibBabble-Inventory-3.0"):GetLookupTable()
 
-local RuleTypes = nil
+local RuleTypes = {}
 
 local wipe=wipe
 local function new() return {} end
 local function del(t) wipe(t) end
+local tinsert = table.insert
 local rdel = del
 local band=bit.band
 
@@ -73,41 +74,7 @@ for i=0,99 do
 end
 	
 
---------------------------
--- scanned 08/13/09 16:52:00 - patch 3.2.0
 
-local ItemTypes = {
-  ["Weapon"] = {"One-Handed Axes", "Two-Handed Axes", "Bows", "Guns", "One-Handed Maces", "Two-Handed Maces", "Polearms", "One-Handed Swords", "Two-Handed Swords", "Staves", "Fist Weapons", "Miscellaneous", "Daggers", "Thrown", "Crossbows", "Wands", "Fishing Poles"},
-  ["Armor"] = {"Miscellaneous", "Cloth", "Leather", "Mail", "Plate", "Shields", "Librams", "Idols", "Totems", "Sigils"},
-  ["Container"] = {"Bag", "Soul Bag", "Herb Bag", "Enchanting Bag", "Engineering Bag", "Gem Bag", "Mining Bag", "Leatherworking Bag", "Inscription Bag"},
-  ["Consumable"] = {"Food & Drink", "Potion", "Elixir", "Flask", "Bandage", "Item Enhancement", "Scroll", "Other"},
-  ["Glyph"] = {"Warrior", "Paladin", "Hunter", "Rogue", "Priest", "Death Knight", "Shaman", "Mage", "Warlock", "Druid"},
-  ["Trade Goods"] = {"Elemental", "Cloth", "Leather", "Metal & Stone", "Meat", "Herb", "Enchanting", "Jewelcrafting", "Parts", "Devices", "Explosives", "Materials", "Other", "Armor Enchantment", "Weapon Enchantment"},
-  ["Projectile"] = {"Arrow", "Bullet"},
-  ["Quiver"] = {"Quiver", "Ammo Pouch"},
-  ["Recipe"] = {"Book", "Leatherworking", "Tailoring", "Engineering", "Blacksmithing", "Cooking", "Alchemy", "First Aid", "Enchanting", "Fishing", "Jewelcrafting", "Inscription"},
-  ["Gem"] = {"Red", "Blue", "Yellow", "Purple", "Green", "Orange", "Meta", "Simple", "Prismatic"},
-  ["Miscellaneous"] = {"Junk", "Reagent", "Pet", "Holiday", "Other", "Mount"},
-  ["Quest"] = {},
-}
-
---[[
-SELECTED_CHAT_FRAME:AddMessage("--------------------------")
-SELECTED_CHAT_FRAME:AddMessage("-- scanned "..date("%c").. " - patch "..(GetBuildInfo()))
-SELECTED_CHAT_FRAME:AddMessage("local ItemTypes = {")
-for i,class in pairs{GetAuctionItemClasses()} do
-  local subs={GetAuctionItemSubClasses(i)}
-  if #subs>0 then
-    
-    SELECTED_CHAT_FRAME:AddMessage('  ["'..class..'"] = {"'..
-      table.concat(subs, '", "') ..
-    '"},')
-  else
-    SELECTED_CHAT_FRAME:AddMessage('  ["'..class..'"] = {},')
-  end
-end
-SELECTED_CHAT_FRAME:AddMessage("}")
---]]
 
 
 local EquipLocs = {
@@ -145,623 +112,24 @@ local EquipLocs = {
 
 
 
---removes any fields not used by the current rule type and sets up defaults if needed
 
 function Baggins:AddCustomRule(type,description)
 	RuleTypes[type] = description
 end
 
+--removes any fields not used by the current rule type and sets up defaults if needed
 function Baggins:CleanRule(rule)
-	for k, v in pairs(rule) do
-		if k ~= "type" then
-			rule[k] = nil
-		end
-	end
+	local type = rule.type
+	wipe(rule)
+	rule.type = type
 
 	if RuleTypes[rule.type].CleanRule then
 		RuleTypes[rule.type].CleanRule(rule)
 	end
-
-	if rule.type == "ItemType" then
-		rule.itype = "Miscellaneous"
-	end
-
-	if rule.type == "Bag" then
-		rule.bagid = 0
-	end
-
-	if rule.type == "EquipLoc" then
-		rule.equiploc = EquipLocs[1]
-	end
-	
-	if rule.type == "Quality" then
-		rule.quality = 1
-		rule.comp = "=="
-	end
-	
 end
 
-local ptsetstatus = {}
-local function PTSetDewdrop(rule,level,value,value_1)
-	local perlevel = 30
-	
-	if level == 1 then
-		for k, v in pairs(ptsets) do
-			dewdrop:AddLine("text",k,"hasArrow",true,"value",k)
-		end
-	else
-		
-	end
-end
 
-RuleTypes = {
-	ItemType = {
-		DisplayName = L["Item Type"],
-		Description = L["Filter by Item type and sub-type as returned by GetItemInfo"],
-		Matches = function(bag,slot,rule) 
-			if not (rule.itype or rule.isubtype) then return end
-			local link = GetContainerItemLink(bag, slot)
-			if link then
-				local Type, SubType = select(6, GetItemInfo(link))
-				if Type and SubType then
-					return Type == BI[rule.itype] and (rule.isubtype == nil or SubType == BI[rule.isubtype] )	
-				end
-			end
-		end,
-		GetName = function(rule) 
-			local ltype, lsubtype = "*", "*"
-			if rule.itype then
-				ltype = BI[rule.itype] or "?"
-			end
-			if rule.isubtype then
-				lsubtype = BI[rule.isubtype] or "?"
-			end
-			return L["ItemType - "]..ltype..":"..lsubtype
-		end,
-		DewDropOptions = function(rule, level, value) 
-			if level == 1 then
-				dewdrop:AddLine('text', L["Item Type Options"], 'isTitle', true)
-				dewdrop:AddLine('text', L["Item Type"], 'hasArrow', true,'value',"ItemType")
-				dewdrop:AddLine('text', L["Item Subtype"], 'hasArrow', true,'value',"ItemSubtype")
 
-			elseif level == 2 and value == "ItemType" then	
-				for k, v in pairs(ItemTypes) do
-					dewdrop:AddLine('text', BI[k], "checked", rule.itype == k,"func",function(k) rule.itype = k rule.isubtype = nil Baggins:OnRuleChanged() end,"arg1",k)
-				end
-			elseif level == 2 and value == "ItemSubtype" then
-				dewdrop:AddLine('text', L["All"], "checked", rule.isubtype == nil,"func",function() rule.isubtype = nil Baggins:OnRuleChanged() end)
-				dewdrop:AddLine()
-				if rule.itype and ItemTypes[rule.itype] then
-					for k, v in ipairs(ItemTypes[rule.itype]) do
-						dewdrop:AddLine('text', BI[v], "checked", rule.isubtype == v,"func",function(v) rule.isubtype = v Baggins:OnRuleChanged() end,"arg1",v)
-					end
-				end
-			end
-		end,
-	},
-	ContainerType = {
-		DisplayName = L["Container Type"],
-		Description = L["Filter by the type of container the item is in."],	
-		Matches = function(bag,slot,rule)
-			if bag < 1 or bag > 11 then return end
-			if not rule.ctype then return end
-			local link = GetInventoryItemLink("player",ContainerIDToInventoryID(bag))
-			if link then
-				local SubType = select(7, GetItemInfo(link))
-				if SubType then
-					return SubType == BI[rule.ctype]
-				end
-			end
-		end,
-		GetName = function(rule) 
-			local ctype
-			if rule.ctype then
-				ctype = BI[rule.ctype]
-			else
-				ctype = L["None"]
-			end
-			return L["Container : "]..ctype
-		end,
-		DewDropOptions = function(rule, level, value) 
-			if level == 1 then
-				dewdrop:AddLine('text', L["Container Type Options"], 'isTitle', true)
-				dewdrop:AddLine('text', L["Container Type"], 'hasArrow', true,'value',"ContainerType")
-	
-			elseif level == 2 and value == "ContainerType" then
-				dewdrop:AddLine('text', L["All"], "checked", rule.ctype == nil,"func",function() rule.ctype = nil Baggins:OnRuleChanged() end)
-				dewdrop:AddLine()
-				for k, v in ipairs(ItemTypes["Container"]) do
-					dewdrop:AddLine('text', BI[v], "checked", rule.ctype == v,"func",function(v) rule.ctype = v Baggins:OnRuleChanged() end,"arg1",v)
-				end	
-				for k, v in ipairs(ItemTypes["Quiver"]) do
-					dewdrop:AddLine('text', BI[v], "checked", rule.ctype == v,"func",function(v) rule.ctype = v Baggins:OnRuleChanged() end,"arg1",v)
-				end		
-			end
-		end,
-	},
-	ItemID = {
-		DisplayName = L["Item ID"],
-		Description = L["Filter by ItemID, this can be a space delimited list or ids to match."],
-		Matches = function(bag,slot,rule) 
-			if not rule.ids then return end
-			local link = GetContainerItemLink(bag, slot)
-			if link then
-				local itemid = link:match("item:(%d+)")
-				return rule.ids[tonumber(itemid)]
-			end
-		end,
-		GetName = function(rule) 
-			return L["ItemIDs "]
-		end,
-		DewDropOptions = function(rule, level, value) 
-			if level == 1 then
-				dewdrop:AddLine('text', L["ItemID Options"], 'isTitle', true)
-				dewdrop:AddLine('text', L["Current IDs, click to remove"], 'isTitle', true)
-				if rule.ids then
-					for k, v in pairs(rule.ids) do
-						local name = GetItemInfo(k)
-						dewdrop:AddLine('text', k.." "..(name or ""),"func", function(id) rule.ids[id] = nil end, "arg1", k )
-					end
-				end
-				dewdrop:AddLine('text', L["New"], 'hasArrow', true,'value',"NewID","hasEditBox",true,"editBoxText", "",
-								"editBoxFunc", function(text) 
-									local id = tonumber(text)
-									if not id then
-										id = tonumber(text:match("item:(%d+)"))
-									end
-									if id ~= 0 then
-										if not rule.ids then
-											rule.ids = {}
-										end
-										rule.ids[id] = true 
-									end
-									Baggins:OnRuleChanged() 
-								end )
-
-			end
-		end,
-	},
-	Bag = {
-		DisplayName = L["Bag"],
-		Description = L["Filter by the bag the item is in"],	
-		Matches = function(bag,slot,rule) 
-			if rule.noempty then
-				local link = GetContainerItemLink(bag, slot)
-				if link then
-					return bag == rule.bagid 
-				end
-			else
-				return bag == rule.bagid
-			end
-		end,
-		GetName = function(rule) 
-			return "Bag "..(BagNames[rule.bagid] or rule.bagid or "*none*")..((rule.noempty and " *NotEmpty*") or "")
-		end,
-		DewDropOptions = function(rule, level, value) 
-			if level == 1 then
-				dewdrop:AddLine('text', L["Bag Options"], 'isTitle', true)
-				dewdrop:AddLine('text', L["Bag"], 'hasArrow', true,'value',"Bag")
-				dewdrop:AddLine('text', L["Ignore Empty Slots"], "checked", rule.noempty ,"func",function() rule.noempty = not rule.noempty Baggins:OnRuleChanged() end)	
-			elseif level == 2 and value == "Bag" then
-				dewdrop:AddLine('text', L["Backpack"], "checked", rule.bagid == 0,"func",function() rule.bagid = 0 Baggins:OnRuleChanged() end)
-				dewdrop:AddLine('text', L["Bag1"], "checked", rule.bagid == 1,"func",function() rule.bagid = 1 Baggins:OnRuleChanged() end)
-				dewdrop:AddLine('text', L["Bag2"], "checked", rule.bagid == 2,"func",function() rule.bagid = 2 Baggins:OnRuleChanged() end)
-				dewdrop:AddLine('text', L["Bag3"], "checked", rule.bagid == 3,"func",function() rule.bagid = 3 Baggins:OnRuleChanged() end)
-				dewdrop:AddLine('text', L["Bag4"], "checked", rule.bagid == 4,"func",function() rule.bagid = 4 Baggins:OnRuleChanged() end)
-				dewdrop:AddLine('text', L["KeyRing"], "checked", rule.bagid == -2,"func",function() rule.bagid = -2 Baggins:OnRuleChanged() end)
-			end
-		end,
-	},
-	ItemName = {
-		DisplayName = L["Item Name"],
-		Description = L["Filter by Name or partial name"],	
-		Matches = function(bag,slot,rule) 
-			if not rule.match then return end
-			local link = GetContainerItemLink(bag, slot)
-			
-			if link then
-				local itemname = GetItemInfo(link)
-				if itemname and itemname:lower():match(rule.match:lower()) then
-					return true
-				end
-			end
-		end,
-		GetName = function(rule) 
-			return L["Name: "]..(rule.match or "")
-		end,
-		DewDropOptions = function(rule, level, value) 
-			if level == 1 then
-				dewdrop:AddLine('text', L["Item Name Options"], 'isTitle', true)
-				dewdrop:AddLine('text', L["String to Match"], 'hasArrow', true,"hasEditBox",true,"editBoxText", rule.match or "","editBoxFunc", function(text) rule.match = text Baggins:OnRuleChanged() end )	
-			end
-		end,
-	},
-	Empty = {
-		DisplayName = L["Empty Slots"],
-		Description = L["Empty bag slots"],
-		Matches = function(bag,slot,rule) 
-			if not (bag and slot) then return end
-			if BagTypes[bag] == 3 then return end
-			local link = GetContainerItemLink(bag, slot)
-			if not link then 
-				return true 
-			end
-		end,
-		GetName = function(rule) 
-			return L["Empty Slots"]
-		end,
-		DewDropOptions = function(rule, level, value) 
-		end,
-	},
-	NewItems = {
-		DisplayName = L["New Items"],
-		Description = L["New Items"],
-		Matches = function(bag,slot,rule) 
-			if not (bag and slot) then return end
-			if BagTypes[bag] ~= 1 then return end
-			local link = GetContainerItemLink(bag, slot)
-			if link then
-				return Baggins:IsNew(link)			
-			end
-		end,
-		GetName = function(rule) 
-			return L["New Items"]
-		end,
-		DewDropOptions = function(rule, level, value) 
-		end,
-	},
-	Category = {
-		DisplayName = L["Category"],
-		Description = L["Items that match another category"],
-		Matches = function(bag,slot,rule) 
-			if not (bag and slot and rule.category) then return end
-			local key = bag..":"..slot
-			if BagTypes[bag] == 2 then
-				return bankcategorycache[rule.category] and bankcategorycache[rule.category][key]
-			else
-				return categorycache[rule.category] and categorycache[rule.category][key]
-			end
-		end,
-		GetName = function(rule) 
-			if rule.category then
-				return L["Category"].." :"..rule.category
-			else
-				return L["Category"]
-			end
-		end,
-		DewDropOptions = function(rule, level, value) 
-			if level == 1 then
-				dewdrop:AddLine('text', L["Category Options"], 'isTitle', true)
-				dewdrop:AddLine('text', L["Category"], 'hasArrow', true,'value',"Category")
-
-			elseif level == 2 and value == "Category" then	
-				for k, v in pairs(categories) do
-					dewdrop:AddLine('text', k, "checked", rule.category == k,"func",function(v) rule.category = k Baggins:OnRuleChanged() end,"arg1",v)
-				end
-			end
-		end,
-	},
-	AmmoBag = {
-		DisplayName = L["Ammo Bag"],
-		Description = L["Items in an ammo pouch or quiver"],
-		Matches = function(bag,slot,rule) 
-			local _,fam = GetContainerNumFreeSlots(bag)
-			return fam and band(fam, 3)~=0
-		end,
-		GetName = function(rule) 
-			return L["Ammo Bag Slots"]
-		end,
-		DewDropOptions = function(rule, level, value)
-		end,
-	},
-	Quality = {
-		DisplayName = L["Quality"],
-		Description = L["Filter by Item Quality"],
-		Matches = function(bag,slot,rule) 
-			if not (rule.comp and rule.quality) then return end
-			local link = GetContainerItemLink(bag, slot)
-			if link then
-				local Rarity = select(3, GetItemInfo(link))
-				if Rarity then
-					return ( rule.comp == "==" and Rarity == rule.quality ) or
-					       ( rule.comp == "<=" and Rarity <= rule.quality ) or
-					       ( rule.comp == ">=" and Rarity >= rule.quality )
-				end
-			end
-		end,
-		GetName = function(rule) 
-			if rule.quality then
-				local r,g,b,hex = GetItemQualityColor(rule.quality)
-				qualname = hex..QualityNames[rule.quality]
-			else
-				qualname = "*none*"
-			end
-			return L["Quality"].." "..(rule.comp or "==").." "..qualname
-		end,
-		DewDropOptions = function(rule, level, value)
-			if level == 1 then
-				dewdrop:AddLine('text', L["Quality Options"], 'isTitle', true)
-				dewdrop:AddLine('text', L["Quality"], 'hasArrow', true,'value',"Quality")
-				dewdrop:AddLine('text', L["Comparison"], 'hasArrow', true, 'value', "QualComp")
-		
-			elseif level == 2 and value == "Quality" then
-				for i = 0, #QualityNames do
-					local r,g,b = GetItemQualityColor(i)
-					dewdrop:AddLine('text', QualityNames[i], "checked", rule.quality == i,"func",function() rule.quality = i Baggins:OnRuleChanged() end,
-									'textR',r,'textG',g,'textB',b)
-				end
-			elseif level == 2 and value == "QualComp" then		
-				dewdrop:AddLine('text', "==", "checked", rule.comp == "==","func",function() rule.comp = "==" Baggins:OnRuleChanged() end)
-				dewdrop:AddLine('text', "<=", "checked", rule.comp == "<=","func",function() rule.comp = "<=" Baggins:OnRuleChanged() end)
-				dewdrop:AddLine('text', ">=", "checked", rule.comp == ">=","func",function() rule.comp = ">=" Baggins:OnRuleChanged() end)
-			end
-		end,
-	},
-	EquipLoc = {
-		DisplayName = L["Equip Location"],
-		Description = L["Filter by Equip Location as returned by GetItemInfo"],
-		Matches = function(bag,slot,rule) 
-			if not rule.equiploc then return end
-			local link = GetContainerItemLink(bag, slot)
-			if link then
-				local EquipLoc = select(9, GetItemInfo(link))
-				if EquipLoc then
-					return EquipLoc == rule.equiploc
-				end
-			end
-		end,
-		GetName = function(rule) 
-			return "Equip Location: "..(getglobal(rule.equiploc) or rule.equiploc or "*None*")
-		end,
-		DewDropOptions = function(rule, level, value) 
-			if level == 1 then
-				dewdrop:AddLine('text', L["Equip Location Options"], 'isTitle', true)
-				dewdrop:AddLine('text', L["Location"], 'hasArrow', true,'value',"Location")
-
-			elseif level == 2 and value == "Location" then	
-				for k, v in pairs(EquipLocs) do
-					dewdrop:AddLine('text', getglobal(v) or v or "", "checked", rule.equiploc == v,"func",function(v) rule.equiploc = v Baggins:OnRuleChanged() end,"arg1",v)
-				end
-			end
-		end,
-	},
-	ItemLevel = {
-		DisplayName = L["Item Level"],
-		Description = L["Filter by item's level - either \"ilvl\" or minimum required level"],
-		Matches = function(bag,slot,rule)
-			local link = GetContainerItemLink(bag, slot)
-			if not link then return false end
-			
-			local _,_,_, itemLevel, itemMinLevel = GetItemInfo(link)
-			local lvl = rule.useminlvl and itemMinLevel or itemLevel
-			
-			if not lvl then	-- can happen if itemcache hasn't been updated yet
-				return false
-			end
-			
-			if rule.include0 and lvl==0 then
-				return true
-			end
-			if rule.include1 and lvl==1 then
-				return true
-			end
-			
-			local minlvl = rule.minlvl or -999
-			local maxlvl = rule.maxlvl or 999
-			if rule.minlvl_rel then
-				minlvl = UnitLevel("player")+minlvl
-			end
-			if rule.maxlvl_rel then
-				maxlvl = UnitLevel("player")+maxlvl
-			end
-			
-			return lvl>=minlvl and lvl<=maxlvl
-		end,
-		GetName = function(rule)
-			local minlvl = rule.minlvl or -999
-			local maxlvl = rule.maxlvl or 999
-			if rule.minlvl_rel then
-				minlvl = UnitLevel("player")+minlvl
-			end
-			if rule.maxlvl_rel then
-				maxlvl = UnitLevel("player")+maxlvl
-			end
-			return (rule.useminlvl and L["ReqLvl"] or L["ILvl"]) .. ": " ..
-				(rule.include0 and "0, " or "") ..
-				(rule.include1 and "1, " or "") ..
-				max(minlvl,0) .. "-" ..
-				min(maxlvl,999);
-		end,
-		DewDropOptions = function(rule, level, value)
-			if level==1 then
-				dewdrop:AddLine('text', L["Item Level Options"], 'isTitle', true)
-				dewdrop:AddLine('text', L["Include Level 0"], "checked", rule.include0, "func",
-					function(b) rule.include0=not rule.include0; Baggins:OnRuleChanged() end);
-				dewdrop:AddLine('text', L["Include Level 1"], "checked", rule.include1, "func",
-					function(b) rule.include1=not rule.include1; Baggins:OnRuleChanged() end);
-				dewdrop:AddLine('text', L["Look at Required Level"], "checked", rule.useminlvl, "func",
-					function(b) rule.useminlvl=not rule.useminlvl; Baggins:OnRuleChanged() end);
-				dewdrop:AddLine('text', L["Look at Item's \"ILvl\""], "checked", not rule.useminlvl, "func",
-					function(b) rule.useminlvl=not rule.useminlvl; Baggins:OnRuleChanged() end);
-				dewdrop:AddSeparator()
-				dewdrop:AddLine('text', L["From level:"], "hasArrow", true, "hasEditBox", true, 
-					"editBoxText", tonumber(rule.minlvl) or -15, "editBoxFunc",
-					function(text) rule.minlvl = tonumber(text) or -15; Baggins:OnRuleChanged() end);
-				dewdrop:AddLine('text', L["... plus Player's Level"], "checked", rule.minlvl_rel, "func",
-					function(b) rule.minlvl_rel=not rule.minlvl_rel; Baggins:OnRuleChanged() end);
-				dewdrop:AddSeparator()
-				dewdrop:AddLine('text', L["To level:"], "hasArrow", true, "hasEditBox", true, 
-					"editBoxText", tonumber(rule.maxlvl) or 999, "editBoxFunc",
-					function(text) rule.maxlvl = tonumber(text) or 999; Baggins:OnRuleChanged() end);
-				dewdrop:AddLine('text', L["... plus Player's Level"], "checked", rule.maxlvl_rel, "func",
-					function(b) rule.maxlvl_rel=not rule.maxlvl_rel; Baggins:OnRuleChanged() end);
-			end
-		end,
-		CleanRule = function(rule)
-			rule.include0 = true
-			rule.include1 = false
-			rule.useminlvl = false
-			rule.minlvl_rel = true
-			rule.minlvl = -15
-			rule.maxlvl_rel = true
-			rule.maxlvl = 10
-		end,
-	},
-	Other = {
-		DisplayName = L["Unfiltered Items"],
-		Description = L["Matches all items that arent matched by any other bag, NOTE: this should be the only rule in a category, others will be ignored"],
-		Matches = function(bag,slot,rule) 
-			
-			--local key = bag..":"..slot
-			--return not useditems[key]
-		end,
-		GetName = function(rule) 
-			return L["Unfiltered"]
-		end,
-		DewDropOptions = function(rule, level, value) 
-			
-		end,
-	},
-	Bind = {
-		DisplayName = L["Bind"],
-		Description = L["Filter based on if the item binds, or if it is already bound"],
-		Matches = function(bag, slot, rule)
-			if not rule.bindtype then return end
-			if rule.bindtype == "Soulbound" then
-				if bag == -1 then
-					gratuity:SetInventoryItem("player", BankButtonIDToInvSlotID(slot))
-				else
-					gratuity:SetBagItem(bag,slot)
-				end
-				if gratuity:Find(ITEM_SOULBOUND,2,2,false,false,true) then
-					return true
-				end
-			elseif rule.bindtype == "Unbound" then
-				local link = GetContainerItemLink(bag,slot)
-					if link then
-					if bag == -1 then
-						gratuity:SetInventoryItem("player", BankButtonIDToInvSlotID(slot))
-					else
-						gratuity:SetBagItem(bag,slot)
-					end
-					if not gratuity:Find(ITEM_SOULBOUND,2,2,false,false,true) then
-						return true
-					end
-				end
-			elseif rule.bindtype == "BoP" then
-				local link = GetContainerItemLink(bag,slot)
-				if link then
-					gratuity:SetHyperlink(link)
-					if gratuity:Find(ITEM_BIND_ON_PICKUP,2,2) then
-						return true
-					end
-				end
-			elseif rule.bindtype == "BoE" then
-				local link = GetContainerItemLink(bag,slot)
-				if link then
-					gratuity:SetHyperlink(link)
-					if gratuity:Find(ITEM_BIND_ON_EQUIP,2,2) then
-						return true
-					end
-				end
-			elseif rule.bindtype == "BoU" then
-				local link = GetContainerItemLink(bag,slot,2,2)
-				if link then
-					gratuity:SetHyperlink(link)
-					if gratuity:Find(ITEM_BIND_ON_USE,2,2) then
-						return true
-					end
-				end
-			end
-		end,
-		GetName = function(rule)
-			if rule.bindtype == "Soulbound" then
-				return ITEM_SOULBOUND
-			elseif rule.bindtype == "Unbound" then
-				return L["Unbound"]
-			elseif rule.bindtype == "BoP" then
-				return ITEM_BIND_ON_PICKUP
-			elseif rule.bindtype == "BoE" then
-				return ITEM_BIND_ON_EQUIP
-			elseif rule.bindtype == "BoU" then
-				return ITEM_BIND_ON_USE
-			else
-				return L["Bind *unset*"]
-			end
-		end,
-		DewDropOptions = function(rule, level, value)
-			if level == 1 then
-				dewdrop:AddLine('text', L["Bind Options"], 'isTitle', true)
-				dewdrop:AddLine('text', L["Bind Type"], 'hasArrow', true,'value',"BindType")
-
-			elseif level == 2 and value == "BindType" then	
-				dewdrop:AddLine('text', ITEM_SOULBOUND, "checked", rule.bindtype == "Soulbound","func",function() rule.bindtype = "Soulbound" Baggins:OnRuleChanged() end)
-				dewdrop:AddLine('text', L["Unbound"], "checked", rule.bindtype == "Unbound","func",function() rule.bindtype = "Unbound" Baggins:OnRuleChanged() end)
-				dewdrop:AddLine('text', ITEM_BIND_ON_PICKUP, "checked", rule.bindtype == "BoP","func",function() rule.bindtype = "BoP" Baggins:OnRuleChanged() end)
-				dewdrop:AddLine('text', ITEM_BIND_ON_EQUIP, "checked", rule.bindtype == "BoE","func",function() rule.bindtype = "BoE" Baggins:OnRuleChanged() end)
-				dewdrop:AddLine('text', ITEM_BIND_ON_USE, "checked", rule.bindtype == "BoU","func",function() rule.bindtype = "BoU" Baggins:OnRuleChanged() end)
-			end
-		end,
-	},
-	Tooltip = {
-		DisplayName = L["Tooltip"],
-		Description = L["Filter based on text contained in its tooltip"],
-		Matches = function(bag, slot, rule)
-			if not rule.text then return end
-			local text = rule.text
-			--if the text is the name of a global string then match against that
-			if text:upper() == text then
-				local gtext = getglobal(rule.text)
-				if type(gtext) == "string" then
-					text = gtext
-				end
-			end
-			if bag == -1 then
-				gratuity:SetInventoryItem("player", BankButtonIDToInvSlotID(slot))
-			else
-				gratuity:SetBagItem(bag,slot)
-			end
-			if gratuity:Find(text) then
-				return true
-			end
-		end,
-		GetName = function(rule)
-			return L["Tooltip"]..": "..(rule.text or "")
-		end,
-		DewDropOptions = function(rule, level, value)
-			if level == 1 then
-				dewdrop:AddLine('text', L["Tooltip Options"], 'isTitle', true)
-				dewdrop:AddLine('text', L["String to Match"], 'hasArrow', true,"hasEditBox",true,"editBoxText", rule.text or "","editBoxFunc", function(text) rule.text = text Baggins:OnRuleChanged() end )	
-			end
-		end,
-	}
-}
-
-if pt then
-	RuleTypes.PTSet = {
-		DisplayName = L["PeriodicTable Set"],
-		Description = L["Filter by PeriodicTable Set"],	
-		Matches = function(bag,slot,rule) 
-			if not rule.setname then return end
-			local link = GetContainerItemLink(bag, slot)
-			if link then
-				local itemid = link:match("item:(%d+)")
-				itemid = tonumber(itemid)
-				return pt:ItemInSet(itemid,rule.setname)
-			end
-		end,
-		GetName = function(rule) 
-			return "PTSet:"..(rule.setname or "*none*")
-		end,
-		DewDropOptions = function(rule, level, value, value_1, value_2)
-			Baggins:BuildPTSetTable()
-			if level == 1 then
-				dewdrop:AddLine('text', L["Periodic Table Set Options"], 'isTitle', true)
-			end
-			dewdrop:FeedAceOptionsTable(ptsets)
-		end,
-	}
-end
 local currentRule = nil
 function Baggins:OpenRuleDewdrop(rule,...)
 	if RuleTypes[rule.type] then
@@ -1011,8 +379,8 @@ function Baggins:ClearSortingCaches()
 	ClearCache(categorycache)
 	ClearCache(slotcache)
 end
-		
-		
+
+
 function Baggins:ForceFullRefresh()
 	self:ClearSortingCaches()
 	self:ClearSectionCaches()
@@ -1036,11 +404,9 @@ function Baggins:CategoriesChanged()
 end
 
 function Baggins:ForceFullBankUpdate()
-	local bagid
-	for bagid = 5, 11 do
+	for bagid in LBU:IterateBags("BANK") do
 		self:CheckSlotsChanged(bagid, true)
 	end
-	self:CheckSlotsChanged(-1,true)
 end
 
 function Baggins:GetIncludeRule(category,create)
@@ -1121,6 +487,701 @@ function Baggins:GetCachedItem(item)
 	return slotcache[item]
 end
 
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------------------------------------
+-- ItemType
+
+--------------------------
+-- scanned 08/13/09 16:52:00 - patch 3.2.0
+
+local ItemTypes = {
+  ["Weapon"] = {"One-Handed Axes", "Two-Handed Axes", "Bows", "Guns", "One-Handed Maces", "Two-Handed Maces", "Polearms", "One-Handed Swords", "Two-Handed Swords", "Staves", "Fist Weapons", "Miscellaneous", "Daggers", "Thrown", "Crossbows", "Wands", "Fishing Poles"},
+  ["Armor"] = {"Miscellaneous", "Cloth", "Leather", "Mail", "Plate", "Shields", "Librams", "Idols", "Totems", "Sigils"},
+  ["Container"] = {"Bag", "Soul Bag", "Herb Bag", "Enchanting Bag", "Engineering Bag", "Gem Bag", "Mining Bag", "Leatherworking Bag", "Inscription Bag"},
+  ["Consumable"] = {"Food & Drink", "Potion", "Elixir", "Flask", "Bandage", "Item Enhancement", "Scroll", "Other"},
+  ["Glyph"] = {"Warrior", "Paladin", "Hunter", "Rogue", "Priest", "Death Knight", "Shaman", "Mage", "Warlock", "Druid"},
+  ["Trade Goods"] = {"Elemental", "Cloth", "Leather", "Metal & Stone", "Meat", "Herb", "Enchanting", "Jewelcrafting", "Parts", "Devices", "Explosives", "Materials", "Other", "Armor Enchantment", "Weapon Enchantment"},
+  ["Projectile"] = {"Arrow", "Bullet"},
+  ["Quiver"] = {"Quiver", "Ammo Pouch"},
+  ["Recipe"] = {"Book", "Leatherworking", "Tailoring", "Engineering", "Blacksmithing", "Cooking", "Alchemy", "First Aid", "Enchanting", "Fishing", "Jewelcrafting", "Inscription"},
+  ["Gem"] = {"Red", "Blue", "Yellow", "Purple", "Green", "Orange", "Meta", "Simple", "Prismatic"},
+  ["Miscellaneous"] = {"Junk", "Reagent", "Pet", "Holiday", "Other", "Mount"},
+  ["Quest"] = {},
+}
+
+-- Manually added types that do not appear in AH scan
+assert(#ItemTypes["Quest"]==0)	-- alert dev if scanned array suddenly looks different
+ItemTypes["Quest"] = { "Quest" }
+assert(not ItemTypes["Key"])    -- alert dev if scanned array suddenly looks different
+ItemTypes["Key"] = { "Key" }
+
+
+--[[
+SELECTED_CHAT_FRAME:AddMessage("--------------------------")
+SELECTED_CHAT_FRAME:AddMessage("-- scanned "..date("%c").. " - patch "..(GetBuildInfo()))
+SELECTED_CHAT_FRAME:AddMessage("local ItemTypes = {")
+for i,class in pairs{GetAuctionItemClasses()} do
+  local subs={GetAuctionItemSubClasses(i)}
+  if #subs>0 then
+    
+    SELECTED_CHAT_FRAME:AddMessage('  ["'..class..'"] = {"'..
+      table.concat(subs, '", "') ..
+    '"},')
+  else
+    SELECTED_CHAT_FRAME:AddMessage('  ["'..class..'"] = {},')
+  end
+end
+SELECTED_CHAT_FRAME:AddMessage("}")
+--]]
+
+Baggins:AddCustomRule("ItemType", {
+		DisplayName = L["Item Type"],
+		Description = L["Filter by Item type and sub-type as returned by GetItemInfo"],
+		Matches = function(bag,slot,rule) 
+			if not (rule.itype or rule.isubtype) then return end
+			local link = GetContainerItemLink(bag, slot)
+			if link then
+				local Type, SubType = select(6, GetItemInfo(link))
+				if Type and SubType then
+					return Type == BI[rule.itype] and (rule.isubtype == nil or SubType == BI[rule.isubtype] )	
+				end
+			end
+		end,
+		GetName = function(rule) 
+			local ltype, lsubtype = "*", "*"
+			if rule.itype then
+				ltype = BI[rule.itype] or "?"
+			end
+			if rule.isubtype then
+				lsubtype = BI[rule.isubtype] or "?"
+			end
+			return L["ItemType - "]..ltype..":"..lsubtype
+		end,
+		DewDropOptions = function(rule, level, value) 
+			if level == 1 then
+				dewdrop:AddLine('text', L["Item Type Options"], 'isTitle', true)
+				dewdrop:AddLine('text', L["Item Type"], 'hasArrow', true,'value',"ItemType")
+				dewdrop:AddLine('text', L["Item Subtype"], 'hasArrow', true,'value',"ItemSubtype")
+
+			elseif level == 2 and value == "ItemType" then	
+				for k, v in pairs(ItemTypes) do
+					dewdrop:AddLine('text', BI[k], "checked", rule.itype == k,"func",function(k) rule.itype = k rule.isubtype = nil Baggins:OnRuleChanged() end,"arg1",k)
+				end
+			elseif level == 2 and value == "ItemSubtype" then
+				dewdrop:AddLine('text', L["All"], "checked", rule.isubtype == nil,"func",function() rule.isubtype = nil Baggins:OnRuleChanged() end)
+				dewdrop:AddLine()
+				if rule.itype and ItemTypes[rule.itype] then
+					for k, v in ipairs(ItemTypes[rule.itype]) do
+						dewdrop:AddLine('text', BI[v], "checked", rule.isubtype == v,"func",function(v) rule.isubtype = v Baggins:OnRuleChanged() end,"arg1",v)
+					end
+				end
+			end
+		end,
+		CleanRule = function(rule)
+			rule.itype="Miscellaneous"
+		end
+})
+
+-----------------------------------------------------------------------
+-- ContainerType
+
+Baggins:AddCustomRule("ContainerType", {
+		DisplayName = L["Container Type"],
+		Description = L["Filter by the type of container the item is in."],	
+		Matches = function(bag,slot,rule)
+			if bag < 1 or bag > 11 then return end
+			if not rule.ctype then return end
+			local link = GetInventoryItemLink("player",ContainerIDToInventoryID(bag))
+			if link then
+				local SubType = select(7, GetItemInfo(link))
+				if SubType then
+					return SubType == BI[rule.ctype]
+				end
+			end
+		end,
+		GetName = function(rule) 
+			local ctype
+			if rule.ctype then
+				ctype = BI[rule.ctype]
+			else
+				ctype = L["None"]
+			end
+			return L["Container : "]..ctype
+		end,
+		DewDropOptions = function(rule, level, value) 
+			if level == 1 then
+				dewdrop:AddLine('text', L["Container Type Options"], 'isTitle', true)
+				dewdrop:AddLine('text', L["Container Type"], 'hasArrow', true,'value',"ContainerType")
+	
+			elseif level == 2 and value == "ContainerType" then
+				dewdrop:AddLine('text', L["All"], "checked", rule.ctype == nil,"func",function() rule.ctype = nil Baggins:OnRuleChanged() end)
+				dewdrop:AddLine()
+				for k, v in ipairs(ItemTypes["Container"]) do
+					dewdrop:AddLine('text', BI[v], "checked", rule.ctype == v,"func",function(v) rule.ctype = v Baggins:OnRuleChanged() end,"arg1",v)
+				end	
+				for k, v in ipairs(ItemTypes["Quiver"]) do
+					dewdrop:AddLine('text', BI[v], "checked", rule.ctype == v,"func",function(v) rule.ctype = v Baggins:OnRuleChanged() end,"arg1",v)
+				end		
+			end
+		end
+})
+
+
+
+
+
+-----------------------------------------------------------------------
+-- ItemID
+
+Baggins:AddCustomRule("ItemID", {
+		DisplayName = L["Item ID"],
+		Description = L["Filter by ItemID, this can be a space delimited list or ids to match."],
+		Matches = function(bag,slot,rule) 
+			if not rule.ids then return end
+			local link = GetContainerItemLink(bag, slot)
+			if link then
+				local itemid = link:match("item:(%d+)")
+				return rule.ids[tonumber(itemid)]
+			end
+		end,
+		GetName = function(rule) 
+			return L["ItemIDs "]
+		end,
+		DewDropOptions = function(rule, level, value) 
+			if level == 1 then
+				dewdrop:AddLine('text', L["ItemID Options"], 'isTitle', true)
+				dewdrop:AddLine('text', L["Current IDs, click to remove"], 'isTitle', true)
+				if rule.ids then
+					for k, v in pairs(rule.ids) do
+						local name = GetItemInfo(k)
+						dewdrop:AddLine('text', k.." "..(name or ""),"func", function(id) rule.ids[id] = nil end, "arg1", k )
+					end
+				end
+				dewdrop:AddLine('text', L["New"], 'hasArrow', true,'value',"NewID","hasEditBox",true,"editBoxText", "",
+								"editBoxFunc", function(text) 
+									local id = tonumber(text)
+									if not id then
+										id = tonumber(text:match("item:(%d+)"))
+									end
+									if id ~= 0 then
+										if not rule.ids then
+											rule.ids = {}
+										end
+										rule.ids[id] = true 
+									end
+									Baggins:OnRuleChanged() 
+								end )
+
+			end
+		end,
+})
+
+
+-----------------------------------------------------------------------
+-- Bag
+
+Baggins:AddCustomRule("Bag", {
+		DisplayName = L["Bag"],
+		Description = L["Filter by the bag the item is in"],	
+		Matches = function(bag,slot,rule) 
+			if rule.noempty then
+				local link = GetContainerItemLink(bag, slot)
+				if link then
+					return bag == rule.bagid 
+				end
+			else
+				return bag == rule.bagid
+			end
+		end,
+		GetName = function(rule) 
+			return "Bag "..(BagNames[rule.bagid] or rule.bagid or "*none*")..((rule.noempty and " *NotEmpty*") or "")
+		end,
+		DewDropOptions = function(rule, level, value) 
+			if level == 1 then
+				dewdrop:AddLine('text', L["Bag Options"], 'isTitle', true)
+				dewdrop:AddLine('text', L["Bag"], 'hasArrow', true,'value',"Bag")
+				dewdrop:AddLine('text', L["Ignore Empty Slots"], "checked", rule.noempty ,"func",function() rule.noempty = not rule.noempty Baggins:OnRuleChanged() end)	
+			elseif level == 2 and value == "Bag" then
+				dewdrop:AddLine('text', L["Backpack"], "checked", rule.bagid == 0,"func",function() rule.bagid = 0 Baggins:OnRuleChanged() end)
+				dewdrop:AddLine('text', L["Bag1"], "checked", rule.bagid == 1,"func",function() rule.bagid = 1 Baggins:OnRuleChanged() end)
+				dewdrop:AddLine('text', L["Bag2"], "checked", rule.bagid == 2,"func",function() rule.bagid = 2 Baggins:OnRuleChanged() end)
+				dewdrop:AddLine('text', L["Bag3"], "checked", rule.bagid == 3,"func",function() rule.bagid = 3 Baggins:OnRuleChanged() end)
+				dewdrop:AddLine('text', L["Bag4"], "checked", rule.bagid == 4,"func",function() rule.bagid = 4 Baggins:OnRuleChanged() end)
+				dewdrop:AddLine('text', L["KeyRing"], "checked", rule.bagid == -2,"func",function() rule.bagid = -2 Baggins:OnRuleChanged() end)
+			end
+		end,
+		CleanRule = function(rule)
+			rule.bagid=0
+		end,
+})
+
+
+-----------------------------------------------------------------------
+-- ItemName
+
+Baggins:AddCustomRule("ItemName", {
+		DisplayName = L["Item Name"],
+		Description = L["Filter by Name or partial name"],	
+		Matches = function(bag,slot,rule) 
+			if not rule.match then return end
+			local link = GetContainerItemLink(bag, slot)
+			
+			if link then
+				local itemname = GetItemInfo(link)
+				if itemname and itemname:lower():match(rule.match:lower()) then
+					return true
+				end
+			end
+		end,
+		GetName = function(rule) 
+			return L["Name: "]..(rule.match or "")
+		end,
+		DewDropOptions = function(rule, level, value) 
+			if level == 1 then
+				dewdrop:AddLine('text', L["Item Name Options"], 'isTitle', true)
+				dewdrop:AddLine('text', L["String to Match"], 'hasArrow', true,"hasEditBox",true,"editBoxText", rule.match or "","editBoxFunc", function(text) rule.match = text Baggins:OnRuleChanged() end )	
+			end
+		end,
+})
+
+
+-----------------------------------------------------------------------
+-- Empty
+
+Baggins:AddCustomRule("Empty", {
+		DisplayName = L["Empty Slots"],
+		Description = L["Empty bag slots"],
+		Matches = function(bag,slot,rule) 
+			if not (bag and slot) then return end
+			if BagTypes[bag] == 3 then return end
+			local link = GetContainerItemLink(bag, slot)
+			if not link then 
+				return true 
+			end
+		end,
+		GetName = function(rule) 
+			return L["Empty Slots"]
+		end,
+		DewDropOptions = function(rule, level, value) 
+		end,
+})
+
+
+-----------------------------------------------------------------------
+-- NewItems
+
+Baggins:AddCustomRule("NewItems", {
+		DisplayName = L["New Items"],
+		Description = L["New Items"],
+		Matches = function(bag,slot,rule) 
+			if not (bag and slot) then return end
+			if BagTypes[bag] ~= 1 then return end
+			local link = GetContainerItemLink(bag, slot)
+			if link then
+				return Baggins:IsNew(link)			
+			end
+		end,
+		GetName = function(rule) 
+			return L["New Items"]
+		end,
+		DewDropOptions = function(rule, level, value) 
+		end,
+})
+
+
+
+
+-----------------------------------------------------------------------
+-- Category
+
+Baggins:AddCustomRule("Category", {
+		DisplayName = L["Category"],
+		Description = L["Items that match another category"],
+		Matches = function(bag,slot,rule) 
+			if not (bag and slot and rule.category) then return end
+			local key = bag..":"..slot
+			if BagTypes[bag] == 2 then
+				return bankcategorycache[rule.category] and bankcategorycache[rule.category][key]
+			else
+				return categorycache[rule.category] and categorycache[rule.category][key]
+			end
+		end,
+		GetName = function(rule) 
+			if rule.category then
+				return L["Category"].." :"..rule.category
+			else
+				return L["Category"]
+			end
+		end,
+		DewDropOptions = function(rule, level, value) 
+			if level == 1 then
+				dewdrop:AddLine('text', L["Category Options"], 'isTitle', true)
+				dewdrop:AddLine('text', L["Category"], 'hasArrow', true,'value',"Category")
+
+			elseif level == 2 and value == "Category" then	
+				for k, v in pairs(categories) do
+					dewdrop:AddLine('text', k, "checked", rule.category == k,"func",function(v) rule.category = k Baggins:OnRuleChanged() end,"arg1",v)
+				end
+			end
+		end,
+})
+
+
+
+-----------------------------------------------------------------------
+-- AmmoBag
+
+Baggins:AddCustomRule("AmmoBag", {
+		DisplayName = L["Ammo Bag"],
+		Description = L["Items in an ammo pouch or quiver"],
+		Matches = function(bag,slot,rule) 
+			local _,fam = GetContainerNumFreeSlots(bag)
+			return fam and band(fam, 3)~=0
+		end,
+		GetName = function(rule) 
+			return L["Ammo Bag Slots"]
+		end,
+		DewDropOptions = function(rule, level, value)
+		end,
+})
+
+
+
+-----------------------------------------------------------------------
+-- Quality
+
+Baggins:AddCustomRule("Quality", {
+		DisplayName = L["Quality"],
+		Description = L["Filter by Item Quality"],
+		Matches = function(bag,slot,rule) 
+			if not (rule.comp and rule.quality) then return end
+			local link = GetContainerItemLink(bag, slot)
+			if link then
+				local Rarity = select(3, GetItemInfo(link))
+				if Rarity then
+					return ( rule.comp == "==" and Rarity == rule.quality ) or
+					       ( rule.comp == "<=" and Rarity <= rule.quality ) or
+					       ( rule.comp == ">=" and Rarity >= rule.quality )
+				end
+			end
+		end,
+		GetName = function(rule) 
+			if rule.quality then
+				local r,g,b,hex = GetItemQualityColor(rule.quality)
+				qualname = hex..QualityNames[rule.quality]
+			else
+				qualname = "*none*"
+			end
+			return L["Quality"].." "..(rule.comp or "==").." "..qualname
+		end,
+		DewDropOptions = function(rule, level, value)
+			if level == 1 then
+				dewdrop:AddLine('text', L["Quality Options"], 'isTitle', true)
+				dewdrop:AddLine('text', L["Quality"], 'hasArrow', true,'value',"Quality")
+				dewdrop:AddLine('text', L["Comparison"], 'hasArrow', true, 'value', "QualComp")
+		
+			elseif level == 2 and value == "Quality" then
+				for i = 0, #QualityNames do
+					local r,g,b = GetItemQualityColor(i)
+					dewdrop:AddLine('text', QualityNames[i], "checked", rule.quality == i,"func",function() rule.quality = i Baggins:OnRuleChanged() end,
+									'textR',r,'textG',g,'textB',b)
+				end
+			elseif level == 2 and value == "QualComp" then		
+				dewdrop:AddLine('text', "==", "checked", rule.comp == "==","func",function() rule.comp = "==" Baggins:OnRuleChanged() end)
+				dewdrop:AddLine('text', "<=", "checked", rule.comp == "<=","func",function() rule.comp = "<=" Baggins:OnRuleChanged() end)
+				dewdrop:AddLine('text', ">=", "checked", rule.comp == ">=","func",function() rule.comp = ">=" Baggins:OnRuleChanged() end)
+			end
+		end,
+		CleanRule = function(rule)
+			rule.quality = 1
+			rule.comp = "=="
+		end,
+})
+
+
+-----------------------------------------------------------------------
+-- EquipLoc
+
+Baggins:AddCustomRule("EquipLoc", {
+		DisplayName = L["Equip Location"],
+		Description = L["Filter by Equip Location as returned by GetItemInfo"],
+		Matches = function(bag,slot,rule) 
+			if not rule.equiploc then return end
+			local link = GetContainerItemLink(bag, slot)
+			if link then
+				local EquipLoc = select(9, GetItemInfo(link))
+				if EquipLoc then
+					return EquipLoc == rule.equiploc
+				end
+			end
+		end,
+		GetName = function(rule) 
+			return "Equip Location: "..(getglobal(rule.equiploc) or rule.equiploc or "*None*")
+		end,
+		DewDropOptions = function(rule, level, value) 
+			if level == 1 then
+				dewdrop:AddLine('text', L["Equip Location Options"], 'isTitle', true)
+				dewdrop:AddLine('text', L["Location"], 'hasArrow', true,'value',"Location")
+
+			elseif level == 2 and value == "Location" then	
+				for k, v in pairs(EquipLocs) do
+					dewdrop:AddLine('text', getglobal(v) or v or "", "checked", rule.equiploc == v,"func",function(v) rule.equiploc = v Baggins:OnRuleChanged() end,"arg1",v)
+				end
+			end
+		end,
+		CleanRule = function(rule)
+			rule.equiploc = EquipLocs[1]
+		end,
+})
+
+
+
+-----------------------------------------------------------------------
+-- ItemLevel
+
+Baggins:AddCustomRule("ItemLevel", {
+		DisplayName = L["Item Level"],
+		Description = L["Filter by item's level - either \"ilvl\" or minimum required level"],
+		Matches = function(bag,slot,rule)
+			local link = GetContainerItemLink(bag, slot)
+			if not link then return false end
+			
+			local _,_,_, itemLevel, itemMinLevel = GetItemInfo(link)
+			local lvl = rule.useminlvl and itemMinLevel or itemLevel
+			
+			if not lvl then	-- can happen if itemcache hasn't been updated yet
+				return false
+			end
+			
+			if rule.include0 and lvl==0 then
+				return true
+			end
+			if rule.include1 and lvl==1 then
+				return true
+			end
+			
+			local minlvl = rule.minlvl or -999
+			local maxlvl = rule.maxlvl or 999
+			if rule.minlvl_rel then
+				minlvl = UnitLevel("player")+minlvl
+			end
+			if rule.maxlvl_rel then
+				maxlvl = UnitLevel("player")+maxlvl
+			end
+			
+			return lvl>=minlvl and lvl<=maxlvl
+		end,
+		GetName = function(rule)
+			local minlvl = rule.minlvl or -999
+			local maxlvl = rule.maxlvl or 999
+			if rule.minlvl_rel then
+				minlvl = UnitLevel("player")+minlvl
+			end
+			if rule.maxlvl_rel then
+				maxlvl = UnitLevel("player")+maxlvl
+			end
+			return (rule.useminlvl and L["ReqLvl"] or L["ILvl"]) .. ": " ..
+				(rule.include0 and "0, " or "") ..
+				(rule.include1 and "1, " or "") ..
+				max(minlvl,0) .. "-" ..
+				min(maxlvl,999);
+		end,
+		DewDropOptions = function(rule, level, value)
+			if level==1 then
+				dewdrop:AddLine('text', L["Item Level Options"], 'isTitle', true)
+				dewdrop:AddLine('text', L["Include Level 0"], "checked", rule.include0, "func",
+					function(b) rule.include0=not rule.include0; Baggins:OnRuleChanged() end);
+				dewdrop:AddLine('text', L["Include Level 1"], "checked", rule.include1, "func",
+					function(b) rule.include1=not rule.include1; Baggins:OnRuleChanged() end);
+				dewdrop:AddLine('text', L["Look at Required Level"], "checked", rule.useminlvl, "func",
+					function(b) rule.useminlvl=not rule.useminlvl; Baggins:OnRuleChanged() end);
+				dewdrop:AddLine('text', L["Look at Item's \"ILvl\""], "checked", not rule.useminlvl, "func",
+					function(b) rule.useminlvl=not rule.useminlvl; Baggins:OnRuleChanged() end);
+				dewdrop:AddSeparator()
+				dewdrop:AddLine('text', L["From level:"], "hasArrow", true, "hasEditBox", true, 
+					"editBoxText", tonumber(rule.minlvl) or -15, "editBoxFunc",
+					function(text) rule.minlvl = tonumber(text) or -15; Baggins:OnRuleChanged() end);
+				dewdrop:AddLine('text', L["... plus Player's Level"], "checked", rule.minlvl_rel, "func",
+					function(b) rule.minlvl_rel=not rule.minlvl_rel; Baggins:OnRuleChanged() end);
+				dewdrop:AddSeparator()
+				dewdrop:AddLine('text', L["To level:"], "hasArrow", true, "hasEditBox", true, 
+					"editBoxText", tonumber(rule.maxlvl) or 999, "editBoxFunc",
+					function(text) rule.maxlvl = tonumber(text) or 999; Baggins:OnRuleChanged() end);
+				dewdrop:AddLine('text', L["... plus Player's Level"], "checked", rule.maxlvl_rel, "func",
+					function(b) rule.maxlvl_rel=not rule.maxlvl_rel; Baggins:OnRuleChanged() end);
+			end
+		end,
+		CleanRule = function(rule)
+			rule.include0 = true
+			rule.include1 = false
+			rule.useminlvl = false
+			rule.minlvl_rel = true
+			rule.minlvl = -15
+			rule.maxlvl_rel = true
+			rule.maxlvl = 10
+		end,
+})
+
+
+
+-----------------------------------------------------------------------
+-- Other
+
+Baggins:AddCustomRule("Other", {
+		DisplayName = L["Unfiltered Items"],
+		Description = L["Matches all items that arent matched by any other bag, NOTE: this should be the only rule in a category, others will be ignored"],
+		Matches = function(bag,slot,rule) 
+			
+			--local key = bag..":"..slot
+			--return not useditems[key]
+		end,
+		GetName = function(rule) 
+			return L["Unfiltered"]
+		end,
+		DewDropOptions = function(rule, level, value) 
+			
+		end,
+})
+
+
+-----------------------------------------------------------------------
+-- Bind
+
+Baggins:AddCustomRule("Bind", {
+		DisplayName = L["Bind"],
+		Description = L["Filter based on if the item binds, or if it is already bound"],
+		Matches = function(bag, slot, rule)
+			if not rule.bindtype then return end
+			if rule.bindtype == "Soulbound" then
+				if bag == -1 then
+					gratuity:SetInventoryItem("player", BankButtonIDToInvSlotID(slot))
+				else
+					gratuity:SetBagItem(bag,slot)
+				end
+				if gratuity:Find(ITEM_SOULBOUND,2,2,false,false,true) then
+					return true
+				end
+			elseif rule.bindtype == "Unbound" then
+				local link = GetContainerItemLink(bag,slot)
+					if link then
+					if bag == -1 then
+						gratuity:SetInventoryItem("player", BankButtonIDToInvSlotID(slot))
+					else
+						gratuity:SetBagItem(bag,slot)
+					end
+					if not gratuity:Find(ITEM_SOULBOUND,2,2,false,false,true) then
+						return true
+					end
+				end
+			elseif rule.bindtype == "BoP" then
+				local link = GetContainerItemLink(bag,slot)
+				if link then
+					gratuity:SetHyperlink(link)
+					if gratuity:Find(ITEM_BIND_ON_PICKUP,2,2) then
+						return true
+					end
+				end
+			elseif rule.bindtype == "BoE" then
+				local link = GetContainerItemLink(bag,slot)
+				if link then
+					gratuity:SetHyperlink(link)
+					if gratuity:Find(ITEM_BIND_ON_EQUIP,2,2) then
+						return true
+					end
+				end
+			elseif rule.bindtype == "BoU" then
+				local link = GetContainerItemLink(bag,slot,2,2)
+				if link then
+					gratuity:SetHyperlink(link)
+					if gratuity:Find(ITEM_BIND_ON_USE,2,2) then
+						return true
+					end
+				end
+			end
+		end,
+		GetName = function(rule)
+			if rule.bindtype == "Soulbound" then
+				return ITEM_SOULBOUND
+			elseif rule.bindtype == "Unbound" then
+				return L["Unbound"]
+			elseif rule.bindtype == "BoP" then
+				return ITEM_BIND_ON_PICKUP
+			elseif rule.bindtype == "BoE" then
+				return ITEM_BIND_ON_EQUIP
+			elseif rule.bindtype == "BoU" then
+				return ITEM_BIND_ON_USE
+			else
+				return L["Bind *unset*"]
+			end
+		end,
+		DewDropOptions = function(rule, level, value)
+			if level == 1 then
+				dewdrop:AddLine('text', L["Bind Options"], 'isTitle', true)
+				dewdrop:AddLine('text', L["Bind Type"], 'hasArrow', true,'value',"BindType")
+
+			elseif level == 2 and value == "BindType" then	
+				dewdrop:AddLine('text', ITEM_SOULBOUND, "checked", rule.bindtype == "Soulbound","func",function() rule.bindtype = "Soulbound" Baggins:OnRuleChanged() end)
+				dewdrop:AddLine('text', L["Unbound"], "checked", rule.bindtype == "Unbound","func",function() rule.bindtype = "Unbound" Baggins:OnRuleChanged() end)
+				dewdrop:AddLine('text', ITEM_BIND_ON_PICKUP, "checked", rule.bindtype == "BoP","func",function() rule.bindtype = "BoP" Baggins:OnRuleChanged() end)
+				dewdrop:AddLine('text', ITEM_BIND_ON_EQUIP, "checked", rule.bindtype == "BoE","func",function() rule.bindtype = "BoE" Baggins:OnRuleChanged() end)
+				dewdrop:AddLine('text', ITEM_BIND_ON_USE, "checked", rule.bindtype == "BoU","func",function() rule.bindtype = "BoU" Baggins:OnRuleChanged() end)
+			end
+		end,
+})
+
+
+
+
+-----------------------------------------------------------------------
+-- Tooltip
+
+Baggins:AddCustomRule("Tooltip", {
+		DisplayName = L["Tooltip"],
+		Description = L["Filter based on text contained in its tooltip"],
+		Matches = function(bag, slot, rule)
+			if not rule.text then return end
+			local text = rule.text
+			--if the text is the name of a global string then match against that
+			if text:upper() == text then
+				local gtext = getglobal(rule.text)
+				if type(gtext) == "string" then
+					text = gtext
+				end
+			end
+			if bag == -1 then
+				gratuity:SetInventoryItem("player", BankButtonIDToInvSlotID(slot))
+			else
+				gratuity:SetBagItem(bag,slot)
+			end
+			if gratuity:Find(text) then
+				return true
+			end
+		end,
+		GetName = function(rule)
+			return L["Tooltip"]..": "..(rule.text or "")
+		end,
+		DewDropOptions = function(rule, level, value)
+			if level == 1 then
+				dewdrop:AddLine('text', L["Tooltip Options"], 'isTitle', true)
+				dewdrop:AddLine('text', L["String to Match"], 'hasArrow', true,"hasEditBox",true,"editBoxText", rule.text or "","editBoxFunc", function(text) rule.text = text Baggins:OnRuleChanged() end )	
+			end
+		end,
+})
+
+
+
+
+-----------------------------------------------------------------------
+-- PTSet
 
 ---------------------
 -- PT Set Browser  --
@@ -1207,5 +1268,28 @@ function Baggins:BuildPTSetTable()
 end
 
 
-
-
+if pt then
+	Baggins:AddCustomRule("PTSet", {
+		DisplayName = L["PeriodicTable Set"],
+		Description = L["Filter by PeriodicTable Set"],	
+		Matches = function(bag,slot,rule) 
+			if not rule.setname then return end
+			local link = GetContainerItemLink(bag, slot)
+			if link then
+				local itemid = link:match("item:(%d+)")
+				itemid = tonumber(itemid)
+				return pt:ItemInSet(itemid,rule.setname)
+			end
+		end,
+		GetName = function(rule) 
+			return "PTSet:"..(rule.setname or "*none*")
+		end,
+		DewDropOptions = function(rule, level, value, value_1, value_2)
+			Baggins:BuildPTSetTable()
+			if level == 1 then
+				dewdrop:AddLine('text', L["Periodic Table Set Options"], 'isTitle', true)
+			end
+			dewdrop:FeedAceOptionsTable(ptsets)
+		end,
+	})
+end
