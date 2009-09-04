@@ -9,10 +9,7 @@ local LBU = LibStub("LibBagUtils-1.0")
 local RuleTypes = {}
 
 local wipe=wipe
-local function new() return {} end
-local function del(t) wipe(t) end
 local tinsert = table.insert
-local rdel = del
 local band=bit.band
 
 local categorycache = {}
@@ -1189,8 +1186,7 @@ Baggins:AddCustomRule("Tooltip", {
 ---------------------
 function Baggins:BuildPTSetTable()
 	if not (pt and self.ptsetsdirty) then return end
-	rdel(ptsets.args)
-	ptsets.args = new()
+	ptsets.args = {}
 
 	local sets = pt.sets
 
@@ -1199,11 +1195,12 @@ function Baggins:BuildPTSetTable()
 		local oldLevel, oldParent, allowedFlag
 		for parent in setname:gmatch("([^%.]+)") do
 			if not workingLevel[parent] then
-				workingLevel[parent] = new()
-				workingLevel[parent].type = "group"
-				workingLevel[parent].name = parent
-				workingLevel[parent].desc = parent
-				workingLevel[parent].args = new()
+				workingLevel[parent] = {
+					type = "group",
+					name = parent,
+					desc = parent,
+					args = {}
+				}
 				allowedFlag = true
 			else
 				allowedFlag = false
@@ -1211,7 +1208,6 @@ function Baggins:BuildPTSetTable()
 			for k, v in pairs(workingLevel) do
 				local kname = k:match("0077ff([^%*]+)")
 				if kname == parent then
-					rdel(workingLevel[k])
 					workingLevel[k] = nil
 				end
 			end
@@ -1243,27 +1239,27 @@ function Baggins:BuildPTSetTable()
 					addSelfSetToOptions(v, x)
 				end
 			end
-			table.args.spacer = new()
-			table.args.spacer.type = "header"
-			table.args.spacer.name = " "
-			table.args.spacer.order = 999
+			table.args.spacer = {
+				type = "header",
+				name = " ",
+				order = 999,
+			}
 			
-			table.args.thisSet = new()
-			table.args.thisSet.order = 1000
-			table.args.thisSet.type = "execute"
-			table.args.thisSet.name = name
-			table.args.thisSet.desc = name
-			table.args.thisSet.func = function()
-				currentRule.setname = name
-				self:OnRuleChanged()
-			end
+			table.args.thisSet = {
+				order = 1000,
+				type = "execute",
+				name = name,
+				desc = name,
+				func = function()
+					currentRule.setname = name
+					self:OnRuleChanged()
+				end
+			}
 		end
 	end
 
 	addSelfSetToOptions(ptsets)
-	rdel(ptsets.args.spacer)
 	ptsets.args.spacer = nil
-	rdel(ptsets.args.thisSet)
 	ptsets.args.thisSet = nil
 	self.ptsetsdirty = false
 end
