@@ -260,7 +260,7 @@ function Baggins:SaveItemCounts()
 	for k in pairs(itemcounts) do
 		itemcounts[k] = nil
 	end
-	for bag = 0, 4 do
+	for bag = 0, NUM_BAG_SLOTS do
 		for slot = 1, GetContainerNumSlots(bag) do
 			local link = GetContainerItemLink(bag, slot)
 			if link then
@@ -834,7 +834,8 @@ function Baggins:UpdateSectionContents(sectionframe,title)
 	self:LayoutSection(sectionframe, title)
 end
 
-local function NameComp(a, b)
+
+local function baseComp(a, b)
 	local p = Baggins.db.profile
 	if type(a) == "table" then
 		for k, v in pairs(a.slots) do
@@ -854,10 +855,14 @@ local function NameComp(a, b)
 	end
 	local baga, slota = a:match("^(-?%d+):(%d+)$")
 	local bagb, slotb = b:match("^(-?%d+):(%d+)$")
+	baga=tonumber(baga)
+	slota=tonumber(slota)
+	bagb=tonumber(bagb)
+	slotb=tonumber(slotb)
 	local linka = GetContainerItemLink(baga, slota)
 	local linkb = GetContainerItemLink(bagb, slotb)
 	--if both are empty slots compare based on bag type
-	if not (linka or linkb) then
+	if not linka and not linkb then
 		local bagtypea = Baggins:IsSpecialBag(baga)
 		local bagtypeb = Baggins:IsSpecialBag(bagb)
 		if not bagtypea then
@@ -875,7 +880,7 @@ local function NameComp(a, b)
 		return true
 	end
 	
-	if p.sortnewfirst then
+	if p.sortnewfirst and baga>=0 and baga<=NUM_BAG_SLOTS then
 		local newa, newb = Baggins:IsNew(linka), Baggins:IsNew(linkb)
 		if newa and not newb then
 			return true
@@ -884,177 +889,106 @@ local function NameComp(a, b)
 			return false
 		end
 	end
+
+	return nil,linka,linkb,baga,slota,bagb,slotb
+end
+
+local function NameComp(a, b)
+	local res,linka,linkb,baga,slota,bagb,slotb=baseComp(a,b)
+	if res~=nil then return res end
 	
 	local namea = GetItemInfo(linka)
 	local nameb = GetItemInfo(linkb)
-	if not namea then return true end
-	if not nameb then return false end
-	if namea == nameb then
-		local counta = select(2, GetContainerItemInfo(baga, slota))
-		local countb = select(2, GetContainerItemInfo(bagb, slotb))
-		return counta < countb
-	else
+
+	if namea ~= nameb then
 		return namea < nameb
 	end
+
+	local counta = select(2, GetContainerItemInfo(baga, slota))
+	local countb = select(2, GetContainerItemInfo(bagb, slotb))
+	return counta > countb
 end
 local function QualityComp(a, b)
-	local p = Baggins.db.profile
-	if type(a) == "table" then
-		for k, v in pairs(a.slots) do
-			if v then
-				a = k
-				break
-			end
-		end
-	end
-	if type(b) == "table" then
-		for k, v in pairs(b.slots) do
-			if v then
-				b = k
-				break
-			end
-		end
-	end
-	local baga, slota = a:match("^(-?%d+):(%d+)$")
-	local bagb, slotb = b:match("^(-?%d+):(%d+)$")
-	local linka = GetContainerItemLink(baga, slota)
-	local linkb = GetContainerItemLink(bagb, slotb)
-	--if both are empty slots compare based on bag type
-	if not (linka or linkb) then
-		local bagtypea = Baggins:IsSpecialBag(baga)
-		local bagtypeb = Baggins:IsSpecialBag(bagb)
-		if not bagtypea then
-			return false
-		end
-		if not bagtypeb then
-			return true
-		end
-		return bagtypea < bagtypeb
-	end
-	if not linka then
-		return false
-	end
-	if not linkb then
-		return true
-	end
-
-	if p.sortnewfirst then
-		local newa, newb = Baggins:IsNew(linka), Baggins:IsNew(linkb)
-		if newa and not newb then
-			return true
-		end
-		if newb and not newa then
-			return false
-		end
-	end
+	local res,linka,linkb,baga,slota,bagb,slotb=baseComp(a,b)
+	if res~=nil then return res end
 	
 	local namea, _, quala = GetItemInfo(linka)
 	local nameb, _, qualb = GetItemInfo(linkb)
-	if not quala then return true end
-	if not qualb then return false end
-	if quala == qualb then
-		if namea == nameb then
-			local counta = select(2, GetContainerItemInfo(baga, slota))
-			local countb = select(2, GetContainerItemInfo(bagb, slotb))
-			return counta > countb
-		else
-			return namea < nameb
-		end
-	else
+	
+	if quala~=qualb then
 		return quala > qualb
 	end
+	
+	if namea ~= nameb then
+		return namea < nameb
+	end
+
+	local counta = select(2, GetContainerItemInfo(baga, slota))
+	local countb = select(2, GetContainerItemInfo(bagb, slotb))
+	return counta > countb
 end
 local function TypeComp(a, b)
-	local p = Baggins.db.profile
-	if type(a) == "table" then
-		for k, v in pairs(a.slots) do
-			if v then
-				a = k
-				break
-			end
-		end
-	end
-	if type(b) == "table" then
-		for k, v in pairs(b.slots) do
-			if v then
-				b = k
-				break
-			end
-		end
-	end
-	local baga, slota = a:match("^(-?%d+):(%d+)$")
-	local bagb, slotb = b:match("^(-?%d+):(%d+)$")
-	
-	local linka = GetContainerItemLink(baga, slota)
-	local linkb = GetContainerItemLink(bagb, slotb)
-	--if both are empty slots compare based on bag type
-	if not (linka or linkb) then
-		local bagtypea = Baggins:IsSpecialBag(baga)
-		local bagtypeb = Baggins:IsSpecialBag(bagb)
-		if not bagtypea then
-			return false
-		end
-		if not bagtypeb then
-			return true
-		end
-		return bagtypea < bagtypeb
-	end
-	if not linka then
-		return false
-	end
-	if not linkb then
-		return true
-	end
-	if p.sortnewfirst then
-		local newa, newb = Baggins:IsNew(linka), Baggins:IsNew(linkb)
-		if newa and not newb then
-			return true
-		end
-		if newb and not newa then
-			return false
-		end
-	end
+	local res,linka,linkb,baga,slota,bagb,slotb=baseComp(a,b)
+	if res~=nil then return res end
+
 	local namea, _, quala, _, _, typea, subtypea, _, equiploca = GetItemInfo(linka)
 	local nameb, _, qualb, _, _, typeb, subtypeb, _, equiplocb = GetItemInfo(linkb)
-	if not typea then return true end
-	if not typeb then return false end
-	if typea == typeb then
-		if (equiploca and equiplocs[equiploca]) and (equiplocb and equiplocs[equiplocb]) then
-			if equiplocs[equiploca] ~= equiplocs[equiplocb] then
-				return equiplocs[equiploca] < equiplocs[equiplocb]
-			end
-		end
-
-		if not quala then return true end
-		if not qualb then return false end
-		if quala == qualb then
-			if namea == nameb then
-				local counta = select(2, GetContainerItemInfo(baga, slota))
-				local countb = select(2, GetContainerItemInfo(bagb, slotb))
-				return counta > countb
-			else
-				return namea < nameb
-			end
-		else
-			return quala < qualb
-		end	
-
-	else
+	if typea ~= typeb then
 		return typea < typeb
 	end
+	
+	if (equiploca and equiplocs[equiploca]) and (equiplocb and equiplocs[equiplocb]) then
+		if equiplocs[equiploca] ~= equiplocs[equiplocb] then
+			return equiplocs[equiploca] < equiplocs[equiplocb]
+		end
+	end
+
+	if quala~=qualb then
+		return quala > qualb
+	end
+	
+	if namea ~= nameb then
+		return namea < nameb
+	end
+
+	local counta = select(2, GetContainerItemInfo(baga, slota))
+	local countb = select(2, GetContainerItemInfo(bagb, slotb))
+	return counta > countb
 end
 local function SlotComp(a, b)
 	local p = Baggins.db.profile
 	if type(a) == "table" then
 		a, b = (next(a.slots)), (next(b.slots))
 	end
-	local baga, slota = a:match("^(-?%d+):(%d+)$")
-	local bagb, slotb = b:match("^(-?%d+):(%d+)$")
+	local baga, slota = tonumber(a:match("^(-?%d+):(%d+)$"))
+	local bagb, slotb = tonumber(b:match("^(-?%d+):(%d+)$"))
 	if baga == bagb then
 		return slota < slotb
 	else
 		return baga < bagb
 	end
+end
+local function IlvlComp(a, b)
+	local res,linka,linkb,baga,slota,bagb,slotb=baseComp(a,b)
+	if res~=nil then return res end
+
+	local namea, _, quala, ilvla = GetItemInfo(linka)
+	local nameb, _, qualb, ilvlb = GetItemInfo(linkb)
+	if ilvla~=ilvlb then
+		return ilvla>ilvlb
+	end
+
+	if quala~=qualb then
+		return quala > qualb
+	end
+	
+	if namea ~= nameb then
+		return namea < nameb
+	end
+
+	local counta = select(2, GetContainerItemInfo(baga, slota))
+	local countb = select(2, GetContainerItemInfo(bagb, slotb))
+	return counta > countb
 end
 
 function Baggins:SortItemList(itemlist, sorttype)
@@ -1067,10 +1001,12 @@ function Baggins:SortItemList(itemlist, sorttype)
 		func = TypeComp
 	elseif sorttype == "slot" then
 		func = SlotComp
+	elseif sorttype == "ilvl" then
+		func = IlvlComp
 	else
 		return
 	end
-	table.sort(itemlist,func)
+	table.sort(itemlist, func)
 end
 
 ------------------------
@@ -2107,15 +2043,18 @@ end
 function Baggins:IsNew(itemid)
 	local itemcounts = self.itemcounts
 	itemid = tonumber(itemid) or tonumber(itemid:match("item:(%d+)"))
+	if not itemid then
+		return nil
+	end
 	local savedcount = itemcounts[itemid] 
 	if not savedcount then
-		return 1
+		return 1	-- completely new
 	else
 		local count = GetItemCount(itemid)
 		if count > savedcount then
-			return 2
+			return 2	-- more of an existing
 		else
-			return nil
+			return nil	-- not new
 		end
 	end
 end
@@ -2140,7 +2079,7 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
 		button.glow:Hide()
 	end
 	local text = button.newtext
-	if p.highlightnew and itemid and bag >= 0 and bag <= 4 then
+	if p.highlightnew and itemid and bag >= 0 and bag <= NUM_BAG_SLOTS then
 		local isNew = self:IsNew(itemid)
 		if isNew == 1 then
 			text:SetText(L["*New*"])
