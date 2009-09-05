@@ -527,7 +527,7 @@ function Baggins:InitOptions()
 						order = 100,
 						get = function() return p.sort end,
 						set = function(value) p.sort = value self:UpdateBags() end,
-						validate = {'quality', 'name', 'type', 'slot' }
+						validate = {'quality', 'name', 'type', 'slot', 'ilvl' }
 					},
 					SortNewFirst = {
 						name = L["Sort New First"],
