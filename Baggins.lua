@@ -1350,17 +1350,16 @@ function Baggins:ReallyLayoutSection(sectionframe, cols)
 					local itemframe = sectionframe.items[itemframeno]
 					itemframeno = itemframeno + 1
 					itemframe:SetPoint("TOPLEFT",sectionframe,"TOPLEFT",((itemnum-1)%cols)*39,-(BaseTop+(math.floor((itemnum-1)/cols)*39)))
-					local bag, slot = GetSlotInfo(next(v.slots))
-					if v.slotcount > 1 then
+					local bag, slot, itemid = GetSlotInfo(next(v.slots))
+					if v.slotcount > 1 or not itemid then
 						itemframe.countoverride = true
 					else
 						itemframe.countoverride = nil
 					end
 					if not itemframe.slots then
 						itemframe.slots = {}
-					end
-					for k in pairs(itemframe.slots) do
-						itemframe.slots[k] = nil
+					else
+						wipe(itemframe.slots)
 					end
 					for slot in pairs(v.slots) do
 						tinsert(itemframe.slots, slot)
