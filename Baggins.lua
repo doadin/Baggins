@@ -1351,7 +1351,7 @@ function Baggins:ReallyLayoutSection(sectionframe, cols)
 					itemframeno = itemframeno + 1
 					itemframe:SetPoint("TOPLEFT",sectionframe,"TOPLEFT",((itemnum-1)%cols)*39,-(BaseTop+(math.floor((itemnum-1)/cols)*39)))
 					local bag, slot, itemid = GetSlotInfo(next(v.slots))
-					if v.slotcount > 1 or not itemid then
+					if v.slotcount > 1 or ((p.compressall or p.compressempty) and not itemid) then
 						itemframe.countoverride = true
 					else
 						itemframe.countoverride = nil
