@@ -1065,18 +1065,18 @@ Baggins:AddCustomRule("Bind", {
 				else
 					gratuity:SetBagItem(bag,slot)
 				end
-				if gratuity:Find(ITEM_SOULBOUND,2,2,false,false,true) then
+				if gratuity:Find(ITEM_SOULBOUND,2,3,false,false,true) then
 					return true
 				end
 			elseif rule.bindtype == "Unbound" then
 				local link = GetContainerItemLink(bag,slot)
-					if link then
+				if link then
 					if bag == -1 then
 						gratuity:SetInventoryItem("player", BankButtonIDToInvSlotID(slot))
 					else
 						gratuity:SetBagItem(bag,slot)
 					end
-					if not gratuity:Find(ITEM_SOULBOUND,2,2,false,false,true) then
+					if not gratuity:Find(ITEM_SOULBOUND,2,3,false,false,true) then
 						return true
 					end
 				end
@@ -1084,7 +1084,7 @@ Baggins:AddCustomRule("Bind", {
 				local link = GetContainerItemLink(bag,slot)
 				if link then
 					gratuity:SetHyperlink(link)
-					if gratuity:Find(ITEM_BIND_ON_PICKUP,2,2) then
+					if gratuity:Find(ITEM_BIND_ON_PICKUP,2,3) then
 						return true
 					end
 				end
@@ -1092,15 +1092,23 @@ Baggins:AddCustomRule("Bind", {
 				local link = GetContainerItemLink(bag,slot)
 				if link then
 					gratuity:SetHyperlink(link)
-					if gratuity:Find(ITEM_BIND_ON_EQUIP,2,2) then
+					if gratuity:Find(ITEM_BIND_ON_EQUIP,2,3) then
 						return true
 					end
 				end
 			elseif rule.bindtype == "BoU" then
-				local link = GetContainerItemLink(bag,slot,2,2)
+				local link = GetContainerItemLink(bag,slot)
 				if link then
 					gratuity:SetHyperlink(link)
-					if gratuity:Find(ITEM_BIND_ON_USE,2,2) then
+					if gratuity:Find(ITEM_BIND_ON_USE,2,3) then
+						return true
+					end
+				end
+			elseif rule.bindtype == "BoA" then
+				local link = GetContainerItemLink(bag,slot)
+				if link then
+					gratuity:SetHyperlink(link)
+					if gratuity:Find(ITEM_BIND_TO_ACCOUNT,2,3) then
 						return true
 					end
 				end
@@ -1117,6 +1125,8 @@ Baggins:AddCustomRule("Bind", {
 				return ITEM_BIND_ON_EQUIP
 			elseif rule.bindtype == "BoU" then
 				return ITEM_BIND_ON_USE
+			elseif rule.bindtype == "BoA" then
+				return ITEM_BIND_TO_ACCOUNT
 			else
 				return L["Bind *unset*"]
 			end
@@ -1132,6 +1142,7 @@ Baggins:AddCustomRule("Bind", {
 				dewdrop:AddLine('text', ITEM_BIND_ON_PICKUP, "checked", rule.bindtype == "BoP","func",function() rule.bindtype = "BoP" Baggins:OnRuleChanged() end)
 				dewdrop:AddLine('text', ITEM_BIND_ON_EQUIP, "checked", rule.bindtype == "BoE","func",function() rule.bindtype = "BoE" Baggins:OnRuleChanged() end)
 				dewdrop:AddLine('text', ITEM_BIND_ON_USE, "checked", rule.bindtype == "BoU","func",function() rule.bindtype = "BoU" Baggins:OnRuleChanged() end)
+				dewdrop:AddLine('text', ITEM_BIND_TO_ACCOUNT, "checked", rule.bindtype == "BoA","func",function() rule.bindtype = "BoA" Baggins:OnRuleChanged() end)
 			end
 		end,
 })
