@@ -257,21 +257,25 @@ end
 
 function Baggins:SaveItemCounts()
 	local itemcounts = self.itemcounts
-	for k in pairs(itemcounts) do
-		itemcounts[k] = nil
-	end
-	for bag = 0, NUM_BAG_SLOTS do
-		for slot = 1, GetContainerNumSlots(bag) do
-			local link = GetContainerItemLink(bag, slot)
-			if link then
-				local id = tonumber(link:match("item:(%d+)"))
-				if id and not itemcounts[id] then
-					itemcounts[id] = GetItemCount(id)
-				end
+	wipe(itemcounts)
+	for bag,slot,link in LBU:Iterate("BAGS") do	-- includes keyring
+		if link then
+			local id = tonumber(link:match("item:(%d+)"))
+			if id and not itemcounts[id] then
+				itemcounts[id] = GetItemCount(id)
 			end
 		end
 	end
-	for slot = 0, 23 do
+	for slot = 0, INVSLOT_LAST_EQUIPPED do	-- 0--19
+		local link = GetInventoryItemLink("player",slot)
+		if link then
+			local id = tonumber(link:match("item:(%d+)"))
+			if id and not itemcounts[id] then
+				itemcounts[id] = GetItemCount(id)
+			end
+		end
+	end
+	for slot = 1+CONTAINER_BAG_OFFSET, NUM_BAG_SLOTS+CONTAINER_BAG_OFFSET do  -- 20--23
 		local link = GetInventoryItemLink("player",slot)
 		if link then
 			local id = tonumber(link:match("item:(%d+)"))
@@ -960,9 +964,11 @@ local function SlotComp(a, b)
 	if type(a) == "table" then
 		a, b = (next(a.slots)), (next(b.slots))
 	end
-	local baga, slota = tonumber(a:match("^(-?%d+):(%d+)$"))
-	local bagb, slotb = tonumber(b:match("^(-?%d+):(%d+)$"))
+	local baga, slota = a:match("^(-?%d+):(%d+)$")
+	local bagb, slotb = b:match("^(-?%d+):(%d+)$")
 	if baga == bagb then
+		slota = tonumber(slota)
+		slotb = tonumber(slotb)
 		return slota < slotb
 	else
 		return baga < bagb
