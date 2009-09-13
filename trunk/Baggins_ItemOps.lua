@@ -21,24 +21,8 @@ local charBags = {}
 for i=0, NUM_BAG_SLOTS do
 	tinsert(charBags, i);
 end
+tinsert(charBags, KEYRING_CONTAINER)
 
-
-local FMASK_GENERIC = 65536*65536
-
-local function GetItemFMask(link)
-	return GetItemFamily(link) + FMASK_GENERIC
-end
-
-local function GetBagFMask(bag)
-	local _,family = GetContainerNumFreeSlots(bag)
-	if not family then
-		return 0
-	elseif family==0 then
-		return FMASK_GENERIC
-	else
-		return family
-	end
-end
 
 
 ------------------------------------------------------
@@ -114,7 +98,7 @@ function Baggins:MoveToSpecialtyBags(bank,testonly)
 		specialtyTargetBags[k] = nil;
 	end
 	for _,bag in ipairs(bank and bankBags or charBags) do
-		local free,bagFamily = GetContainerNumFreeSlots(bag)
+		local free,bagFamily = LBU:GetContainerNumFreeSlots(bag)
 		if free>0 and bagFamily~=0 then
 			for slot=1, (GetContainerNumSlots(bag) or 0) do
 				if not GetContainerItemLink(bag, slot) then
@@ -128,7 +112,7 @@ function Baggins:MoveToSpecialtyBags(bank,testonly)
 	-- Find stuff that can go in specialty bags
 	if next(specialtyTargetBags) then
 		for _,bag in ipairs(bank and bankBags or charBags) do
-			local _,bagFamily = GetContainerNumFreeSlots(bag)
+			local bagFamily = LBU:GetContainerFamily(bag)
 			if bagFamily==0 then	-- only examine stuff in normal bags
 				for slot=1, (GetContainerNumSlots(bag) or 0) do
 					local link = GetContainerItemLink(bag, slot)
@@ -230,7 +214,7 @@ local function BagginsItemButton_Split(bag,slot,amount)
 	local itemFamily = GetItemFamily(link)
 	if itemFamily~=0 then
 		for _,destbag in ipairs(charBags) do
-			local free,bagFamily = GetContainerNumFreeSlots(destbag)
+			local free,bagFamily = LBU:GetContainerNumFreeSlots(destbag)
 			if free>0 and bit.band(bagFamily,itemFamily)~=0 then
 				for destslot=1, GetContainerNumSlots(destbag) do
 					if not GetContainerItemLink(destbag, destslot) then	
