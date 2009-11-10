@@ -857,14 +857,15 @@ local function baseComp(a, b)
 			end
 		end
 	end
-	local baga, slota = a:match("^(-?%d+):(%d+)$")
-	local bagb, slotb = b:match("^(-?%d+):(%d+)$")
+	-- getting a or b as nil here shouldn't happen. but it happens.
+	local baga, slota = strmatch(a or "", "^(-?%d+):(%d+)$")
+	local bagb, slotb = strmatch(b or "", "^(-?%d+):(%d+)$")
 	baga=tonumber(baga)
 	slota=tonumber(slota)
 	bagb=tonumber(bagb)
 	slotb=tonumber(slotb)
-	local linka = GetContainerItemLink(baga, slota)
-	local linkb = GetContainerItemLink(bagb, slotb)
+	local linka = baga and slota and GetContainerItemLink(baga, slota)
+	local linkb = bagb and slotb and GetContainerItemLink(bagb, slotb)
 	--if both are empty slots compare based on bag type
 	if not linka and not linkb then
 		local bagtypea = Baggins:IsSpecialBag(baga)
