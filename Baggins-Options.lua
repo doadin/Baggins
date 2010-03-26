@@ -43,6 +43,7 @@ function Baggins:InitOptions()
 		bottomoffset = 50,
 		leftoffset = 50,
 		layoutanchor = "BOTTOMRIGHT",
+		highlightquestitems = true,
 		qualitycolorintensity = 0.3,
 		qualitycolor = true,
 		qualitycolormin = 2,
@@ -316,6 +317,17 @@ function Baggins:InitOptions()
 								disabled = function() return not p.qualitycolor end,
 							},
 						}
+					},
+					QuestItems = {
+						name = L["Highlight quest items"],
+						type = "toggle",
+						desc = L["Displays a special border around quest items and a exclamation mark over items that starts new quests."],
+						order = 17,
+						get = function() return p.highlightquestitems end,
+						set = function(value)
+							p.highlightquestitems = value
+							self:UpdateItemButtons()
+						end,
 					},
 					HideDuplicates = {
 						name = L["Hide Duplicate Items"],

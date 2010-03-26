@@ -449,6 +449,9 @@ L:RegisterTranslations("enUS", function()
 		["To level:"] = true,
 		["... plus Player's Level"] = true,
 		
+		["Highlight quest items"] = true,
+		["Displays a special border around quest items and a exclamation mark over items that starts new quests."] = true,
+		
 	}
 	
 end)
