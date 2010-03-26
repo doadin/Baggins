@@ -169,6 +169,8 @@ function Baggins:OnEnable(firstload)
 	self:RegisterEvent("BAG_UPDATE", "OnBagUpdate")
 	self:RegisterEvent("BAG_UPDATE_COOLDOWN", "UpdateItemButtonCooldowns")
 	self:RegisterEvent("ITEM_LOCK_CHANGED", "UpdateItemButtonLocks")
+	self:RegisterEvent("QUEST_ACCEPTED", "UpdateItemButtons")
+	self:RegisterEvent("UNIT_QUEST_LOG_CHANGED", "UpdateItemButtons")
 	self:RegisterEvent("PLAYERBANKSLOTS_CHANGED", "OnBankChanged")
 	self:RegisterEvent("BANKFRAME_CLOSED", "OnBankClosed")
 	self:RegisterEvent("BANKFRAME_OPENED", "OnBankOpened")
@@ -1658,7 +1660,7 @@ function Baggins:CreateItemButton(sectionframe,item)
 	frame.newtext:SetShadowOffset(1,-1)
 	frame.newtext:SetText("*New*")
 	frame.newtext:Hide()
-	
+
 	frame:ClearAllPoints()
 	local cooldown = getglobal(frame:GetName().."Cooldown")
 	cooldown:SetAllPoints(frame)
@@ -2069,15 +2071,24 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
 	local p = self.db.profile
 	local texture, itemCount, locked, quality, readable = GetContainerItemInfo(bag, slot)
 	local link = GetContainerItemLink(bag, slot)
-	local itemid
+	local itemid	
 	if link then
 		local qual = select(3, GetItemInfo(link))
 		quality = qual or quality
 		itemid = tonumber(link:match("item:(%d+)"))
 	end
 	button:SetID(slot)
-	if p.qualitycolor and texture and quality >= p.qualitycolormin then
+	-- quest item glow introduced in 3.3 (with silly logic)
+	local isQuestItem, questId, isActive = GetContainerItemQuestInfo(bag, slot)
+	local questTexture = (questId and not isActive) and TEXTURE_ITEM_QUEST_BANG or (questId or isQuestItem) and TEXTURE_ITEM_QUEST_BORDER
+	if p.highlightquestitems and texture and questTexture then
+		button.glow:SetTexture(questTexture)
+		button.glow:SetVertexColor(1,1,1)
+		button.glow:SetAlpha(1)
+		button.glow:Show()
+	elseif p.qualitycolor and texture and quality >= p.qualitycolormin then
 		local r, g, b = GetItemQualityColor(quality)
+		button.glow:SetTexture("Interface\\Addons\\Baggins\\Textures\\Glow")
 		button.glow:SetVertexColor(r,g,b)
 		button.glow:SetAlpha(p.qualitycolorintensity)
 		button.glow:Show()
