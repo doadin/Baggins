@@ -1440,7 +1440,7 @@ local f = CreateFrame("frame","BagginsBagPlacement",UIParent)
 	f:SetResizable(true)
 	f:SetClampedToScreen(true)
 	f:SetScript("OnMouseDown",function(this, button) if button == "RightButton" then this:Hide() else this:StartMoving() end end)
-	f:SetScript("OnMouseUp", function() this:StopMovingOrSizing() self:SaveBagPlacement() end)
+	f:SetScript("OnMouseUp", function(this) this:StopMovingOrSizing() self:SaveBagPlacement() end)
 
 	f.t = CreateFrame("frame","BagginsBagPlacementTopMover",f)
 	f.t:SetPoint("TOPLEFT",f,"TOPLEFT",0,0)
@@ -1452,8 +1452,8 @@ local f = CreateFrame("frame","BagginsBagPlacement",UIParent)
 	                                            insets = { left = 0, right = 0, top = 0, bottom = 0 }})
 	f.t:SetBackdropColor(0,0,1,1)
 	f.t:EnableMouse(true)
-	f.t:SetScript("OnMouseDown",function() this:GetParent():StartSizing("TOP") end)
-	f.t:SetScript("OnMouseUp", function() this:GetParent():StopMovingOrSizing() self:SaveBagPlacement() end)
+	f.t:SetScript("OnMouseDown",function(this) this:GetParent():StartSizing("TOP") end)
+	f.t:SetScript("OnMouseUp", function(this) this:GetParent():StopMovingOrSizing() self:SaveBagPlacement() end)
 	
 	f.b = CreateFrame("frame","BagginsBagPlacementTopMover",f)
 	f.b:SetPoint("BOTTOMLEFT",f,"BOTTOMLEFT",0,0)
@@ -1465,8 +1465,8 @@ local f = CreateFrame("frame","BagginsBagPlacement",UIParent)
 	                                            insets = { left = 0, right = 0, top = 0, bottom = 0 }})
 	f.b:SetBackdropColor(0,0,1,1)
 	f.b:EnableMouse(true)
-	f.b:SetScript("OnMouseDown",function() this:GetParent():StartSizing("BOTTOM") end)
-	f.b:SetScript("OnMouseUp", function() this:GetParent():StopMovingOrSizing() self:SaveBagPlacement() end)
+	f.b:SetScript("OnMouseDown",function(this) this:GetParent():StartSizing("BOTTOM") end)
+	f.b:SetScript("OnMouseUp", function(this) this:GetParent():StopMovingOrSizing() self:SaveBagPlacement() end)
 	
 	f.midtext = f:CreateFontString(nil,"OVERLAY","GameFontNormalSmall")
 	f.midtext:SetText(L["Drag to Move\nRight-Click to Close"])
@@ -1776,11 +1776,11 @@ function Baggins:CreateBagFrame(bagid)
 	
 	
 	frame.closebutton = CreateFrame("Button",bagname.."CloseButton",frame,"UIPanelCloseButton")
-	frame.closebutton:SetScript("OnClick", function()
+	frame.closebutton:SetScript("OnClick", function(this)
 		if IsShiftKeyDown() then
 			self:CloseAllBags()
 		else
-			self:CloseBag(this:GetParent().bagid) 
+  		    self:CloseBag(this:GetParent().bagid) 
 		end
 	end)
 	
@@ -1789,12 +1789,12 @@ function Baggins:CreateBagFrame(bagid)
 	frame.compressbutton:SetScript("OnClick", function()
 		self:CompressBags(Baggins.db.profile.bags[frame.bagid].isBank);
 	end)
-	frame.compressbutton:SetScript("OnEnter", function()
+	frame.compressbutton:SetScript("OnEnter", function(this)
 		GameTooltip:SetOwner(this, 'ANCHOR_DEFAULT')
 		GameTooltip:SetText(L["Compress bag contents"]);
 		GameTooltip:Show();
 	end)
-	frame.compressbutton:SetScript("OnLeave", function()
+	frame.compressbutton:SetScript("OnLeave", function(this)
 		if(GameTooltip:IsOwned(this)) then
 			GameTooltip:Hide();
 		end
