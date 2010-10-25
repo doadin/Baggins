@@ -1,4 +1,5 @@
-Baggins = AceLibrary("AceAddon-2.0"):new("AceConsole-2.0", "AceDB-2.0", "AceEvent-2.0", "AceDebug-2.0", "FuBarPlugin-2.0", "AceHook-2.1")
+local _G = _G
+_G.Baggins = AceLibrary("AceAddon-2.0"):new("AceConsole-2.0", "AceDB-2.0", "AceEvent-2.0", "AceDebug-2.0", "FuBarPlugin-2.0", "AceHook-2.1")
 
 local Baggins = Baggins
 local pt = LibStub("LibPeriodicTable-3.1", true)
@@ -7,6 +8,7 @@ local tablet = AceLibrary("Tablet-2.0")
 local dewdrop = AceLibrary("Dewdrop-2.0")
 local LBU = LibStub("LibBagUtils-1.0")
 
+local ipairs,table,math,tonumber,pairs = ipairs,table,math,tonumber,pairs
 
 Baggins.hasIcon = "Interface\\Icons\\INV_Jewelry_Ring_03"
 Baggins.cannotDetachTooltip = true
@@ -14,8 +16,8 @@ Baggins.clickableTooltip = true
 Baggins.independentProfile = true
 Baggins.hideWithoutStandby = true
 
-BINDING_HEADER_BAGGINS = L["Baggins"]
-BINDING_NAME_BAGGINS_TOGGLEALL = L["Toggle All Bags"]
+_G.BINDING_HEADER_BAGGINS = L["Baggins"]
+_G.BINDING_NAME_BAGGINS_TOGGLEALL = L["Toggle All Bags"]
 
 local equiplocs = {
 	INVTYPE_AMMO = 0, 
@@ -69,7 +71,6 @@ local rdel = del
 local signals = {}
 
 function Baggins:RegisterSignal(name, handler, arg1)		-- Example: RegisterSignal("MySignal", self.SomeHandler, self)
-	assert(arg1);
 	if not signals[name] then
 		signals[name] = {}
 	end
@@ -887,7 +888,7 @@ local function baseComp(a, b)
 		return true
 	end
 	
-	if p.sortnewfirst and baga>=0 and baga<=NUM_BAG_SLOTS then
+	if p.sortnewfirst and not LBU:IsBank(baga) then
 		local newa, newb = Baggins:IsNew(linka), Baggins:IsNew(linkb)
 		if newa and not newb then
 			return true
@@ -911,8 +912,8 @@ local function NameComp(a, b)
 		return namea < nameb
 	end
 
-	local counta = select(2, GetContainerItemInfo(baga, slota))
-	local countb = select(2, GetContainerItemInfo(bagb, slotb))
+	local _,counta = GetContainerItemInfo(baga, slota)
+	local _,countb = GetContainerItemInfo(bagb, slotb)
 	return counta > countb
 end
 local function QualityComp(a, b)
@@ -930,8 +931,8 @@ local function QualityComp(a, b)
 		return namea < nameb
 	end
 
-	local counta = select(2, GetContainerItemInfo(baga, slota))
-	local countb = select(2, GetContainerItemInfo(bagb, slotb))
+	local _,counta = GetContainerItemInfo(baga, slota)
+	local _,countb = GetContainerItemInfo(bagb, slotb)
 	return counta > countb
 end
 local function TypeComp(a, b)
@@ -958,8 +959,8 @@ local function TypeComp(a, b)
 		return namea < nameb
 	end
 
-	local counta = select(2, GetContainerItemInfo(baga, slota))
-	local countb = select(2, GetContainerItemInfo(bagb, slotb))
+	local _,counta = GetContainerItemInfo(baga, slota)
+	local _,countb = GetContainerItemInfo(bagb, slotb)
 	return counta > countb
 end
 local function SlotComp(a, b)
@@ -995,8 +996,8 @@ local function IlvlComp(a, b)
 		return namea < nameb
 	end
 
-	local counta = select(2, GetContainerItemInfo(baga, slota))
-	local countb = select(2, GetContainerItemInfo(bagb, slotb))
+	local _,counta = GetContainerItemInfo(baga, slota)
+	local _,countb = GetContainerItemInfo(bagb, slotb)
 	return counta > countb
 end
 
@@ -1066,7 +1067,7 @@ function Baggins:OptimizeSectionLayout(bagid)
 		local count = sectionframe.itemcount
 		if sectionframe.used and (count > 0 or not p.hideemptysections) then
 			local minwidth = self:GetSectionSize(sectionframe, 1)
-			local minheight = select(2, self:GetSectionSize(sectionframe))
+			local _,minheight = self:GetSectionSize(sectionframe)
 
 			--[[
 			self:Debug("Section #%d, %d item(s), title width: %q, min width: %q, min height: %q",
@@ -1549,7 +1550,7 @@ end
 local function BagginsItemButton_PreClick(button)
 	for i, v in ipairs(button.slots) do
 		local bag, slot = GetSlotInfo(v)
-		local locked =select(3, GetContainerItemInfo(bag, slot))
+		local _,_,locked = GetContainerItemInfo(bag, slot)
 		if not locked then
 			button:SetID(slot)
 			local bagframe = button:GetParent():GetParent()
@@ -1662,7 +1663,7 @@ function Baggins:CreateItemButton(sectionframe,item)
 	frame.newtext:Hide()
 
 	frame:ClearAllPoints()
-	local cooldown = getglobal(frame:GetName().."Cooldown")
+	local cooldown = _G[frame:GetName().."Cooldown"]
 	cooldown:SetAllPoints(frame)
 	cooldown:SetFrameLevel(10)
 	frame:SetFrameStrata("HIGH")
@@ -1985,7 +1986,7 @@ function Baggins:UpdateItemButtonLocks()
 		for sectionid, section in ipairs(bag.sections) do
 			for buttonid, button in ipairs(section.items) do
 				if button:IsVisible() then
-					local locked = select(3, GetContainerItemInfo(button:GetParent():GetID(), button:GetID()))
+					local _,_,locked = GetContainerItemInfo(button:GetParent():GetID(), button:GetID())
 					SetItemButtonDesaturated(button, locked, 0.5, 0.5, 0.5)
 				end
 			end
@@ -2005,7 +2006,7 @@ function Baggins:UpdateItemButtonCooldowns()
 						self:UpdateItemButtonCooldown(container, button)
 						button.hasItem = 1
 					else
-						getglobal(button:GetName().."Cooldown"):Hide()
+						_G[button:GetName().."Cooldown"]:Hide()
 						button.hasItem = nil
 					end
 				end
@@ -2021,7 +2022,7 @@ function Baggins:SetItemButtonCount(button, count, realcount)
 	if not count then
 		count = 0
 	end
-	local counttext = getglobal(button:GetName().."Count")
+	local counttext = _G[button:GetName().."Count"]
 	if button.countoverride then
 		button.count = realcount
 	else
@@ -2073,7 +2074,7 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
 	local link = GetContainerItemLink(bag, slot)
 	local itemid	
 	if link then
-		local qual = select(3, GetItemInfo(link))
+		local _,_,qual = GetItemInfo(link)
 		quality = qual or quality
 		itemid = tonumber(link:match("item:(%d+)"))
 	end
@@ -2148,7 +2149,7 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
 		self:UpdateItemButtonCooldown(bag, button)
 		button.hasItem = 1
 	else
-		getglobal(button:GetName().."Cooldown"):Hide()
+		_G[button:GetName().."Cooldown"]:Hide()
 		button.hasItem = nil
 	end
 
@@ -2193,7 +2194,7 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
 end
 
 function Baggins:UpdateItemButtonCooldown(container, button)
-	local cooldown = getglobal(button:GetName().."Cooldown")
+	local cooldown = _G[button:GetName().."Cooldown"]
 	local start, duration, enable = GetContainerItemCooldown(container, button:GetID())
 	CooldownFrame_SetTimer(cooldown, start, duration, enable)
 	if ( duration > 0 and enable == 0 ) then
