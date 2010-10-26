@@ -118,7 +118,7 @@ function Baggins:MoveToSpecialtyBags(bank,testonly)
 					local link = GetContainerItemLink(bag, slot)
 					if link then
 						local itemFamily = GetItemFamily(link)
-						if itemFamily~=0 then
+						if itemFamily and itemFamily~=0 then	-- itemFamily can apparently be null? (before item is cached?)
 							if select(9, GetItemInfo(link))=="INVTYPE_BAG" then
 								-- specialty bags dont go in specialty bags
 							else
