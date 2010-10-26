@@ -909,12 +909,12 @@ local function NameComp(a, b)
 	local nameb = GetItemInfo(linkb)
 
 	if namea ~= nameb then
-		return namea < nameb
+		return (namea  or "?") < (nameb or "?") 
 	end
 
 	local _,counta = GetContainerItemInfo(baga, slota)
 	local _,countb = GetContainerItemInfo(bagb, slotb)
-	return counta > countb
+	return (counta  or 0) > (countb or 0) 
 end
 local function QualityComp(a, b)
 	local res,linka,linkb,baga,slota,bagb,slotb=baseComp(a,b)
@@ -924,16 +924,16 @@ local function QualityComp(a, b)
 	local nameb, _, qualb = GetItemInfo(linkb)
 	
 	if quala~=qualb then
-		return quala > qualb
+		return (quala  or 0) > (qualb  or 0) 
 	end
 	
 	if namea ~= nameb then
-		return namea < nameb
+		return (namea  or "?") < (nameb or "?") 
 	end
 
 	local _,counta = GetContainerItemInfo(baga, slota)
 	local _,countb = GetContainerItemInfo(bagb, slotb)
-	return counta > countb
+	return (counta  or 0) > (countb  or 0) 
 end
 local function TypeComp(a, b)
 	local res,linka,linkb,baga,slota,bagb,slotb=baseComp(a,b)
@@ -941,7 +941,7 @@ local function TypeComp(a, b)
 
 	local namea, _, quala, _, _, typea, subtypea, _, equiploca = GetItemInfo(linka)
 	local nameb, _, qualb, _, _, typeb, subtypeb, _, equiplocb = GetItemInfo(linkb)
-	if typea ~= typeb then
+	if (typea or "?")  ~= (typeb  or "?") then
 		return typea < typeb
 	end
 	
@@ -952,16 +952,16 @@ local function TypeComp(a, b)
 	end
 
 	if quala~=qualb then
-		return quala > qualb
+		return (quala or 0)  > (qualb or 0) 
 	end
 	
 	if namea ~= nameb then
-		return namea < nameb
+		return (namea or "?")  < (nameb or "?") 
 	end
 
 	local _,counta = GetContainerItemInfo(baga, slota)
 	local _,countb = GetContainerItemInfo(bagb, slotb)
-	return counta > countb
+	return (counta or 0)  > (countb or 0) 
 end
 local function SlotComp(a, b)
 	local p = Baggins.db.profile
@@ -985,20 +985,20 @@ local function IlvlComp(a, b)
 	local namea, _, quala, ilvla = GetItemInfo(linka)
 	local nameb, _, qualb, ilvlb = GetItemInfo(linkb)
 	if ilvla~=ilvlb then
-		return ilvla>ilvlb
+		return (ilvla or 0) > (ilvlb or 0)
 	end
 
 	if quala~=qualb then
-		return quala > qualb
+		return (quala or 0) > (qualb or 0) 
 	end
 	
 	if namea ~= nameb then
-		return namea < nameb
+		return (namea or "?")  < (nameb or "?") 
 	end
 
 	local _,counta = GetContainerItemInfo(baga, slota)
 	local _,countb = GetContainerItemInfo(bagb, slotb)
-	return counta > countb
+	return (counta  or 0) > (countb or 0) 
 end
 
 function Baggins:SortItemList(itemlist, sorttype)
@@ -2097,7 +2097,7 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
 		button.glow:Hide()
 	end
 	local text = button.newtext
-	if p.highlightnew and itemid and bag >= 0 and bag <= NUM_BAG_SLOTS then
+	if p.highlightnew and itemid and not LBU:IsBank(bag) then
 		local isNew = self:IsNew(itemid)
 		if isNew == 1 then
 			text:SetText(L["*New*"])
