@@ -1165,7 +1165,7 @@ function Baggins:ReallyUpdateBagFrameSize(bagid)
 	local height = s.BagTopPadding + s.BagBottomPadding
 
 	if not p.shrinkbagtitle then
-		width = width + bagframe.title:GetWidth()
+		width = width + bagframe.title:GetStringWidth()
  	end
 
 	if self.db.profile.optimizesectionlayout then
