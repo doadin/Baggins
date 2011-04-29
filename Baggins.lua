@@ -239,11 +239,15 @@ end
 function Baggins:UpdateBagHooks()
 	if self.db.profile.overridedefaultbags then
 		self:Hook("OpenAllBags", "ToggleAllBags", true)
+		self:Hook("ToggleAllBags", true)
 		self:Hook("CloseAllBags", true)
 		self:Hook("ToggleBackpack", true)
 	else
 		if self:IsHooked("OpenAllBags") then
 			self:Unhook("OpenAllBags")
+		end
+		if self:IsHooked("ToggleAllBags") then
+			self:Unhook("ToggleAllBags")
 		end
 		if self:IsHooked("CloseAllBags") then
 			self:Unhook("CloseAllBags")
