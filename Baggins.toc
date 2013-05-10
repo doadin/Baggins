@@ -1,4 +1,8 @@
-﻿## Interface: 40300
+﻿## Interface: 50200
+## X-Curse-Packaged-Version: r542
+## X-Curse-Project-Name: Baggins
+## X-Curse-Project-ID: baggins
+## X-Curse-Repository-ID: wow/baggins/ace3
 
 ## Title: Baggins
 ## Notes: Inventory Management with virtual bags divided into sections.
@@ -7,34 +11,33 @@
 ## Notes-deDE: Inventar Manager mit virtuellen Taschen unterteilt in Kategorien.
 ## Notes-ruRU: Управление инвентарём, путём деления его на виртуальные сумки-секции
 
-## Author: Nargiddley
-## X-Email: nargiddley@gmail.com
+## Author: Nargiddley, Mikk, Profalbert
 ## Version: @project-revision@
 ## SavedVariables: BagginsDB
 ## X-Category: Inventory
 
-## OptionalDeps: Ace2, Ace3, FuBar, LibGratuity-3.0, TabletLib, DewdropLib, LibBagUtils-1.0, LibPeriodicTable-3.1, LibBabble-Inventory-3.0, Waterfall-1.0, FubarPlugin-2.0
-## X-Embeds: Ace2, Ace3, LibGratuity-3.0, TabletLib, DewdropLib, LibBagUtils-1.0, LibPeriodicTable-3.1, LibBabble-Inventory-3.0, Waterfall-1.0
+## LoadManagers: AddonLoader
+## X-LoadOn-Always: delayed
+
+## OptionalDeps: Ace3, LibGratuity-3.0, LibQTip-1.0, LibBagUtils-1.0, LibPeriodicTable-3.1, LibBabble-Inventory-3.0, LibDBIcon-1.0
+## X-Embeds: Ace3, LibGratuity-3.0, LibQTip-1.0, LibBagUtils-1.0, LibPeriodicTable-3.1, LibBabble-Inventory-3.0, LibDBIcon-1.0, LibDataBroker-1.0
 
 ## X-Localizations: enUS, enGB, deDE, frFR, esES, esMX, zhCN, zhTW, koKR, ruRU
 ## X-CompatibleLocales: enUS, enGB, deDE, frFR, esES, esMX, zhCN, zhTW, koKR, ruRU
 
-#@no-lib-strip@
 embeds.xml
-#@end-no-lib-strip@
 
-Baggins-enUS.lua
-Baggins-deDE.lua
-Baggins-koKR.lua
-Baggins-frFR.lua
-Baggins-esES.lua
-Baggins-zhTW.lua
-Baggins-zhCN.lua
-Baggins-ruRU.lua
+locales\Baggins-enUS.lua
+locales\Baggins-deDE.lua
+locales\Baggins-koKR.lua
+locales\Baggins-frFR.lua
+locales\Baggins-esES.lua
+locales\Baggins-zhTW.lua
+locales\Baggins-zhCN.lua
+locales\Baggins-ruRU.lua
 
 Baggins.lua
 Baggins-Options.lua
 Baggins-Skins.lua
 Baggins-Filtering.lua
 Baggins_ItemOps.lua
-
