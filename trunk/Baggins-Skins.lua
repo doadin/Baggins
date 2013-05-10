@@ -1,4 +1,4 @@
-﻿local Baggins = Baggins
+local Baggins = Baggins
 
 ----------------
 -- Skin stuff --
@@ -18,11 +18,11 @@ do -- private
 		end
 		return skinlist
 	end
-	
+
 	function Baggins:GetSkin(name)
 		return skins[name]
 	end
-	
+
 	function Baggins:RegisterSkin(name, skin)
 		skin.core = self
 		skin.name = skin.name or name
@@ -83,7 +83,7 @@ end
 ------------------
 -- Default Skin --
 ------------------
- 
+
 local defaultSkin = {
 
 	BagLeftPadding = 10,
@@ -92,29 +92,29 @@ local defaultSkin = {
 	BagBottomPadding = 10,
 	TitlePadding = 32+48,
 	SectionTitleHeight = 13,
-	
+
 	EmptySlotTexture = false,
 
 	BagFrameBackdrop = {
-		bgFile = "Interface/Tooltips/UI-Tooltip-Background", 
-		edgeFile = "Interface/Tooltips/UI-Tooltip-Border", 
-		tile = true, tileSize = 16, edgeSize = 16, 
+		bgFile = "Interface/Tooltips/UI-Tooltip-Background",
+		edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
+		tile = true, tileSize = 16, edgeSize = 16,
 		insets = { left = 5, right = 5, top = 5, bottom = 5 }
 	},
-	
+
 	NormalBagColor = 'black',
 	BankBagColor = 'blue',
-	
+
 }
-	
+
 function defaultSkin:SkinBag(frame)
 	frame:SetBackdrop(self.BagFrameBackdrop)
 
 	frame.closebutton:SetPoint("TOPRIGHT",frame,"TOPRIGHT",0,0)
-	
+
 	frame.compressbutton:ClearAllPoints();
 	frame.compressbutton:SetPoint("TOPRIGHT", frame.closebutton, "TOPLEFT", -4, -2);
-	
+
 	frame.title:SetVertexColor(1,1,1,1)
 	frame.title:ClearAllPoints()
 	-- double anchoring is required to resize bag properly
@@ -156,9 +156,9 @@ local blizzardSkin = setmetatable({
 	TitlePadding = 80,
 
 	BagFrameBackdrop = {
-		bgFile = 'Interface\\AddOns\\Baggins\\Textures\\AltBG', 
-		edgeFile = 'Interface\\AddOns\\Baggins\\Textures\\BagFrameBorder', 
-		tile = true, tileSize = 256, edgeSize = 32, 
+		bgFile = 'Interface\\AddOns\\Baggins\\Textures\\AltBG',
+		edgeFile = 'Interface\\AddOns\\Baggins\\Textures\\BagFrameBorder',
+		tile = true, tileSize = 256, edgeSize = 32,
 		insets = { left = 7, right = 6, top = 7, bottom = 6 }
 	},
 
@@ -168,13 +168,13 @@ local blizzardSkin = setmetatable({
 
 function blizzardSkin:SkinBag(frame)
 	frame:SetBackdrop(self.BagFrameBackdrop)
-	
+
 	frame.closebutton:SetPoint("TOPRIGHT",frame,"TOPRIGHT",0,-1)
-	
+
 	frame.compressbutton:ClearAllPoints();
 	frame.compressbutton:SetPoint("TOPRIGHT", frame.closebutton, "BOTTOMRIGHT", -12, 8);
-	
-	
+
+
 	if not frame.portrait then
 		frame.portrait = frame:CreateTexture(frame:GetName().."Portrait","OVERLAY")
 		frame.portrait:SetWidth(48)
@@ -201,7 +201,7 @@ function blizzardSkin:SkinBag(frame)
 		frame.icon:SetTexture("Interface\\Icons\\INV_Jewelry_Ring_03")
 	end
 	frame.icon:Show()
-	
+
 end
 
 function blizzardSkin:UnskinBag(frame)
@@ -230,9 +230,9 @@ local oSkin = setmetatable({}, {__index = defaultSkin}) -- inherits from default
 
 function oSkin:SkinBag(frame)
 	defaultSkin.SkinBag(self, frame) -- call inherited skinning
-	
-	if not frame.tfade then 
-		frame.tfade = frame:CreateTexture(nil, 'BORDER') 
+
+	if not frame.tfade then
+		frame.tfade = frame:CreateTexture(nil, 'BORDER')
 		frame.tfade:SetTexture("Interface\\ChatFrame\\ChatFrameBackground")
 		frame.tfade:SetPoint('TOPLEFT', frame, 'TOPLEFT',1,-1)
 		frame.tfade:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT',-1,1)
@@ -242,7 +242,7 @@ function oSkin:SkinBag(frame)
 		frame.tfade:SetPoint('BOTTOMRIGHT', frame, 'TOPRIGHT', -6, -30)
 	end
 	frame.tfade:Show()
-	
+
 end
 
 function oSkin:UnskinBag(frame)

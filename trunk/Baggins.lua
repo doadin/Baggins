@@ -1,59 +1,23 @@
 local _G = _G
-_G.Baggins = AceLibrary("AceAddon-2.0"):new("AceConsole-2.0", "AceDB-2.0", "AceEvent-2.0", "AceDebug-2.0", "FuBarPlugin-2.0", "AceHook-2.1")
+
+_G.Baggins = LibStub("AceAddon-3.0"):NewAddon("Baggins", "AceEvent-3.0", "AceHook-3.0", "AceBucket-3.0", "AceTimer-3.0", "AceConsole-3.0")
 
 local Baggins = Baggins
 local pt = LibStub("LibPeriodicTable-3.1", true)
-local L = AceLibrary("AceLocale-2.2"):new("Baggins")
-local tablet = AceLibrary("Tablet-2.0")
-local dewdrop = AceLibrary("Dewdrop-2.0")
+local L = LibStub("AceLocale-3.0"):GetLocale("Baggins")
 local LBU = LibStub("LibBagUtils-1.0")
+local qt = LibStub('LibQTip-1.0')
+local dbIcon = LibStub("LibDBIcon-1.0")
+local console = LibStub("AceConsole-3.0")
 
-local ipairs,table,math,tonumber,pairs = ipairs,table,math,tonumber,pairs
+local next,unpack,pairs,ipairs,tonumber,select,strmatch =
+      next,unpack,pairs,ipairs,tonumber,select,strmatch
 
-Baggins.hasIcon = "Interface\\Icons\\INV_Jewelry_Ring_03"
-Baggins.cannotDetachTooltip = true
-Baggins.clickableTooltip = true
-Baggins.independentProfile = true
-Baggins.hideWithoutStandby = true
-
-_G.BINDING_HEADER_BAGGINS = L["Baggins"]
-_G.BINDING_NAME_BAGGINS_TOGGLEALL = L["Toggle All Bags"]
-
-local equiplocs = {
-	INVTYPE_AMMO = 0, 
-	INVTYPE_HEAD = 1, 
-	INVTYPE_NECK = 2, 
-	INVTYPE_SHOULDER = 3, 
-	INVTYPE_BODY = 4, 
-	INVTYPE_CHEST = 5, 
-	INVTYPE_ROBE = 5, 
-	INVTYPE_WAIST = 6, 
-	INVTYPE_LEGS = 7, 
-	INVTYPE_FEET = 8, 
-	INVTYPE_WRIST = 9, 
-	INVTYPE_HAND = 10, 
-	INVTYPE_FINGER = 11,
-	INVTYPE_TRINKET = 13, 
-	INVTYPE_CLOAK = 15, 
-	INVTYPE_WEAPON = 16,
-	INVTYPE_SHIELD = 17, 
-	INVTYPE_2HWEAPON = 16, 
-	INVTYPE_WEAPONMAINHAND = 16, 
-	INVTYPE_WEAPONOFFHAND = 17, 
-	INVTYPE_HOLDABLE = 17, 
-	INVTYPE_RANGED = 18, 
-	INVTYPE_THROWN = 18, 
-	INVTYPE_RANGEDRIGHT = 18, 
-	INVTYPE_RELIC = 18, 
-	INVTYPE_TABARD = 19, 
-	INVTYPE_BAG = 20,
-}
-local currentbag
-local currentsection
-local currentcategory
-
-local catsorttable = {}
-Baggins.itemcounts = {}
+local min, max, ceil, floor, mod  = 
+      min, max, ceil, floor, mod
+	  
+local tinsert, tremove, tsort = 
+      tinsert, tremove, table.sort
 
 local tconcat = table.concat
 local format = string.format
@@ -64,13 +28,111 @@ local function new() return {} end
 local function del(t) wipe(t) end
 local rdel = del
 
+local GetItemCount, GetItemInfo, GetInventoryItemLink, GetItemQualityColor, GetItemFamily =
+      GetItemCount, GetItemInfo, GetInventoryItemLink, GetItemQualityColor, GetItemFamily
+	  
+local GetContainerItemInfo, GetContainerItemLink, GetContainerItemQuestInfo, GetContainerNumFreeSlots, GetContainerItemCooldown =
+      GetContainerItemInfo, GetContainerItemLink, GetContainerItemQuestInfo, GetContainerNumFreeSlots, GetContainerItemCooldown
 
+-- GLOBALS: UIParent, GameTooltip, BankFrame, CloseBankFrame, TEXTURE_ITEM_QUEST_BANG, TEXTURE_ITEM_QUEST_BORDER
+-- GLOBALS: CoinPickupFrame
+-- GLOBALS: BagginsCopperIcon, BagginsCopperText, BagginsSilverIcon, BagginsSilverText, BagginsGoldIcon, BagginsGoldText, BagginsMoneyFrame
+-- GLOBALS: GetAddOnInfo, GetAddOnMetadata, GetNumAddOns, LoadAddOn
+-- GLOBALS: GetCursorInfo, CreateFrame, GetCursorPosition, ClearCursor, GetScreenWidth, GetScreenHeight, GetMouseButtonClicked, IsControlKeyDown, IsAltKeyDown, IsShiftKeyDown
+-- GLOBALS: GameFontNormalLarge, GameFontNormal
+-- GLOBALS: EasyMenu
+
+Baggins.hasIcon = "Interface\\Icons\\INV_Jewelry_Ring_03"
+Baggins.cannotDetachTooltip = true
+Baggins.clickableTooltip = true
+Baggins.independentProfile = true
+Baggins.hideWithoutStandby = true
+
+-- number of item buttons that should be kept in the pool, so that none need to be created in combat
+Baggins.minSpareItemButtons = 10
+
+_G.BINDING_HEADER_BAGGINS = L["Baggins"]
+_G.BINDING_NAME_BAGGINS_TOGGLEALL = L["Toggle All Bags"]
+
+local equiplocs = {
+	INVTYPE_AMMO = 0,
+	INVTYPE_HEAD = 1,
+	INVTYPE_NECK = 2,
+	INVTYPE_SHOULDER = 3,
+	INVTYPE_BODY = 4,
+	INVTYPE_CHEST = 5,
+	INVTYPE_ROBE = 5,
+	INVTYPE_WAIST = 6,
+	INVTYPE_LEGS = 7,
+	INVTYPE_FEET = 8,
+	INVTYPE_WRIST = 9,
+	INVTYPE_HAND = 10,
+	INVTYPE_FINGER = 11,
+	INVTYPE_TRINKET = 13,
+	INVTYPE_CLOAK = 15,
+	INVTYPE_WEAPON = 16,
+	INVTYPE_SHIELD = 17,
+	INVTYPE_2HWEAPON = 16,
+	INVTYPE_WEAPONMAINHAND = 16,
+	INVTYPE_WEAPONOFFHAND = 17,
+	INVTYPE_HOLDABLE = 17,
+	INVTYPE_RANGED = 18,
+	INVTYPE_THROWN = 18,
+	INVTYPE_RANGEDRIGHT = 18,
+	INVTYPE_RELIC = 18,
+	INVTYPE_TABARD = 19,
+	INVTYPE_BAG = 20,
+}
+local currentbag
+local currentsection
+local currentcategory
+
+local catsorttable = {}
+Baggins.itemcounts = {}
+
+local timers = {}
+function Baggins:ScheduleNamedTimer(name, callback, delay, arg)
+	local alreadyScheduled = timers[name]
+	if alreadyScheduled and self:TimeLeft(alreadyScheduled) then
+		self:CancelTimer(alreadyScheduled, true)
+	end
+
+	timers[name] = self:ScheduleTimer(callback, delay, arg)
+end
+function Baggins:CancelNamedTimer(name)
+	local timer = timers[name]
+	if timer then
+		timers[name] = nil
+		self:CancelTimer(timer, true)
+	end
+end
+local nextFrameTimers = {}
+local timerFrame = CreateFrame('Frame')
+timerFrame:SetScript("OnUpdate", function(self)
+	while next(nextFrameTimers) do
+		local func = next(nextFrameTimers)
+		local args = nextFrameTimers[func]
+		if type(args) == 'table' then
+			Baggins[func](Baggins, unpack(args))
+			wipe(args)
+		else
+			Baggins[func](Baggins)
+		end
+		nextFrameTimers[func] = nil
+	end
+	self:Hide()
+end)
+function Baggins:ScheduleForNextFrame(callback, arg, ...)
+	nextFrameTimers[callback] = arg and { arg, ... } or true
+	timerFrame:Show()
+end
 
 -- internal signalling minilibrary
 
 local signals = {}
 
 function Baggins:RegisterSignal(name, handler, arg1)		-- Example: RegisterSignal("MySignal", self.SomeHandler, self)
+	if not arg1 then error("want arg1 noob!") end
 	if not signals[name] then
 		signals[name] = {}
 	end
@@ -86,14 +148,167 @@ function Baggins:FireSignal(name, ...)		-- Example: FireSignal("MySignal", 1, 2,
 end
 
 local function PT3ModuleSet(name, value)
-	Baggins.db.account.pt3mods[name] = value
+	Baggins.db.global.pt3mods[name] = value
 	if value then
 		LoadAddOn(name)
 	end
 end
 
 local function PT3ModuleGet(name)
-	return Baggins.db.account.pt3mods[name]
+	return Baggins.db.global.pt3mods[name]
+end
+
+local tooltip
+
+local ldbDropDownFrame = CreateFrame("Frame", "Baggins_DropDownFrame", UIParent, "UIDropDownMenuTemplate")
+
+local ldbDropDownMenu
+local spacer = { text = "", disabled = true, notCheckable = true, notClickable = true}
+local function initDropdownMenu()
+	ldbDropDownMenu = {
+		{
+			text = L["Force Full Refresh"],
+			tooltipText = L["Forces a Full Refresh of item sorting"],
+			func = function()
+					Baggins:ForceFullRefresh()
+					Baggins:UpdateBags()
+				end,
+			notCheckable = true,
+		},
+		spacer,
+		{
+			text = L["Hide Default Bank"],
+			tooltipText = L["Hide the default bank window."],
+			checked = Baggins.db.profile.hidedefaultbank,
+			keepShownOnClick = true,
+			func = function()
+					Baggins.db.profile.hidedefaultbank = not Baggins.db.profile.hidedefaultbank
+				end,
+		},
+		{
+			text = L["Override Default Bags"],
+			tooltipText = L["Baggins will open instead of the default bags"],
+			checked = Baggins.db.profile.overridedefaultbags,
+			keepShownOnClick = true,
+			func = function()
+					Baggins.db.profile.overridedefaultbags = not Baggins.db.profile.overridedefaultbags
+					Baggins:UpdateBagHooks()
+				end,
+		},
+		spacer,
+		{
+			text = L["Config Window"],
+			func = function() Baggins:OpenConfig() end,
+			notCheckable = true,
+		},
+		{
+			text = L["Bag/Category Config"],
+			func = function() Baggins:OpenEditConfig() end,
+			notCheckable = true,
+		},
+	}
+end
+
+local function updateMenu()
+	if not ldbDropDownMenu then
+		initDropdownMenu()
+		return
+	end
+	ldbDropDownMenu[3].checked = Baggins.db.profile.hidedefaultbank
+	ldbDropDownMenu[4].checked = Baggins.db.profile.overridedefaultbags
+end
+
+local ldbdata = {
+	type = "data source",
+	icon = "Interface\\Icons\\INV_Jewelry_Ring_03",
+	OnClick = function(self, message)
+			if message == "RightButton" then
+				tooltip:Hide()
+				updateMenu()
+				EasyMenu(ldbDropDownMenu, ldbDropDownFrame, "cursor", 0, 0, "MENU")
+				-- Baggins:OpenConfig()
+			else
+				Baggins:OnClick()
+			end
+		end,
+	label = "Baggins",
+	text = "",
+	OnEnter = function(self)
+			tooltip = qt:Acquire('BagginsTooltip', 1)
+			tooltip:SetHeaderFont(GameFontNormalLarge)
+			tooltip:SetScript("OnHide", function(self)
+					qt:Release(self)
+				end)
+			Baggins:UpdateTooltip(true)
+			self.tooltip = tooltip
+			tooltip:SmartAnchorTo(self)
+			tooltip:SetAutoHideDelay(0.2, self)
+			tooltip:Show()
+		end,
+}
+Baggins.obj = LibStub("LibDataBroker-1.1"):NewDataObject("Baggins", ldbdata)
+
+do
+	local buttonCount = 0
+	local buttonPool = {}
+
+	local function createItemButton()
+		local frame = CreateFrame("Button","BagginsPooledItemButton"..buttonCount,nil,"ContainerFrameItemButtonTemplate")
+		buttonCount = buttonCount + 1
+		if InCombatLockdown() then
+			print("Baggins: WARNING: item-frame will be tainted")
+			Baggins:RegisterEvent("PLAYER_REGEN_ENABLED")
+			frame.tainted = true
+		end
+		return frame
+	end
+
+	function Baggins:RepopulateButtonPool(num)
+		if InCombatLockdown() then
+			Baggins:RegisterEvent("PLAYER_REGEN_ENABLED")
+			return
+		end
+		while #buttonPool < num do
+			local frame = createItemButton()
+			table.insert(buttonPool, frame)
+		end
+	end
+
+	local usedButtons = 0
+	function Baggins:GetItemButton()
+		usedButtons = usedButtons + 1
+		self.db.char.lastNumItemButtons = usedButtons
+		local frame
+		if next(buttonPool) then
+			frame = table.remove(buttonPool, 1)
+		else
+			frame = createItemButton()
+		end
+		self:ScheduleTimer("RepopulateButtonPool", 0, Baggins.minSpareItemButtons)
+		return frame
+	end
+
+	function Baggins:ReleaseItemButton(button)
+		button.glow:Hide()
+		button.newtext:Hide()
+		table.insert(buttonPool, button)
+	end
+end
+
+function Baggins:PLAYER_REGEN_ENABLED()
+	for _,bagframe in ipairs(Baggins.bagframes) do
+		for _,section in ipairs(bagframe.sections) do
+			for i,item in ipairs(section.items) do
+				if item.tainted then
+					local tainted = section.items[i]
+					tainted:Hide()
+					section.items[i] = self:CreateItemButton()
+				end
+			end
+		end
+	end
+	self:ForceFullUpdate()
+	self:RepopulateButtonPool(Baggins.minSpareItemButtons)
 end
 
 function Baggins:OnInitialize()
@@ -104,24 +319,18 @@ function Baggins:OnInitialize()
 		blue = {r=0,g=0.5,b=1,hex="|cff007fff"},
 		purple = {r=1,g=0.4,b=1,hex="|cffff66ff"},
 	}
-	
+
 	self:InitOptions()
-	
+	local buttonsToPool = (self.db.char.lastNumItemButtons or 90) + Baggins.minSpareItemButtons -- create a few spare buttons
+	self:RepopulateButtonPool(buttonsToPool)
+	self:InitBagCategoryOptions()
+	self:RegisterChatCommand("baggins", "OpenConfig")
 	self.OnMenuRequest = self.opts
 
-	--self:RegisterEditTablets()
-	
-	self.dewdropparent = CreateFrame("frame",nil,UIParent)
-	self.dewdropparent:SetHeight(1)
-	self.dewdropparent:SetWidth(1)
-	self.dewdropparent:SetPoint("CENTER",UIParent,"CENTER",0,0)
+	dbIcon:Register("Baggins", ldbdata, self.db.profile.minimap)
 
-	self:RegisterWaterfall()
-	self:BuildWaterfallTree()
-
-	
 	self.ptsetsdirty = true
-	
+
 	local PT3Modules
 	if pt then
 		for i = 1, GetNumAddOns() do
@@ -135,15 +344,15 @@ function Baggins:OnInitialize()
 		  end
 		end
 	end
-	
+
 	if PT3Modules then
 		self.opts.args.PT3LOD = {
 				name = L["PT3 LoD Modules"],
 				type = "group",
 				desc = L["Choose PT3 LoD Modules to load at startup, Will load immediately when checked"],
 				order = 135,
-				args = {	
-					
+				args = {
+
 				},
 			}
 		local order = 1
@@ -153,21 +362,25 @@ function Baggins:OnInitialize()
 				type = "toggle",
 				order = order,
 				desc = L["Load %s at Startup"]:format(name),
-				passValue = name,
+				arg = name,
 				get = PT3ModuleGet,
 				set = PT3ModuleSet,
 			}
 			order = order + 1
 		end
 	end
-	
-	self:RegisterChatCommand({ "/baggins" }, self.opts, "BAGGINS")
-	
+
+	-- self:RegisterChatCommand({ "/baggins" }, self.opts, "BAGGINS")
+
 end
 
-function Baggins:OnEnable(firstload)
+function Baggins:IsActive()
+	return true
+end
+
+function Baggins:OnEnable()
 	--self:SetBagUpdateSpeed();
-	self:RegisterEvent("BAG_UPDATE", "OnBagUpdate")
+	self:RegisterEvent("BAG_UPDATE")
 	self:RegisterEvent("BAG_UPDATE_COOLDOWN", "UpdateItemButtonCooldowns")
 	self:RegisterEvent("ITEM_LOCK_CHANGED", "UpdateItemButtonLocks")
 	self:RegisterEvent("QUEST_ACCEPTED", "UpdateItemButtons")
@@ -178,51 +391,51 @@ function Baggins:OnEnable(firstload)
 	self:RegisterEvent("PLAYER_MONEY", "UpdateMoneyFrame")
 	self:RegisterEvent('AUCTION_HOUSE_SHOW', "AuctionHouse")
 	self:RegisterEvent('AUCTION_HOUSE_CLOSED', "CloseAllBags")
-	--self:RegisterEvent("PLAYER_REGEN_ENABLED");
-	--self:RegisterEvent("PLAYER_REGEN_DISABLED");
 	self:RegisterEvent('Baggins_RefreshBags')
 	self:RegisterEvent('Baggins_CategoriesChanged')
 	self:RegisterBucketEvent('ADDON_LOADED', 5,'OnAddonLoaded')
-	
+
 	self:RegisterSignal('CategoryMatchAdded', self.CategoryMatchAdded, self)
 	self:RegisterSignal('CategoryMatchRemoved', self.CategoryMatchRemoved, self)
 	self:RegisterSignal('SlotMoved', self.SlotMoved, self)
-	
-	self:ScheduleRepeatingEvent(self.RunBagUpdates,20,self)
-	
-	self:Hook("OpenBackpack", true)
-	self:Hook("CloseBackpack", true)
+
+	self:ScheduleRepeatingTimer("RunBagUpdates", 20)
+
 	self:UpdateBagHooks()
-	self:Hook("CloseSpecialWindows", true)
-	self:HookScript(BankFrame,"OnEvent","BankFrame_OnEvent")
+	self:RawHook("CloseSpecialWindows", true)
+	self:RawHookScript(BankFrame,"OnEvent","BankFrame_OnEvent")
 	--force an update of all bags on first opening
 	self.doInitialUpdate = true
 	self.doInitialBankUpdate = true
 	self:ResortSections()
+	self:UpdateText()
 	--self:SetDebugging(true)
-	
-	if firstload then
-		if pt then
-			for name, load in pairs(self.db.account.pt3mods) do
-				if GetAddOnMetadata(name, "X-PeriodicTable-3.1-Module") then
-					if load then
-						LoadAddOn(name)
-					end
-				else
-					self.db.account.pt3mods[name] = nil
+
+	if pt then
+		for name, load in pairs(self.db.global.pt3mods) do
+			if GetAddOnMetadata(name, "X-PeriodicTable-3.1-Module") then
+				if load then
+					LoadAddOn(name)
 				end
+			else
+				self.db.global.pt3mods[name] = nil
 			end
 		end
-		
-		if self.db.profile.hideduplicates == true then
-			self.db.profile.hideduplicates = "global"
-	    end
-			self:CreateMoneyFrame()
 	end
-	self:UpdateMoneyFrame()
-	self:EnableSkin(self.db.profile.skin)
 
+	if self.db.profile.hideduplicates == true then
+		self.db.profile.hideduplicates = "global"
+	end
+	self:CreateMoneyFrame()
+	self:UpdateMoneyFrame()
+	local skin = self:GetSkin(self.db.profile.skin)
+	if not skin then -- if skin doesn't exist anymore, reset to default
+		console:Print("|cFFFF0000Baggins|r "..L["Skin '%s' not found, resetting to default"]:format(self.db.profile.skin))
+		self.db.profile.skin = "default"
+	end
+	self:EnableSkin(self.db.profile.skin)
 	self:OnProfileEnable()
+	self:RunBagUpdates()
 end
 
 function Baggins:Baggins_CategoriesChanged()
@@ -238,29 +451,32 @@ end
 
 function Baggins:UpdateBagHooks()
 	if self.db.profile.overridedefaultbags then
-		self:Hook("OpenAllBags", "ToggleAllBags", true)
-		self:Hook("ToggleAllBags", true)
-		self:Hook("CloseAllBags", true)
-		self:Hook("ToggleBackpack", true)
+		self:RawHook("OpenAllBags", "ToggleAllBags", true)
+		self:RawHook("ToggleAllBags", true)
+		self:RawHook("CloseAllBags", true)
 	else
-		if self:IsHooked("OpenAllBags") then
-			self:Unhook("OpenAllBags")
-		end
-		if self:IsHooked("ToggleAllBags") then
-			self:Unhook("ToggleAllBags")
-		end
-		if self:IsHooked("CloseAllBags") then
-			self:Unhook("CloseAllBags")
-		end
-		if self:IsHooked("ToggleBackpack") then
-			self:Unhook("ToggleBackpack")
-		end
+		self:UnhookBagHooks()
+	end
+end
+
+function Baggins:UnhookBagHooks()
+	if self:IsHooked("OpenAllBags") then
+		self:Unhook("OpenAllBags")
+	end
+	if self:IsHooked("ToggleAllBags") then
+		self:Unhook("ToggleAllBags")
+	end
+	if self:IsHooked("CloseAllBags") then
+		self:Unhook("CloseAllBags")
 	end
 end
 
 function Baggins:OnDisable()
 	self:CloseAllBags()
 end
+
+local INVSLOT_LAST_EQUIPPED, CONTAINER_BAG_OFFSET, NUM_BAG_SLOTS =
+      INVSLOT_LAST_EQUIPPED, CONTAINER_BAG_OFFSET, NUM_BAG_SLOTS
 
 function Baggins:SaveItemCounts()
 	local itemcounts = self.itemcounts
@@ -370,8 +586,7 @@ local scheduled_refresh = false
 
 function Baggins:ScheduleRefresh()
 	if not scheduled_refresh then
-		--self:Debug('Scheduling refresh')
-		scheduled_refresh = self:ScheduleEvent('Baggins_RefreshBags', 0)
+		scheduled_refresh = self:ScheduleForNextFrame('Baggins_RefreshBags')
 	end
 end
 
@@ -393,17 +608,13 @@ function Baggins:Baggins_RefreshBags()
 		end
 	end
 	if self.dirtyBagLayout then
-		--self:Debug('Updating bag layout')
 		self:ReallyLayoutBagFrames()
 	end
 
-	--self:Debug('Refresh done')
 	scheduled_refresh = nil
 end
 
 function Baggins:UpdateBags()
-	--tablet:Refresh("BagginsEditCategories")
-	--self:RefreshEditWaterfall() 
 	self.dirtyBags = true
 	self:ScheduleRefresh()
 end
@@ -451,7 +662,7 @@ function Baggins:CategoryMatchAdded(category, slot, isbank)
 							itemid = (bagtype or "")
 						end
 						local found
-					
+
 						--check for an existing stack to add the slot to
 						for k, entry in ipairs(layout) do
 							if type(entry) == "table" then
@@ -508,7 +719,7 @@ function Baggins:CategoryMatchRemoved(category, slot, isbank)
 						if secframe.slots[slot] == 0 then
 							secframe.slots[slot] = false
 						end
-						
+
 						local layout = secframe.layout
 
 						--remove the slot from any stacks that contain it
@@ -525,7 +736,7 @@ function Baggins:CategoryMatchRemoved(category, slot, isbank)
 								end
 							end
 						end
-						
+
 					end
 				end
 			end
@@ -549,7 +760,7 @@ function Baggins:SlotMoved(category, slot, isbank)
 						if not itemid then
 							itemid = (bagtype or "")
 						end
-						
+
 						--remove the slot from any stacks that contain it
 						for k, entry in ipairs(layout) do
 							if type(entry) == "table" then
@@ -598,7 +809,7 @@ function Baggins:SlotMoved(category, slot, isbank)
 							tinsert(layout, newentry)
 							secframe.needssorting = true
 						end
-						
+
 					end
 				end
 			end
@@ -643,7 +854,7 @@ function Baggins:ClearSectionCaches()
 			end
 		end
 	end
-end			
+end
 
 function Baggins:RebuildSectionLayouts()
 	for bagid, bag in ipairs(self.db.profile.bags) do
@@ -721,7 +932,9 @@ function Baggins:ReallyUpdateBags()
 		if ( not bag.isBank ) or self.bankIsOpen then
 			if self.bagframes[bagid] then
 				self:SetBagTitle(bagid,bag.name)
-				self.currentSkin:SetBankVisual(self.bagframes[bagid], bag.isBank)
+				if self.currentSkin then
+					self.currentSkin:SetBankVisual(self.bagframes[bagid], bag.isBank)
+				end
 				for k, v in pairs(self.bagframes[bagid].sections) do
 					v.used = nil
 					v:Hide()
@@ -730,7 +943,7 @@ function Baggins:ReallyUpdateBags()
 					end
 				end
 				for sectionid, section in pairs(bag.sections) do
-					if self.bagframes[bagid]:IsVisible() then
+					if (self.bagframes[bagid]:IsVisible() or p.hideemptybags) then
 						self:UpdateSection(bagid,sectionid,section.name) --,Baggins:FinishSection())
 					end
 				end
@@ -770,12 +983,16 @@ local firstbagupdate = true
 local bagupdatebucket = {}
 local lastbag,lastbagfree=-1,-1
 
+function Baggins:BAG_UPDATE(_, ...)
+	self:OnBagUpdate(...)
+end
+
 function Baggins:OnBagUpdate(bagid)
 	--ignore bags -4 ( currency ) and -3 (unknown)
 	if bagid <= -3 then return end
 	bagupdatebucket[bagid] = true
 	if self:IsWhateverOpen() then
-		self:ScheduleEvent("Baggins_RunBagUpdates",self.RunBagUpdates,0.1,self)
+		self:ScheduleTimer("RunBagUpdates",0.1)
 		lastbagfree=-1
 	else
 		-- Update panel text.
@@ -801,7 +1018,7 @@ function Baggins:RunBagUpdates()
 		return
 	end
 	self:UpdateText()
-	
+
 	local itemschanged
 	for bag in pairs(bagupdatebucket) do
 		itemschanged = Baggins:CheckSlotsChanged(bag) or itemschanged
@@ -813,7 +1030,7 @@ function Baggins:RunBagUpdates()
 	else
 		self:UpdateItemButtons()
 	end
-	
+
 	if(self:IsWhateverOpen()) then
 		Baggins:FireSignal("Baggins_BagsUpdatedWhileOpen");
 	end
@@ -824,7 +1041,7 @@ end
 -----------------------------
 function Baggins:UpdateSectionContents(sectionframe,title)
 	local p = self.db.profile
-	
+
 	sectionframe.used = true
 	if sectionframe.needssorting or self.db.profile.alwaysresort then
 		local layout = sectionframe.layout
@@ -836,7 +1053,7 @@ function Baggins:UpdateSectionContents(sectionframe,title)
 				end
 			end
 		end
-		
+
 		self:SortItemList(layout, p.sort)
 		sectionframe.needssorting = false
 	end
@@ -891,8 +1108,8 @@ local function baseComp(a, b)
 	if not linkb then
 		return true
 	end
-	
-	if p.sortnewfirst and not LBU:IsBank(baga) then
+
+	if p.sortnewfirst and baga>=0 and baga<=NUM_BAG_SLOTS then
 		local newa, newb = Baggins:IsNew(linka), Baggins:IsNew(linkb)
 		if newa and not newb then
 			return true
@@ -908,7 +1125,7 @@ end
 local function NameComp(a, b)
 	local res,linka,linkb,baga,slota,bagb,slotb=baseComp(a,b)
 	if res~=nil then return res end
-	
+
 	local namea = GetItemInfo(linka)
 	local nameb = GetItemInfo(linkb)
 
@@ -916,28 +1133,28 @@ local function NameComp(a, b)
 		return (namea  or "?") < (nameb or "?") 
 	end
 
-	local _,counta = GetContainerItemInfo(baga, slota)
-	local _,countb = GetContainerItemInfo(bagb, slotb)
+	local counta = select(2, GetContainerItemInfo(baga, slota))
+	local countb = select(2, GetContainerItemInfo(bagb, slotb))
 	return (counta  or 0) > (countb or 0) 
 end
 local function QualityComp(a, b)
 	local res,linka,linkb,baga,slota,bagb,slotb=baseComp(a,b)
 	if res~=nil then return res end
-	
+
 	local namea, _, quala = GetItemInfo(linka)
 	local nameb, _, qualb = GetItemInfo(linkb)
-	
+
 	if quala~=qualb then
-		return (quala  or 0) > (qualb  or 0) 
+		return (quala  or 0) > (qualb  or 0)
 	end
-	
+
 	if namea ~= nameb then
 		return (namea  or "?") < (nameb or "?") 
 	end
 
-	local _,counta = GetContainerItemInfo(baga, slota)
-	local _,countb = GetContainerItemInfo(bagb, slotb)
-	return (counta  or 0) > (countb  or 0) 
+	local counta = select(2, GetContainerItemInfo(baga, slota))
+	local countb = select(2, GetContainerItemInfo(bagb, slotb))
+	return (counta  or 0) > (countb  or 0)
 end
 local function TypeComp(a, b)
 	local res,linka,linkb,baga,slota,bagb,slotb=baseComp(a,b)
@@ -948,7 +1165,7 @@ local function TypeComp(a, b)
 	if (typea or "?")  ~= (typeb  or "?") then
 		return typea < typeb
 	end
-	
+
 	if (equiploca and equiplocs[equiploca]) and (equiplocb and equiplocs[equiplocb]) then
 		if equiplocs[equiploca] ~= equiplocs[equiplocb] then
 			return equiplocs[equiploca] < equiplocs[equiplocb]
@@ -958,14 +1175,14 @@ local function TypeComp(a, b)
 	if quala~=qualb then
 		return (quala or 0)  > (qualb or 0) 
 	end
-	
+
 	if namea ~= nameb then
 		return (namea or "?")  < (nameb or "?") 
 	end
 
-	local _,counta = GetContainerItemInfo(baga, slota)
-	local _,countb = GetContainerItemInfo(bagb, slotb)
-	return (counta or 0)  > (countb or 0) 
+	local counta = select(2, GetContainerItemInfo(baga, slota))
+	local countb = select(2, GetContainerItemInfo(bagb, slotb))
+	return (counta or 0)  > (countb or 0)
 end
 local function SlotComp(a, b)
 	local p = Baggins.db.profile
@@ -993,15 +1210,15 @@ local function IlvlComp(a, b)
 	end
 
 	if quala~=qualb then
-		return (quala or 0) > (qualb or 0) 
-	end
-	
-	if namea ~= nameb then
-		return (namea or "?")  < (nameb or "?") 
+		return (quala or 0) > (qualb or 0)
 	end
 
-	local _,counta = GetContainerItemInfo(baga, slota)
-	local _,countb = GetContainerItemInfo(bagb, slotb)
+	if namea ~= nameb then
+		return (namea or "?")  < (nameb or "?")
+	end
+
+	local counta = select(2, GetContainerItemInfo(baga, slota))
+	local countb = select(2, GetContainerItemInfo(bagb, slotb))
 	return (counta  or 0) > (countb or 0) 
 end
 
@@ -1020,7 +1237,7 @@ function Baggins:SortItemList(itemlist, sorttype)
 	else
 		return
 	end
-	table.sort(itemlist, func)
+	tsort(itemlist, func)
 end
 
 ------------------------
@@ -1033,24 +1250,104 @@ function Baggins:GetSectionSize(sectionframe, maxcols)
 	local sectionconf = bagconf.sections[sectionframe.secid]
 	if not sectionconf then return 0,0 end
 	if sectionconf.hidden then
-			count = 0
-		else
-			count = sectionframe.itemcount
-		end
+		count = 0
+	else
+		count = sectionframe.itemcount
+	end
 	maxcols = maxcols or count
-	local width = math.min(count, maxcols) * 39 - 2
-	local height = maxcols > 0 and (math.ceil(count / maxcols) * 39 - 2) or 0
+	local columns = min(count, maxcols)
+	local rows = ceil(count / maxcols)
+	local width = columns * 39 - 2
+	local height = rows * 39 - 2
+	-- Flow requires we still get a height
+	if maxcols < 1 then-- and not self.db.profile.flow_sections then
+		height = 0
+	end
 
 	if self.db.profile.showsectiontitle then
-		width = math.max(width, sectionframe.title:GetWidth())
+		width = max(width, sectionframe.title:GetWidth())
 		height = height + sectionframe.title:GetHeight()
 	end
 
-	return width, height
+	return width, height, columns, rows
+end
+
+
+-- Flow layout
+function Baggins:FlowSections(bagid)
+	-- Bag references
+	local bag = self.bagframes[bagid]
+	local sections_conf = self.db.profile.bags[bagid].sections
+	local skin = self.currentSkin
+	-- Bag dimensions
+	local width, height = 0, 0
+	local xoff, yoff = skin.BagLeftPadding, -skin.BagTopPadding
+	local max_cols = self.db.profile.columns
+	-- Flow data
+	local flow_x, flow_y, flow_anchor = 0, 0
+	local flow_items, flow_sections, max_sections = 0, 0, 0
+	local bagempty = true
+	
+	-- Like a river, man. LIKE A RIVER DO YOU HEAR ME
+	for id, section in ipairs(self.bagframes[bagid].sections) do
+		if section.used and section.itemcount > 0 then
+			bagempty = false
+			local available = max_cols - flow_items
+			
+			-- Give collapsed sections a virtual size to account for title length
+			local x, y, section_items = self:GetSectionSize(section, max_cols)
+			if not section_items then print('oops') return nil end
+			local title_length = ceil(section.title:GetStringWidth()/39)
+			if sections_conf[id] and sections_conf[id].hidden then
+				section_items = title_length
+			-- Account for long labels with one or two items
+			else
+				section_items = max(title_length, section_items)
+			end
+			flow_items = flow_items + section_items
+			
+			-- Add to last row
+			if flow_anchor and available >= section_items then
+				flow_sections = flow_sections + 1
+				section:SetPoint("TOPLEFT", flow_anchor, "TOPLEFT", flow_x + 10, 0)
+				flow_x = flow_x + x + 10
+				flow_y = max(y, flow_y)
+			
+			else
+				-- New row
+				if flow_anchor then
+					section:SetPoint("TOPLEFT", flow_anchor, "TOPLEFT", 0, -flow_y -5)
+					y = y + 5
+					max_sections = max(max_sections, flow_sections)
+					height = height + flow_y + 5
+				
+				-- First row
+				else
+					section:SetPoint("TOPLEFT", bag, "TOPLEFT", xoff, yoff)
+					--height = height + y
+				end
+				
+				-- Frame/flow Data
+				flow_anchor = section
+				flow_items = section_items
+				flow_sections = 0
+				flow_x = x
+				flow_y = y
+			end
+			
+			width = max(x, width, flow_x)
+		end
+	end
+	
+	if (self.db.profile.hideemptybags and bagempty) then
+		bag.isempty = true
+	end
+
+	-- Dimensions
+	return width + skin.BagLeftPadding + skin.BagRightPadding, height + flow_y + skin.BagTopPadding + skin.BagBottomPadding
 end
 
 local areas = {}
-
 function Baggins:OptimizeSectionLayout(bagid)
 	local bagframe = self.bagframes[bagid]
 	if not bagframe then
@@ -1063,15 +1360,17 @@ function Baggins:OptimizeSectionLayout(bagid)
 
 	for k in pairs(areas) do areas[k] = nil end
 
-	table.insert(areas, string.format('0:0:%d:3000', self.db.profile.columns * 39))
+	tinsert(areas, format('0:0:%d:3000', self.db.profile.columns * 39))
 
 	--self:Debug("**** Laying out bag #%d ***", bagid)
+	local bagempty = true
 
 	for secid,sectionframe in ipairs(bagframe.sections) do
 		local count = sectionframe.itemcount
 		if sectionframe.used and (count > 0 or not p.hideemptysections) then
+			bagempty = false
 			local minwidth = self:GetSectionSize(sectionframe, 1)
-			local _,minheight = self:GetSectionSize(sectionframe)
+			local minheight = select(2, self:GetSectionSize(sectionframe))
 
 			--[[
 			self:Debug("Section #%d, %d item(s), title width: %q, min width: %q, min height: %q",
@@ -1091,7 +1390,7 @@ function Baggins:OptimizeSectionLayout(bagid)
 				area_h = tonumber(area_h)
 
 				if area_w >= minwidth and area_h >= minheight then
-					local cols = math.floor(area_w / 39)
+					local cols = floor(area_w / 39)
 					local width, height = self:GetSectionSize(sectionframe, cols)
 					--self:Debug("    %d columns", cols)
 
@@ -1116,7 +1415,7 @@ function Baggins:OptimizeSectionLayout(bagid)
 				end
 			end
 			local areaid = sectionframe.layout_areaid
-			local area_x, area_y, area_w, area_h = table.remove(areas, areaid):match('^(%d+):(%d+):(%d+):(%d+)$')
+			local area_x, area_y, area_w, area_h = tremove(areas, areaid):match('^(%d+):(%d+):(%d+):(%d+)$')
 			area_x = tonumber(area_x)
 			area_y = tonumber(area_y)
 			area_w = tonumber(area_w)
@@ -1127,25 +1426,27 @@ function Baggins:OptimizeSectionLayout(bagid)
 			sectionframe:SetWidth(width)
 			sectionframe:SetHeight(height)
 
-			totalwidth = math.max(totalwidth, area_x + width)
-			totalheight = math.max(totalheight,area_y + height)
+			totalwidth = max(totalwidth, area_x + width)
+			totalheight = max(totalheight,area_y + height)
 			--self:ReallyLayoutSection(sectionframe, cols)
 
 			width = width + 10
 			height = height + 10
 			if area_w - width >= 39 then
-				local area = string.format('%d:%d:%d:%d', area_x + width, area_y, area_w - width, height)
+				local area = format('%d:%d:%d:%d', area_x + width, area_y, area_w - width, height)
 				--self:Debug("Created new area: %s", area)
-				table.insert(areas, area)
+				tinsert(areas, area)
 			end
 			if area_h - height >= 39 then
-				local area = string.format('%d:%d:%d:%d', area_x, area_y + height, area_w, area_h - height)
+				local area = format('%d:%d:%d:%d', area_x, area_y + height, area_w, area_h - height)
 				--self:Debug("Created new area: %s", area)
-				table.insert(areas, area)
+				tinsert(areas, area)
 			end
 		end
 	end
-	
+	if (p.hideemptybags and bagempty) then
+		bagframe.isempty = true
+	end
 	return s.BagLeftPadding + s.BagRightPadding + totalwidth, s.BagTopPadding + s.BagBottomPadding + totalheight
 end
 
@@ -1163,7 +1464,8 @@ function Baggins:ReallyUpdateBagFrameSize(bagid)
 	local s = self.currentSkin
 
 	--self:Debug('Updating bag #%d', bagid)
-	
+	bagframe.isempty = false
+
 	local hpadding = s.BagLeftPadding + s.BagRightPadding
 	local width = s.BagLeftPadding + s.TitlePadding
 	local height = s.BagTopPadding + s.BagBottomPadding
@@ -1172,14 +1474,21 @@ function Baggins:ReallyUpdateBagFrameSize(bagid)
 		width = width + bagframe.title:GetStringWidth()
  	end
 
-	if self.db.profile.optimizesectionlayout then
+	local layout = p.section_layout or "flow"
+	if layout == 'optimize' then
 		local swidth, sheight = Baggins:OptimizeSectionLayout(bagid)
-		width = math.max(width, swidth)
-		height = math.max(height, sheight)
+		width = max(width, swidth)
+		height = max(height, sheight)
+	elseif layout == 'flow' then
+		local x, y = self:FlowSections(bagid)
+		width = max(x, width)
+		height = max(y, height)
 	else
 		local lastsection
-		for id,section in ipairs(bagframe.sections) do			
+		local bagempty = true
+		for id,section in ipairs(bagframe.sections) do
 			if section.used and (not p.hideemptysections or section.itemcount > 0) then
+				bagempty = false
 				if not lastsection then
 					section:SetPoint("TOPLEFT",bagframe,"TOPLEFT",s.BagLeftPadding,-s.BagTopPadding)
 				else
@@ -1188,13 +1497,17 @@ function Baggins:ReallyUpdateBagFrameSize(bagid)
 				end
 				lastsection = section
 				--self:ReallyLayoutSection(section)
-				width = math.max(width,section:GetWidth()+hpadding)
+				width = max(width,section:GetWidth()+hpadding)
 				height = height + section:GetHeight()
 			end
 		end
+		if (p.hideemptybags and bagempty) then
+			bagframe.isempty = true
+		end
 	end
-	
+
 	if p.moneybag == bagid then
+		bagframe.isempty = false
 		BagginsMoneyFrame:SetParent(bagframe)
 		BagginsMoneyFrame:ClearAllPoints()
 		BagginsMoneyFrame:SetPoint("BOTTOMLEFT",bagframe,"BOTTOMLEFT",8,6)
@@ -1202,30 +1515,30 @@ function Baggins:ReallyUpdateBagFrameSize(bagid)
 		width = max(BagginsMoneyFrame:GetWidth() + 16, width)
 		height = height + 30
 	end
-	
+
 	if not p.shrinkwidth then
-		width = math.max(p.columns*39 + hpadding, width)
+		width = max(p.columns*39 + hpadding, width)
 	end
-	
+
 	if bagframe:GetWidth() ~= width or bagframe:GetHeight() ~= height then
 		bagframe:SetWidth(width)
 		bagframe:SetHeight(height)
 		self.dirtyBagLayout = true
 	end
-	
+
 	bagframe.dirty = nil
 end
 
 local sectionSortTab = {}
 local function sectionComp(a, b)
     local bags = Baggins.db.profile.bags
-    
-    local bagA, secA = math.floor(a/1000), mod(a,1000)
-    local bagB, secB = math.floor(b/1000), mod(b,1000)
-     
+
+    local bagA, secA = floor(a/1000), mod(a,1000)
+    local bagB, secB = floor(b/1000), mod(b,1000)
+
     local PriA = (bags[bagA].priority or 1) + (bags[bagA].sections[secA].priority or 1)
     local PriB = (bags[bagB].priority or 1) + (bags[bagB].sections[secB].priority or 1)
-    
+
     if PriA == PriB then
         return a < b
     else
@@ -1242,16 +1555,16 @@ function Baggins:IsSlotMine(mybagid, mysecid, slot, wasMine)
 	if not p.hideduplicates or p.hideduplicates == "disabled" then
 		return true
 	end
-	
+
 	local bag = p.bags[mybagid]
 	if not bag then return false end
 	local section = bag.sections[mysecid]
 	if not section then return false end
-	
+
     if section.allowdupes then
         return true
     end
-	
+
 	if type(slot) == 'table' then
 		for k, v in pairs(slot) do
 			if v then
@@ -1260,12 +1573,12 @@ function Baggins:IsSlotMine(mybagid, mysecid, slot, wasMine)
 			end
 		end
 	end
-	
+
 	--if self.sectionOrderDirty then
         local i = 1
-        
+
         local numbags = #p.bags
-        
+
     	if p.hideduplicates == true or p.hideduplicates == "global" then
             for bagid = 1, numbags do
                 local numsections = #p.bags[bagid].sections
@@ -1293,18 +1606,18 @@ function Baggins:IsSlotMine(mybagid, mysecid, slot, wasMine)
                 end
             end
     	end
-    
+
         while sectionSortTab[i] do
             sectionSortTab[i] = nil
             i = i + 1
         end
         self.sectionOrderDirty = nil
     --end
-    
-    table.sort(sectionSortTab, sectionComp)
-    
+
+    tsort(sectionSortTab, sectionComp)
+
 	for i, v in ipairs(sectionSortTab) do
-	    local bagid, secid = math.floor(v/1000), mod(v,1000)
+	    local bagid, secid = floor(v/1000), mod(v,1000)
 	    local section = self.bagframes[bagid].sections[secid]
 		if section and ((not wasMine and section.slots[slot]) or (wasMine and section.slots[slot] == false)) then
 			if mybagid == bagid and mysecid == secid then
@@ -1333,7 +1646,7 @@ function Baggins:ReallyLayoutSection(sectionframe, cols)
 	local totalwidth, totalheight = 1,1
 	local s = self.currentSkin
 	cols = cols or sectionframe.set_columns or p.columns
-	
+
 	if p.showsectiontitle then
 		totalheight = totalheight + s.SectionTitleHeight
 	end
@@ -1343,12 +1656,12 @@ function Baggins:ReallyLayoutSection(sectionframe, cols)
 			itemframe:Hide()
 		end
 		for k, v in ipairs(sectionframe.layout) do
-			sectionframe.itemcount = sectionframe.itemcount + 1	
+			sectionframe.itemcount = sectionframe.itemcount + 1
 		end
 	else
 		local itemnum = 1
 		local itemframeno = 1
-		local BaseTop 
+		local BaseTop
 		if p.showsectiontitle then
 			BaseTop = (sectionframe.title:GetHeight() + 1)
 		else
@@ -1363,7 +1676,7 @@ function Baggins:ReallyLayoutSection(sectionframe, cols)
 					sectionframe.items[itemframeno] = sectionframe.items[itemframeno] or self:CreateItemButton(sectionframe,itemframeno)
 					local itemframe = sectionframe.items[itemframeno]
 					itemframeno = itemframeno + 1
-					itemframe:SetPoint("TOPLEFT",sectionframe,"TOPLEFT",((itemnum-1)%cols)*39,-(BaseTop+(math.floor((itemnum-1)/cols)*39)))
+					itemframe:SetPoint("TOPLEFT",sectionframe,"TOPLEFT",((itemnum-1)%cols)*39,-(BaseTop+(floor((itemnum-1)/cols)*39)))
 					local bag, slot, itemid = GetSlotInfo(next(v.slots))
 					if v.slotcount > 1 or ((p.compressall or p.compressempty) and not itemid) then
 						itemframe.countoverride = true
@@ -1382,7 +1695,7 @@ function Baggins:ReallyLayoutSection(sectionframe, cols)
 
 					itemframe:Show()
 				end
-				sectionframe.itemcount = sectionframe.itemcount + 1	
+				sectionframe.itemcount = sectionframe.itemcount + 1
 				if itemnum == 1 then
 					totalwidth = 39
 					totalheight = totalheight+39
@@ -1393,11 +1706,16 @@ function Baggins:ReallyLayoutSection(sectionframe, cols)
 						totalwidth = totalwidth+39
 					end
 				end
-				itemnum = itemnum + 1	
-			end	
+				itemnum = itemnum + 1
+			end
+		end
+		-- cleaning up unused itembuttons
+		for i = itemframeno,#sectionframe.items do
+			local unusedframe = table.remove(sectionframe.items, itemframeno)
+			self:ReleaseItemButton(unusedframe)
 		end
 	end
-	
+
 	if p.showsectiontitle then
 		local title = sectionframe.set_title
 		if sectionconf.hidden then
@@ -1410,18 +1728,18 @@ function Baggins:ReallyLayoutSection(sectionframe, cols)
 	else
 		sectionframe.title:SetText("")
 	end
-	
+
 	if sectionframe.itemcount == 0 and p.hideemptysections then
 		totalheight = 1
 		sectionframe:Hide()
 	end
 
 	if sectionframe:GetWidth() ~= totalwidth or sectionframe:GetHeight() ~= totalheight then
-		sectionframe:SetWidth(totalwidth)	
-		sectionframe:SetHeight(totalheight)	
+		sectionframe:SetWidth(totalwidth)
+		sectionframe:SetHeight(totalheight)
 		self.bagframes[sectionframe.bagid].dirty = true
 	end
-	
+
 	sectionframe.dirty = nil
 end
 
@@ -1434,12 +1752,12 @@ local f = CreateFrame("frame","BagginsBagPlacement",UIParent)
 	f:SetWidth(130)
 	f:SetHeight(300)
 	f:SetPoint("CENTER",UIParent,"CENTER",0,0)
-	f:SetBackdrop({bgFile = "Interface/Tooltips/UI-Tooltip-Background", 
-	                                            edgeFile = false, 
-	                                            edgeSize = 0, 
+	f:SetBackdrop({bgFile = "Interface/Tooltips/UI-Tooltip-Background",
+	                                            edgeFile = false,
+	                                            edgeSize = 0,
 	                                            insets = { left = 0, right = 0, top = 0, bottom = 0 }})
 	f:SetBackdropColor(0.2,0.5,1,0.5)
-		
+
 	f:EnableMouse(true)
 	f:SetMovable(true)
 	f:SetResizable(true)
@@ -1451,35 +1769,35 @@ local f = CreateFrame("frame","BagginsBagPlacement",UIParent)
 	f.t:SetPoint("TOPLEFT",f,"TOPLEFT",0,0)
 	f.t:SetPoint("TOPRIGHT",f,"TOPRIGHT",0,0)
 	f.t:SetHeight(20)
-	f.t:SetBackdrop({bgFile = "Interface/Tooltips/UI-Tooltip-Background", 
-	                                            edgeFile = false, 
-	                                            edgeSize = 0, 
+	f.t:SetBackdrop({bgFile = "Interface/Tooltips/UI-Tooltip-Background",
+	                                            edgeFile = false,
+	                                            edgeSize = 0,
 	                                            insets = { left = 0, right = 0, top = 0, bottom = 0 }})
 	f.t:SetBackdropColor(0,0,1,1)
 	f.t:EnableMouse(true)
 	f.t:SetScript("OnMouseDown",function(this) this:GetParent():StartSizing("TOP") end)
 	f.t:SetScript("OnMouseUp", function(this) this:GetParent():StopMovingOrSizing() self:SaveBagPlacement() end)
-	
+
 	f.b = CreateFrame("frame","BagginsBagPlacementTopMover",f)
 	f.b:SetPoint("BOTTOMLEFT",f,"BOTTOMLEFT",0,0)
 	f.b:SetPoint("BOTTOMRIGHT",f,"BOTTOMRIGHT",0,0)
 	f.b:SetHeight(20)
-	f.b:SetBackdrop({bgFile = "Interface/Tooltips/UI-Tooltip-Background", 
-	                                            edgeFile = false, 
-	                                            edgeSize = 0, 
+	f.b:SetBackdrop({bgFile = "Interface/Tooltips/UI-Tooltip-Background",
+	                                            edgeFile = false,
+	                                            edgeSize = 0,
 	                                            insets = { left = 0, right = 0, top = 0, bottom = 0 }})
 	f.b:SetBackdropColor(0,0,1,1)
 	f.b:EnableMouse(true)
 	f.b:SetScript("OnMouseDown",function(this) this:GetParent():StartSizing("BOTTOM") end)
 	f.b:SetScript("OnMouseUp", function(this) this:GetParent():StopMovingOrSizing() self:SaveBagPlacement() end)
-	
+
 	f.midtext = f:CreateFontString(nil,"OVERLAY","GameFontNormalSmall")
 	f.midtext:SetText(L["Drag to Move\nRight-Click to Close"])
 	f.midtext:SetPoint("LEFT",f,"LEFT",0,0)
 	f.midtext:SetPoint("RIGHT",f,"RIGHT",0,0)
 	f.midtext:SetHeight(45)
 	f.midtext:SetVertexColor(1, 1, 1)
-	
+
 	f.toptext = f.t:CreateFontString(nil,"OVERLAY","GameFontNormalSmall")
 	f.toptext:SetText(L["Drag to Size"])
 	f.toptext:SetPoint("TOPLEFT",f,"TOPLEFT",0,-2)
@@ -1492,7 +1810,7 @@ local f = CreateFrame("frame","BagginsBagPlacement",UIParent)
 	f.bottext:SetPoint("BOTTOMLEFT",f,"BOTTOMLEFT",0,2)
 	f.bottext:SetPoint("BOTTOMRIGHT",f,"BOTTOMRIGHT",0,2)
 	f.bottext:SetHeight(15)
-	f.bottext:SetVertexColor(1, 1, 1)	
+	f.bottext:SetVertexColor(1, 1, 1)
 end
 
 local function BagginsItemButton_OnEnter(button)
@@ -1510,11 +1828,25 @@ local function BagginsItemButton_OnEnter(button)
 
 	-- Keyring specific code
 	button:UpdateTooltip()
-		
+
+end
+
+local KEYRING_CONTAINER = KEYRING_CONTAINER
+
+local function showBattlePetTooltip(link)
+	local speciesID, level, quality, maxHealth, power, speed, petid = link:match("battlepet:(%d+):(%d+):([-%d]+):(%d+):(%d+):(%d+):(%d+)")
+	speciesID = tonumber(speciesID)
+	level = tonumber(level)
+	quality = tonumber(quality)
+	maxHealth = tonumber(maxHealth)
+	power = tonumber(power)
+	speed = tonumber(speed)
+	petid = tonumber(petid)
+	BattlePetToolTip_Show(speciesID, level, quality, maxHealth, power, speed)
 end
 
 local function BagginsItemButton_UpdateTooltip(button)
-if ( button:GetParent():GetID() == KEYRING_CONTAINER ) then
+	if ( button:GetParent():GetID() == KEYRING_CONTAINER ) then
 		GameTooltip:SetInventoryItem("player", KeyRingButtonIDToInvSlotID(button:GetID(),button.isBag))
 		CursorUpdate()
 		return
@@ -1531,6 +1863,11 @@ if ( button:GetParent():GetID() == KEYRING_CONTAINER ) then
 	end
 
 	local showSell = nil;
+	local itemlink = GetContainerItemLink(button:GetParent():GetID(), button:GetID())
+	if itemlink and itemlink:match("battlepet:") then
+		showBattlePetTooltip(itemlink)
+		return
+	end
 	local hasCooldown, repairCost = GameTooltip:SetBagItem(button:GetParent():GetID(), button:GetID());
 	if ( InRepairMode() and (repairCost and repairCost > 0) ) then
 		GameTooltip:AddLine(REPAIR_COST, "", 1, 1, 1);
@@ -1549,163 +1886,399 @@ if ( button:GetParent():GetID() == KEYRING_CONTAINER ) then
 	else
 		ResetCursor();
 	end
-end	
+end
 
-local function BagginsItemButton_PreClick(button)
-	for i, v in ipairs(button.slots) do
-		local bag, slot = GetSlotInfo(v)
-		local _,_,locked = GetContainerItemInfo(bag, slot)
-		if not locked then
-			button:SetID(slot)
-			local bagframe = button:GetParent():GetParent()
-			if not bagframe.bagparents[bag] then 
-				bagframe.bagparents[bag] = CreateFrame("Frame",nil,bagframe)
-				bagframe.bagparents[bag]:SetID(bag)
-			end
-			button:SetParent(bagframe.bagparents[bag])
-			break
-		end
+do
+	local menu = {}
+	local currentItem
+
+	local function includeItemInCategory(info)
+		Baggins:IncludeItemInCategory(info.value, currentItem)
 	end
-	if IsAltKeyDown() and GetMouseButtonClicked() == "RightButton" then
-		local bag = button:GetParent():GetID();
-		local slot = button:GetID();
-		local link = GetContainerItemLink(bag,slot)
-		
-		if link then
-			local itemid = tonumber(link:match("item:(%d+)"))
-			if itemid then
-				dewdrop:Open( button,
-					"children",function(level, value, ...)
-						Baggins:FireSignal("Baggins_ItemButtonMenu", button, dewdrop, level, value, ...);
-						if level == 1 then
-							dewdrop:AddLine("text",L["Add To Category"], "hasArrow", true, "value", "AddToCat")
-							dewdrop:AddLine("text",L["Exclude From Category"], "hasArrow", true, "value", "ExcludeFromCat")
-							dewdrop:AddLine("text",L["Item Info"], "hasArrow", true, "value", "Info")
-						
-						elseif level == 2 and (value=="AddToCat" or value=="ExcludeFromCat") then
-							
-							local categories = Baggins.db.profile.categories
-							while #catsorttable > 0 do
-								table.remove(catsorttable,#catsorttable)
-							end
-							for catid in pairs(categories) do
-								table.insert(catsorttable,catid)
-							end
-							table.sort(catsorttable)
-							
-							if value == "AddToCat" then
-								for i, name in ipairs(catsorttable) do
-									dewdrop:AddLine("text",name, "func", function(cat, item) Baggins:IncludeItemInCategory(cat, item) end, "arg1", name,"arg2", itemid)
-								end
-							elseif value == "ExcludeFromCat" then
-								for i, name in ipairs(catsorttable) do
-									dewdrop:AddLine("text",name, "func", function(cat, item) Baggins:ExcludeItemFromCategory(cat, item) end, "arg1", name,"arg2", itemid)
-								end
-							end
-						
-						elseif level == 2 and (value=="Info") then
-							
-							local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemCount, itemEquipLoc, itemTexture = GetItemInfo(itemid)
-							dewdrop:AddLine("text",L["ItemID: "]..itemid)
-							dewdrop:AddLine("text",L["Item Type: "]..itemType)
-							dewdrop:AddLine("text",L["Item Subtype: "]..itemSubType)
-							dewdrop:AddLine("text",L["Quality: "]..itemRarity)
-							dewdrop:AddLine("text",L["Level: "]..itemLevel)
-							dewdrop:AddLine("text",L["MinLevel: "]..itemMinLevel)
-							dewdrop:AddLine("text",L["Stack Size: "]..itemCount)
-							dewdrop:AddLine("text",L["Equip Location: "]..itemEquipLoc)
-							if pt then
-								dewdrop:AddLine("text",L["Periodic Table Sets"], "hasArrow", true, "value", "PTSets")
-							end
-							
-						elseif level == 3 then
-						
-							if pt and value == "PTSets" then
-								local matches = pt:ItemSearch(itemid)
-								if matches then
-									for i,v in ipairs(matches) do
-										dewdrop:AddLine('text',v)
-									end
-								end
-							end
+
+	local function excludeItemFromCategory(info)
+		Baggins:ExcludeItemFromCategory(info.value, currentItem)
+	end
+
+	local useButton = CreateFrame("Button", nil, UIParent, "SecureActionButtonTemplate")
+	useButton:SetAttribute("type", "item")
+
+	local function reallyHideUseButton()
+		useButton:ClearAllPoints()
+		useButton:SetAttribute("item", nil)
+		useButton:UnregisterAllEvents()
+		useButton:Hide()
+		useButton.owner = nil
+		Baggins:Unhook(DropDownList1Button1, "OnHide")
+	end
+
+	useButton:SetScript("OnEvent", function(self, event)
+		if event == "PLAYER_REGEN_DISABLED" then
+			self:Hide()
+		elseif event == "PLAYER_REGEN_ENABLED" then
+			if self.hideaftercombat then
+				reallyHideUseButton()
+				return
+			end
+			self:Show()
+		end
+	end)
+
+	useButton:SetScript("OnEnter", function(self)
+		DropDownList1Button1:GetScript("OnEnter")(DropDownList1Button1)
+	end)
+
+	useButton:SetScript("OnLeave", function(self)
+		DropDownList1Button1:GetScript("OnLeave")(DropDownList1Button1)
+	end)
+
+	useButton:HookScript("OnClick", function(self)
+		DropDownList1Button1:GetScript("OnClick")(DropDownList1Button1)
+	end)
+
+	local function hideUseButton()
+		if InCombatLockdown() then
+			useButton.hideaftercombat = true
+			return
+		end
+		reallyHideUseButton()
+	end
+
+	local function showUseButton(link)
+		local itemstring = link:match("(item:[-%d:]+)")
+		useButton:SetAttribute("item", itemstring)
+		useButton:ClearAllPoints()
+		local button = _G["DropDownList1Button" .. useButton.owner]
+		useButton:SetAllPoints(button)
+		useButton:SetFrameStrata(button:GetFrameStrata())
+		useButton:SetFrameLevel(button:GetFrameLevel()+1)
+		useButton:RegisterEvent("PLAYER_REGEN_ENABLED")
+		useButton:RegisterEvent("PLAYER_REGEN_DISABLED")
+		useButton:Show()
+		Baggins:SecureHookScript(DropDownList1Button1, "OnHide", hideUseButton)
+	end
+	
+	local addCategoryIndex
+	local excludeCategoryIndex
+	-- some code to make the UIDropDownMenu scrollable
+	local offset = 0
+	local switchpage
+	local function pageup(self)
+		offset = max(offset - 1,0)
+		switchpage(self)
+	end
+	local function pagedown(self)
+		offset = min(offset + 1, #catsorttable)
+		switchpage(self)
+	end
+	function switchpage(self)
+		-- check if it's one of the category-menus
+		if self.parentID ~= addCategoryIndex and self.parentID ~= excludeCategoryIndex then
+			offset = 0
+			return
+		end
+		if offset < 0 then
+			offset = 0
+		end
+		local maxoffset = #catsorttable - 20
+		if offset > maxoffset then
+			offset = maxoffset
+		end
+		for x = 1,20 do
+			local y = x + offset
+			local newtext
+			local button = _G[self:GetName() .. "Button" .. x]
+			if x == 1 and offset > 0 then
+				newtext = "..."
+				button.func = pageup
+				button.keepShownOnClick = true
+			elseif x == 20 and y < #catsorttable then
+				newtext = "..."
+				button.func = pagedown
+				button.keepShownOnClick = true
+			else
+				newtext = catsorttable[y] or ""
+				button.func = menu[self.parentID].menuList[2].func
+				button.keepShownOnClick = false
+			end
+			button:SetText(newtext)
+			button.value = newtext
+		end
+		UIDropDownMenu_Refresh(Baggins_ItemMenuFrame)
+	end
+
+	function makeMenu(bag, slot, link)
+		wipe(menu)
+		if not LBU:IsBank(bag) then
+			local use = {
+				text = L["Use"],
+				tooltipTitle = L["Use"],
+				tooltipText = L["Use/equip the item rather than bank/sell it"],
+				notCheckable = true,
+				disabled = InCombatLockdown(),
+				func = function()
+						if InCombatLockdown() then
+							print("Baggins: could not trigger item use because you are in combat")
 						end
+					end,
+			}
+			tinsert(menu, use)
+			useButton.owner = #menu
+		end
+
+		local addToCatMenu = {
+			text = L["Add To Category"],
+			hasArrow = true,
+			menuList = {},
+			notCheckable = true,
+		}
+		tinsert(menu, addToCatMenu)
+		addCategoryIndex = #menu
+
+		local excludeFromCatMenu = {
+			text = L["Exclude From Category"],
+			hasArrow = true,
+			notCheckable = true,
+			menuList = {},
+		}
+		tinsert(menu, excludeFromCatMenu)
+		excludeCategoryIndex = #menu
+
+		local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemCount, itemEquipLoc, itemTexture = GetItemInfo(currentItem)
+		local litemEquipLoc = _G[itemEquipLoc] or itemEquipLoc
+		local litemQuality = _G["ITEM_QUALITY" .. itemRarity .. "_DESC"] or itemRarity
+		local itemInfo = {
+			text = L["Item Info"],
+			hasArrow = true,
+			notCheckable = true,
+			menuList = {
+				{ text = L["ItemID: "]..currentItem, notCheckable = true, },
+				{ text = L["Item Type: "]..itemType, notCheckable = true, },
+				{ text = L["Item Subtype: "]..itemSubType, notCheckable = true, },
+				{ text = L["Quality: "]..litemQuality, notCheckable = true, },
+				{ text = L["Level: "]..itemLevel, notCheckable = true, },
+				{ text = L["MinLevel: "]..itemMinLevel, notCheckable = true, },
+				{ text = L["Stack Size: "]..itemCount, notCheckable = true, },
+				{ text = L["Equip Location: "]..litemEquipLoc, notCheckable = true, },
+			},
+		}
+		tinsert(menu, itemInfo)
+		local categories = Baggins.db.profile.categories
+		while #catsorttable > 0 do
+			tremove(catsorttable,#catsorttable)
+		end
+		for catid in pairs(categories) do
+			tinsert(catsorttable,catid)
+		end
+		tsort(catsorttable)
+		for i, name in ipairs(catsorttable) do
+			if i == 20 and #catsorttable > 20 then
+				addToCatMenu.menuList[i] = {
+					text= " ...",
+					notCheckable = true,
+					func = pagedown,
+					keepShownOnClick = true,
+				}
+				excludeFromCatMenu.menuList[i] = {
+					text = "...",
+					notCheckable = true,
+					func = pagedown,
+					keepShownOnClick = true,
+				}
+				break
+			end
+			addToCatMenu.menuList[i] = {
+				text = name,
+				notCheckable = true,
+				func = includeItemInCategory,
+			}
+			excludeFromCatMenu.menuList[i] = {
+				text = name,
+				notCheckable = true,
+				func = excludeItemFromCategory,
+			}
+		end
+		DropDownList2:EnableMouseWheel(true)
+		DropDownList2:SetScript("OnMouseWheel", function(self, delta)
+			offset = offset - delta
+			switchpage(self)
+		end)
+		return menu
+	end
+
+	local itemDropdownFrame = CreateFrame("Frame", "Baggins_ItemMenuFrame", UIParent, "UIDropDownMenuTemplate")
+
+	local function BagginsItemButton_PreClick(button)
+		if GetMouseButtonClicked() == "RightButton" and button.tainted then
+			print("|cff00cc00Baggins: |cffffff00Right-clicking this button will not work until you leave combat|r")
+		end
+		for i, v in ipairs(button.slots) do
+			local bag, slot = GetSlotInfo(v)
+			local locked =select(3, GetContainerItemInfo(bag, slot))
+			if not locked then
+				button:SetID(slot)
+				local bagframe = button:GetParent():GetParent()
+				if not bagframe.bagparents[bag] then
+					bagframe.bagparents[bag] = CreateFrame("Frame",nil,bagframe)
+					bagframe.bagparents[bag]:SetID(bag)
+				end
+				button:SetParent(bagframe.bagparents[bag])
+				break
+			end
+		end
+		if (IsControlKeyDown() or IsAltKeyDown()) and GetMouseButtonClicked() == "RightButton" then
+			local bag = button:GetParent():GetID();
+			local slot = button:GetID();
+			local link = GetContainerItemLink(bag,slot)
+			if link then
+				local itemid = tonumber(link:match("item:(%d+)"))
+				if itemid then
+					currentItem = itemid
+					if DropDownList1:IsShown() then
+						DropDownList1:Hide()
+						return
+					end
+					makeMenu(bag, slot, link)
+					EasyMenu(menu, itemDropdownFrame, "cursor", 0, 0, "MENU")
+					-- make sure we restore the original scroll-wheel behavior for the DropdownList2-Frame
+					-- when the item-dropdown is closed
+					Baggins:SecureHookScript(DropDownList1, "OnHide", function(self)
+						DropDownList2:EnableMouseWheel(false)
+						DropDownList2:SetScript("OnMouseWheel", nil)
+						Baggins:Unhook(DropDownList1, "OnHide")
 					end)
+
+					if not LBU:IsBank(bag) and not InCombatLockdown() then
+						showUseButton(link)
+					else
+						hideUseButton()
+					end
+				end
 			end
 		end
 	end
-end
---[[
-local function BagginsItemButton_OnUpdate(button,elapsed)
-	if ( this.updateTooltip ) then
-		this.updateTooltip = button.updateTooltip - elapsed;
-		if ( button.updateTooltip > 0 ) then
-			return;
+
+	function Baggins:CreateItemButton(sectionframe,item)
+		local frame = Baggins:GetItemButton()
+		frame.glow = frame.glow or frame:CreateTexture(nil,"OVERLAY")
+		frame.glow:SetTexture("Interface\\Addons\\Baggins\\Textures\\Glow")
+		frame.glow:SetAlpha(0.3)
+		frame.glow:SetAllPoints(frame)
+
+		frame.newtext = frame.newtext or frame:CreateFontString(frame:GetName().."NewText","OVERLAY","GameFontNormal")
+		frame.newtext:SetPoint("TOP",frame,"TOP",0,0)
+		frame.newtext:SetHeight(13)
+		frame.newtext:SetTextColor(0,1,0,1)
+		frame.newtext:SetShadowColor(0,0,0,1)
+		frame.newtext:SetShadowOffset(1,-1)
+		frame.newtext:SetText("*New*")
+		frame.newtext:Hide()
+
+		frame:ClearAllPoints()
+		local cooldown = _G[frame:GetName().."Cooldown"]
+		cooldown:SetAllPoints(frame)
+		cooldown:SetFrameLevel(10)
+		frame:SetFrameStrata("HIGH")
+		frame:SetScript("OnEnter",BagginsItemButton_OnEnter)
+		frame:SetScript("PreClick",BagginsItemButton_PreClick)
+		frame.UpdateTooltip = BagginsItemButton_UpdateTooltip
+		--frame:SetScript("OnUpdate",BagginsItemButton_OnUpdate)
+		if self.currentSkin then
+			self.currentSkin:SkinItem(frame)
 		end
-	else
-		return
+		frame:Show()
+		return frame
 	end
-	
-	if ( GameTooltip:IsOwned(this) ) then
-		BagginsItemButton_OnEnter(this);
-	end
-end]]
-
-function Baggins:CreateItemButton(sectionframe,item)
-	local frame = CreateFrame("Button",sectionframe:GetName().."Item"..item,nil,"ContainerFrameItemButtonTemplate")
-	frame.glow = frame:CreateTexture(nil,"OVERLAY")
-	frame.glow:SetTexture("Interface\\Addons\\Baggins\\Textures\\Glow")
-	frame.glow:SetAlpha(0.3)
-	frame.glow:SetAllPoints(frame)
-	
-	frame.newtext = frame:CreateFontString(frame:GetName().."NewText","OVERLAY","GameFontNormal")
-	frame.newtext:SetPoint("TOP",frame,"TOP",0,0)
-	frame.newtext:SetHeight(13)
-	frame.newtext:SetTextColor(0,1,0,1)
-	frame.newtext:SetShadowColor(0,0,0,1)
-	frame.newtext:SetShadowOffset(1,-1)
-	frame.newtext:SetText("*New*")
-	frame.newtext:Hide()
-
-	frame:ClearAllPoints()
-	local cooldown = _G[frame:GetName().."Cooldown"]
-	cooldown:SetAllPoints(frame)
-	cooldown:SetFrameLevel(10)
-	frame:SetFrameStrata("HIGH")
-	frame:SetScript("OnEnter",BagginsItemButton_OnEnter)
-	frame:SetScript("PreClick",BagginsItemButton_PreClick)
-	frame.UpdateTooltip = BagginsItemButton_UpdateTooltip
-	--frame:SetScript("OnUpdate",BagginsItemButton_OnUpdate)
-	frame:Show()
-	return frame
 end
 
-function Baggins:CreateSectionFrame(bagframe,secid)
-	local frame = CreateFrame("Frame",bagframe:GetName().."Section"..secid,bagframe)
+do
+	local dropdown = CreateFrame("Frame", "BagginsCategoryAddDropdown")
+	local info = { }
 	
-	frame.title = frame:CreateFontString(bagframe:GetName().."SectionTitle","OVERLAY","GameFontNormalSmall")
-	frame.titleframe = CreateFrame("button",bagframe:GetName().."SectionTitleFrame",frame)
-	frame.titleframe:SetAllPoints(frame.title)
-	frame.titleframe:SetScript("OnClick", function(this) self:ToggleSection(this:GetParent()) end)
-	--[[
-	frame.titleframe:SetScript("OnEnter", function(this) self:ShowSectionTooltip(this:GetParent()) end)
-	frame.titleframe:SetScript("OnLeave", function(this) self:HideSectionTooltip(this:GetParent()) end)
-	--]]
-	frame:SetFrameStrata("HIGH")
-	frame:Show()
-	frame.items = {}
-	frame.slots = {}
-	frame.layout = {}
-	frame.secid = secid
-	frame.bagid = bagframe.bagid
-	frame.itemcount = 0
-	self.currentSkin:SkinSection(frame)
+	local function Close()
+		CloseDropDownMenus()
+	end
 	
-	return frame
+	local function Click(dropdown, arg1, arg2)
+		Baggins:IncludeItemInCategory(arg1, arg2)
+		Baggins:UpdateBags()
+	end
+	
+	local dd_categories, dd_id
+	dropdown.initialize = function(self, level)
+		
+		-- Title
+		wipe(info)
+		info.text = L["Add To Category"]
+		info.isTitle = true
+		info.notCheckable = 1
+		UIDropDownMenu_AddButton(info, 1)
+		
+		-- Categories
+		for k, v in ipairs(dd_categories) do
+			wipe(info)
+			info.text = v
+			info.arg1 = v
+			info.arg2 = dd_id
+			info.func = Click
+			info.notCheckable = 1
+			UIDropDownMenu_AddButton(info, 1)
+		end
+		
+		-- Close
+		wipe(info)
+		info.text = "|cff777777"..L["Close"]
+		info.func = Close
+		info.notCheckable = 1
+		UIDropDownMenu_AddButton(info, 1)
+	end
+	
+	local function RecieveDrag(self)
+		local section = self:GetParent()
+		local categories = Baggins.db.profile.bags[section.bagid].sections[section.secid].cats
+		local ctype, cid, clink = GetCursorInfo()
+		if ctype ~= 'item' then return nil end
+		if #categories == 1 then
+			Click(nil, categories[1], cid)
+		else
+			dd_categories = categories
+			dd_id = cid
+			ToggleDropDownMenu(1, nil, BagginsCategoryAddDropdown, "UIParent", GetCursorPosition())
+		end
+		ClearCursor()
+	end
+	
+	function Baggins:CreateSectionFrame(bagframe,secid)
+		local frame = CreateFrame("Frame",bagframe:GetName().."Section"..secid,bagframe)
+
+		frame.title = frame:CreateFontString(bagframe:GetName().."SectionTitle","OVERLAY","GameFontNormalSmall")
+		frame.titleframe = CreateFrame("button",bagframe:GetName().."SectionTitleFrame",frame)
+		frame.titleframe:SetAllPoints(frame.title)
+		frame.titleframe:SetScript("OnClick", function(this) self:ToggleSection(this:GetParent()) end)
+		frame.titleframe:SetScript("OnReceiveDrag", RecieveDrag)
+		--[[
+		frame.titleframe:SetScript("OnEnter", function(this) self:ShowSectionTooltip(this:GetParent()) end)
+		frame.titleframe:SetScript("OnLeave", function(this) self:HideSectionTooltip(this:GetParent()) end)
+		--]]
+		frame:SetFrameStrata("HIGH")
+		frame:Show()
+		frame.items = {}
+		frame.slots = {}
+		frame.layout = {}
+		frame.secid = secid
+		frame.bagid = bagframe.bagid
+		frame.itemcount = 0
+		if self.currentSkin then
+			self.currentSkin:SkinSection(frame)
+		end
+
+		return frame
+	end
 end
 
 function Baggins:ToggleSection(sectionframe)
 	local p = self.db.profile
-	
+
 	local bag = p.bags[sectionframe.bagid]
 	if bag then
 		local section = bag.sections[sectionframe.secid]
@@ -1716,33 +2289,6 @@ function Baggins:ToggleSection(sectionframe)
 		end
 	end
 end
-
---[[
-function Baggins:ShowSectionTooltip(sectionframe)
-	local p = self.db.profile
-	
-	local bag = p.bags[sectionframe.bagid]
-	if bag then
-		local section = bag.sections[sectionframe.secid]
-		if section then
-			GameTooltip:ClearLines()
-			GameTooltip:SetOwner(sectionframe, 'ANCHOR_DEFAULT')
-			GameTooltip:AddLine(section.name)
-			GameTooltip:AddLine("Categories: "..table.concat(section.cats, ', ') , 1, 1, 1) -- TODO: Locale
-			GameTooltip:AddLine("Hint: click to collapse/expand.", 0, 1, 0) -- TODO: Locale
-			GameTooltip:Show()
-		end
-	end
-end
-
-function Baggins:HideSectionTooltip(sectionframe)
-	local p = self.db.profile
-	if GameTooltip:IsOwned(sectionframe) then
-		GameTooltip:Hide()
-	end
-end
---]]
-
 
 function Baggins:CreateAllBags()
 	for k, v in ipairs(self.db.profile.bags) do
@@ -1755,7 +2301,7 @@ end
 function Baggins:CreateBagFrame(bagid)
 	if not bagid then return end
 	local bagname = "BagginsBag"..bagid
-	
+
 	local frame = CreateFrame("Frame",bagname,UIParent)
 	self.bagframes[bagid] = frame
 	frame.bagid = bagid
@@ -1765,30 +2311,30 @@ function Baggins:CreateBagFrame(bagid)
 	frame:SetPoint("CENTER",UIParent,"CENTER",0,0)
 	frame:EnableMouse(true)
 	frame:SetMovable(true)
-	frame:SetScript("OnMouseDown",function(this,arg1) 
-		if arg1=="LeftButton" and not self:AreBagsLocked() then 
-			this:StartMoving() 
-		end 
+	frame:SetScript("OnMouseDown",function(this,arg1)
+		if arg1=="LeftButton" and not self:AreBagsLocked() then
+			this:StartMoving()
+		end
 	end)
 	frame:SetScript("OnMouseUp",function(this,arg1)
 		if arg1=="LeftButton" then
-			this:StopMovingOrSizing() self:SaveBagPosition(this.bagid) 
+			this:StopMovingOrSizing() self:SaveBagPosition(this.bagid)
 		elseif arg1=="RightButton" then
 			Baggins:DoBagMenu(frame);
 		end
 	end)
 	frame:SetScript("OnShow",function() self:FireSignal("Baggins_BagOpened", frame); end)
-	
-	
+
+
 	frame.closebutton = CreateFrame("Button",bagname.."CloseButton",frame,"UIPanelCloseButton")
 	frame.closebutton:SetScript("OnClick", function(this)
 		if IsShiftKeyDown() then
 			self:CloseAllBags()
 		else
-  		    self:CloseBag(this:GetParent().bagid) 
+  		    self:CloseBag(this:GetParent().bagid)
 		end
 	end)
-	
+
 	frame.compressbutton = CreateFrame("Button",bagname.."CompressButton",frame,nil);
 	frame.compressbutton:Hide();
 	frame.compressbutton:SetScript("OnClick", function()
@@ -1807,25 +2353,27 @@ function Baggins:CreateBagFrame(bagid)
 	frame.compressbutton:SetHeight(32);
 	frame.compressbutton:SetWidth(32);
 	frame.compressbutton:SetNormalTexture("Interface\\AddOns\\Baggins\\Textures\\compressbutton.tga");
-	self:RegisterSignal("Baggins_CanCompress", function(self, bank, compressable) 
+	self:RegisterSignal("Baggins_CanCompress", function(self, bank, compressable)
 			if Baggins.db.profile.bags[self.bagid] then
-				if (not Baggins.db.profile.bags[self.bagid].isBank) == (not bank) then 
+				if (not Baggins.db.profile.bags[self.bagid].isBank) == (not bank) then
 					(compressable and self.compressbutton.Show or self.compressbutton.Hide)(self.compressbutton);
-				end 
+				end
 			end
 		end,
 		frame
 	);
-	
+
 	frame.title = frame:CreateFontString(bagname.."Title","OVERLAY","GameFontNormalLarge")
 	frame.title:SetText("Baggins")
 	frame:SetFrameStrata("HIGH")
-	frame:SetClampedToScreen(true) 
+	frame:SetClampedToScreen(true)
 	frame:SetScale(self.db.profile.scale)
 	frame.sections = {}
 	frame.bagparents = {}
-	
-	self.currentSkin:SkinBag(frame)
+
+	if self.currentSkin then
+		self.currentSkin:SkinBag(frame)
+	end
 
 	self:UpdateBagFrameSize(bagid)
 	frame:Hide()
@@ -1920,9 +2468,9 @@ function Baggins:UpdateMoneyFrame()
 	local gold = floor(copper / 10000)
 	local silver = mod(floor(copper / 100), 100)
 	copper = mod(copper, 100)
-		
+
 	local width = 0
-	
+
 	if gold == 0 then
 		BagginsGoldIcon:Hide()
 		BagginsGoldText:Hide()
@@ -1990,7 +2538,7 @@ function Baggins:UpdateItemButtonLocks()
 		for sectionid, section in ipairs(bag.sections) do
 			for buttonid, button in ipairs(section.items) do
 				if button:IsVisible() then
-					local _,_,locked = GetContainerItemInfo(button:GetParent():GetID(), button:GetID())
+					local locked = select(3, GetContainerItemInfo(button:GetParent():GetID(), button:GetID()))
 					SetItemButtonDesaturated(button, locked, 0.5, 0.5, 0.5)
 				end
 			end
@@ -2039,7 +2587,7 @@ function Baggins:SetItemButtonCount(button, count, realcount)
 		counttext:Show()
 	elseif ( count > 1 or (button.isBag and count > 0) ) then
 		if ( count > 999 ) then
-			count = (math.floor(count/100)/10).."k"
+			count = (floor(count/100)/10).."k"
 			counttext:ClearAllPoints()
 			counttext:SetPoint("BOTTOM",button,"BOTTOM",0,2)
 		else
@@ -2059,7 +2607,7 @@ function Baggins:IsNew(itemid)
 	if not itemid then
 		return nil
 	end
-	local savedcount = itemcounts[itemid] 
+	local savedcount = itemcounts[itemid]
 	if not savedcount then
 		return 1	-- completely new
 	else
@@ -2076,9 +2624,9 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
 	local p = self.db.profile
 	local texture, itemCount, locked, quality, readable = GetContainerItemInfo(bag, slot)
 	local link = GetContainerItemLink(bag, slot)
-	local itemid	
+	local itemid
 	if link then
-		local _,_,qual = GetItemInfo(link)
+		local qual = select(3, GetItemInfo(link))
 		quality = qual or quality
 		itemid = tonumber(link:match("item:(%d+)"))
 	end
@@ -2115,15 +2663,15 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
 	else
 		text:Hide()
 	end
-	
-	if not bagframe.bagparents[bag] then 
+
+	if not bagframe.bagparents[bag] then
 		bagframe.bagparents[bag] = CreateFrame("Frame",nil,bagframe)
 		bagframe.bagparents[bag]:SetID(bag)
 	end
 	button:SetParent(bagframe.bagparents[bag])
 	if texture then
 		SetItemButtonTexture(button, texture)
-	elseif self.currentSkin.EmptySlotTexture then
+	elseif self.currentSkin and self.currentSkin.EmptySlotTexture then
 		SetItemButtonTexture(button, self.currentSkin.EmptySlotTexture)
 	else
 		SetItemButtonTexture(button, nil)
@@ -2148,13 +2696,18 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
 		self:SetItemButtonCount(button, itemCount)
 	end
 	SetItemButtonDesaturated(button, locked, 0.5, 0.5, 0.5)
-	
+
 	if ( texture ) then
 		self:UpdateItemButtonCooldown(bag, button)
 		button.hasItem = 1
 	else
 		_G[button:GetName().."Cooldown"]:Hide()
 		button.hasItem = nil
+	end
+	if button.tainted then
+		button.icon:SetAlpha(0.3)
+	else
+		button.icon:SetAlpha(1)
 	end
 
 	button.readable = readable
@@ -2175,7 +2728,7 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
 		CursorUpdate();
 		return
 	end
-	
+
 	local showSell = nil;
 	local hasCooldown, repairCost = GameTooltip:SetBagItem(button:GetParent():GetID(), button:GetID());
 	if ( InRepairMode() and (repairCost and repairCost > 0) ) then
@@ -2272,6 +2825,9 @@ function Baggins:LayoutBagFrames()
 	self:ScheduleRefresh()
 end
 
+local CONTAINER_SPACING, VISIBLE_CONTAINER_SPACING = 
+      CONTAINER_SPACING, VISIBLE_CONTAINER_SPACING
+	  
 function Baggins:ReallyLayoutBagFrames()
 	local p = self.db.profile
 	if p.layout ~= "auto" then return end
@@ -2279,10 +2835,10 @@ function Baggins:ReallyLayoutBagFrames()
 	local screenWidth = GetScreenWidth()
 
 	screenHeight = GetScreenHeight()
-	
+
 	local initialcorner = p.layoutanchor
 	local nextcorner, vdir, hdir
-	local availableScreenHeight 
+	local availableScreenHeight
 	if initialcorner == "BOTTOMRIGHT" then
 		hdir = -1
 		vdir = 1
@@ -2313,7 +2869,7 @@ function Baggins:ReallyLayoutBagFrames()
 		availableScreenHeight = screenHeight - yOffset - p.bottomoffset
 	end
 	-- Adjust the start anchor for bags depending on the multibars
-	
+
 	-- freeScreenHeight determines when to start a new column of bags
 	freeScreenHeight = availableScreenHeight
 	maxwidth = 1
@@ -2322,6 +2878,19 @@ function Baggins:ReallyLayoutBagFrames()
 	local columnoffset = 0
 	local prevframe
 	for id, frame in ipairs(self.bagframes) do
+		if (p.hideemptybags) then
+			if (frame.isempty) then 
+				if (frame:IsVisible()) then
+					frame.autohide = true
+					frame:Hide()
+				end
+			else
+				if (frame.autohide) then
+					frame.autohide = false
+					frame:Show()
+				end
+			end
+		end
 		if frame:IsVisible() then
 			--self:ReallyUpdateBagFrameSize(id)
 			frame:ClearAllPoints()
@@ -2346,7 +2915,7 @@ function Baggins:ReallyLayoutBagFrames()
 				index = index + 1
 				prevframe = frame
 			end
-			maxwidth = math.max(maxwidth, frame:GetWidth())
+			maxwidth = max(maxwidth, frame:GetWidth())
 			self:SaveBagPosition(id)
 			freeScreenHeight = freeScreenHeight - frame:GetHeight()*s - VISIBLE_CONTAINER_SPACING
 		end
@@ -2363,9 +2932,17 @@ end
 ---------------------
 -- Fubar Plugin    --
 ---------------------
+function Baggins:UpdateText()
+	self:OnTextUpdate()
+end
+
+function Baggins:SetText(text)
+	ldbdata.text = text
+end
+
 function Baggins:OnClick()
 	if IsShiftKeyDown() then
-		self:SaveItemCounts() 
+		self:SaveItemCounts()
 		self:ForceFullUpdate()
 	elseif IsControlKeyDown() and self.db.profile.layout == 'manual' then
 		self.db.profile.lock = not self.db.profile.lock
@@ -2374,34 +2951,37 @@ function Baggins:OnClick()
 	end
 end
 
-function Baggins:OnTooltipUpdate()
-	local cat = tablet:AddCategory() 
-	
-	for bagid, bag in ipairs(self.db.profile.bags) do
+function Baggins:UpdateTooltip(force)
+	if not tooltip then return end
+	if not tooltip:IsShown() and not force then return end
+	ldbdata:OnTooltipUpdate()
+end
+
+local function openBag(self, line)
+	Baggins:ToggleBag(line)
+end
+
+function ldbdata:OnTooltipUpdate()
+	tooltip:Clear()
+	local title = tooltip:AddHeader()
+	tooltip:SetCell(title, 1, "Baggins", tooltip:GetHeaderFont(), "LEFT")
+	tooltip:AddLine()
+	for bagid, bag in ipairs(Baggins.db.profile.bags) do
 		if not bag.isBank or (bag.isBank and self.bankIsOpen) then
 			local color
 			if bag.isBank then
-				color = self.colors.blue
+				color = Baggins.colors.blue
 			else
-				color = self.colors.white
+				color = Baggins.colors.white
 			end
 			local name = bag.name
-			if self.bagframes[bagid] and self.bagframes[bagid]:IsVisible() then
+			if Baggins.bagframes[bagid] and Baggins.bagframes[bagid]:IsVisible() then
 				name = "* "..name
 			end
-			cat:AddLine("text",name,"func", function(self, bagid) 
-													if IsShiftKeyDown() then
-														self:MoveBag(bagid)
-													elseif IsAltKeyDown() then
-														self:MoveBag(bagid, true)
-													else
-														self:ToggleBag(bagid)
-													end
-												end ,"arg1",self,"arg2",bagid,
-												"textR",color.r,"textG",color.g,"textB",color.b)
+			local line = tooltip:AddLine(name)
+			tooltip:SetLineScript(line, "OnMouseUp", openBag, line - 2)
 		end
 	end
-	tablet:SetHint(L["Click a bag to toggle it. Shift-click to move it up. Alt-click to move it down"])
 end
 
 
@@ -2409,12 +2989,7 @@ end
 function Baggins:BuildCountString(empty, total, color)
 	local p = self.db.profile
 	color = color or ""
-	local div 
-	if self:IsTextColored() then
-		div = "|r/"
-	else
-		div = "/"
-	end
+	local div = "|r/"
 	if p.showtotal then
 		if p.showused and p.showempty then
 			return format("%s%i%s%s%i%s%s%i", color, total-empty, div, color, empty, div, color, total)
@@ -2425,7 +3000,7 @@ function Baggins:BuildCountString(empty, total, color)
 		end
 		return format("%s%i", color, total)
 	end
-	
+
 	if p.showused and p.showempty then
 		return format("%s%i%s%s%i", color, total-empty, div, color, empty)
 	elseif p.showused then
@@ -2441,10 +3016,10 @@ local texts={}
 function Baggins:OnTextUpdate()
 	local p = self.db.profile
 	local color
-	
+
 	if p.combinecounts then
 		local normalempty,normaltotal = LBU:CountSlots("BAGS", 0)
-		local itemFamilies 
+		local itemFamilies
 		if p.showspecialcount then
 			itemFamilies = 2047-256-4-2-1   -- all except keyring, ammo, quiver, soul
 		else
@@ -2456,78 +3031,64 @@ function Baggins:OnTextUpdate()
 		if p.showsoulcount then
 			itemFamilies = itemFamilies +4
 		end
-		
+
 		local empty, total = LBU:CountSlots("BAGS", itemFamilies)
 		empty=empty+normalempty
 		total=total+normaltotal
 
-		if self:IsTextColored() then
-			local fullness = 1 - (empty/total)
-			local r, g
-			r = math.min(1,fullness * 2)
-			g = math.min(1,(1-fullness) *2)
-			color = ("|cFF%2X%2X00"):format(r*255,g*255)
-		else
-			color = ""
-		end
-		
+		local fullness = 1 - (empty/total)
+		local r, g
+		r = min(1,fullness * 2)
+		g = min(1,(1-fullness) *2)
+		color = ("|cFF%2X%2X00"):format(r*255,g*255)
+
 		self:SetText(self:BuildCountString(empty,total,color))
 		return
 	end
 
 	-- separate normal/ammo/soul/special counts
-	
+
 	local n=0	-- count of strings in texts{}
 
 	local normalempty, normaltotal = LBU:CountSlots("BAGS", 0)
-	
-	if self:IsTextColored() then
-		local fullness = 1 - (normalempty/normaltotal)
-		local r, g
-		r = math.min(1,fullness * 2)
-		g = math.min(1,(1-fullness) *2)
-		color = ("|cFF%2X%2X00"):format(r*255,g*255)
-	else
-		color = ""
-	end
-	
+
+	local fullness = 1 - (normalempty/normaltotal)
+	local r, g
+	r = min(1,fullness * 2)
+	g = min(1,(1-fullness) *2)
+	color = ("|cFF%2X%2X00"):format(r*255,g*255)
+
 	n=n+1
 	texts[n] = self:BuildCountString(normalempty,normaltotal,color)
-	
+
 	if self.db.profile.showsoulcount then
 		local soulempty, soultotal = LBU:CountSlots("BAGS", 4)
 		if soultotal>0 then
-			if self:IsTextColored() then
-				color = self.colors.purple.hex
-			end
+			color = self.colors.purple.hex
 			n=n+1
 			texts[n] = self:BuildCountString(soulempty,soultotal,color)
 		end
 	end
-	
+
 	if self.db.profile.showammocount then
 		local ammoempty, ammototal = LBU:CountSlots("BAGS", 1+2)
 		if ammototal>0 then
-			if self:IsTextColored() then
-				color = self.colors.white.hex
-			end
+			color = self.colors.white.hex
 			n=n+1
 			texts[n] = self:BuildCountString(ammoempty,ammototal,color)
 		end
 	end
-	
+
 	if self.db.profile.showspecialcount then
 		local specialempty, specialtotal = LBU:CountSlots("BAGS", 2047-256-4-2-1)
 		if specialtotal>0 then
-			if self:IsTextColored() then
-				color = self.colors.blue.hex
-			end
+			color = self.colors.blue.hex
 			n=n+1
 			texts[n] = self:BuildCountString(specialempty,specialtotal,color)
 		end
 	end
 
-	if n==1 then 
+	if n==1 then
 		self:SetText(texts[1])
 	else
 		self:SetText(tconcat(texts, " ", 1, n))
@@ -2539,13 +3100,12 @@ end
 ---------------------
 function Baggins:NewBag(bagname)
 	local bags = self.db.profile.bags
-	table.insert(bags, { name=bagname, openWithAll=true, sections={}})
+	tinsert(bags, { name=bagname, openWithAll=true, sections={}})
 	if not self.bagframes[#bags] then
 		self:CreateBagFrame(#bags)
 	end
 	currentbag = #bags
 	self:ResortSections()
-	self:BuildWaterfallTree()
 	self:ForceFullRefresh()
 	self:UpdateBags()
 	self:UpdateLayout()
@@ -2560,12 +3120,11 @@ function Baggins:MoveBag(bagid, down)
 	else
 		other = bagid - 1
 	end
-	
+
 	if bags[bagid] and bags[other] then
 		bags[bagid], bags[other] = bags[other], bags[bagid]
 	end
 	self:ResortSections()
-	self:BuildWaterfallTree()
 	self:ForceFullRefresh()
 	self:BuildMoneyBagOptions()
 end
@@ -2584,7 +3143,6 @@ function Baggins:MoveSection(bagid, sectionid, down)
 		end
 	end
     self:ResortSections()
-	self:BuildWaterfallTree()
 	self:ForceFullRefresh()
 end
 
@@ -2605,10 +3163,9 @@ end
 
 function Baggins:RemoveBag(bagid)
 	self:CloseBag(bagid)
-	table.remove(self.db.profile.bags, bagid)
+	tremove(self.db.profile.bags, bagid)
 	self:ResetCatInUse()
 	self:ResortSections()
-	self:BuildWaterfallTree()
 	self:ForceFullRefresh()
 	self:UpdateBags()
 	self:UpdateLayout()
@@ -2622,10 +3179,9 @@ function Baggins:RemoveBag(bagid)
 end
 
 function Baggins:NewSection(bagid,sectionname)
-	table.insert(self.db.profile.bags[bagid].sections, { name=sectionname, cats = {} })
+	tinsert(self.db.profile.bags[bagid].sections, { name=sectionname, cats = {} })
 	currentsection = #self.db.profile.bags[bagid].sections
 	self:ResortSections()
-	self:BuildWaterfallTree()
 	self:ForceFullRefresh()
 	self:UpdateBags()
 	self:UpdateLayout()
@@ -2633,32 +3189,30 @@ end
 
 function Baggins:NewCategory(catname)
 	if not self.db.profile.categories[catname] then
-		self.db.profile.categories[catname] = { name=catname } 
+		self.db.profile.categories[catname] = { name=catname }
 		currentcategory = catname
-		self:BuildWaterfallTree()
 		--tablet:Refresh("BagginsEditCategories")
-		self:RefreshEditWaterfall() 
+		self:RebuildCategoryOptions()
 	end
 end
 
 function Baggins:RemoveSection(bagid, sectionid)
-	table.remove(self.db.profile.bags[bagid].sections, sectionid)
+	tremove(self.db.profile.bags[bagid].sections, sectionid)
 	self:ResetCatInUse()
 	self:ResortSections()
-	self:BuildWaterfallTree()
 	self:ForceFullRefresh()
 	self:UpdateBags()
 	self:UpdateLayout()
 end
 
 function Baggins:RemoveRule(catid, ruleid)
-	table.remove(self.db.profile.categories[catid], ruleid)
-	--tablet:Refresh("BagginsEditCategories") 
+	tremove(self.db.profile.categories[catid], ruleid)
+	--tablet:Refresh("BagginsEditCategories")
 	Baggins:OnRuleChanged()
 end
 
 function Baggins:AddCategory(bagid,sectionid,category)
-	table.insert(self.db.profile.bags[bagid].sections[sectionid].cats,category)
+	tinsert(self.db.profile.bags[bagid].sections[sectionid].cats,category)
 	self:ResetCatInUse(category)
 	self:ForceFullRefresh()
 	self:UpdateBags()
@@ -2680,7 +3234,7 @@ do
 			end
 		end
 	end
-	
+
 	function Baggins:CategoryInUse(catname, isbank)
 		if not catname then return end
 		if isbank == nil or catinuse[isbank][catname] == nil then
@@ -2698,7 +3252,7 @@ do
 					end
 				end
 			end
-			if isbank ~= nil then 
+			if isbank ~= nil then
 				catinuse[isbank][catname] = false
 			end
 			return false
@@ -2712,17 +3266,13 @@ function Baggins:RemoveCategory(bagid,sectionid,catid)
 	local p = self.db.profile
 	if type(bagid) == "string" then
 		--removing a category completely
-		
 		if not self:CategoryInUse(bagid) then
 			p.categories[bagid] = nil
-			self:BuildWaterfallTree()
-			--tablet:Refresh("BagginsEditCategories") 
 		end
-		self:BuildWaterfallTree()
-		self:RefreshEditWaterfall() 
+		self:RebuildCategoryOptions()
 	else
 		--removing a category from a bag
-		table.remove(p.bags[bagid].sections[sectionid].cats,catid)
+		tremove(p.bags[bagid].sections[sectionid].cats,catid)
 		self:ResetCatInUse()
 		self:ForceFullRefresh()
 		self:UpdateBags()
@@ -2744,7 +3294,7 @@ function Baggins:CloseBag(bagid)
 		self:UpdateLayout()
 	end
 	self:UpdateTooltip()
-	
+
 	if(not Baggins:IsWhateverOpen()) then
 		--self:SetBagUpdateSpeed(false);	-- indicate bags closed
 		self:FireSignal("Baggins_AllBagsClosed");
@@ -2752,7 +3302,7 @@ function Baggins:CloseBag(bagid)
 		if self.tempcompressnone then
 			self.tempcompressnone = nil
 			self:RebuildSectionLayouts()
-		end		
+		end
 	end
 end
 
@@ -2783,7 +3333,7 @@ function Baggins:OpenBag(bagid,noupdate)
 		Baggins:ForceFullUpdate()
 		self.doInitialUpdate = nil
 	end
-	
+
 	if p.bags[bagid].isBank and not self.bankIsOpen then
 		return
 	end
@@ -2793,7 +3343,7 @@ function Baggins:OpenBag(bagid,noupdate)
 	end
 	self.bagframes[bagid]:Show()
 	if not noupdate then
-		
+
 		self:RunBagUpdates()
 		self:UpdateBags()
 	end
@@ -2823,11 +3373,23 @@ function Baggins:AuctionHouse()
  	end
 end
 
+
 function Baggins:ToggleAllBags(forceopen)
-	if self:IsAllOpen() and not forceopen then
-		self:CloseAllBags()
-	else
+	local p = self.db.profile
+	if (forceopen) then
 		self:OpenAllBags()
+	elseif (p.hideemptybags) then
+		if self:IsAnyOpen() then
+			self:CloseAllBags()
+		else
+			self:OpenAllBags()
+		end
+	else
+		if self:IsAllOpen() then
+			self:CloseAllBags()
+		else
+			self:OpenAllBags()
+		end
 	end
 end
 
