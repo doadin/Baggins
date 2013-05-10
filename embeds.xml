@@ -22,7 +22,7 @@
   <include file="libs\LibBagUtils-1.0\LibBagUtils-1.0.xml" />
   <include file="libs\LibQTip-1.0\lib.xml" />
   <include file="libs\LibGratuity-3.0\lib.xml" />
-  <script file="libs\LibDBIcon-1.0\LibDBIcon-1.0" />
+  <script file="libs\LibDBIcon-1.0\LibDBIcon-1.0.lua" />
 
   <script file="libs\LibPeriodicTable-3.1\LibPeriodicTable-3.1.lua"/>
   <script file="libs\LibPeriodicTable-3.1-Consumable\LibPeriodicTable-3.1-Consumable.lua"/>
