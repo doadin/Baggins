@@ -620,8 +620,8 @@ function Baggins:RebuildOptions()
 					desc = L["Which Bag to Show Money On"],
 					order = 64,
 					arg = true,
-					get = function() return tostring(p.moneybag) end,
-					set = function(info, value) p.moneybag = tonumber(value) self:UpdateBags() end,
+					get = function() return p.moneybag < 0 and "None" or tostring(p.moneybag) end,
+					set = function(info, value) p.moneybag = tonumber(value) or -1 self:UpdateBags() end,
 					values = "GetMoneyBagChoices",
 				},
 				Sections = {
