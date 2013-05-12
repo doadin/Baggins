@@ -1848,7 +1848,7 @@ end
 local function BagginsItemButton_UpdateTooltip(button)
 	if ( button:GetParent():GetID() == KEYRING_CONTAINER ) then
 		GameTooltip:SetInventoryItem("player", KeyRingButtonIDToInvSlotID(button:GetID(),button.isBag))
-		CursorUpdate()
+		CursorUpdate(button)
 		return
 	end
 	local hasItem, hasCooldown, repairCost
@@ -1858,7 +1858,7 @@ local function BagginsItemButton_UpdateTooltip(button)
 				GameTooltip:SetText(button.tooltipText);
 			end
 		end
-		CursorUpdate();
+		CursorUpdate(button);
 		return
 	end
 
