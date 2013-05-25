@@ -16,9 +16,6 @@
 ## SavedVariables: BagginsDB
 ## X-Category: Inventory
 
-## LoadManagers: AddonLoader
-## X-LoadOn-Always: delayed
-
 ## OptionalDeps: Ace3, LibGratuity-3.0, LibQTip-1.0, LibBagUtils-1.0, LibPeriodicTable-3.1, LibBabble-Inventory-3.0, LibDBIcon-1.0
 ## X-Embeds: Ace3, LibGratuity-3.0, LibQTip-1.0, LibBagUtils-1.0, LibPeriodicTable-3.1, LibBabble-Inventory-3.0, LibDBIcon-1.0, LibDataBroker-1.0
 
