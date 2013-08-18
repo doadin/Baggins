@@ -1122,12 +1122,27 @@ local function baseComp(a, b)
 	return nil,linka,linkb,baga,slota,bagb,slotb
 end
 
+local function getBattlePetInfoFromLink(link)
+	local speciesID, level, quality, maxHealth, power, speed, petid, name = link:match("battlepet:(%d+):(%d+):([-%d]+):(%d+):(%d+):(%d+):([x%d]+)|h%[([%a%s]+)")
+	return tonumber(speciesID), tonumber(level), tonumber(quality), tonumber(maxHealth), tonumber(power), tonumber(speed), tonumber(petid), name
+end
+
+local function getCompInfo(link)
+	if not link:match("battlepet:") then
+		return GetItemInfo(link)
+	end
+	local speciesID, level, quality, maxHealth, power, speed, petid, name = getBattlePetInfoFromLink(link)
+	local petType = C_PetJournal.GetPetInfoBySpeciesID(speciesID)
+	local subtype = _G["BATTLE_PET_NAME_" .. petType]
+	return name, nil, quality, level, nil, L["Battle Pets"], subtype
+end
+
 local function NameComp(a, b)
 	local res,linka,linkb,baga,slota,bagb,slotb=baseComp(a,b)
 	if res~=nil then return res end
 
-	local namea = GetItemInfo(linka)
-	local nameb = GetItemInfo(linkb)
+	local namea = getCompInfo(linka)
+	local nameb = getCompInfo(linkb)
 
 	if namea ~= nameb then
 		return (namea  or "?") < (nameb or "?") 
@@ -1141,8 +1156,8 @@ local function QualityComp(a, b)
 	local res,linka,linkb,baga,slota,bagb,slotb=baseComp(a,b)
 	if res~=nil then return res end
 
-	local namea, _, quala = GetItemInfo(linka)
-	local nameb, _, qualb = GetItemInfo(linkb)
+	local namea, _, quala = getCompInfo(linka)
+	local nameb, _, qualb = getCompInfo(linkb)
 
 	if quala~=qualb then
 		return (quala  or 0) > (qualb  or 0)
@@ -1160,10 +1175,11 @@ local function TypeComp(a, b)
 	local res,linka,linkb,baga,slota,bagb,slotb=baseComp(a,b)
 	if res~=nil then return res end
 
-	local namea, _, quala, _, _, typea, subtypea, _, equiploca = GetItemInfo(linka)
-	local nameb, _, qualb, _, _, typeb, subtypeb, _, equiplocb = GetItemInfo(linkb)
-	if (typea or "?")  ~= (typeb  or "?") then
-		return typea < typeb
+	local namea, _, quala, _, _, typea, subtypea, _, equiploca = getCompInfo(linka)
+	local nameb, _, qualb, _, _, typeb, subtypeb, _, equiplocb = getCompInfo(linkb)
+
+	if typea ~= typeb then
+		return (typea or "?") < (typeb or "?")
 	end
 
 	if (equiploca and equiplocs[equiploca]) and (equiplocb and equiplocs[equiplocb]) then
@@ -1203,8 +1219,8 @@ local function IlvlComp(a, b)
 	local res,linka,linkb,baga,slota,bagb,slotb=baseComp(a,b)
 	if res~=nil then return res end
 
-	local namea, _, quala, ilvla = GetItemInfo(linka)
-	local nameb, _, qualb, ilvlb = GetItemInfo(linkb)
+	local namea, _, quala, ilvla = getCompInfo(linka)
+	local nameb, _, qualb, ilvlb = getCompInfo(linkb)
 	if ilvla~=ilvlb then
 		return (ilvla or 0) > (ilvlb or 0)
 	end
@@ -1834,14 +1850,7 @@ end
 local KEYRING_CONTAINER = KEYRING_CONTAINER
 
 local function showBattlePetTooltip(link)
-	local speciesID, level, quality, maxHealth, power, speed, petid = link:match("battlepet:(%d+):(%d+):([-%d]+):(%d+):(%d+):(%d+):(%d+)")
-	speciesID = tonumber(speciesID)
-	level = tonumber(level)
-	quality = tonumber(quality)
-	maxHealth = tonumber(maxHealth)
-	power = tonumber(power)
-	speed = tonumber(speed)
-	petid = tonumber(petid)
+	local speciesID, level, quality, maxHealth, power, speed = getBattlePetInfoFromLink(link)
 	BattlePetToolTip_Show(speciesID, level, quality, maxHealth, power, speed)
 end
 
