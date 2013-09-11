@@ -2631,6 +2631,12 @@ end
 
 function Baggins:UpdateItemButton(bagframe,button,bag,slot)
 	local p = self.db.profile
+	if not C_NewItems.IsNewItem(bag, slot) then
+		local newItemTexture = _G[button:GetName().."NewItemTexture"]
+		if newItemTexture then
+			newItemTexture:Hide()
+		end
+	end
 	local texture, itemCount, locked, quality, readable = GetContainerItemInfo(bag, slot)
 	local link = GetContainerItemLink(bag, slot)
 	local itemid
