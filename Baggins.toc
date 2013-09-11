@@ -1,4 +1,4 @@
-﻿## Interface: 50300
+﻿## Interface: 50400
 ## X-Curse-Packaged-Version: r542
 ## X-Curse-Project-Name: Baggins
 ## X-Curse-Project-ID: baggins
