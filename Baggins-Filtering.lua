@@ -1219,9 +1219,9 @@ Baggins:AddCustomRule("Bind", {
 				gratuity:SetBagItem(bag,slot)
 			end
 			if status == 'unset' or status == 'unbound' then
-				return not (gratuity:Find(_G.ITEM_SOULBOUND, 2, 5, false, true))
+				return not (gratuity:Find(_G.ITEM_SOULBOUND, 2, 6, false, true))
 			end
-			return (gratuity:Find(status, 2, 5, false, true))
+			return (gratuity:Find(status, 2, 6, false, true))
 		end,
 		GetName = function(rule)
 			if not rule.status then
