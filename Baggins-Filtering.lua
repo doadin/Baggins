@@ -24,6 +24,8 @@ local GetEquipmentSetInfo, GetEquipmentSetItemIDs, GetNumEquipmentSets =
 
 local UnitLevel = UnitLevel
 
+local C_PetJournal = C_PetJournal
+
 
 
 local Baggins = Baggins
@@ -1329,7 +1331,11 @@ function Baggins:BuildPTSetTable()
 	self.ptsetsdirty = false
 end
 
-local currentRule
+local function sortMenu(a, b)
+	local function pad(s) return ("%04d"):format(tonumber(s)) end -- pseudo natural sorting!
+	return a.text:gsub("(%d+)", pad) < b.text:gsub("(%d+)", pad)
+end
+
 local function buildMenu(tab, name)
 	local menu = {}
 	for k,v in pairs(tab) do
@@ -1343,10 +1349,10 @@ local function buildMenu(tab, name)
 			tinsert(menu, {
 				text = k,
 				func = function()
-						currentRule.setname = newName
-						AceConfigRegistry:NotifyChange("BagginsEdit")
-						Baggins:OnRuleChanged()
-					end,
+					currentRule.setname = newName
+					AceConfigRegistry:NotifyChange("BagginsEdit")
+					Baggins:OnRuleChanged()
+				end,
 			})
 		elseif type(v) == 'table' then
 			tinsert(menu, {
@@ -1354,12 +1360,31 @@ local function buildMenu(tab, name)
 				hasArrow = true,
 				menuList = buildMenu(v, newName),
 				func = function()
-						currentRule.setname = newName
-						AceConfigRegistry:NotifyChange("BagginsEdit")
-						Baggins:OnRuleChanged()
-					end,
+					currentRule.setname = newName
+					AceConfigRegistry:NotifyChange("BagginsEdit")
+					Baggins:OnRuleChanged()
+				end,
 			})
 		end
+	end
+	tsort(menu, sortMenu)
+	local menuSize = 35
+	if #menu > menuSize then
+		local newMenu = {}
+		for i=1, ceil(#menu/menuSize) do
+			local subMenu = {}
+			for j=1, menuSize do
+				local index = menuSize * (i-1) + j
+				if not menu[index] then break end
+				tinsert(subMenu, menu[index])
+			end
+			tinsert(newMenu, {
+				text = ("%s-%s"):format(subMenu[1].text:sub(1, 1), subMenu[#subMenu].text:sub(1, 1)),
+				hasArrow = true,
+				menuList = subMenu,
+			})
+		end
+		menu = newMenu
 	end
 	return menu
 end
