@@ -1382,6 +1382,8 @@ local function buildMenu(tab, name)
 				text = ("%s-%s"):format(subMenu[1].text:sub(1, 1), subMenu[#subMenu].text:sub(1, 1)),
 				hasArrow = true,
 				menuList = subMenu,
+				notCheckable = true,
+				notClickable = true,
 			})
 		end
 		menu = newMenu

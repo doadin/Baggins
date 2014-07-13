@@ -147,14 +147,16 @@ function Baggins:FireSignal(name, ...)		-- Example: FireSignal("MySignal", 1, 2,
 	end
 end
 
-local function PT3ModuleSet(name, value)
+local function PT3ModuleSet(info, value)
+	local name = info[#info]
 	Baggins.db.global.pt3mods[name] = value
 	if value then
 		LoadAddOn(name)
 	end
 end
 
-local function PT3ModuleGet(name)
+local function PT3ModuleGet(info)
+	local name = info[#info]
 	return Baggins.db.global.pt3mods[name]
 end
 
