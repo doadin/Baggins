@@ -1317,10 +1317,14 @@ local function openBagCategoryConfig()
 	Baggins:OpenEditConfig()
 end
 
+local function openBagginsConfig()
+	Baggins:OpenConfig()
+end
+
 function Baggins:DoBagMenu(bagframe)
 	local p = self.db.profile
 	wipe(menu)
-	if self.db.profile.highlightnew then
+	if p.highlightnew then
 		tinsert(menu, {
 			text = L["Reset New Items"],
 			tooltipTitle = L["Reset New Items"],
@@ -1339,6 +1343,13 @@ function Baggins:DoBagMenu(bagframe)
 			keepShownOnClick = true,
 		})
 	end
+
+	tinsert(menu, {
+		text = L["Config Window"],
+		tooltipText = L["Opens the Waterfall Config window"],
+		func = openBagginsConfig,
+		notCheckable = true,
+	})
 
 	tinsert(menu, {
 		text = L["Bag/Category Config"],
