@@ -2193,6 +2193,7 @@ do
 		frame:SetScript("OnEnter",BagginsItemButton_OnEnter)
 		frame:SetScript("PreClick",BagginsItemButton_PreClick)
 		frame.UpdateTooltip = BagginsItemButton_UpdateTooltip
+		frame.BattlepayItemTexture:Hide()	-- new blue glow introduced in 6.0
 		--frame:SetScript("OnUpdate",BagginsItemButton_OnUpdate)
 		if self.currentSkin then
 			self.currentSkin:SkinItem(frame)

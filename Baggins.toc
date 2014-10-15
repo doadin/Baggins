@@ -1,9 +1,4 @@
-﻿## Interface: 50400
-## X-Curse-Packaged-Version: r542
-## X-Curse-Project-Name: Baggins
-## X-Curse-Project-ID: baggins
-## X-Curse-Repository-ID: wow/baggins/ace3
-
+﻿## Interface: 60000
 ## Title: Baggins
 ## Notes: Inventory Management with virtual bags divided into sections.
 ## Notes-zhCN: 使用分类的形式来管理背包。
