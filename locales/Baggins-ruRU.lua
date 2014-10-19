@@ -149,6 +149,7 @@ L["Bank Bag4"] = "Сумка Банка4"
 L["Bank Bag5"] = "Сумка Банка5"
 L["Bank Bag6"] = "Сумка Банка6"
 L["Bank Bag7"] = "Сумка Банка7"
+L["Reagent Bank"] = true
 L["KeyRing"] = "Ключница"
 
 		--qualoty names
@@ -404,6 +405,9 @@ L["Bottom Left"] = "Основание слева"
 L["Show Money On Bag"] = "Показать деньги в сумке"
 L["Which Bag to Show Money On"] = "Показывает деньги внутри сумки"
 
+L["Show Bank Controls On Bag"] = true
+L["Which Bag to Show Bank Controls On"] = true
+
 L["User Defined"] = "Определенный пользователь"
 L["Load a User Defined Profile"] = "Загрузить определенный профиль пользователя"
 L["Save Profile"] = "Сохранить профиль"
@@ -446,3 +450,10 @@ L["From level:"] = "От уровня:"
 L["... plus Player's Level"] = "... + уровень игрока"
 L["To level:"] = "К уровню:"
 L["... plus Player's Level"] = "... + уровень игрока"
+
+L["Buy Bank Bag Slot"] = true
+L["Buy Reagent Bank"] = true
+L["Deposit All Reagents"] = true
+L["Crafting Reagent"] = true
+L["Reagent Deposit"] = true
+L["Automatically deposits crafting reagents into the reagent bank if available."] = true

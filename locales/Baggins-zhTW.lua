@@ -149,6 +149,7 @@ L["Bank Bag4"] = "銀行4號背包"
 L["Bank Bag5"] = "銀行5號背包"
 L["Bank Bag6"] = "銀行6號背包"
 L["Bank Bag7"] = "銀行7號背包"
+L["Reagent Bank"] = true
 L["KeyRing"] = "鑰匙圈"
 
 		--qualoty names
@@ -404,6 +405,9 @@ L["Bottom Left"] = "左下"
 L["Show Money On Bag"] = "在背包顯示金錢"
 L["Which Bag to Show Money On"] = "選擇顯示金錢的背包"
 
+L["Show Bank Controls On Bag"] = true
+L["Which Bag to Show Bank Controls On"] = true
+
 L["User Defined"] = "自定義設置"
 L["Load a User Defined Profile"] = "加載一個自定義設置"
 L["Save Profile"] = "保存設置"
@@ -432,6 +436,13 @@ L["Section Priority"] = "分類塊優先級"
 
 L["Allow Duplicates"] = "允許顯示重復物品"
 L["Import Sections From"] = "分類塊導入自："
+
+L["Buy Bank Bag Slot"] = true
+L["Buy Reagent Bank"] = true
+L["Deposit All Reagents"] = true
+L["Crafting Reagent"] = true
+L["Reagent Deposit"] = true
+L["Automatically deposits crafting reagents into the reagent bank if available."] = true
 --[[------------------- modified by lalibre -------------------------------
 	------ Baggins-Options.lua ------
 $38		hideduplicates = 'global'

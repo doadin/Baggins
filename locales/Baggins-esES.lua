@@ -149,6 +149,7 @@ L["Bank Bag4"] = "Bolsa de banco4"
 L["Bank Bag5"] = "Bolsa de banco5"
 L["Bank Bag6"] = "Bolsa de banco6"
 L["Bank Bag7"] = "Bolsa de banco7"
+L["Reagent Bank"] = true
 L["KeyRing"] = "Llavero"
 
 		--qualoty names
@@ -404,6 +405,9 @@ L["Bottom Left"] = "Abajo a la izquierda"
 L["Show Money On Bag"] = "Mostrar dinero en bolsa"
 L["Which Bag to Show Money On"] = "En qué bolsa mostrar el dinero"
 
+L["Show Bank Controls On Bag"] = true
+L["Which Bag to Show Bank Controls On"] = true
+
 L["User Defined"] = "Definido por usuario"
 L["Load a User Defined Profile"] = "Carga un perfil definido por usuario"
 L["Save Profile"] = "Salvar perfil"
@@ -432,3 +436,10 @@ L["Section Priority"] = "Prioridad de secciones"
 
 L["Allow Duplicates"] = "Permitir duplicados"
 L["Import Sections From"] = "Importar secciones desde"
+
+L["Buy Bank Bag Slot"] = true
+L["Buy Reagent Bank"] = true
+L["Deposit All Reagents"] = true
+L["Crafting Reagent"] = true
+L["Reagent Deposit"] = true
+L["Automatically deposits crafting reagents into the reagent bank if available."] = true

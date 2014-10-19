@@ -149,6 +149,7 @@ L["Bank Bag4"] = "银行背包4"
 L["Bank Bag5"] = "银行背包5"
 L["Bank Bag6"] = "银行背包6"
 L["Bank Bag7"] = "银行背包7"
+L["Reagent Bank"] = true
 L["KeyRing"] = "钥匙链"
 
 		--qualoty names
@@ -404,6 +405,9 @@ L["Bottom Left"] = "左下"
 L["Show Money On Bag"] = "在背包显示金钱"
 L["Which Bag to Show Money On"] = "选择显示金钱的背包"
 
+L["Show Bank Controls On Bag"] = true
+L["Which Bag to Show Bank Controls On"] = true
+
 L["User Defined"] = "自定义配置"
 L["Load a User Defined Profile"] = "加载一个自定义配置"
 L["Save Profile"] = "保存配置"
@@ -431,3 +435,10 @@ L["Bag Priority"] = "背包优先级"
 L["Section Priority"] = "分类块优先级"
 L["Allow Duplicates"] = "允许显示重复物品"
 L["Import Sections From"] = "分类块导入自："
+
+L["Buy Bank Bag Slot"] = true
+L["Buy Reagent Bank"] = true
+L["Deposit All Reagents"] = true
+L["Crafting Reagent"] = true
+L["Reagent Deposit"] = true
+L["Automatically deposits crafting reagents into the reagent bank if available."] = true

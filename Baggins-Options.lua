@@ -242,6 +242,7 @@ local dbDefaults = {
 		hideemptybags = false,
 		hidedefaultbank = false,
 		overridedefaultbags = true,
+		autoreagent = true,
 		compressempty = true,
 		compressstackable = true,
 		sortnewfirst = true,
@@ -273,6 +274,7 @@ local dbDefaults = {
 		bags = { },
 		categories = {},
 		moneybag = 1,
+		bankcontrolbag = 11, -- "Bank Other"
 		openatauction = true,
 		minimap = {
 			hide = false,
@@ -618,11 +620,21 @@ function Baggins:RebuildOptions()
 					name = L["Show Money On Bag"],
 					type = 'select',
 					desc = L["Which Bag to Show Money On"],
-					order = 64,
+					order = 63,
 					arg = true,
 					get = function() return p.moneybag < 0 and "None" or tostring(p.moneybag) end,
 					set = function(info, value) p.moneybag = tonumber(value) or -1 self:UpdateBags() end,
 					values = "GetMoneyBagChoices",
+				},
+				ShowBankControls = {
+					name = L["Show Bank Controls On Bag"],
+					type = 'select',
+					desc = L["Which Bag to Show Bank Controls On"],
+					order = 64,
+					arg = true,
+					get = function() return p.bankcontrolbag < 0 and "None" or tostring(p.bankcontrolbag) end,
+					set = function(info, value) p.bankcontrolbag = tonumber(value) or -1 self:UpdateBags() end,
+					values = "GetBankControlsBagChoices",
 				},
 				Sections = {
 					type = 'header',
@@ -797,6 +809,14 @@ function Baggins:RebuildOptions()
 			order = 180,
 			get = function() return p.overridedefaultbags end,
 			set = function(info, value) p.overridedefaultbags = value self:UpdateBagHooks() end,
+		},
+		AutomaticReagentHandling = {
+			name = L["Reagent Deposit"],
+			type = "toggle",
+			desc = L["Automatically deposits crafting reagents into the reagent bank if available."],
+			order = 190,
+			get = function() return p.autoreagent end,
+			set = function(info, value) p.autoreagent = value end,
 		},
 	}
 
@@ -1220,6 +1240,25 @@ function Baggins:BuildMoneyBagOptions()
 	wipe(moneyBagChoices)
 end
 
+local bankControlBagChoices = {}
+function Baggins:GetBankControlsBagChoices()
+	if not next(bankControlBagChoices) then
+		bankControlBagChoices.None = L["None"]
+		for i, v in ipairs(Baggins.db.profile.bags) do
+			if v.isBank then
+				local name = v.name
+				if name=="" then name="(unnamed)" end
+				bankControlBagChoices[tostring(i)] = name
+			end
+		end
+	end
+	return bankControlBagChoices
+end
+
+function Baggins:BuildBankControlsBagOptions()
+	wipe(bankControlBagChoices)
+end
+
 ------------------------
 -- Profile Management --
 ------------------------
@@ -1249,6 +1288,7 @@ function Baggins:ApplyProfile(profile)
 	self:OpenAllBags()
 	self:ForceFullRefresh()
 	self:BuildMoneyBagOptions()
+	self:BuildBankControlsBagOptions()
 end
 
 function Baggins:UpdateDB()
@@ -1295,6 +1335,7 @@ function Baggins:OnProfileEnable()
 	self:ForceFullRefresh()
 	self:UpdateBags()
 	self:BuildMoneyBagOptions()
+	self:BuildBankControlsBagOptions()
 end
 
 ----------------------
@@ -2044,6 +2085,7 @@ function Baggins:InitBagCategoryOptions()
 	self.editOpts = opts
 	self:RebuildBagOptions(opts)
 	self:BuildMoneyBagOptions()
+	self:BuildBankControlsBagOptions()
 	
 
 	AceConfig:RegisterOptionsTable("BagginsEdit", function()

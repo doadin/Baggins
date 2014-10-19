@@ -148,6 +148,7 @@ L["Bank Bag4"] = "Banktasche 4"
 L["Bank Bag5"] = "Banktasche 5"
 L["Bank Bag6"] = "Banktasche 6"
 L["Bank Bag7"] = "Banktasche 7"
+L["Reagent Bank"] = true
 L["KeyRing"] = "Schlüsselbund"
 
 		--qualoty names
@@ -363,3 +364,13 @@ L["Items"]= "Gegenstände"
 L["Item display settings"]= "Gegennstandsanzeige Einstellungen."
 L["Bag Skin"]= "Taschen Ausssehn"
 L["Select bag skin"]= "Wähle das Taschen Aussehn."
+
+L["Show Bank Controls On Bag"] = true
+L["Which Bag to Show Bank Controls On"] = true
+
+L["Buy Bank Bag Slot"] = true
+L["Buy Reagent Bank"] = true
+L["Deposit All Reagents"] = true
+L["Crafting Reagent"] = true
+L["Reagent Deposit"] = true
+L["Automatically deposits crafting reagents into the reagent bank if available."] = true
