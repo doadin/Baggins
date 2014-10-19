@@ -160,6 +160,7 @@ L["Bank Bag4"] = "Sac de banque n\194\1764"
 L["Bank Bag5"] = "Sac de banque n\194\1765"
 L["Bank Bag6"] = "Sac de banque n\194\1766"
 L["Bank Bag7"] = "Sac de banque n\194\1767"
+L["Reagent Bank"] = true
 L["KeyRing"] = "Trouseau de cl\195\169s"
 
 		--qualoty names
@@ -362,3 +363,13 @@ L["Prevents items from appearing in more than one section/bag."] =
 L["Optimize Section Layout"] = "Optimiser la disposition des sections"
 L["Change order and layout of sections in order to save display space."] =
 			"Change l'ordre et la disposition des sections pour \195\169conomiser l'espace d'affichage"
+
+L["Show Bank Controls On Bag"] = true
+L["Which Bag to Show Bank Controls On"] = true
+
+L["Buy Bank Bag Slot"] = true
+L["Buy Reagent Bank"] = true
+L["Deposit All Reagents"] = true
+L["Crafting Reagent"] = true
+L["Reagent Deposit"] = true
+L["Automatically deposits crafting reagents into the reagent bank if available."] = true

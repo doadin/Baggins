@@ -84,6 +84,7 @@ end
 
 
 local BagNames = {
+	[REAGENTBANK_CONTAINER] = L["Reagent Bank"],
 	[KEYRING_CONTAINER] = L["KeyRing"],
 	[BANK_CONTAINER] = L["Bank Frame"],
 	[BACKPACK_CONTAINER] = L["Backpack"],
@@ -92,6 +93,7 @@ local BagTypes = {
 	[BACKPACK_CONTAINER] = 1,
 	[BANK_CONTAINER] = 2,
 	[KEYRING_CONTAINER] = 3,
+	[REAGENTBANK_CONTAINER] = 4,
 }
 for i=1,NUM_BAG_SLOTS do
 	BagNames[i] = L["Bag"..i]
@@ -101,6 +103,9 @@ for i=1,NUM_BANKBAGSLOTS do
 	BagNames[NUM_BAG_SLOTS+i] = L["Bank Bag"..i]
 	BagTypes[NUM_BAG_SLOTS+i] = 2
 end
+
+BagNames[REAGENTBANK_CONTAINER] = L["Reagent Bank"]
+BagTypes[REAGENTBANK_CONTAINER] = 4
 
 
 local QualityNames = {
@@ -234,6 +239,9 @@ function Baggins:IsSpecialBag(bag)
 	end
 	if BagTypes[bag] == 3 then
 		return "k", 256
+	end
+	if BagTypes[bag] == 4 then
+		return "r"
 	end
 	if bag>=1 and bag<= 11 then
 		local _,fam = GetContainerNumFreeSlots(bag)
@@ -381,7 +389,7 @@ function Baggins:OnSlotChanged(bag, slot)
 	local isbank
 	local cache
 	local used
-	if BagTypes[bag] == 2 then
+	if BagTypes[bag] == 2 or BagTypes[bag] == 4 then
 		used = bankuseditems
 		cache = bankcategorycache
 		isbank = true
@@ -475,6 +483,10 @@ end
 
 function Baggins:ForceFullBankUpdate()
 	for bagid in LBU:IterateBags("BANK") do
+		self:CheckSlotsChanged(bagid, true)
+	end
+	
+	for bagid in LBU:IterateBags("REAGENTBANK") do
 		self:CheckSlotsChanged(bagid, true)
 	end
 end
@@ -941,7 +953,7 @@ Baggins:AddCustomRule("Category", {
 		Matches = function(bag,slot,rule)
 			if not (bag and slot and rule.category) then return end
 			local key = bag..":"..slot
-			if BagTypes[bag] == 2 then
+			if BagTypes[bag] == 2 or BagTypes[bag] == 4 then
 				return bankcategorycache[rule.category] and bankcategorycache[rule.category][key]
 			else
 				return categorycache[rule.category] and categorycache[rule.category][key]

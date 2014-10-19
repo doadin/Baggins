@@ -9,6 +9,7 @@ local LBU = LibStub("LibBagUtils-1.0")
 local qt = LibStub('LibQTip-1.0')
 local dbIcon = LibStub("LibDBIcon-1.0")
 local console = LibStub("AceConsole-3.0")
+local gratuity = LibStub("LibGratuity-3.0")
 
 local next,unpack,pairs,ipairs,tonumber,select,strmatch =
       next,unpack,pairs,ipairs,tonumber,select,strmatch
@@ -41,6 +42,11 @@ local GetContainerItemInfo, GetContainerItemLink, GetContainerItemQuestInfo, Get
 -- GLOBALS: GetCursorInfo, CreateFrame, GetCursorPosition, ClearCursor, GetScreenWidth, GetScreenHeight, GetMouseButtonClicked, IsControlKeyDown, IsAltKeyDown, IsShiftKeyDown
 -- GLOBALS: GameFontNormalLarge, GameFontNormal
 -- GLOBALS: EasyMenu
+
+-- Bank tab locals, for auto reagent deposit
+local BankFrame_ShowPanel = BankFrame_ShowPanel
+local BANK_TAB = BANK_PANELS[1].name
+local REAGENT_BANK_TAB = BANK_PANELS[2].name
 
 Baggins.hasIcon = "Interface\\Icons\\INV_Jewelry_Ring_03"
 Baggins.cannotDetachTooltip = true
@@ -388,6 +394,9 @@ function Baggins:OnEnable()
 	self:RegisterEvent("QUEST_ACCEPTED", "UpdateItemButtons")
 	self:RegisterEvent("UNIT_QUEST_LOG_CHANGED", "UpdateItemButtons")
 	self:RegisterEvent("PLAYERBANKSLOTS_CHANGED", "OnBankChanged")
+	self:RegisterEvent("PLAYERREAGENTBANKSLOTS_CHANGED", "OnReagentBankChanged")
+	self:RegisterEvent("REAGENTBANK_PURCHASED", "OnReagentBankPurchased")
+	self:RegisterEvent("PLAYERBANKBAGSLOTS_CHANGED", "OnBankSlotPurchased")
 	self:RegisterEvent("BANKFRAME_CLOSED", "OnBankClosed")
 	self:RegisterEvent("BANKFRAME_OPENED", "OnBankOpened")
 	self:RegisterEvent("PLAYER_MONEY", "UpdateMoneyFrame")
@@ -406,6 +415,12 @@ function Baggins:OnEnable()
 	self:UpdateBagHooks()
 	self:RawHook("CloseSpecialWindows", true)
 	self:RawHookScript(BankFrame,"OnEvent","BankFrame_OnEvent")
+	
+	-- hook blizzard PLAYERBANKSLOTS_CHANGED function to filter inactive table
+	-- this is required to prevent a nil error when working with a tab that the
+	-- default UI is not currently showing
+	self:RawHook("BankFrameItemButton_Update", true)
+	
 	--force an update of all bags on first opening
 	self.doInitialUpdate = true
 	self.doInitialBankUpdate = true
@@ -430,6 +445,8 @@ function Baggins:OnEnable()
 	end
 	self:CreateMoneyFrame()
 	self:UpdateMoneyFrame()
+	self:CreateBankControlFrame()
+	self:UpdateBankControlFrame()
 	local skin = self:GetSkin(self.db.profile.skin)
 	if not skin then -- if skin doesn't exist anymore, reset to default
 		console:Print("|cFFFF0000Baggins|r "..L["Skin '%s' not found, resetting to default"]:format(self.db.profile.skin))
@@ -484,6 +501,14 @@ function Baggins:SaveItemCounts()
 	local itemcounts = self.itemcounts
 	wipe(itemcounts)
 	for bag,slot,link in LBU:Iterate("BAGS") do	-- includes keyring
+		if link then
+			local id = tonumber(link:match("item:(%d+)"))
+			if id and not itemcounts[id] then
+				itemcounts[id] = GetItemCount(id)
+			end
+		end
+	end
+	for bag,slot,link in LBU:Iterate("REAGENTBANK") do
 		if link then
 			local id = tonumber(link:match("item:(%d+)"))
 			if id and not itemcounts[id] then
@@ -579,6 +604,22 @@ end
 
 function Baggins:OnBankChanged()
 	self:OnBagUpdate(-1)
+end
+
+function Baggins:OnReagentBankChanged()
+	self:OnBagUpdate(REAGENTBANK_CONTAINER)
+end
+
+function Baggins:OnReagentBankPurchased()
+	self:UpdateBankControlFrame()
+	self:ForceFullBankUpdate()
+	self:UpdateBags()
+end
+
+function Baggins:OnBankSlotPurchased()
+	self:UpdateBankControlFrame()
+	self:ForceFullBankUpdate()
+	self:UpdateBags()
 end
 
 -------------------------
@@ -924,6 +965,7 @@ function Baggins:ReallyUpdateBags()
 	local p = self.db.profile
 	local isVisible = false
 	BagginsMoneyFrame:Hide()
+	BagginsBankControlFrame:Hide()
 	for bagid, bag in pairs(p.bags) do
 		if self.bagframes[bagid] and self.bagframes[bagid]:IsVisible() then
 			isVisible = true
@@ -990,8 +1032,8 @@ function Baggins:BAG_UPDATE(_, ...)
 end
 
 function Baggins:OnBagUpdate(bagid)
-	--ignore bags -4 ( currency ) and -3 (unknown)
-	if bagid <= -3 then return end
+	--ignore bags -4 ( currency ); -3 is reagent bank
+	if bagid <= -4 then return end
 	bagupdatebucket[bagid] = true
 	if self:IsWhateverOpen() then
 		self:ScheduleTimer("RunBagUpdates",0.1)
@@ -1533,6 +1575,16 @@ function Baggins:ReallyUpdateBagFrameSize(bagid)
 		width = max(BagginsMoneyFrame:GetWidth() + 16, width)
 		height = height + 30
 	end
+	
+	if p.bankcontrolbag == bagid then
+		bagframe.isempty = false
+		BagginsBankControlFrame:SetParent(bagframe)
+		BagginsBankControlFrame:ClearAllPoints()
+		BagginsBankControlFrame:SetPoint("BOTTOMLEFT",bagframe,"BOTTOMLEFT",12,8)
+		BagginsBankControlFrame:Show()
+		width = max(BagginsBankControlFrame:GetWidth() + 16, width)
+		height = height + BagginsBankControlFrame:GetHeight()
+	end
 
 	if not p.shrinkwidth then
 		width = max(p.columns*39 + hpadding, width)
@@ -1872,6 +1924,16 @@ local function BagginsItemButton_UpdateTooltip(button)
 		CursorUpdate(button);
 		return
 	end
+	if button:GetParent():GetID() == REAGENTBANK_CONTAINER then
+		if ( not GameTooltip:SetInventoryItem("player", ReagentBankButtonIDToInvSlotID(button:GetID(),button.isBag)) ) then
+			if ( button.isBag ) then
+				GameTooltip:SetText(button.tooltipText);
+			end
+		end
+		CursorUpdate(button);
+		return
+	end
+	
 
 	local showSell = nil;
 	local itemlink = GetContainerItemLink(button:GetParent():GetID(), button:GetID())
@@ -2020,7 +2082,7 @@ do
 
 	function makeMenu(bag, slot, link)
 		wipe(menu)
-		if not LBU:IsBank(bag) then
+		if not LBU:IsBank(bag, true) then
 			local use = {
 				text = L["Use"],
 				tooltipTitle = L["Use"],
@@ -2119,7 +2181,57 @@ do
 
 	local itemDropdownFrame = CreateFrame("Frame", "Baggins_ItemMenuFrame", UIParent, "UIDropDownMenuTemplate")
 
+	local function BagginsItemButton_GetTargetBankTab(bag, slot)
+		-- There's likely a better way then looking at the tooltip
+		-- It seems all crafting reagents now have a line in the tooltip called "Crafting Reagent" in enUS.
+
+		-- setup gratuity based on bag and slot
+		if LBU:IsReagentBank(bag) then
+			gratuity:SetInventoryItem("player", ReagentBankButtonIDToInvSlotID(slot))
+		elseif LBU:IsBank(bag) then
+			gratuity:SetInventoryItem("player", BankButtonIDToInvSlotID(slot))
+		else
+			gratuity:SetBagItem(bag, slot)
+		end
+
+		-- count remaining slots and switch the tab based on the item type
+		local count = LBU:CountSlots("REAGENTBANK")
+		if gratuity:Find(L["Crafting Reagent"]) and count ~= nil and count > 0 then
+			return REAGENT_BANK_TAB
+		end
+		
+		return BANK_TAB
+	end
+	
+	local function BagginsItemButton_OnClick(button)
+		local bag = button:GetParent():GetID()
+		local slot = button:GetID()
+		UseContainerItem(bag, slot, nil, true)
+		
+		button:SetScript("OnClick",button.origOnClick)
+		button.origOnClick = nil
+	end
+	
+	local function BagginsItemButton_AutoReagent(button, mouseButton, ...)
+		if Baggins.bankIsOpen and Baggins.db.profile.autoreagent
+				and not IsModifiedClick() and mouseButton == "RightButton" then
+			local bag = button:GetParent():GetID()
+			local slot = button:GetID()
+
+			local target = BagginsItemButton_GetTargetBankTab(bag, slot)
+			
+			if target == REAGENT_BANK_TAB then
+				BankFrame.selectedTab = 2
+				button.origOnClick = button:GetScript("OnClick")
+				button:SetScript("OnClick",BagginsItemButton_OnClick)
+			else
+				BankFrame.selectedTab = 1
+			end
+		end
+	end
+	
 	local function BagginsItemButton_PreClick(button)
+		BagginsItemButton_AutoReagent(button, GetMouseButtonClicked())
 		if GetMouseButtonClicked() == "RightButton" and button.tainted then
 			print("|cff00cc00Baggins: |cffffff00Right-clicking this button will not work until you leave combat|r")
 		end
@@ -2159,7 +2271,7 @@ do
 						Baggins:Unhook(DropDownList1, "OnHide")
 					end)
 
-					if not LBU:IsBank(bag) and not InCombatLockdown() then
+					if not LBU:IsBank(bag, true) and not InCombatLockdown() then
 						showUseButton(link)
 					else
 						hideUseButton()
@@ -2514,6 +2626,86 @@ function Baggins:UpdateMoneyFrame()
 	BagginsMoneyFrame:SetWidth(width)
 end
 
+function Baggins:CreateBankControlFrame()
+	local frame = CreateFrame("Frame", "BagginsBankControlFrame", UIParent)
+	frame:SetPoint("CENTER")
+	frame:SetWidth(160)
+	--frame:SetHeight((18 + 2) * 3)
+
+	-- A button to allow purchase of bank slots
+	-- Not super useful as you still require the default UI to place the bags,
+	-- but can help as a reminder if a slot is not purchased with the default UI hidden.
+	-- OnClick handler's are just like Blizzards default UI (see BankFrame.xml)
+	frame.slotbuy = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+	frame.slotbuy:SetScript("OnClick", function(this)
+		PlaySound("igMainMenuOption");
+		StaticPopup_Show("CONFIRM_BUY_BANK_SLOT");
+	end)
+	frame.slotbuy:SetWidth(160)
+	frame.slotbuy:SetHeight(18)
+	frame.slotbuy:SetText(L["Buy Bank Bag Slot"])
+	frame.slotbuy:Hide()
+	
+	-- A button to buy the reagent bank
+	frame.rabuy = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+	frame.rabuy:SetScript("OnClick", function(this)
+		PlaySound("igMainMenuOption")
+		StaticPopup_Show("CONFIRM_BUY_REAGENTBANK_TAB")
+	end)
+	frame.rabuy:SetWidth(160)
+	frame.rabuy:SetHeight(18)
+	frame.rabuy:SetText(L["Buy Reagent Bank"])
+	frame.rabuy:Hide()
+	
+	-- Finally, a button to allow blizzards "Deposit All Reagents" feature to work.
+	-- this takes all your reagents and moves them into the reagent bank
+	frame.radeposit = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+	frame.radeposit:SetScript("OnClick", function(this)
+		DepositReagentBank()
+	end)
+	frame.radeposit:SetWidth(160)
+	frame.radeposit:SetHeight(18)
+	frame.radeposit:SetText(L["Deposit All Reagents"])
+	frame.radeposit:Hide()
+	
+	frame:Hide()
+end
+
+function Baggins:UpdateBankControlFrame()
+	local frame = BagginsBankControlFrame
+	local numbuttons = 0
+	local anchorframe = frame
+	local anchorpoint = "TOPLEFT"
+	local anchoryoffset = 0
+	
+	local _, full = GetNumBankSlots()
+	if full then
+		frame.slotbuy:Hide()
+	else
+		frame.slotbuy:SetPoint("TOPLEFT", anchorframe, anchorpoint, 0, anchoryoffset)
+		frame.slotbuy:Show()
+		
+		numbuttons = numbuttons + 1
+		anchorframe = frame.slotbuy
+		anchorpoint = "BOTTOMLEFT"
+		anchoryoffset = -2
+	end
+	
+	if IsReagentBankUnlocked() then
+		frame.radeposit:SetPoint("TOPLEFT", anchorframe, anchorpoint, 0, anchoryoffset)
+		frame.radeposit:Show()
+		frame.rabuy:Hide()
+		numbuttons = numbuttons + 1
+	else
+		frame.rabuy:SetPoint("TOPLEFT", anchorframe, anchorpoint, 0, anchoryoffset)
+		frame.rabuy:Show()
+		frame.radeposit:Hide()
+		numbuttons = numbuttons + 1
+	end
+	
+	frame:SetHeight((18 + 2) * numbuttons)
+end
+
 function Baggins:SetBagTitle(bagid,title)
 	if self.bagframes[bagid] then
 		self.bagframes[bagid].title:SetText(title)
@@ -2670,7 +2862,7 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
 		button.glow:Hide()
 	end
 	local text = button.newtext
-	if p.highlightnew and itemid and not LBU:IsBank(bag) then
+	if p.highlightnew and itemid and not LBU:IsBank(bag, true) then
 		local isNew = self:IsNew(itemid)
 		if isNew == 1 then
 			text:SetText(L["*New*"])
@@ -2702,10 +2894,10 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
 		if not itemid then
 			local bagtype, itemFamily = Baggins:IsSpecialBag(bag)
 			bagtype = bagtype or ""
-			count = bagtype..LBU:CountSlots(LBU:IsBank(bag) and "BANK" or "BAGS", itemFamily)
+			count = bagtype..LBU:CountSlots(LBU:IsBank(bag) and "BANK" or LBU:IsReagentBank(bag) and "REAGENTBANK" or "BAGS", itemFamily)
 		else
 			count = GetItemCount(itemid)
-			if LBU:IsBank(bag) then
+			if LBU:IsBank(bag, true) then
 				count = GetItemCount(itemid,true) - count
 			end
 			if IsEquippedItem(itemid) then
@@ -3131,6 +3323,7 @@ function Baggins:NewBag(bagname)
 	self:UpdateBags()
 	self:UpdateLayout()
 	self:BuildMoneyBagOptions()
+	self:BuildBankControlsBagOptions()
 end
 
 function Baggins:MoveBag(bagid, down)
@@ -3148,6 +3341,7 @@ function Baggins:MoveBag(bagid, down)
 	self:ResortSections()
 	self:ForceFullRefresh()
 	self:BuildMoneyBagOptions()
+	self:BuildBankControlsBagOptions()
 end
 
 function Baggins:MoveSection(bagid, sectionid, down)
@@ -3197,6 +3391,7 @@ function Baggins:RemoveBag(bagid)
 		end
 	end
 	self:BuildMoneyBagOptions()
+	self:BuildBankControlsBagOptions()
 end
 
 function Baggins:NewSection(bagid,sectionname)
@@ -3483,4 +3678,10 @@ function Baggins:CloseSpecialWindows()
 		return true
 	end
 	return self.hooks.CloseSpecialWindows()
+end
+
+function Baggins:BankFrameItemButton_Update(button)
+	if button ~= nil then
+		return self.hooks.BankFrameItemButton_Update(button)
+	end
 end

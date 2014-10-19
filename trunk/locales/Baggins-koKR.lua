@@ -149,6 +149,7 @@ L["Bank Bag4"] = "4번 은행 가방"
 L["Bank Bag5"] = "5번 은행 가방"
 L["Bank Bag6"] = "6번 은행 가방"
 L["Bank Bag7"] = "7번 은행 가방"
+L["Reagent Bank"] = true
 L["KeyRing"] = "열쇠 고리"
 
 		--qualoty names
@@ -363,3 +364,13 @@ L["Items"]= "아이템"
 L["Item display settings"]= "아이템 표시 설정"
 L["Bag Skin"]= "가방 스킨"
 L["Select bag skin"]= "가방의 스킨을 선택합니다"
+
+L["Show Bank Controls On Bag"] = true
+L["Which Bag to Show Bank Controls On"] = true
+
+L["Buy Bank Bag Slot"] = true
+L["Buy Reagent Bank"] = true
+L["Deposit All Reagents"] = true
+L["Crafting Reagent"] = true
+L["Reagent Deposit"] = true
+L["Automatically deposits crafting reagents into the reagent bank if available."] = true

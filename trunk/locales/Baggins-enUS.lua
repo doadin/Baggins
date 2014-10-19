@@ -95,6 +95,7 @@ L["Bank Bag4"] = true
 L["Bank Bag5"] = true
 L["Bank Bag6"] = true
 L["Bank Bag7"] = true
+L["Reagent Bank"] = true
 L["KeyRing"] = true
 
 		--quality names
@@ -374,6 +375,9 @@ L["Bottom Left"] = true
 L["Show Money On Bag"] = true
 L["Which Bag to Show Money On"] = true
 
+L["Show Bank Controls On Bag"] = true
+L["Which Bag to Show Bank Controls On"] = true
+
 L["User Defined"] = true
 L["Load a User Defined Profile"] = true
 L["Save Profile"] = true
@@ -443,3 +447,10 @@ L["You can use the preset defaults as a starting point for setting up your inter
 L["Reset Profile"] = true
 
 L["Skin '%s' not found, resetting to default"] = true
+
+L["Buy Bank Bag Slot"] = true
+L["Buy Reagent Bank"] = true
+L["Deposit All Reagents"] = true
+L["Crafting Reagent"] = true
+L["Reagent Deposit"] = true
+L["Automatically deposits crafting reagents into the reagent bank if available."] = true
