@@ -275,6 +275,7 @@ local dbDefaults = {
 		categories = {},
 		moneybag = 1,
 		bankcontrolbag = 11, -- "Bank Other"
+		disablebagmenu = false,
 		openatauction = true,
 		minimap = {
 			hide = false,
@@ -636,9 +637,19 @@ function Baggins:RebuildOptions()
 					set = function(info, value) p.bankcontrolbag = tonumber(value) or -1 self:UpdateBags() end,
 					values = "GetBankControlsBagChoices",
 				},
+				DisableBagRightClick = {
+					name = L["Disable Bag Menu"],
+					type = "toggle",
+					desc = L["Disables the menu that pops up when right clicking on bags."],
+					order = 65,
+					get = function() return p.disablebagmenu end,
+					set = function(info, value)
+						p.disablebagmenu = value
+					end,
+				},
 				Sections = {
 					type = 'header',
-					order = 65,
+					order = 69,
 					name = L["Sections"],
 				},
 				SectionLayout = { -- TODO: Select for layout type?
@@ -1365,40 +1376,43 @@ end
 function Baggins:DoBagMenu(bagframe)
 	local p = self.db.profile
 	wipe(menu)
-	if p.highlightnew then
+	
+	if not p.disablebagmenu then
+		if p.highlightnew then
+			tinsert(menu, {
+				text = L["Reset New Items"],
+				tooltipTitle = L["Reset New Items"],
+				tooltipText = L["Resets the new items highlights."],
+				func = resetNewItems,
+				notCheckable = true,
+			})
+		end
+
+		if p.compressall or p.compressstackable or p.compressempty then
+			tinsert(menu, {
+				text = L["Disable Compression Temporarily"],
+				tooltipText = L["Disabled Item Compression until the bags are closed."],
+				func = disableCompressionTemp,
+				checked = Baggins.tempcompressnone,
+				keepShownOnClick = true,
+			})
+		end
+
 		tinsert(menu, {
-			text = L["Reset New Items"],
-			tooltipTitle = L["Reset New Items"],
-			tooltipText = L["Resets the new items highlights."],
-			func = resetNewItems,
+			text = L["Config Window"],
+			tooltipText = L["Opens the Waterfall Config window"],
+			func = openBagginsConfig,
 			notCheckable = true,
 		})
-	end
 
-	if p.compressall or p.compressstackable or p.compressempty then
 		tinsert(menu, {
-			text = L["Disable Compression Temporarily"],
-			tooltipText = L["Disabled Item Compression until the bags are closed."],
-			func = disableCompressionTemp,
-			checked = Baggins.tempcompressnone,
-			keepShownOnClick = true,
+			text = L["Bag/Category Config"],
+			tooltipText = L["Edit the Bag Definitions"],
+			func = openBagCategoryConfig,
+			notCheckable = true,
 		})
+		EasyMenu(menu, bagDropdownMenuFrame, "cursor", 0, 0, "MENU")
 	end
-
-	tinsert(menu, {
-		text = L["Config Window"],
-		tooltipText = L["Opens the Waterfall Config window"],
-		func = openBagginsConfig,
-		notCheckable = true,
-	})
-
-	tinsert(menu, {
-		text = L["Bag/Category Config"],
-		tooltipText = L["Edit the Bag Definitions"],
-		func = openBagCategoryConfig,
-		notCheckable = true,
-	})
-	EasyMenu(menu, bagDropdownMenuFrame, "cursor", 0, 0, "MENU")
 end
 
 --------------------
