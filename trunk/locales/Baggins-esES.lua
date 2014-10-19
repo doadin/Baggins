@@ -443,3 +443,6 @@ L["Deposit All Reagents"] = true
 L["Crafting Reagent"] = true
 L["Reagent Deposit"] = true
 L["Automatically deposits crafting reagents into the reagent bank if available."] = true
+
+L["Disable Bag Menu"] = true
+L["Disables the menu that pops up when right clicking on bags."] = true
