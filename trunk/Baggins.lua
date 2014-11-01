@@ -2961,6 +2961,8 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
 	else
 		ResetCursor();
 	end]]
+	
+	self:FireSignal("Baggins_ItemButtonUpdated", bagframe, button, bag, slot)
 end
 
 function Baggins:UpdateItemButtonCooldown(container, button)
