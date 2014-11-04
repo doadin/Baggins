@@ -293,17 +293,15 @@ function Baggins:CheckSlotsChanged(bag, forceupdate)
 
 		local link = GetContainerItemLink(bag, slot)
 		local itemCount = select(2, GetContainerItemInfo(bag, slot))
-		local itemid, itemName
+		local itemid
 		if link then
 			itemid = link:match("item:(%d+)")
-			if itemid then -- it's a battle pet				
-				itemName = GetItemInfo(link)
-				iteminfo = itemid.." "..itemCount.." "..(itemName or "_")
+			if itemid then -- it's not a battle pet
+				iteminfo = itemid.." "..itemCount.." "..(link and link:match("item[%-?%d:]+") or "_")
 			else
 				-- sample battle-pet-link "|cffffd200|Hbattlepet:261:3:-1:253:34:29:6822822|h[Personal World Destroyer]|h|r"
 				local speciesID, level, quality, maxhp, power, speed, petid = link:match("battlepet:(%d+):(%d+):([-%d]+):(%d+):(%d+):(%d+):(%d+)")
 				local name, icon, petType, creatureID, sourceText, description, isWild, canBattle, tradable, unique = C_PetJournal.GetPetInfoBySpeciesID( speciesID )
-				itemName = name
 				itemid = - tonumber(petid) -- use negative itemid values for battle-pets
 				if itemid == 0 then
 					itemid = - tonumber(speciesID)
