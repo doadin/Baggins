@@ -1,5 +1,5 @@
 <Bindings>
-	<Binding name="BAGGINS_TOGGLEALL" header="BAGGINS">
+	<Binding name="BAGGINS_TOGGLEALL" header="BAGGINS" category="ADDONS">
 		Baggins:ToggleAllBags()
 	</Binding>
 </Bindings>
