@@ -1,7 +1,7 @@
 local debug = false
---@debug@
+--[===[@debug@
 --debug = true
---@end-debug@
+--@end-debug@]===]
 local L = LibStub("AceLocale-3.0"):NewLocale("Baggins", "enUS", true, debug)
 if not L then return end
 
@@ -457,3 +457,10 @@ L["Automatically deposits crafting reagents into the reagent bank if available."
 
 L["Disable Bag Menu"] = true
 L["Disables the menu that pops up when right clicking on bags."] = true
+
+L["Override Backpack Button"] = true
+L["Baggins will open when clicking the backpack. Holding alt will open the default backpack."] = true
+L["General"] = true
+L["Display and Overrides"] = true
+L["Display"] = true
+L["Overrides"] = true

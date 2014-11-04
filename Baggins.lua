@@ -413,6 +413,7 @@ function Baggins:OnEnable()
 	self:ScheduleRepeatingTimer("RunBagUpdates", 20)
 
 	self:UpdateBagHooks()
+	self:UpdateBackpackHook()
 	self:RawHook("CloseSpecialWindows", true)
 	self:RawHookScript(BankFrame,"OnEvent","BankFrame_OnEvent")
 	
@@ -487,6 +488,20 @@ function Baggins:UnhookBagHooks()
 	end
 	if self:IsHooked("CloseAllBags") then
 		self:Unhook("CloseAllBags")
+	end
+end
+
+function Baggins:UpdateBackpackHook()
+	if self.db.profile.overridebackpack then
+		self:RawHookScript(MainMenuBarBackpackButton, "OnClick", "MainMenuBarBackpackButtonOnClick")
+	else
+		self:UnhookBackpack()
+	end
+end
+
+function Baggins:UnhookBackpack()
+	if self:IsHooked(MainMenuBarBackpackButton, "OnClick") then
+		self:Unhook(MainMenuBarBackpackButton, "OnClick")
 	end
 end
 
@@ -3527,6 +3542,15 @@ end
 function Baggins:CloseAllBags()
 	for bagid, bag in ipairs(self.db.profile.bags) do
 		Baggins:CloseBag(bagid)
+	end
+end
+
+function Baggins:MainMenuBarBackpackButtonOnClick(button)
+	if IsAltKeyDown() then
+		BackpackButton_OnClick(button)
+	else
+		self:ToggleAllBags()
+		button:SetChecked(false)
 	end
 end
 

@@ -242,6 +242,7 @@ local dbDefaults = {
 		hideemptybags = false,
 		hidedefaultbank = false,
 		overridedefaultbags = true,
+		overridebackpack = true,
 		autoreagent = true,
 		compressempty = true,
 		compressstackable = true,
@@ -339,21 +340,6 @@ function Baggins:RebuildOptions()
 			order = 2,
 			desc = L["Opens the Waterfall Config window"],
 			func = "OpenEditConfig",
-		},
-		minimap = {
-			name = L["Minimap icon"],
-			type = 'toggle',
-			order = 4,
-			desc = L["Show an icon at the minimap if no Broker-Display is present."],
-			get = function() return not Baggins.db.profile.minimap.hide end,
-			set = function(info, value)
-					Baggins.db.profile.minimap.hide = not value
-					if value then
-						dbIcon:Show("Baggins")
-					else
-						dbIcon:Hide("Baggins")
-					end
-				end
 		},
 		Items = {
 			name = L["Items"],
@@ -519,6 +505,82 @@ function Baggins:RebuildOptions()
 						self:ForceFullUpdate()
 					end,
 					disabled = function() return not p.highlightnew end,
+				},
+			}
+		},
+		General = {
+			name = L["General"],
+			type = 'group',
+			order = 1,
+			desc = L["Display and Overrides"],
+			args = {
+				Display = {
+					type = 'header',
+					order = 1,
+					name = L["Display"],
+				},
+				minimap = {
+					name = L["Minimap icon"],
+					type = 'toggle',
+					order = 100,
+					desc = L["Show an icon at the minimap if no Broker-Display is present."],
+					get = function() return not Baggins.db.profile.minimap.hide end,
+					set = function(info, value)
+							Baggins.db.profile.minimap.hide = not value
+							if value then
+								dbIcon:Show("Baggins")
+							else
+								dbIcon:Hide("Baggins")
+							end
+						end
+				},
+				Skin = {
+					name = L["Bag Skin"],
+					type = 'select',
+					desc = L["Select bag skin"],
+					order = 300,
+					get = function() return p.skin end,
+					set = function(info, value)
+							Baggins:ApplySkin(value)
+						end,
+					values = function() return dbl(CopyTable(self:GetSkinList())) end,
+				},
+				HideDefaultBank = {
+					name = L["Hide Default Bank"],
+					type = "toggle",
+					desc = L["Hide the default bank window."],
+					order = 200,
+					get = function() return p.hidedefaultbank end,
+					set = function(info, value) p.hidedefaultbank = value end,
+				},
+				Overrides = {
+					type = 'header',
+					order = 500,
+					name = L["Overrides"],
+				},
+				OverrideBags = {
+					name = L["Override Default Bags"],
+					type = "toggle",
+					desc = L["Baggins will open instead of the default bags"],
+					order = 600,
+					get = function() return p.overridedefaultbags end,
+					set = function(info, value) p.overridedefaultbags = value self:UpdateBagHooks() end,
+				},
+				OverrideBackpack = {
+					name = L["Override Backpack Button"],
+					type = "toggle",
+					desc = L["Baggins will open when clicking the backpack. Holding alt will open the default backpack."],
+					order = 700,
+					get = function() return p.overridebackpack end,
+					set = function(info, value) p.overridebackpack = value self:UpdateBackpackHook() end,
+				},
+				AutomaticReagentHandling = {
+					name = L["Reagent Deposit"],
+					type = "toggle",
+					desc = L["Automatically deposits crafting reagents into the reagent bank if available."],
+					order = 800,
+					get = function() return p.autoreagent end,
+					set = function(info, value) p.autoreagent = value end,
 				},
 			}
 		},
@@ -794,41 +856,6 @@ function Baggins:RebuildOptions()
 				},
 			},
 		},
-		Skin = {
-			name = L["Bag Skin"],
-			type = 'select',
-			desc = L["Select bag skin"],
-			order = 160,
-			get = function() return p.skin end,
-			set = function(info, value)
-					Baggins:ApplySkin(value)
-				end,
-			values = function() return dbl(CopyTable(self:GetSkinList())) end,
-		},
-		HideDefaultBank = {
-			name = L["Hide Default Bank"],
-			type = "toggle",
-			desc = L["Hide the default bank window."],
-			order = 170,
-			get = function() return p.hidedefaultbank end,
-			set = function(info, value) p.hidedefaultbank = value end,
-		},
-		OverrideBags = {
-			name = L["Override Default Bags"],
-			type = "toggle",
-			desc = L["Baggins will open instead of the default bags"],
-			order = 180,
-			get = function() return p.overridedefaultbags end,
-			set = function(info, value) p.overridedefaultbags = value self:UpdateBagHooks() end,
-		},
-		AutomaticReagentHandling = {
-			name = L["Reagent Deposit"],
-			type = "toggle",
-			desc = L["Automatically deposits crafting reagents into the reagent bank if available."],
-			order = 190,
-			get = function() return p.autoreagent end,
-			set = function(info, value) p.autoreagent = value end,
-		},
 	}
 
 	self.opts.args.profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)
@@ -905,6 +932,7 @@ function Baggins:ChangeProfile()
 	self:UpdateLayout()
 	self:UnhookBagHooks()
 	self:UpdateBagHooks()
+	self:UpdateBackpackHook()
 end
 
 function Baggins:OpenConfig()
