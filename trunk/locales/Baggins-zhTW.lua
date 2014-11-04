@@ -447,6 +447,13 @@ L["Automatically deposits crafting reagents into the reagent bank if available."
 L["Disable Bag Menu"] = true
 L["Disables the menu that pops up when right clicking on bags."] = true
 
+L["Override Backpack Button"] = true
+L["Baggins will open when clicking the backpack. Holding alt will open the default backpack."] = true
+L["General"] = true
+L["Display and Overrides"] = true
+L["Display"] = true
+L["Overrides"] = true
+
 --[[------------------- modified by lalibre -------------------------------
 	------ Baggins-Options.lua ------
 $38		hideduplicates = 'global'
