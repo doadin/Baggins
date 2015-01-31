@@ -1944,15 +1944,6 @@ function Baggins:RebuildCategoryRules(categoryname)
 		end
 	end
 	for ruleid,rule in ipairs(category) do
-		local rulename
-		if rule.type == "New" then
-			rulename = L["New Rule"]
-		else
-			rulename = Baggins:GetRuleDesc(rule)
-		end
-		if ruleid > 1 then
-			rulename = (rule.operation or "OR").." "..rulename
-		end
 		local ruleopt = {
 			type = 'group',
 			name = rule.type,
