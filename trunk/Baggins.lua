@@ -2983,7 +2983,18 @@ end
 function Baggins:UpdateItemButtonCooldown(container, button)
 	local cooldown = _G[button:GetName().."Cooldown"]
 	local start, duration, enable = GetContainerItemCooldown(container, button:GetID())
-	CooldownFrame_SetTimer(cooldown, start, duration, enable)
+	
+	-- CooldownFrame_SetTimer has been renamed to CooldownFrame_Set in 7.0
+	-- We'll check for the new name and use it if it's available. This lets the patch
+	-- work with both 6.2 and 7.0.
+	local setTimer = nil
+	if (CooldownFrame_Set ~= nil) then
+		setTimer = CooldownFrame_Set
+	else
+		setTimer = CooldownFrame_SetTimer
+	end
+	setTimer(cooldown, start, duration, enable)
+	
 	if ( duration > 0 and enable == 0 ) then
 		SetItemButtonTextureVertexColor(button, 0.4, 0.4, 0.4)
 	end
