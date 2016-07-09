@@ -3584,7 +3584,7 @@ function Baggins:OpenBag(bagid,noupdate)
 	end
 	if self.doInitialUpdate then
 		Baggins:ForceFullUpdate()
-		self.doInitialUpdate = nil
+		-- note: we use self.doInitialUpdate further down, and nil it there
 	end
 
 	if p.bags[bagid].isBank and not self.bankIsOpen then
@@ -3602,6 +3602,15 @@ function Baggins:OpenBag(bagid,noupdate)
 	end
 	self:UpdateLayout()
 	self:UpdateTooltip()
+
+	-- reuse self.doInitialUpdate to only run once
+	-- this fixes the duplicate stacks bug upon login
+	if self.doInitialUpdate then
+		-- rebuild layouts to fix duplicate stacks
+		self:RebuildSectionLayouts()
+		-- this time we set to nil so this only runs the first time
+		self.doInitialUpdate = nil
+	end
 end
 
 -- "All Bags" in these 3 functions refers to bags that are set to openWithAll
