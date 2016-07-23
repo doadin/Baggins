@@ -129,7 +129,6 @@ local templates = {
 					{ name = L["First Aid"], cats = {L["FirstAid"]}},
 					{ name = L["Potions"], cats = {L["Potions"]}},
 					{ name = L["Flasks & Elixirs"], cats = {L["Flasks & Elixirs"]}},
-					{ name = L["Scrolls"], cats = {L["Scrolls"]}},
 					{ name = L["Item Enhancements"], cats = {L["Item Enhancements"]}},
 					{ name = L["Misc"], cats = { L["Misc Consumables"] }},
 				}
@@ -148,6 +147,7 @@ local templates = {
 					{ name=L["Enchanting"], cats={ L["Enchanting"] } },
 					{ name=L["Jewelcrafting"], cats={ L["Jewelcrafting"] } },
 					{ name=L["Engineering"], cats={ L["Engineering"] } },
+					{ name=L["Inscription"], cats={ L["Inscription"] } },
 					{ name=L["Misc Trade Goods"], cats={ L["Misc Trade Goods"] } },
 					{ name=L["Item Enchantment"], cats={ L["Item Enchantment"] } },
 					{ name=L["Recipes"], cats={ L["Recipes"] } },
@@ -190,7 +190,6 @@ local templates = {
 					{ name = L["First Aid"], cats = {L["FirstAid"]}},
 					{ name = L["Potions"], cats = {L["Potions"]}},
 					{ name = L["Flasks & Elixirs"], cats = {L["Flasks & Elixirs"]}},
-					{ name = L["Scrolls"], cats = {L["Scrolls"]}},
 					{ name = L["Item Enhancements"], cats = {L["Item Enhancements"]}},
 					{ name = L["Misc"], cats = { L["Misc Consumables"] }},
 				}
@@ -210,6 +209,7 @@ local templates = {
 					{ name=L["Enchanting"], cats={ L["Enchanting"] } },
 					{ name=L["Jewelcrafting"], cats={ L["Jewelcrafting"] } },
 					{ name=L["Engineering"], cats={ L["Engineering"] } },
+					{ name=L["Inscription"], cats={ L["Inscription"] } },
 					{ name=L["Misc Trade Goods"], cats={ L["Misc Trade Goods"] } },
 					{ name=L["Item Enchantment"], cats={ L["Item Enchantment"] } },
 					{ name=L["Recipes"], cats={ L["Recipes"] } },
@@ -278,6 +278,7 @@ local dbDefaults = {
 		bankcontrolbag = 11, -- "Bank Other"
 		disablebagmenu = false,
 		openatauction = true,
+		ranMigrations = {},
 		minimap = {
 			hide = false,
 		}
@@ -906,11 +907,280 @@ function Baggins:InitOptions()
 	self.db.RegisterCallback(self, "OnProfileChanged", "ChangeProfile")
 	self.db.RegisterCallback(self, "OnProfileCopied", "ChangeProfile")
 	self.db.RegisterCallback(self, "OnProfileReset", "ChangeProfile")
-	self.db.RegisterCallback(self, "OnNewProfile", "ChangeProfile")
+	self.db.RegisterCallback(self, "OnNewProfile", "NewProfile")
 
 	AceConfig:RegisterOptionsTable("Baggins", self.opts)
 	AceConfigDialog:AddToBlizOptions("Baggins", "Baggins")
 	oldskin = self.db.profile.skin
+end
+
+local itemTypeReverse = {
+	["Quiver"] = {
+		["id"] = 11,
+		["subTypes"] = {
+		},
+	},
+	["WoW Token"] = {
+		["id"] = 18,
+		["subTypes"] = {
+			["WoW Token"] = 0,
+		},
+	},
+	["Recipe"] = {
+		["id"] = 9,
+		["subTypes"] = {
+			["Tailoring"] = 2,
+			["Blacksmithing"] = 4,
+			["Alchemy"] = 6,
+			["First Aid"] = 7,
+			["Book"] = 0,
+			["Cooking"] = 5,
+			["Fishing"] = 9,
+			["Jewelcrafting"] = 10,
+			["Engineering"] = 3,
+			["Leatherworking"] = 1,
+			["Inscription"] = 11,
+			["Enchanting"] = 8,
+		},
+	},
+	["Reagent"] = {
+		["id"] = 5,
+		["subTypes"] = {
+			["Reagent"] = 0,
+			["Keystone"] = 1,
+		},
+	},
+	["Key"] = {
+		["id"] = 13,
+		["subTypes"] = {
+			["Key"] = 0,
+			["Lockpick"] = 1,
+		},
+	},
+	["Armor"] = {
+		["id"] = 4,
+		["subTypes"] = {
+			["Leather"] = 2,
+			["Cosmetic"] = 5,
+			["Shields"] = 6,
+			["Mail"] = 3,
+			["Plate"] = 4,
+			["Cloth"] = 1,
+			["Miscellaneous"] = 0,
+		},
+	},
+	["Quest"] = {
+		["id"] = 12,
+		["subTypes"] = {
+			["Quest"] = 0,
+		},
+	},
+	["Container"] = {
+		["id"] = 1,
+		["subTypes"] = {
+			["Bag"] = 0,
+			["Mining Bag"] = 6,
+			["Cooking Bag"] = 10,
+			["Gem Bag"] = 5,
+			["Herb Bag"] = 2,
+			["Engineering Bag"] = 4,
+			["Tackle Box"] = 9,
+			["Leatherworking Bag"] = 7,
+			["Inscription Bag"] = 8,
+			["Enchanting Bag"] = 3,
+		},
+	},
+	["Tradeskill"] = {
+		["id"] = 7,
+		["subTypes"] = {
+			["Inscription"] = 16,
+			["Elemental"] = 10,
+			["Jewelcrafting"] = 4,
+			["Leather"] = 6,
+			["Herb"] = 9,
+			["Other"] = 11,
+			["Enchanting"] = 12,
+			["Cloth"] = 5,
+			["Cooking"] = 8,
+			["Metal & Stone"] = 7,
+			["Parts"] = 1,
+		},
+	},
+	["Permanent(OBSOLETE)"] = {
+		["id"] = 14,
+		["subTypes"] = {
+			["Permanent"] = 0,
+		},
+	},
+	["Miscellaneous"] = {
+		["id"] = 15,
+		["subTypes"] = {
+			["Other"] = 4,
+			["Reagent"] = 1,
+			["Companion Pets"] = 2,
+			["Holiday"] = 3,
+			["Junk"] = 0,
+			["Mount"] = 5,
+		},
+	},
+	["Battle Pets"] = {
+		["id"] = 17,
+		["subTypes"] = {
+			["Dragonkin"] = 1,
+			["Humanoid"] = 0,
+			["Elemental"] = 6,
+			["Critter"] = 4,
+			["Magic"] = 5,
+			["Flying"] = 2,
+			["Aquatic"] = 8,
+			["Undead"] = 3,
+			["Beast"] = 7,
+			["Mechanical"] = 9,
+		},
+	},
+	["Consumable"] = {
+		["id"] = 0,
+		["subTypes"] = {
+			["Other"] = 8,
+			["Elixir"] = 2,
+			["Explosives and Devices"] = 0,
+			["Potion"] = 1,
+			["Food & Drink"] = 5,
+			["Flask"] = 3,
+			["Bandage"] = 7,
+			["Vantus Runes"] = 9,
+		},
+	},
+	["Gem"] = {
+		["id"] = 3,
+		["subTypes"] = {
+			["Intellect"] = 0,
+			["Artifact Relic"] = 11,
+			["Haste"] = 7,
+			["Strength"] = 2,
+			["Multiple Stats"] = 10,
+			["Agility"] = 1,
+			["Other"] = 9,
+			["Versatility"] = 8,
+			["Stamina"] = 3,
+			["Mastery"] = 6,
+			["Spirit"] = 4,
+			["Critical Strike"] = 5,
+		},
+	},
+	["Money(OBSOLETE)"] = {
+		["id"] = 10,
+		["subTypes"] = {
+			["Money(OBSOLETE)"] = 0,
+		},
+	},
+	["Projectile"] = {
+		["id"] = 6,
+		["subTypes"] = {
+		},
+	},
+	["Item Enhancement"] = {
+		["id"] = 8,
+		["subTypes"] = {
+			["Waist"] = 7,
+			["Head"] = 0,
+			["Neck"] = 1,
+			["Shield/Off-hand"] = 13,
+			["Two-Handed Weapon"] = 12,
+			["Feet"] = 9,
+			["Chest"] = 4,
+			["Cloak"] = 3,
+			["Finger"] = 10,
+			["Legs"] = 8,
+			["Hands"] = 6,
+			["Wrist"] = 5,
+			["Shoulder"] = 2,
+			["Weapon"] = 11,
+		},
+	},
+	["Glyph"] = {
+		["id"] = 16,
+		["subTypes"] = {
+			["Warrior"] = 1,
+			["Paladin"] = 2,
+			["Shaman"] = 7,
+			["Monk"] = 10,
+			["Rogue"] = 4,
+			["Mage"] = 8,
+			["Demon Hunter"] = 12,
+			["Warlock"] = 9,
+			["Priest"] = 5,
+			["Hunter"] = 3,
+			["Druid"] = 11,
+			["Death Knight"] = 6,
+		},
+	},
+	["Weapon"] = {
+		["id"] = 2,
+		["subTypes"] = {
+			["One-Handed Axes"] = 0,
+			["One-Handed Swords"] = 7,
+			["Staves"] = 10,
+			["Crossbows"] = 18,
+			["Polearms"] = 6,
+			["One-Handed Maces"] = 4,
+			["Warglaives"] = 9,
+			["Bows"] = 2,
+			["Two-Handed Swords"] = 8,
+			["Miscellaneous"] = 14,
+			["Fishing Poles"] = 20,
+			["Daggers"] = 15,
+			["Guns"] = 3,
+			["Fist Weapons"] = 13,
+			["Two-Handed Maces"] = 5,
+			["Wands"] = 19,
+			["Thrown"] = 16,
+			["Two-Handed Axes"] = 1,
+		},
+	},
+}
+
+local migrations = {
+	["0001_ItemTypes_7.0.3"] = function ()
+		Baggins:Print("Migrating Item Type Filters to 7.0.3")
+		itemTypeReverse["Consumable"].subTypes["Scroll"] = -1
+		itemTypeReverse["Consumable"].subTypes["Consumable"] = -2
+		itemTypeReverse["Trade Goods"] = itemTypeReverse["Tradeskill"]
+		itemTypeReverse["Trade Goods"].subTypes["Materials"] = -1
+		for _, category in pairs(Baggins.db.profile.categories) do
+			for ruleid, rule in ipairs(category) do
+				if (rule.type == "ItemType") then
+					if ((rule.itype == "Trade Goods" and rule.isubtype == "Devices")
+						or
+					   (rule.itype == "Trade Goods" and rule.isubtype == "Explosives"))
+						then
+						rule.itype = 0
+						rule.subtype = 0
+					elseif ((rule.itype == "Consumable" and rule.isubtype == "Item Enhancement")
+								or
+							(rule.itype == "Trade Goods" and rule.isubtype == "Item Enchantment")
+							) then
+						rule.itype = 8
+						rule.isubtype = nil
+					else
+						if (type(rule.itype) == 'string') then
+							if (type(rule.isubtype) == 'string') then
+								rule.isubtype = itemTypeReverse[rule.itype].subTypes[rule.isubtype]
+							end
+							rule.itype = itemTypeReverse[rule.itype].id
+						end
+					end
+				end
+			end
+		end
+	end
+}
+
+function Baggins:NewProfile(t, key)
+	for k in pairs(migrations) do
+		key.profile.ranMigrations[k] = true
+	end
+	self:ChangeProfile();
 end
 
 function Baggins:ChangeProfile()
@@ -948,32 +1218,27 @@ Baggins.defaultcategories = {
 		name=L["Misc Consumables"],
 		{
 			type="ItemType" ,
-			itype = "Consumable",
-			isubtype = "Other",
-		},
-		{
-			type="ItemType" ,
-			itype = "Consumable",
-			isubtype = "Consumable",
-		},
+			itype = itemTypeReverse["Consumable"].id,
+			isubtype = itemTypeReverse["Consumable"].subTypes["Other"],
+		}
 	},
 	[L["Consumables"]] = {
 		name=L["Consumables"],
 		{
 			type="ItemType",
-			itype = "Consumable"
+			itype = itemTypeReverse["Consumable"].id
 		}
 	},
 	[L["Armor"]] = {
 		name=L["Armor"],
 		{
 			type="ItemType",
-			itype="Armor"
+			itype = itemTypeReverse["Armor"].id
 		},
 		{
 			type="ItemType",
-			itype="Armor",
-			isubtype="Shields",
+			itype = itemTypeReverse["Armor"].id,
+			isubtype = itemTypeReverse["Armor"].subTypes["Shields"],
 			operation="NOT"
 		},
 	},
@@ -981,31 +1246,31 @@ Baggins.defaultcategories = {
 		name=L["Weapons"],
 		{
 			type="ItemType",
-			itype="Weapon"
+			itype = itemTypeReverse["Weapon"].id
 		},
 		{
 			type="ItemType",
-			itype="Armor",
-			isubtype="Shields"
+			itype = itemTypeReverse["Armor"].id,
+			isubtype = itemTypeReverse["Armor"].subTypes["Shields"]
 		},
 		{
 			type="ItemType",
-			itype="Weapon",
-			isubtype="Miscellaneous",
+			itype = itemTypeReverse["Weapon"].id,
+			isubtype = itemTypeReverse["Weapon"].subTypes["Miscellaneous"],
 			operation="NOT"
 		},
 	},
-	[L["Quest"]] = { name=L["Quest"], { type="ItemType", itype="Quest" }, { type="Tooltip", text="ITEM_BIND_QUEST" } },
+	[L["Quest"]] = { name=L["Quest"], { type="ItemType", itype = itemTypeReverse["Quest"].id }, { type="Tooltip", text="ITEM_BIND_QUEST" } },
 	[L["Trash"]] = { name=L["Trash"], { type="Quality", quality = 0, comp = "<=" } },
 	[L["TrashEquip"]] = {
 		name=L["TrashEquip"],
 		{
 			type="ItemType",
-			itype="Armor"
+			itype = itemTypeReverse["Armor"].id
 		},
 		{
 			type="ItemType",
-			itype="Weapon",
+			itype = itemTypeReverse["Weapon"].id,
 			operation="OR"
 		},
 		{
@@ -1021,7 +1286,7 @@ Baggins.defaultcategories = {
 		},
 		{
 			type="ItemType",
-			itype="Quest",
+			itype = itemTypeReverse["Quest"].id,
 			operation="NOT" },
 		},
 	[L["Other"]] = { name=L["Other"], { type="Other" } },
@@ -1032,179 +1297,160 @@ Baggins.defaultcategories = {
 		name=L["Potions"],
 		{
 			type="ItemType",
-			itype = "Consumable",
-			isubtype = "Potion",
+			itype = itemTypeReverse["Consumable"].id,
+			isubtype = itemTypeReverse["Consumable"].subTypes["Potion"],
 		},
 	},
 	[L["Flasks & Elixirs"]] = {
 		name=L["Flasks & Elixirs"],
 		{
 			type="ItemType",
-			itype = "Consumable",
-			isubtype = "Flask",
+			itype = itemTypeReverse["Consumable"].id,
+			isubtype = itemTypeReverse["Consumable"].subTypes["Flask"],
 		},
 		{
 			operation = "OR",
 			type="ItemType",
-			itype = "Consumable",
-			isubtype = "Elixir",
+			itype = itemTypeReverse["Consumable"].id,
+			isubtype = itemTypeReverse["Consumable"].subTypes["Elixir"],
 		},
 	},
 	[L["Food & Drink"]] = {
 		name=L["Food & Drink"],
 		{
 			type="ItemType",
-			itype = "Consumable",
-			isubtype = "Food & Drink",
-		},
-	},
-	[L["Scrolls"]] = {
-		name=L["Scrolls"],
-		{
-			type="ItemType",
-			itype = "Consumable",
-			isubtype = "Scroll",
+			itype = itemTypeReverse["Consumable"].id,
+			isubtype = itemTypeReverse["Consumable"].subTypes["Food & Drink"],
 		},
 	},
 	[L["FirstAid"]] = {
 		name=L["FirstAid"],
 		{
 			type="ItemType",
-			itype = "Consumable",
-			isubtype = "Bandage",
+			itype = itemTypeReverse["Consumable"].id,
+			isubtype = itemTypeReverse["Consumable"].subTypes["Bandage"],
 		},
 	},
 	[L["Item Enhancements"]] = {
 		name=L["Item Enhancements"],
 		{
 			type="ItemType",
-			itype = "Consumable",
-			isubtype = "Item Enhancement",
+			itype = itemTypeReverse["Item Enhancement"].id
 		},
 	},
 	[L["Tradeskill Mats"]] = {
 		name=L["Tradeskill Mats"],
 		{
 			type="ItemType",
-			itype = "Trade Goods",
+			itype = itemTypeReverse["Tradeskill"].id,
 		},
 	},
 	[L["Elemental"]] = {
 		name=L["Elemental"],
 		{
 			type = "ItemType",
-			itype = "Trade Goods",
-			isubtype = "Elemental",
+			itype = itemTypeReverse["Tradeskill"].id,
+			isubtype = itemTypeReverse["Tradeskill"].subTypes["Elemental"],
 		},
 	},
 	[L["Cloth"]] = {
 		name=L["Cloth"],
 		{
 			type = "ItemType",
-			itype = "Trade Goods",
-			isubtype = "Cloth",
+			itype = itemTypeReverse["Tradeskill"].id,
+			isubtype = itemTypeReverse["Tradeskill"].subTypes["Cloth"],
 		},
 	},
 	[L["Leather"]] = {
 		name=L["Leather"],
 		{
 			type = "ItemType",
-			itype = "Trade Goods",
-			isubtype = "Leather",
+			itype = itemTypeReverse["Tradeskill"].id,
+			isubtype = itemTypeReverse["Tradeskill"].subTypes["Leather"],
 		},
 	},
 	[L["Metal & Stone"]] = {
 		name=L["Metal & Stone"],
 		{
 			type = "ItemType",
-			itype = "Trade Goods",
-			isubtype = "Metal & Stone",
+			itype = itemTypeReverse["Tradeskill"].id,
+			isubtype = itemTypeReverse["Tradeskill"].subTypes["Metal & Stone"],
 		},
 	},
 	[L["Cooking"]] = {
 		name=L["Cooking"],
 		{
 			type = "ItemType",
-			itype = "Trade Goods",
-			isubtype = "Cooking",
+			itype = itemTypeReverse["Tradeskill"].id,
+			isubtype = itemTypeReverse["Tradeskill"].subTypes["Cooking"],
 		},
 	},
 	[L["Herb"]] = {
 		name=L["Herb"],
 		{
 			type = "ItemType",
-			itype = "Trade Goods",
-			isubtype = "Herb",
+			itype = itemTypeReverse["Tradeskill"].id,
+			isubtype = itemTypeReverse["Tradeskill"].subTypes["Herb"],
 		},
 	},
 	[L["Enchanting"]] = {
 		name=L["Enchanting"],
 		{
 			type = "ItemType",
-			itype = "Trade Goods",
-			isubtype = "Enchanting",
+			itype = itemTypeReverse["Tradeskill"].id,
+			isubtype = itemTypeReverse["Tradeskill"].subTypes["Enchanting"],
 		},
 	},
 	[L["Jewelcrafting"]] = {
 		name=L["Jewelcrafting"],
 		{
 			type = "ItemType",
-			itype = "Trade Goods",
-			isubtype = "Jewelcrafting",
+			itype = itemTypeReverse["Tradeskill"].id,
+			isubtype = itemTypeReverse["Tradeskill"].subTypes["Jewelcrafting"],
 		},
 	},
 	[L["Engineering"]] = {
 		name=L["Parts"],
 		{
 			type = "ItemType",
-			itype = "Trade Goods",
-			isubtype = "Parts",
+			itype = itemTypeReverse["Tradeskill"].id,
+			isubtype = itemTypeReverse["Tradeskill"].subTypes["Parts"],
 		},
 		{
 			type = "ItemType",
-			itype = "Trade Goods",
-			isubtype = "Devices",
+			itype = itemTypeReverse["Consumable"].id,
+			isubtype = itemTypeReverse["Consumable"].subTypes["Explosives and Devices"],
 			operation = "OR",
-		},
+		}
+	},
+	[L["Inscription"]] = {
+		name = L["Inscription"],
 		{
 			type = "ItemType",
-			itype = "Trade Goods",
-			isubtype = "Devices",
-			operation = "OR",
-		},
-		{
-			type = "ItemType",
-			itype = "Trade Goods",
-			isubtype = "Explosives",
-			operation = "OR",
-		},
+			itype = itemTypeReverse["Tradeskill"].id,
+			isubtype = itemTypeReverse["Tradeskill"].subTypes["Inscription"],
+		}
 	},
 	[L["Misc Trade Goods"]] = {
 		name=L["Other"],
 		{
 			type = "ItemType",
-			itype = "Trade Goods",
-			isubtype = "Other",
-		},
-		{
-			type = "ItemType",
-			itype = "Trade Goods",
-			isubtype = "Materials",
-		},
+			itype = itemTypeReverse["Tradeskill"].id,
+			isubtype = itemTypeReverse["Tradeskill"].subTypes["Other"],
+		}
 	},
 	[L["Item Enchantment"]] = {
 		name=L["Item Enchantment"],
 		{
 			type = "ItemType",
-			itype = "Trade Goods",
-			isubtype = "Item Enchantment",
+			itype = itemTypeReverse["Item Enhancement"].id
 		},
 	},
 	[L["Recipes"]] = {
 		name=L["Recipes"],
 		{
 			type="ItemType",
-			itype = "Recipe",
+			itype = itemTypeReverse["Recipe"].id,
 		},
 	},
 	[L["Tools"]] = {
@@ -1352,6 +1598,13 @@ function Baggins:OnProfileEnable()
 	local p = self.db.profile
 	--check if this profile has been setup before, if not add the default bags and categories
 	--cant leave these in the defaults since removing a bag would have it come back on reload
+	for k,m in pairs(migrations) do
+		if not self.db.profile.ranMigrations[k] then
+			self:Print("Running Migration " .. k)
+			m()
+			self.db.profile.ranMigrations[k] = true
+		end
+	end
 	local refresh = false
 	if not next(p.categories) then
 		deepCopy(p.categories, self.defaultcategories)
