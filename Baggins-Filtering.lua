@@ -565,41 +565,50 @@ function Baggins:GetCachedItem(item)
 	return slotcache[item]
 end
 
-
-
-
-
-
-
-
-
-
-
 -----------------------------------------------------------------------
 -- ItemType
 
 --------------------------
--- Baggins: AH category scanned 04/13/13 10:56:38 - patch 5.2.0
+-- Baggins: AH category scanned 2016-07-21 22:56:38 - patch 7.0.3
 
+local ItemTypes = {
+  [1]="Container",
+  [2]="Weapon",
+  [3]="Gem",
+  [4]="Armor",
+  [5]="Reagent",
+  [6]="Projectile",
+  [7]="Tradeskill",
+  [8]="Item Enhancement",
+  [9]="Recipe",
+  [10]="Money(OBSOLETE)",
+  [11]="Quiver",
+  [12]="Quest",
+  [13]="Key",
+  [14]="Permanent(OBSOLETE)",
+  [15]="Miscellaneous",
+  [16]="Glyph",
+  [17]="Battle Pets",
+  [18]="WoW Token",
+  [0]="Consumable"
+}
+
+--[[
 local ItemTypes = {
  ["Weapon"] = {"One-Handed Axes", "Two-Handed Axes", "Bows", "Guns", "One-Handed Maces", "Two-Handed Maces", "Polearms", "One-Handed Swords", "Two-Handed Swords", "Staves", "Fist Weapons", "Miscellaneous", "Daggers", "Thrown", "Crossbows", "Wands", "Fishing Poles"},
  ["Armor"] = {"Miscellaneous", "Cloth", "Leather", "Mail", "Plate", "Cosmetic", "Shields"},  
  ["Container"] = {"Bag", "Herb Bag", "Enchanting Bag", "Engineering Bag", "Gem Bag", "Mining Bag", "Leatherworking Bag", "Inscription Bag", "Tackle Box", "Cooking Bag"},  
+ ["Gem"] = {"Red", "Blue", "Yellow", "Purple", "Green", "Orange", "Meta", "Simple", "Prismatic", "Cogwheel"},
  ["Consumable"] = {"Food & Drink", "Potion", "Elixir", "Flask", "Bandage", "Item Enhancement", "Scroll", "Other"},
  ["Glyph"] = {"Warrior", "Paladin", "Hunter", "Rogue", "Priest", "Death Knight", "Shaman", "Mage", "Warlock", "Monk", "Druid"},
+ ["Item Enhancement"] = {},
  ["Trade Goods"] = {"Elemental", "Cloth", "Leather", "Metal & Stone", "Cooking", "Herb", "Enchanting", "Jewelcrafting", "Parts", "Devices", "Explosives", "Materials", "Other", "Item Enchantment"},
- ["Recipe"] = {"Book", "Leatherworking", "Tailoring", "Engineering", "Blacksmithing", "Cooking", "Alchemy", "First Aid", "Enchanting", "Fishing", "Jewelcrafting", "Inscription"},
- ["Gem"] = {"Red", "Blue", "Yellow", "Purple", "Green", "Orange", "Meta", "Simple", "Prismatic", "Cogwheel"},
- ["Miscellaneous"] = {"Junk", "Reagent", "Companion Pets", "Holiday", "Other", "Mount"},
  ["Quest"] = {},
+ ["Recipe"] = {"Book", "Leatherworking", "Tailoring", "Engineering", "Blacksmithing", "Cooking", "Alchemy", "First Aid", "Enchanting", "Fishing", "Jewelcrafting", "Inscription"},
+ ["Miscellaneous"] = {"Junk", "Reagent", "Companion Pets", "Holiday", "Other", "Mount"},
  ["Battle Pets"] = {"Humanoid", "Dragonkin", "Flying", "Undead", "Critter", "Magic", "Elemental", "Beast", "Aquatic", "Mechanical"},
-}
+}--]]
 
--- Manually added types that do not appear in AH scan
-assert(#ItemTypes["Quest"]==0)	-- alert dev if scanned array suddenly looks different
-ItemTypes["Quest"] = { "Quest" }
-assert(not ItemTypes["Key"])    -- alert dev if scanned array suddenly looks different
-ItemTypes["Key"] = { "Key" }
 
 --[[
 SELECTED_CHAT_FRAME:AddMessage("--------------------------")
@@ -626,7 +635,7 @@ Baggins:AddCustomRule("ItemType", {
 			if not (rule.itype or rule.isubtype) then return end
 			local link = GetContainerItemLink(bag, slot)
 			if link then
-				local Type, SubType = select(6, GetItemInfo(link))
+				local Type, SubType = select(12, GetItemInfo(link))
 				if not Type then
 					local speciesID, level, quality, maxhp, power, speed, petid = link:match("battlepet:(%d+):(%d+):([-%d]+):(%d+):(%d+):(%d+):(%d+)")
 					if not tonumber(speciesID) then
@@ -637,17 +646,17 @@ Baggins:AddCustomRule("ItemType", {
 					SubType = _G["BATTLE_PET_NAME_" .. petType]
 				end
 				if Type and SubType then
-					return Type == BI[rule.itype] and (rule.isubtype == nil or SubType == BI[rule.isubtype] )
+					return Type == rule.itype and (rule.isubtype == nil or SubType == rule.isubtype )
 				end
 			end
 		end,
 		GetName = function(rule)
 			local ltype, lsubtype = "*", "*"
 			if rule.itype then
-				ltype = BI[rule.itype] or "?"
+				ltype = GetItemClassInfo(rule.itype) or "?"
 			end
 			if rule.isubtype then
-				lsubtype = BI[rule.isubtype] or "?"
+				lsubtype = GetItemSubClassInfo(rule.itype, rule.isubtype) or "?"
 			end
 			return L["ItemType - "]..ltype..":"..lsubtype
 		end,
@@ -658,8 +667,8 @@ Baggins:AddCustomRule("ItemType", {
 				desc = "",
 				values = function(info)
 						local tmp = {}
-						for k in pairs(ItemTypes) do
-							tmp[k] = k
+						for i in pairs(ItemTypes) do
+							tmp[i] = GetItemClassInfo(i)
 						end
 						return tmp
 					end,
@@ -670,14 +679,14 @@ Baggins:AddCustomRule("ItemType", {
 				desc = "",
 				type = "select",
 				get = function(info)
-						return info.arg.isubtype or "ALL"
+						return tostring(info.arg.isubtype or "ALL")
 					end,
 				set = function(info, value)
 						local rule = info.arg
 						if value == "ALL" then
 							rule.isubtype = nil
 						else
-							rule.isubtype = value
+							rule.isubtype = tonumber(value)
 						end
 						Baggins:OnRuleChanged()
 					end,
@@ -686,8 +695,8 @@ Baggins:AddCustomRule("ItemType", {
 						local tmp = {}
 						tmp.ALL = _G.ALL
 						if rule.itype and ItemTypes[rule.itype] then
-							for _,v in ipairs(ItemTypes[rule.itype]) do
-								tmp[v] = v
+							for _,k in pairs({GetAuctionItemSubClasses(rule.itype)}) do
+								tmp[tostring(k)] = GetItemSubClassInfo(rule.itype, k) or UNKNOWN
 							end
 						end
 						return tmp

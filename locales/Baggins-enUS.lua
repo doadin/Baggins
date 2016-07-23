@@ -265,6 +265,7 @@ L["Herb"] = true
 L["Enchanting"] = true
 L["Jewelcrafting"] = true
 L["Engineering"] = true
+L["Inscription"] = true
 L["Misc Trade Goods"] = true
 L["Item Enchantment"] = true
 L["Professions"] = true
