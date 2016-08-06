@@ -1,3 +1,4 @@
+local ItemUpgradeInfo = LibStub("LibItemUpgradeInfo-1.0")
 
 local pairs, ipairs, next, select, type, tonumber, tostring, format = 
       pairs, ipairs, next, select, type, tonumber, tostring, format
@@ -1087,6 +1088,7 @@ Baggins:AddCustomRule("ItemLevel", {
 			if not link then return false end
 
 			local _,_,_, itemLevel, itemMinLevel = GetItemInfo(link)
+                        local itemLevel = ItemUpgradeInfo:GetUpgradedItemLevel(link)
 			local lvl = rule.useminlvl and itemMinLevel or itemLevel
 
 			if not lvl then	-- can happen if itemcache hasn't been updated yet
