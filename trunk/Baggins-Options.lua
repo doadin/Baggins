@@ -558,9 +558,9 @@ function Baggins:RebuildOptions()
 				NewItemDuration = {
 					name = L["New Item Duration"],
 					type = "range",
-					desc = L["Controls how long (in minutes) an item will be considered new."],
-					min = 1,
-					max = 60,
+					desc = L["Controls how long (in minutes) an item will be considered new. 0 disables the time limit."],
+					min = 0,
+					max = 15,
 					step = 1,
 					bigStep = 1,
 					order = 340,

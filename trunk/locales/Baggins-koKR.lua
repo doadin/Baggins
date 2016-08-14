@@ -386,4 +386,4 @@ L["Display"] = true
 L["Overrides"] = true
 
 L["New Item Duration"] = true
-L["Controls how long (in minutes) an item will be considered new."] = true
+L["Controls how long (in minutes) an item will be considered new. 0 disables the time limit."] = true
