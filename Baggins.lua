@@ -2839,7 +2839,8 @@ function Baggins:IsNew(itemid)
 		return 1	-- completely new
 	else
 		local count = GetItemCount(itemid)
-		if count ~= savedcount.count and time() - savedcount.ts < p.newitemduration then
+		if count ~= savedcount.count
+			and (self.db.profile.newitemduration > 0 and time() - savedcount.ts < self.db.profile.newitemduration) then
 			return 2	-- more of an existing
 		else
 			return nil	-- not new
