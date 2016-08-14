@@ -411,6 +411,7 @@ function Baggins:OnEnable()
 	self:RegisterSignal('SlotMoved', self.SlotMoved, self)
 
 	self:ScheduleRepeatingTimer("RunBagUpdates", 20)
+	self:ScheduleRepeatingTimer("RunItemCountUpdates", 60)
 
 	self:UpdateBagHooks()
 	self:UpdateBackpackHook()
@@ -519,7 +520,7 @@ function Baggins:SaveItemCounts()
 		if link then
 			local id = tonumber(link:match("item:(%d+)"))
 			if id and not itemcounts[id] then
-				itemcounts[id] = GetItemCount(id)
+				itemcounts[id] = { count = GetItemCount(id), ts = time() }
 			end
 		end
 	end
@@ -527,7 +528,7 @@ function Baggins:SaveItemCounts()
 		if link then
 			local id = tonumber(link:match("item:(%d+)"))
 			if id and not itemcounts[id] then
-				itemcounts[id] = GetItemCount(id)
+				itemcounts[id] = { count = GetItemCount(id), ts = time() }
 			end
 		end
 	end
@@ -536,7 +537,7 @@ function Baggins:SaveItemCounts()
 		if link then
 			local id = tonumber(link:match("item:(%d+)"))
 			if id and not itemcounts[id] then
-				itemcounts[id] = GetItemCount(id)
+				itemcounts[id] = { count = GetItemCount(id), ts = time() }
 			end
 		end
 	end
@@ -545,10 +546,14 @@ function Baggins:SaveItemCounts()
 		if link then
 			local id = tonumber(link:match("item:(%d+)"))
 			if id and not itemcounts[id] then
-				itemcounts[id] = GetItemCount(id)
+				itemcounts[id] = { count = GetItemCount(id), ts = time() }
 			end
 		end
 	end
+end
+
+function Baggins:RunItemCountUpdates()
+	Baggins:ForceFullUpdate()
 end
 
 function Baggins:IsCompressed(itemID)
@@ -2834,7 +2839,7 @@ function Baggins:IsNew(itemid)
 		return 1	-- completely new
 	else
 		local count = GetItemCount(itemid)
-		if count > savedcount then
+		if count ~= savedcount.count and time() - savedcount.ts < p.newitemduration then
 			return 2	-- more of an existing
 		else
 			return nil	-- not new

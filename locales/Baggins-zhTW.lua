@@ -454,6 +454,9 @@ L["Display and Overrides"] = true
 L["Display"] = true
 L["Overrides"] = true
 
+L["New Item Duration"] = true
+L["Controls how long (in minutes) an item will be considered new."] = true
+
 --[[------------------- modified by lalibre -------------------------------
 	------ Baggins-Options.lua ------
 $38		hideduplicates = 'global'
