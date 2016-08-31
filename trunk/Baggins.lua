@@ -553,7 +553,9 @@ function Baggins:SaveItemCounts()
 end
 
 function Baggins:RunItemCountUpdates()
-	Baggins:ForceFullUpdate()
+	if self.db.profile.newitemduration > 0 then
+		Baggins:ForceFullUpdate()
+	end
 end
 
 function Baggins:IsCompressed(itemID)
