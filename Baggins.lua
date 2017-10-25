@@ -2660,7 +2660,7 @@ function Baggins:CreateBankControlFrame()
 	-- OnClick handler's are just like Blizzards default UI (see BankFrame.xml)
 	frame.slotbuy = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
 	frame.slotbuy:SetScript("OnClick", function(this)
-		PlaySound("igMainMenuOption");
+		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
 		StaticPopup_Show("CONFIRM_BUY_BANK_SLOT");
 	end)
 	frame.slotbuy:SetWidth(160)
@@ -2671,7 +2671,7 @@ function Baggins:CreateBankControlFrame()
 	-- A button to buy the reagent bank
 	frame.rabuy = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
 	frame.rabuy:SetScript("OnClick", function(this)
-		PlaySound("igMainMenuOption")
+		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
 		StaticPopup_Show("CONFIRM_BUY_REAGENTBANK_TAB")
 	end)
 	frame.rabuy:SetWidth(160)
