@@ -1,25 +1,25 @@
 local ItemUpgradeInfo = LibStub("LibItemUpgradeInfo-1.0")
 
-local pairs, ipairs, next, select, type, tonumber, tostring, format = 
+local pairs, ipairs, next, select, type, tonumber, tostring, format =
       pairs, ipairs, next, select, type, tonumber, tostring, format
 
 local _G = _G
-	  
-local min, max = 
+
+local min, max =
       min, max
 
 local wipe=wipe
 local tinsert, tremove, tsort = tinsert, tremove, table.sort
 local band=bit.band
-	  
+
 local BANK_CONTAINER = BANK_CONTAINER
 
 local GetItemInfo, GetContainerItemLink, GetContainerItemID, GetContainerItemInfo, GetContainerNumFreeSlots, GetContainerNumSlots =
       GetItemInfo, GetContainerItemLink, GetContainerItemID, GetContainerItemInfo, GetContainerNumFreeSlots, GetContainerNumSlots
 
-local GetInventoryItemLink, GetItemQualityColor = 
+local GetInventoryItemLink, GetItemQualityColor =
       GetInventoryItemLink, GetItemQualityColor
-	  
+
 local GetEquipmentSetInfo, GetEquipmentSetItemIDs, GetNumEquipmentSets =
       GetEquipmentSetInfo, GetEquipmentSetItemIDs, GetNumEquipmentSets
 
@@ -281,34 +281,22 @@ function Baggins:IsSpecialBag(bag)
 	return nil,0
 end
 
-local PET_CAGE_ITEM_ID = 82800
 --------------------
 -- Item Filtering --
 --------------------
 function Baggins:CheckSlotsChanged(bag, forceupdate)
-	local slot
 	local itemschanged
 	for slot = 1, GetContainerNumSlots(bag) do
 		local key = bag..":"..slot
-		local iteminfo
+		local iteminfo = nil
 
-		local link = GetContainerItemLink(bag, slot)
-		local itemCount = select(2, GetContainerItemInfo(bag, slot))
-		local itemid
-		if link then
-			itemid = link:match("item:(%d+)")
-			if itemid then -- it's not a battle pet
-				iteminfo = itemid.." "..itemCount.." "..(link and link:match("item[%-?%d:]+") or "_")
-			else
-				-- sample battle-pet-link "|cffffd200|Hbattlepet:261:3:-1:253:34:29:6822822|h[Personal World Destroyer]|h|r"
-				local speciesID, level, quality, maxhp, power, speed, petid = link:match("battlepet:(%d+):(%d+):([-%d]+):(%d+):(%d+):(%d+):(%d+)")
-				local name, icon, petType, creatureID, sourceText, description, isWild, canBattle, tradable, unique = C_PetJournal.GetPetInfoBySpeciesID( speciesID )
-				itemid = - tonumber(petid) -- use negative itemid values for battle-pets
-				if itemid == 0 then
-					itemid = - tonumber(speciesID)
-				end
-				iteminfo = PET_CAGE_ITEM_ID .. " " .. 1 .. " " .. name
-			end
+		local _, count, _, _, _, _, link, _, _, itemid = GetContainerItemInfo(bag, slot)
+		if itemid then
+			-- "|cffffffff|Hitem:6948::::::::1:259::::::|h[Hearthstone]|h|r"
+			-- "|cff1eff00|Hbattlepet:261:1:2:151:11:10:0000000000000000|h[Personal World Destroyer]|h|r",
+			-- "|cffa335ee|Hkeystone:198:9:5:13:0|h[Keystone: Darkheart Thicket]|h|r"
+			local itemstring = link:match("|H(.-)|h") or "_"
+			iteminfo = ("%s %d %s"):format(itemid, count, itemstring)
 		end
 
 		if slotcache[key] ~= iteminfo or forceupdate then
@@ -484,7 +472,7 @@ function Baggins:ForceFullBankUpdate()
 	for bagid in LBU:IterateBags("BANK") do
 		self:CheckSlotsChanged(bagid, true)
 	end
-	
+
 	for bagid in LBU:IterateBags("REAGENTBANK") do
 		self:CheckSlotsChanged(bagid, true)
 	end
@@ -597,8 +585,8 @@ local ItemTypes = {
 --[[
 local ItemTypes = {
  ["Weapon"] = {"One-Handed Axes", "Two-Handed Axes", "Bows", "Guns", "One-Handed Maces", "Two-Handed Maces", "Polearms", "One-Handed Swords", "Two-Handed Swords", "Staves", "Fist Weapons", "Miscellaneous", "Daggers", "Thrown", "Crossbows", "Wands", "Fishing Poles"},
- ["Armor"] = {"Miscellaneous", "Cloth", "Leather", "Mail", "Plate", "Cosmetic", "Shields"},  
- ["Container"] = {"Bag", "Herb Bag", "Enchanting Bag", "Engineering Bag", "Gem Bag", "Mining Bag", "Leatherworking Bag", "Inscription Bag", "Tackle Box", "Cooking Bag"},  
+ ["Armor"] = {"Miscellaneous", "Cloth", "Leather", "Mail", "Plate", "Cosmetic", "Shields"},
+ ["Container"] = {"Bag", "Herb Bag", "Enchanting Bag", "Engineering Bag", "Gem Bag", "Mining Bag", "Leatherworking Bag", "Inscription Bag", "Tackle Box", "Cooking Bag"},
  ["Gem"] = {"Red", "Blue", "Yellow", "Purple", "Green", "Orange", "Meta", "Simple", "Prismatic", "Cogwheel"},
  ["Consumable"] = {"Food & Drink", "Potion", "Elixir", "Flask", "Bandage", "Item Enhancement", "Scroll", "Other"},
  ["Glyph"] = {"Warrior", "Paladin", "Hunter", "Rogue", "Priest", "Death Knight", "Shaman", "Mage", "Warlock", "Monk", "Druid"},
@@ -634,20 +622,11 @@ Baggins:AddCustomRule("ItemType", {
 		Description = L["Filter by Item type and sub-type as returned by GetItemInfo"],
 		Matches = function(bag,slot,rule)
 			if not (rule.itype or rule.isubtype) then return end
-			local link = GetContainerItemLink(bag, slot)
-			if link then
-				local Type, SubType = select(12, GetItemInfo(link))
-				if not Type then
-					local speciesID, level, quality, maxhp, power, speed, petid = link:match("battlepet:(%d+):(%d+):([-%d]+):(%d+):(%d+):(%d+):(%d+)")
-					if not tonumber(speciesID) then
-						return false
-					end
-					Type = L["Battle Pets"]
-					local _, _, petType = C_PetJournal.GetPetInfoBySpeciesID(speciesID)
-					SubType = _G["BATTLE_PET_NAME_" .. petType]
-				end
-				if Type and SubType then
-					return Type == rule.itype and (rule.isubtype == nil or SubType == rule.isubtype )
+			local itemid = GetContainerItemID(bag, slot)
+			if itemid then
+				local _, _, _, _, _, TypeID, SubTypeID = GetItemInfoInstant(itemid)
+				if TypeID and SubTypeID then
+					return TypeID == rule.itype and (rule.isubtype == nil or SubTypeID == rule.isubtype )
 				end
 			end
 		end,
@@ -723,7 +702,7 @@ Baggins:AddCustomRule("ContainerType", {
 			if not rule.ctype then return end
 			local link = GetInventoryItemLink("player",ContainerIDToInventoryID(bag))
 			if link then
-				local SubType = select(7, GetItemInfo(link))
+				local _, _, SubType = GetItemInfoInstant(link)
 				if SubType then
 					return SubType == BI[rule.ctype]
 				end
@@ -815,11 +794,8 @@ Baggins:AddCustomRule("ItemID", {
 		Description = L["Filter by ItemID, this can be a space delimited list or ids to match."],
 		Matches = function(bag,slot,rule)
 			if not rule.ids then return end
-			local link = GetContainerItemLink(bag, slot)
-			if link then
-				local itemid = link:match("item:(%d+)")
-				return rule.ids[tonumber(itemid)]
-			end
+			local itemid = GetContainerItemID(bag, slot)
+			return rule.ids[itemid]
 		end,
 		GetName = function(rule)
 			return L["ItemIDs "]
@@ -1053,7 +1029,7 @@ Baggins:AddCustomRule("EquipLoc", {
 			if not rule.equiploc then return end
 			local link = GetContainerItemLink(bag, slot)
 			if link then
-				local EquipLoc = select(9, GetItemInfo(link))
+				local _, _, _, EquipLoc = GetItemInfoInstant(link)
 				if EquipLoc then
 					return EquipLoc == rule.equiploc
 				end
@@ -1088,7 +1064,8 @@ Baggins:AddCustomRule("ItemLevel", {
 			if not link then return false end
 
 			local _,_,_, itemLevel, itemMinLevel = GetItemInfo(link)
-                        local itemLevel = ItemUpgradeInfo:GetUpgradedItemLevel(link)
+			local itemLevel = ItemUpgradeInfo:GetUpgradedItemLevel(link)
+			-- local itemLevel = GetDetailedItemLevelInfo(link)
 			local lvl = rule.useminlvl and itemMinLevel or itemLevel
 
 			if not lvl then	-- can happen if itemcache hasn't been updated yet
@@ -1466,9 +1443,9 @@ local equipmentSets = {}
 
 local function updateSets()
 	wipe(equipmentSets)
-	for i = 1,GetNumEquipmentSets() do
-		local setname = GetEquipmentSetInfo(i)
-		equipmentSets[setname] = setname
+	for _, id in next, C_EquipmentSet.GetEquipmentSetIDs() do
+		local name = C_EquipmentSet.GetEquipmentSetInfo(id)
+		equipmentSets[name] = name
 	end
 end
 
@@ -1525,7 +1502,7 @@ Baggins:AddCustomRule("EquipmentSet", {
 			if not rule.sets then return false end
 			local sets = { (","):split(setstring) }
 			for i,v in ipairs(sets) do
-			local set = v:gsub("^ ", "") 
+			local set = v:gsub("^ ", "")
 				if rule.sets[set] then
 					return true
 				end
@@ -1610,7 +1587,7 @@ Baggins:AddCustomRule("EquipmentSlot", {
 	Matches = function(bag, slot, rule)
 			local itemId = GetContainerItemID(bag, slot)
 			if not itemId then return end
-			local _,_,_,_,_,_,_,_,equiploc = GetItemInfo(itemId)
+			local _, _, _, equiploc = GetItemInfoInstant(itemId)
 			return rule.slots[equiploc] ~= nil
 		end,
 	Ace3Options = {

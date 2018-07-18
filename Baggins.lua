@@ -14,10 +14,10 @@ local gratuity = LibStub("LibGratuity-3.0")
 local next,unpack,pairs,ipairs,tonumber,select,strmatch =
       next,unpack,pairs,ipairs,tonumber,select,strmatch
 
-local min, max, ceil, floor, mod  = 
+local min, max, ceil, floor, mod  =
       min, max, ceil, floor, mod
-	  
-local tinsert, tremove, tsort = 
+
+local tinsert, tremove, tsort =
       tinsert, tremove, table.sort
 
 local tconcat = table.concat
@@ -31,7 +31,7 @@ local rdel = del
 
 local GetItemCount, GetItemInfo, GetInventoryItemLink, GetItemQualityColor, GetItemFamily =
       GetItemCount, GetItemInfo, GetInventoryItemLink, GetItemQualityColor, GetItemFamily
-	  
+
 local GetContainerItemInfo, GetContainerItemLink, GetContainerItemQuestInfo, GetContainerNumFreeSlots, GetContainerItemCooldown =
       GetContainerItemInfo, GetContainerItemLink, GetContainerItemQuestInfo, GetContainerNumFreeSlots, GetContainerItemCooldown
 
@@ -402,8 +402,6 @@ function Baggins:OnEnable()
 	self:RegisterEvent("PLAYER_MONEY", "UpdateMoneyFrame")
 	self:RegisterEvent('AUCTION_HOUSE_SHOW', "AuctionHouse")
 	self:RegisterEvent('AUCTION_HOUSE_CLOSED', "CloseAllBags")
-	self:RegisterEvent('Baggins_RefreshBags')
-	self:RegisterEvent('Baggins_CategoriesChanged')
 	self:RegisterBucketEvent('ADDON_LOADED', 5,'OnAddonLoaded')
 
 	self:RegisterSignal('CategoryMatchAdded', self.CategoryMatchAdded, self)
@@ -417,12 +415,12 @@ function Baggins:OnEnable()
 	self:UpdateBackpackHook()
 	self:RawHook("CloseSpecialWindows", true)
 	self:RawHookScript(BankFrame,"OnEvent","BankFrame_OnEvent")
-	
+
 	-- hook blizzard PLAYERBANKSLOTS_CHANGED function to filter inactive table
 	-- this is required to prevent a nil error when working with a tab that the
 	-- default UI is not currently showing
 	self:RawHook("BankFrameItemButton_Update", true)
-	
+
 	--force an update of all bags on first opening
 	self.doInitialUpdate = true
 	self.doInitialBankUpdate = true
@@ -1211,12 +1209,12 @@ local function NameComp(a, b)
 	local nameb = getCompInfo(linkb)
 
 	if namea ~= nameb then
-		return (namea  or "?") < (nameb or "?") 
+		return (namea  or "?") < (nameb or "?")
 	end
 
 	local counta = select(2, GetContainerItemInfo(baga, slota))
 	local countb = select(2, GetContainerItemInfo(bagb, slotb))
-	return (counta  or 0) > (countb or 0) 
+	return (counta  or 0) > (countb or 0)
 end
 local function QualityComp(a, b)
 	local res,linka,linkb,baga,slota,bagb,slotb=baseComp(a,b)
@@ -1230,7 +1228,7 @@ local function QualityComp(a, b)
 	end
 
 	if namea ~= nameb then
-		return (namea  or "?") < (nameb or "?") 
+		return (namea  or "?") < (nameb or "?")
 	end
 
 	local counta = select(2, GetContainerItemInfo(baga, slota))
@@ -1255,11 +1253,11 @@ local function TypeComp(a, b)
 	end
 
 	if quala~=qualb then
-		return (quala or 0)  > (qualb or 0) 
+		return (quala or 0)  > (qualb or 0)
 	end
 
 	if namea ~= nameb then
-		return (namea or "?")  < (nameb or "?") 
+		return (namea or "?")  < (nameb or "?")
 	end
 
 	local counta = select(2, GetContainerItemInfo(baga, slota))
@@ -1301,7 +1299,7 @@ local function IlvlComp(a, b)
 
 	local counta = select(2, GetContainerItemInfo(baga, slota))
 	local countb = select(2, GetContainerItemInfo(bagb, slotb))
-	return (counta  or 0) > (countb or 0) 
+	return (counta  or 0) > (countb or 0)
 end
 
 function Baggins:SortItemList(itemlist, sorttype)
@@ -1369,13 +1367,13 @@ function Baggins:FlowSections(bagid)
 	local flow_x, flow_y, flow_anchor = 0, 0
 	local flow_items, flow_sections, max_sections = 0, 0, 0
 	local bagempty = true
-	
+
 	-- Like a river, man. LIKE A RIVER DO YOU HEAR ME
 	for id, section in ipairs(self.bagframes[bagid].sections) do
 		if section.used and section.itemcount > 0 then
 			bagempty = false
 			local available = max_cols - flow_items
-			
+
 			-- Give collapsed sections a virtual size to account for title length
 			local x, y, section_items = self:GetSectionSize(section, max_cols)
 			if not section_items then print('oops') return nil end
@@ -1387,14 +1385,14 @@ function Baggins:FlowSections(bagid)
 				section_items = max(title_length, section_items)
 			end
 			flow_items = flow_items + section_items
-			
+
 			-- Add to last row
 			if flow_anchor and available >= section_items then
 				flow_sections = flow_sections + 1
 				section:SetPoint("TOPLEFT", flow_anchor, "TOPLEFT", flow_x + 10, 0)
 				flow_x = flow_x + x + 10
 				flow_y = max(y, flow_y)
-			
+
 			else
 				-- New row
 				if flow_anchor then
@@ -1402,13 +1400,13 @@ function Baggins:FlowSections(bagid)
 					y = y + 5
 					max_sections = max(max_sections, flow_sections)
 					height = height + flow_y + 5
-				
+
 				-- First row
 				else
 					section:SetPoint("TOPLEFT", bag, "TOPLEFT", xoff, yoff)
 					--height = height + y
 				end
-				
+
 				-- Frame/flow Data
 				flow_anchor = section
 				flow_items = section_items
@@ -1416,11 +1414,11 @@ function Baggins:FlowSections(bagid)
 				flow_x = x
 				flow_y = y
 			end
-			
+
 			width = max(x, width, flow_x)
 		end
 	end
-	
+
 	if (self.db.profile.hideemptybags and bagempty) then
 		bag.isempty = true
 	end
@@ -1597,7 +1595,7 @@ function Baggins:ReallyUpdateBagFrameSize(bagid)
 		width = max(BagginsMoneyFrame:GetWidth() + 16, width)
 		height = height + 30
 	end
-	
+
 	if p.bankcontrolbag == bagid then
 		bagframe.isempty = false
 		BagginsBankControlFrame:SetParent(bagframe)
@@ -1955,7 +1953,7 @@ local function BagginsItemButton_UpdateTooltip(button)
 		CursorUpdate(button);
 		return
 	end
-	
+
 
 	local showSell = nil;
 	local itemlink = GetContainerItemLink(button:GetParent():GetID(), button:GetID())
@@ -1985,29 +1983,31 @@ end
 
 do
 	local menu = {}
-	local currentItem
 
-	local function includeItemInCategory(info)
-		Baggins:IncludeItemInCategory(info.value, currentItem)
+	local function includeItemInCategory(info, itemID)
+		Baggins:IncludeItemInCategory(info.value, itemID)
 	end
 
-	local function excludeItemFromCategory(info)
-		Baggins:ExcludeItemFromCategory(info.value, currentItem)
+	local function excludeItemFromCategory(info, itemID)
+		Baggins:ExcludeItemFromCategory(info.value, itemID)
 	end
 
-	local useButton = CreateFrame("Button", nil, UIParent, "SecureActionButtonTemplate")
+	local useButton = CreateFrame("Button", "BagginsUseItemButton", UIParent, "SecureActionButtonTemplate")
 	useButton:SetAttribute("type", "item")
+	useButton:SetAttribute("item", nil)
+	useButton:Hide()
 
 	local function reallyHideUseButton()
 		useButton:ClearAllPoints()
 		useButton:SetAttribute("item", nil)
 		useButton:UnregisterAllEvents()
 		useButton:Hide()
+		Baggins:Unhook(_G["DropDownList1Button" .. useButton.owner], "OnHide")
 		useButton.owner = nil
-		Baggins:Unhook(DropDownList1Button1, "OnHide")
 	end
 
 	useButton:SetScript("OnEvent", function(self, event)
+		UIDropDownMenu_Refresh(Baggins_ItemMenuFrame)
 		if event == "PLAYER_REGEN_DISABLED" then
 			self:Hide()
 		elseif event == "PLAYER_REGEN_ENABLED" then
@@ -2020,15 +2020,18 @@ do
 	end)
 
 	useButton:SetScript("OnEnter", function(self)
-		DropDownList1Button1:GetScript("OnEnter")(DropDownList1Button1)
+		local button = _G["DropDownList1Button" .. self.owner]
+		button:GetScript("OnEnter")(button)
 	end)
 
 	useButton:SetScript("OnLeave", function(self)
-		DropDownList1Button1:GetScript("OnLeave")(DropDownList1Button1)
+		local button = _G["DropDownList1Button" .. self.owner]
+		button:GetScript("OnLeave")(button)
 	end)
 
 	useButton:HookScript("OnClick", function(self)
-		DropDownList1Button1:GetScript("OnClick")(DropDownList1Button1)
+		local button = _G["DropDownList1Button" .. self.owner]
+		button:GetScript("OnClick")(button)
 	end)
 
 	local function hideUseButton()
@@ -2039,20 +2042,20 @@ do
 		reallyHideUseButton()
 	end
 
-	local function showUseButton(link)
-		local itemstring = link:match("(item:[-%d:]+)")
-		useButton:SetAttribute("item", itemstring)
+	local function showUseButton(bag, slot)
+		useButton:SetAttribute("item", ("%d %d"):format(bag, slot))
 		useButton:ClearAllPoints()
 		local button = _G["DropDownList1Button" .. useButton.owner]
 		useButton:SetAllPoints(button)
 		useButton:SetFrameStrata(button:GetFrameStrata())
 		useButton:SetFrameLevel(button:GetFrameLevel()+1)
+		useButton:SetToplevel(true)
 		useButton:RegisterEvent("PLAYER_REGEN_ENABLED")
 		useButton:RegisterEvent("PLAYER_REGEN_DISABLED")
 		useButton:Show()
-		Baggins:SecureHookScript(DropDownList1Button1, "OnHide", hideUseButton)
+		Baggins:SecureHookScript(button, "OnHide", hideUseButton)
 	end
-	
+
 	local addCategoryIndex
 	local excludeCategoryIndex
 	-- some code to make the UIDropDownMenu scrollable
@@ -2102,20 +2105,21 @@ do
 		UIDropDownMenu_Refresh(Baggins_ItemMenuFrame)
 	end
 
-	function makeMenu(bag, slot, link)
+	function makeMenu(bag, slot)
 		wipe(menu)
 		if not LBU:IsBank(bag, true) then
 			local use = {
 				text = L["Use"],
 				tooltipTitle = L["Use"],
 				tooltipText = L["Use/equip the item rather than bank/sell it"],
+				-- tooltipOnButton = true,
 				notCheckable = true,
 				disabled = InCombatLockdown(),
 				func = function()
-						if InCombatLockdown() then
-							print("Baggins: could not trigger item use because you are in combat")
-						end
-					end,
+					if InCombatLockdown() then
+						print("Baggins: Could not use item because you are in combat.")
+					end
+				end,
 			}
 			tinsert(menu, use)
 			useButton.owner = #menu
@@ -2139,24 +2143,45 @@ do
 		tinsert(menu, excludeFromCatMenu)
 		excludeCategoryIndex = #menu
 
-		local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemCount, itemEquipLoc, itemTexture = GetItemInfo(currentItem)
-		local litemEquipLoc = _G[itemEquipLoc] or itemEquipLoc
-		local litemQuality = _G["ITEM_QUALITY" .. itemRarity .. "_DESC"] or itemRarity
+		local _, itemCount, _, itemQuality, _, _, itemLink, _, _, itemID = GetContainerItemInfo(bag, slot)
+		local itemName, _, _, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc = GetItemInfo(itemLink)
+		if not itemName then
+			itemName, _, _, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc = GetItemInfo(itemID)
+			itemLink = itemID
+		end
+
 		local itemInfo = {
 			text = L["Item Info"],
 			hasArrow = true,
 			notCheckable = true,
 			menuList = {
-				{ text = L["ItemID: "]..currentItem, notCheckable = true, },
-				{ text = L["Item Type: "]..itemType, notCheckable = true, },
-				{ text = L["Item Subtype: "]..itemSubType, notCheckable = true, },
-				{ text = L["Quality: "]..litemQuality, notCheckable = true, },
-				{ text = L["Level: "]..itemLevel, notCheckable = true, },
-				{ text = L["MinLevel: "]..itemMinLevel, notCheckable = true, },
-				{ text = L["Stack Size: "]..itemCount, notCheckable = true, },
-				{ text = L["Equip Location: "]..litemEquipLoc, notCheckable = true, },
+				{ text = L["ItemID: "]..itemID, notCheckable = true },
 			},
 		}
+
+		if itemType then
+			tinsert(itemInfo.menuList, { text = L["Item Type: "]..itemType, notCheckable = true })
+			tinsert(itemInfo.menuList, { text = L["Item Subtype: "]..itemSubType, notCheckable = true })
+		end
+		tinsert(itemInfo.menuList, { text = L["Quality: "].._G["ITEM_QUALITY" .. itemQuality .. "_DESC"], notCheckable = true })
+		if itemLevel and itemLevel > 1 then
+			local effectiveItemLevel = GetDetailedItemLevelInfo(itemLink)
+			if itemLevel ~= effectiveItemLevel then
+				itemLevel = ("%d (%d)"):format(itemLevel, effectiveItemLevel)
+			end
+			tinsert(itemInfo.menuList, { text = L["Item Level: "]..itemLevel, notCheckable = true })
+		end
+		if itemMinLevel and itemMinLevel > 1 then
+			tinsert(itemInfo.menuList, { text = L["Required Level: "]..itemMinLevel, notCheckable = true })
+		end
+		if itemStackCount and itemStackCount > 1 then
+			tinsert(itemInfo.menuList, { text = L["Stack Size: "]..itemStackCount, notCheckable = true })
+		end
+		if itemEquipLoc and itemEquipLoc ~= "" then
+			tinsert(itemInfo.menuList, { text = L["Equip Location: "]..(_G[itemEquipLoc] or itemEquipLoc), notCheckable = true })
+		end
+		-- tinsert(itemInfo.menuList, { text = ("Bag Location: %d %d"):format(bag, slot), notCheckable = true })
+
 		tinsert(menu, itemInfo)
 		local categories = Baggins.db.profile.categories
 		while #catsorttable > 0 do
@@ -2186,11 +2211,13 @@ do
 				text = name,
 				notCheckable = true,
 				func = includeItemInCategory,
+				arg1 = itemID,
 			}
 			excludeFromCatMenu.menuList[i] = {
 				text = name,
 				notCheckable = true,
 				func = excludeItemFromCategory,
+				arg1 = itemID,
 			}
 		end
 		DropDownList2:EnableMouseWheel(true)
@@ -2221,19 +2248,19 @@ do
 		if gratuity:Find(L["Crafting Reagent"]) and count ~= nil and count > 0 then
 			return REAGENT_BANK_TAB
 		end
-		
+
 		return BANK_TAB
 	end
-	
+
 	local function BagginsItemButton_OnClick(button)
 		local bag = button:GetParent():GetID()
 		local slot = button:GetID()
 		UseContainerItem(bag, slot, nil, true)
-		
+
 		button:SetScript("OnClick",button.origOnClick)
 		button.origOnClick = nil
 	end
-	
+
 	local function BagginsItemButton_AutoReagent(button, mouseButton, ...)
 		if Baggins.bankIsOpen and Baggins.db.profile.autoreagent
 				and not IsModifiedClick() and mouseButton == "RightButton" then
@@ -2241,7 +2268,7 @@ do
 			local slot = button:GetID()
 
 			local target = BagginsItemButton_GetTargetBankTab(bag, slot)
-			
+
 			if target == REAGENT_BANK_TAB then
 				BankFrame.selectedTab = 2
 				button.origOnClick = button:GetScript("OnClick")
@@ -2251,7 +2278,7 @@ do
 			end
 		end
 	end
-	
+
 	local function BagginsItemButton_PreClick(button)
 		BagginsItemButton_AutoReagent(button, GetMouseButtonClicked())
 		if GetMouseButtonClicked() == "RightButton" and button.tainted then
@@ -2274,30 +2301,26 @@ do
 		if (IsControlKeyDown() or IsAltKeyDown()) and GetMouseButtonClicked() == "RightButton" then
 			local bag = button:GetParent():GetID();
 			local slot = button:GetID();
-			local link = GetContainerItemLink(bag,slot)
-			if link then
-				local itemid = tonumber(link:match("item:(%d+)"))
-				if itemid then
-					currentItem = itemid
-					if DropDownList1:IsShown() then
-						DropDownList1:Hide()
-						return
-					end
-					makeMenu(bag, slot, link)
-					EasyMenu(menu, itemDropdownFrame, "cursor", 0, 0, "MENU")
-					-- make sure we restore the original scroll-wheel behavior for the DropdownList2-Frame
-					-- when the item-dropdown is closed
-					Baggins:SecureHookScript(DropDownList1, "OnHide", function(self)
-						DropDownList2:EnableMouseWheel(false)
-						DropDownList2:SetScript("OnMouseWheel", nil)
-						Baggins:Unhook(DropDownList1, "OnHide")
-					end)
+			local itemid = GetContainerItemID(bag, slot)
+			if itemid then
+				if DropDownList1:IsShown() then
+					DropDownList1:Hide()
+					return
+				end
+				makeMenu(bag, slot)
+				EasyMenu(menu, itemDropdownFrame, "cursor", 0, 0, "MENU")
+				-- make sure we restore the original scroll-wheel behavior for the DropdownList2-Frame
+				-- when the item-dropdown is closed
+				Baggins:SecureHookScript(DropDownList1, "OnHide", function(self)
+					DropDownList2:EnableMouseWheel(false)
+					DropDownList2:SetScript("OnMouseWheel", nil)
+					Baggins:Unhook(DropDownList1, "OnHide")
+				end)
 
-					if not LBU:IsBank(bag, true) and not InCombatLockdown() then
-						showUseButton(link)
-					else
-						hideUseButton()
-					end
+				if not LBU:IsBank(bag, true) and not InCombatLockdown() then
+					showUseButton(bag, slot)
+				else
+					hideUseButton()
 				end
 			end
 		end
@@ -2328,8 +2351,8 @@ do
 		frame:SetScript("PreClick",BagginsItemButton_PreClick)
 		frame.UpdateTooltip = BagginsItemButton_UpdateTooltip
 		if frame.BattlepayItemTexture then
-			-- New blue glow introduced in 6.0. Purposely keeping this conditional - it smells like something that could change name or get removed in a future patch. 
-			frame.BattlepayItemTexture:Hide()	
+			-- New blue glow introduced in 6.0. Purposely keeping this conditional - it smells like something that could change name or get removed in a future patch.
+			frame.BattlepayItemTexture:Hide()
 		end
 		--frame:SetScript("OnUpdate",BagginsItemButton_OnUpdate)
 		if self.currentSkin then
@@ -2343,26 +2366,26 @@ end
 do
 	local dropdown = CreateFrame("Frame", "BagginsCategoryAddDropdown")
 	local info = { }
-	
+
 	local function Close()
 		CloseDropDownMenus()
 	end
-	
+
 	local function Click(dropdown, arg1, arg2)
 		Baggins:IncludeItemInCategory(arg1, arg2)
 		Baggins:UpdateBags()
 	end
-	
+
 	local dd_categories, dd_id
 	dropdown.initialize = function(self, level)
-		
+
 		-- Title
 		wipe(info)
 		info.text = L["Add To Category"]
 		info.isTitle = true
 		info.notCheckable = 1
 		UIDropDownMenu_AddButton(info, 1)
-		
+
 		-- Categories
 		for k, v in ipairs(dd_categories) do
 			wipe(info)
@@ -2373,7 +2396,7 @@ do
 			info.notCheckable = 1
 			UIDropDownMenu_AddButton(info, 1)
 		end
-		
+
 		-- Close
 		wipe(info)
 		info.text = "|cff777777"..L["Close"]
@@ -2381,7 +2404,7 @@ do
 		info.notCheckable = 1
 		UIDropDownMenu_AddButton(info, 1)
 	end
-	
+
 	local function RecieveDrag(self)
 		local section = self:GetParent()
 		local categories = Baggins.db.profile.bags[section.bagid].sections[section.secid].cats
@@ -2396,7 +2419,7 @@ do
 		end
 		ClearCursor()
 	end
-	
+
 	function Baggins:CreateSectionFrame(bagframe,secid)
 		local frame = CreateFrame("Frame",bagframe:GetName().."Section"..secid,bagframe)
 
@@ -2667,7 +2690,7 @@ function Baggins:CreateBankControlFrame()
 	frame.slotbuy:SetHeight(18)
 	frame.slotbuy:SetText(L["Buy Bank Bag Slot"])
 	frame.slotbuy:Hide()
-	
+
 	-- A button to buy the reagent bank
 	frame.rabuy = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
 	frame.rabuy:SetScript("OnClick", function(this)
@@ -2678,7 +2701,7 @@ function Baggins:CreateBankControlFrame()
 	frame.rabuy:SetHeight(18)
 	frame.rabuy:SetText(L["Buy Reagent Bank"])
 	frame.rabuy:Hide()
-	
+
 	-- Finally, a button to allow blizzards "Deposit All Reagents" feature to work.
 	-- this takes all your reagents and moves them into the reagent bank
 	frame.radeposit = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
@@ -2689,7 +2712,7 @@ function Baggins:CreateBankControlFrame()
 	frame.radeposit:SetHeight(18)
 	frame.radeposit:SetText(L["Deposit All Reagents"])
 	frame.radeposit:Hide()
-	
+
 	frame:Hide()
 end
 
@@ -2699,20 +2722,20 @@ function Baggins:UpdateBankControlFrame()
 	local anchorframe = frame
 	local anchorpoint = "TOPLEFT"
 	local anchoryoffset = 0
-	
+
 	local _, full = GetNumBankSlots()
 	if full then
 		frame.slotbuy:Hide()
 	else
 		frame.slotbuy:SetPoint("TOPLEFT", anchorframe, anchorpoint, 0, anchoryoffset)
 		frame.slotbuy:Show()
-		
+
 		numbuttons = numbuttons + 1
 		anchorframe = frame.slotbuy
 		anchorpoint = "BOTTOMLEFT"
 		anchoryoffset = -2
 	end
-	
+
 	if IsReagentBankUnlocked() then
 		frame.radeposit:SetPoint("TOPLEFT", anchorframe, anchorpoint, 0, anchoryoffset)
 		frame.radeposit:Show()
@@ -2724,7 +2747,7 @@ function Baggins:UpdateBankControlFrame()
 		frame.radeposit:Hide()
 		numbuttons = numbuttons + 1
 	end
-	
+
 	frame:SetHeight((18 + 2) * numbuttons)
 end
 
@@ -2984,14 +3007,14 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
 	else
 		ResetCursor();
 	end]]
-	
+
 	self:FireSignal("Baggins_ItemButtonUpdated", bagframe, button, bag, slot)
 end
 
 function Baggins:UpdateItemButtonCooldown(container, button)
 	local cooldown = _G[button:GetName().."Cooldown"]
 	local start, duration, enable = GetContainerItemCooldown(container, button:GetID())
-	
+
 	-- CooldownFrame_SetTimer has been renamed to CooldownFrame_Set in 7.0
 	-- We'll check for the new name and use it if it's available. This lets the patch
 	-- work with both 6.2 and 7.0.
@@ -3002,7 +3025,7 @@ function Baggins:UpdateItemButtonCooldown(container, button)
 		setTimer = CooldownFrame_SetTimer
 	end
 	setTimer(cooldown, start, duration, enable)
-	
+
 	if ( duration > 0 and enable == 0 ) then
 		SetItemButtonTextureVertexColor(button, 0.4, 0.4, 0.4)
 	end
@@ -3074,9 +3097,9 @@ function Baggins:LayoutBagFrames()
 	self:ScheduleRefresh()
 end
 
-local CONTAINER_SPACING, VISIBLE_CONTAINER_SPACING = 
+local CONTAINER_SPACING, VISIBLE_CONTAINER_SPACING =
       CONTAINER_SPACING, VISIBLE_CONTAINER_SPACING
-	  
+
 function Baggins:ReallyLayoutBagFrames()
 	local p = self.db.profile
 	if p.layout ~= "auto" then return end
@@ -3128,7 +3151,7 @@ function Baggins:ReallyLayoutBagFrames()
 	local prevframe
 	for id, frame in ipairs(self.bagframes) do
 		if (p.hideemptybags) then
-			if (frame.isempty) then 
+			if (frame.isempty) then
 				if (frame:IsVisible()) then
 					frame.autohide = true
 					frame:Hide()

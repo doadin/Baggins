@@ -1,4 +1,4 @@
-﻿## Interface: 70000
+﻿## Interface: 80000
 ## Title: Baggins
 ## Notes: Inventory Management with virtual bags divided into sections.
 ## Notes-zhCN: 使用分类的形式来管理背包。
