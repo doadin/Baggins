@@ -1,31 +1,31 @@
 package-as: Baggins
 
 externals:
-	libs/AceAddon-3.0: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceAddon-3.0
-	libs/AceBucket-3.0: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceBucket-3.0
-	libs/AceConfig-3.0: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceConfig-3.0
-	libs/AceConsole-3.0: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceConsole-3.0
-	libs/AceDB-3.0: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceDB-3.0
-	libs/AceDBOptions-3.0: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceDBOptions-3.0
-	libs/AceEvent-3.0: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceEvent-3.0
-	libs/AceGUI-3.0: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceGUI-3.0
-	libs/AceHook-3.0: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceHook-3.0
-	libs/AceLocale-3.0: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceLocale-3.0
-	libs/AceTimer-3.0: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceTimer-3.0
-	libs/LibBabble-Inventory-3.0: svn://svn.wowace.com/wow/libbabble-inventory-3-0/mainline/trunk
-	libs/LibBagUtils-1.0: svn://svn.wowace.com/wow/libbagutils-1-0/mainline/trunk/LibBagUtils-1.0
-	libs/LibGratuity-3.0: svn://svn.wowace.com/wow/libgratuity-3-0/mainline/trunk
-	libs/LibPeriodicTable-3.1: svn://svn.wowace.com/wow/libperiodictable-3-1/mainline/trunk/LibPeriodicTable-3.1
-	libs/LibPeriodicTable-3.1-TradeskillResultMats: svn://svn.wowace.com/wow/libperiodictable-3-1/mainline/trunk/LibPeriodicTable-3.1-TradeskillResultMats
-	libs/LibPeriodicTable-3.1-Tradeskill: svn://svn.wowace.com/wow/libperiodictable-3-1/mainline/trunk/LibPeriodicTable-3.1-Tradeskill
-	libs/LibPeriodicTable-3.1-Misc: svn://svn.wowace.com/wow/libperiodictable-3-1/mainline/trunk/LibPeriodicTable-3.1-Misc
-	libs/LibPeriodicTable-3.1-GearSet: svn://svn.wowace.com/wow/libperiodictable-3-1/mainline/trunk/LibPeriodicTable-3.1-GearSet
-	libs/LibPeriodicTable-3.1-Gear: svn://svn.wowace.com/wow/libperiodictable-3-1/mainline/trunk/LibPeriodicTable-3.1-Gear
-	libs/LibPeriodicTable-3.1-Consumable: svn://svn.wowace.com/wow/libperiodictable-3-1/mainline/trunk/LibPeriodicTable-3.1-Consumable
-	libs/LibPeriodicTable-3.1-Reputation: svn://svn.wowace.com/wow/libperiodictable-3-1/mainline/trunk/LibPeriodicTable-3.1-Reputation
-	libs/LibPeriodicTable-3.1-InstanceLoot: svn://svn.wowace.com/wow/libperiodictable-3-1/mainline/trunk/LibPeriodicTable-3.1-InstanceLoot
-	libs/LibPeriodicTable-3.1-InstanceLootHeroic: svn://svn.wowace.com/wow/libperiodictable-3-1/mainline/trunk/LibPeriodicTable-3.1-InstanceLootHeroic
-	libs/LibQTip-1.0: svn://svn.wowace.com/wow/libqtip-1-0/mainline/trunk
+    libs/AceAddon-3.0: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceAddon-3.0
+    libs/AceBucket-3.0: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceBucket-3.0
+    libs/AceConfig-3.0: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceConfig-3.0
+    libs/AceConsole-3.0: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceConsole-3.0
+    libs/AceDB-3.0: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceDB-3.0
+    libs/AceDBOptions-3.0: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceDBOptions-3.0
+    libs/AceEvent-3.0: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceEvent-3.0
+    libs/AceGUI-3.0: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceGUI-3.0
+    libs/AceHook-3.0: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceHook-3.0
+    libs/AceLocale-3.0: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceLocale-3.0
+    libs/AceTimer-3.0: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceTimer-3.0
+    libs/LibBabble-Inventory-3.0: svn://svn.wowace.com/wow/libbabble-inventory-3-0/mainline/trunk
+    libs/LibBagUtils-1.0: svn://svn.wowace.com/wow/libbagutils-1-0/mainline/trunk/LibBagUtils-1.0
+    libs/LibGratuity-3.0: svn://svn.wowace.com/wow/libgratuity-3-0/mainline/trunk
+    libs/LibPeriodicTable-3.1: svn://svn.wowace.com/wow/libperiodictable-3-1/mainline/trunk/LibPeriodicTable-3.1
+    libs/LibPeriodicTable-3.1-TradeskillResultMats: svn://svn.wowace.com/wow/libperiodictable-3-1/mainline/trunk/LibPeriodicTable-3.1-TradeskillResultMats
+    libs/LibPeriodicTable-3.1-Tradeskill: svn://svn.wowace.com/wow/libperiodictable-3-1/mainline/trunk/LibPeriodicTable-3.1-Tradeskill
+    libs/LibPeriodicTable-3.1-Misc: svn://svn.wowace.com/wow/libperiodictable-3-1/mainline/trunk/LibPeriodicTable-3.1-Misc
+    libs/LibPeriodicTable-3.1-GearSet: svn://svn.wowace.com/wow/libperiodictable-3-1/mainline/trunk/LibPeriodicTable-3.1-GearSet
+    libs/LibPeriodicTable-3.1-Gear: svn://svn.wowace.com/wow/libperiodictable-3-1/mainline/trunk/LibPeriodicTable-3.1-Gear
+    libs/LibPeriodicTable-3.1-Consumable: svn://svn.wowace.com/wow/libperiodictable-3-1/mainline/trunk/LibPeriodicTable-3.1-Consumable
+    libs/LibPeriodicTable-3.1-Reputation: svn://svn.wowace.com/wow/libperiodictable-3-1/mainline/trunk/LibPeriodicTable-3.1-Reputation
+    libs/LibPeriodicTable-3.1-InstanceLoot: svn://svn.wowace.com/wow/libperiodictable-3-1/mainline/trunk/LibPeriodicTable-3.1-InstanceLoot
+    libs/LibPeriodicTable-3.1-InstanceLootHeroic: svn://svn.wowace.com/wow/libperiodictable-3-1/mainline/trunk/LibPeriodicTable-3.1-InstanceLootHeroic
+    libs/LibQTip-1.0: svn://svn.wowace.com/wow/libqtip-1-0/mainline/trunk
     libs/LibDBIcon-1.0: svn://svn.wowace.com/wow/libdbicon-1-0/mainline/trunk/LibDBIcon-1.0
     libs/LibItemUpgradeInfo-1.0: git://git.wowace.com/wow/libitemupgradeinfo-1-0/mainline.git
 
