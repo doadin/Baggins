@@ -35,6 +35,8 @@ local GetItemCount, GetItemInfo, GetInventoryItemLink, GetItemQualityColor, GetI
 local GetContainerItemInfo, GetContainerItemLink, GetContainerItemQuestInfo, GetContainerNumFreeSlots, GetContainerItemCooldown =
       GetContainerItemInfo, GetContainerItemLink, GetContainerItemQuestInfo, GetContainerNumFreeSlots, GetContainerItemCooldown
 
+local C_Item, ItemLocation = C_Item, ItemLocation
+
 -- GLOBALS: UIParent, GameTooltip, BankFrame, CloseBankFrame, TEXTURE_ITEM_QUEST_BANG, TEXTURE_ITEM_QUEST_BORDER
 -- GLOBALS: CoinPickupFrame
 -- GLOBALS: BagginsCopperIcon, BagginsCopperText, BagginsSilverIcon, BagginsSilverText, BagginsGoldIcon, BagginsGoldText, BagginsMoneyFrame
@@ -2143,7 +2145,11 @@ do
 		tinsert(menu, excludeFromCatMenu)
 		excludeCategoryIndex = #menu
 
-		local _, itemCount, _, itemQuality, _, _, itemLink, _, _, itemID = GetContainerItemInfo(bag, slot)
+    local itemID
+		local _, itemCount, _, itemQuality, _, _, itemLink = GetContainerItemInfo(bag, slot)
+    if itemLink then
+      itemID = C_Item.GetItemID(ItemLocation:CreateFromBagAndSlot(bag, slot))
+    end
 		local itemName, _, _, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc = GetItemInfo(itemLink)
 		if not itemName then
 			itemName, _, _, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc = GetItemInfo(itemID)

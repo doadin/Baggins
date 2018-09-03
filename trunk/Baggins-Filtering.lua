@@ -27,7 +27,7 @@ local UnitLevel = UnitLevel
 
 local C_PetJournal = C_PetJournal
 
-
+local C_Item, ItemLocation = C_Item, ItemLocation
 
 local Baggins = Baggins
 local pt = LibStub("LibPeriodicTable-3.1", true)
@@ -285,30 +285,34 @@ end
 -- Item Filtering --
 --------------------
 function Baggins:CheckSlotsChanged(bag, forceupdate)
-	local itemschanged
-	for slot = 1, GetContainerNumSlots(bag) do
-		local key = bag..":"..slot
-		local iteminfo = nil
+  local itemschanged
+  for slot = 1, GetContainerNumSlots(bag) do
+    local key = bag..":"..slot
+    local iteminfo = nil
+    local itemid
 
-		local _, count, _, _, _, _, link, _, _, itemid = GetContainerItemInfo(bag, slot)
-		if itemid then
-			-- "|cffffffff|Hitem:6948::::::::1:259::::::|h[Hearthstone]|h|r"
-			-- "|cff1eff00|Hbattlepet:261:1:2:151:11:10:0000000000000000|h[Personal World Destroyer]|h|r",
-			-- "|cffa335ee|Hkeystone:198:9:5:13:0|h[Keystone: Darkheart Thicket]|h|r"
-			local itemstring = link:match("|H(.-)|h") or "_"
-			iteminfo = ("%s %d %s"):format(itemid, count, itemstring)
-		end
+    local _, count, _, _, _, _, link = GetContainerItemInfo(bag, slot)
+    if link then
+      itemid = C_Item.GetItemID(ItemLocation:CreateFromBagAndSlot(bag, slot))
+    end
+    if itemid then
+      -- "|cffffffff|Hitem:6948::::::::1:259::::::|h[Hearthstone]|h|r"
+      -- "|cff1eff00|Hbattlepet:261:1:2:151:11:10:0000000000000000|h[Personal World Destroyer]|h|r",
+      -- "|cffa335ee|Hkeystone:198:9:5:13:0|h[Keystone: Darkheart Thicket]|h|r"
+      local itemstring = link:match("|H(.-)|h") or "_"
+      iteminfo = ("%s %d %s"):format(itemid, count, itemstring)
+    end
 
-		if slotcache[key] ~= iteminfo or forceupdate then
-			local olditemid = (slotcache[key] or ""):match("^(%d+)")
-			if itemid ~= olditemid then
-				itemschanged = true
-			end
-			slotcache[key] = iteminfo
-			self:OnSlotChanged(bag, slot)
-		end
-	end
-	return itemschanged
+    if slotcache[key] ~= iteminfo or forceupdate then
+      local olditemid = (slotcache[key] or ""):match("^(%d+)")
+      if itemid ~= olditemid then
+        itemschanged = true
+      end
+      slotcache[key] = iteminfo
+      self:OnSlotChanged(bag, slot)
+    end
+  end
+  return itemschanged
 end
 
 local categoriesrun = { [true] = {}, [false] = {}}
