@@ -2,7 +2,7 @@ local _G = _G
 
 _G.Baggins = LibStub("AceAddon-3.0"):NewAddon("Baggins", "AceEvent-3.0", "AceHook-3.0", "AceBucket-3.0", "AceTimer-3.0", "AceConsole-3.0")
 
-local Baggins = Baggins
+local Baggins = _G.Baggins
 local pt = LibStub("LibPeriodicTable-3.1", true)
 local L = LibStub("AceLocale-3.0"):GetLocale("Baggins")
 local LBU = LibStub("LibBagUtils-1.0")
@@ -12,39 +12,35 @@ local console = LibStub("AceConsole-3.0")
 local gratuity = LibStub("LibGratuity-3.0")
 local iui = LibStub("LibItemUpgradeInfo-1.0")
 
-local next,unpack,pairs,ipairs,tonumber,select,strmatch =
-      next,unpack,pairs,ipairs,tonumber,select,strmatch
-
+local next, unpack, pairs, ipairs, tonumber, select, strmatch, wipe, type, time, print =
+      _G.next, _G.unpack, _G.pairs, _G.ipairs, _G.tonumber, _G.select, _G.strmatch, _G.wipe, _G.type, _G.time, _G.print
 local min, max, ceil, floor, mod  =
-      min, max, ceil, floor, mod
+      _G.min, _G.max, _G.ceil, _G.floor, _G.mod
+local tinsert, tremove, tsort, tconcat =
+      _G.tinsert, _G.tremove, _G.table.sort, _G.table.concat
+local format =
+      _G.string.format
+local band =
+      _G.bit.band
 
-local tinsert, tremove, tsort =
-      tinsert, tremove, table.sort
+local GetItemCount, GetItemInfo, GetInventoryItemLink, GetItemQualityColor, GetItemFamily, BankButtonIDToInvSlotID, ReagentBankButtonIDToInvSlotID, GetNumBankSlots =
+      _G.GetItemCount, _G.GetItemInfo, _G.GetInventoryItemLink, _G.GetItemQualityColor, _G.GetItemFamily, _G.BankButtonIDToInvSlotID, _G.ReagentBankButtonIDToInvSlotID, _G.GetNumBankSlots
+local GetContainerItemInfo, GetContainerItemLink, GetContainerItemQuestInfo, GetContainerNumFreeSlots, GetContainerItemCooldown, DepositReagentBank, IsReagentBankUnlocked =
+      _G.GetContainerItemInfo, _G.GetContainerItemLink, _G.GetContainerItemQuestInfo, _G.GetContainerNumFreeSlots, _G.GetContainerItemCooldown, _G.DepositReagentBank, _G.IsReagentBankUnlocked
+local C_Item, ItemLocation, InCombatLockdown, IsModifiedClick, GetDetailedItemLevelInfo, GetContainerItemID, InRepairMode, KeyRingButtonIDToInvSlotID, C_PetJournal, C_NewItems, PlaySound =
+      _G.C_Item, _G.ItemLocation, _G.InCombatLockdown, _G.IsModifiedClick, _G.GetDetailedItemLevelInfo, _G.GetContainerItemID, _G.InRepairMode, _G.KeyRingButtonIDToInvSlotID, _G.C_PetJournal, _G.C_NewItems, _G.PlaySound
 
-local tconcat = table.concat
-local format = string.format
-local band = bit.band
-local wipe=wipe
-local type = type
 local function new() return {} end
 local function del(t) wipe(t) end
 local rdel = del
 
-local GetItemCount, GetItemInfo, GetInventoryItemLink, GetItemQualityColor, GetItemFamily =
-      GetItemCount, GetItemInfo, GetInventoryItemLink, GetItemQualityColor, GetItemFamily
-
-local GetContainerItemInfo, GetContainerItemLink, GetContainerItemQuestInfo, GetContainerNumFreeSlots, GetContainerItemCooldown =
-      GetContainerItemInfo, GetContainerItemLink, GetContainerItemQuestInfo, GetContainerNumFreeSlots, GetContainerItemCooldown
-
-local C_Item, ItemLocation = C_Item, ItemLocation
-
--- GLOBALS: UIParent, GameTooltip, BankFrame, CloseBankFrame, TEXTURE_ITEM_QUEST_BANG, TEXTURE_ITEM_QUEST_BORDER
--- GLOBALS: CoinPickupFrame
--- GLOBALS: BagginsCopperIcon, BagginsCopperText, BagginsSilverIcon, BagginsSilverText, BagginsGoldIcon, BagginsGoldText, BagginsMoneyFrame
--- GLOBALS: GetAddOnInfo, GetAddOnMetadata, GetNumAddOns, LoadAddOn
+-- GLOBALS: UIParent, GameTooltip, BankFrame, CloseBankFrame, TEXTURE_ITEM_QUEST_BANG, TEXTURE_ITEM_QUEST_BORDER, REAGENTBANK_CONTAINER, REPAIR_COST, SOUNDKIT
+-- GLOBALS: CoinPickupFrame, ShowInspectCursor, this, CooldownFrame_Set, MerchantFrame, SetTooltipMoney, BagginsCategoryAddDropdown, error, CooldownFrame_SetTimer, StaticPopup_Show
+-- GLOBALS: BagginsCopperIcon, BagginsCopperText, BagginsSilverIcon, BagginsSilverText, BagginsGoldIcon, BagginsGoldText, BagginsMoneyFrame, GetMoney, IsEquippedItem
+-- GLOBALS: GetAddOnInfo, GetAddOnMetadata, GetNumAddOns, LoadAddOn, CursorUpdate, ResetCursor, ShowContainerSellCursor, UseContainerItem, SetItemButtonDesaturated, SetItemButtonTexture, SetItemButtonTextureVertexColor
 -- GLOBALS: GetCursorInfo, CreateFrame, GetCursorPosition, ClearCursor, GetScreenWidth, GetScreenHeight, GetMouseButtonClicked, IsControlKeyDown, IsAltKeyDown, IsShiftKeyDown
--- GLOBALS: GameFontNormalLarge, GameFontNormal
--- GLOBALS: EasyMenu
+-- GLOBALS: GameFontNormalLarge, GameFontNormal, Baggins_ItemMenuFrame, BagginsBankControlFrame, makeMenu, BagginsBagPlacement, CloseDropDownMenus, ToggleDropDownMenu
+-- GLOBALS: EasyMenu, MainMenuBarBackpackButton, BackpackButton_OnClick, UIDropDownMenu_AddButton, OpenCoinPickupFrame, UIDropDownMenu_Refresh, BattlePetToolTip_Show, DropDownList1, DropDownList2
 
 -- Bank tab locals, for auto reagent deposit
 local BankFrame_ShowPanel = BankFrame_ShowPanel
@@ -281,7 +277,7 @@ do
 		end
 		while #buttonPool < num do
 			local frame = createItemButton()
-			table.insert(buttonPool, frame)
+			tinsert(buttonPool, frame)
 		end
 	end
 
@@ -291,7 +287,7 @@ do
 		self.db.char.lastNumItemButtons = usedButtons
 		local frame
 		if next(buttonPool) then
-			frame = table.remove(buttonPool, 1)
+			frame = tremove(buttonPool, 1)
 		else
 			frame = createItemButton()
 		end
@@ -302,7 +298,7 @@ do
 	function Baggins:ReleaseItemButton(button)
 		button.glow:Hide()
 		button.newtext:Hide()
-		table.insert(buttonPool, button)
+		tinsert(buttonPool, button)
 	end
 end
 
@@ -1808,7 +1804,7 @@ function Baggins:ReallyLayoutSection(sectionframe, cols)
 		end
 		-- cleaning up unused itembuttons
 		for i = itemframeno,#sectionframe.items do
-			local unusedframe = table.remove(sectionframe.items, itemframeno)
+			local unusedframe = tremove(sectionframe.items, itemframeno)
 			self:ReleaseItemButton(unusedframe)
 		end
 	end

@@ -1,4 +1,10 @@
-local Baggins = Baggins
+local _G = _G
+local Baggins = _G.Baggins
+
+local pairs, ipairs =
+      _G.pairs, _G.ipairs
+local tinsert =
+      _G.tinsert
 
 ----------------
 -- Skin stuff --
@@ -14,7 +20,7 @@ do -- private
 			skinlist[k] = nil
 		end
 		for name in pairs(skins) do
-			table.insert(skinlist, name)
+			tinsert(skinlist, name)
 		end
 		return skinlist
 	end

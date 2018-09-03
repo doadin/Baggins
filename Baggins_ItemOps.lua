@@ -4,12 +4,22 @@
 -- items, etc.
 --
 
-local Baggins = Baggins
+local _G = _G
+local Baggins = _G.Baggins
+
+local pairs, ipairs, next, select, type, tonumber, tostring, format, min, max, wipe =
+      _G.pairs, _G.ipairs, _G.next, _G.select, _G.type, _G.tonumber, _G.tostring, _G.format, _G.min, _G.max, _G.wipe
+local min, max, ceil, floor, mod  =
+      _G.min, _G.max, _G.ceil, _G.floor, _G.mod
+local GetItemInfo, GetContainerItemLink, GetContainerItemID, GetContainerItemInfo, GetContainerNumFreeSlots, GetContainerNumSlots, GetItemFamily =
+      _G.GetItemInfo, _G.GetContainerItemLink, _G.GetContainerItemID, _G.GetContainerItemInfo, _G.GetContainerNumFreeSlots, _G.GetContainerNumSlots, _G.GetItemFamily
+local PickupContainerItem, SplitContainerItem, IsShiftKeyDown =
+      _G.PickupContainerItem, _G.SplitContainerItem, _G.IsShiftKeyDown
+local band =
+      _G.bit.band
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Baggins")
 local LBU = LibStub("LibBagUtils-1.0")
-
-
 
 local bankBags = { BANK_CONTAINER }
 for i=NUM_BAG_SLOTS+1, NUM_BAG_SLOTS+NUM_BANKBAGSLOTS do
@@ -21,7 +31,6 @@ for i=0, NUM_BAG_SLOTS do
 	tinsert(charBags, i);
 end
 tinsert(charBags, KEYRING_CONTAINER)
-
 
 
 ------------------------------------------------------
@@ -43,10 +52,10 @@ end
 
 function Baggins:DoCompressBags(bank,testonly)
 	local bags = bank and bankBags or charBags
-	
+
 	wipe(incompleteSlots)
-	
-	local lockedSlots 
+
+	local lockedSlots
 
 	for _,bag in ipairs(bags) do
 		for slot=1,(GetContainerNumSlots(bag) or 0) do
@@ -61,7 +70,7 @@ function Baggins:DoCompressBags(bank,testonly)
 						if testonly then return true end	-- Yup, we've got something that needs compressing!
 						compressLoopProtect = compressLoopProtect - 1
 						if compressLoopProtect < 0 then return end
-						
+
 						PickupContainerItem(floor(incompleteSlots[itemid]/1000), incompleteSlots[itemid]%1000)
 						PickupContainerItem(bag, slot)
 						self:ScheduleTimer("DoCompressBags", 0.1, bank)
@@ -73,7 +82,7 @@ function Baggins:DoCompressBags(bank,testonly)
 			end
 		end
 	end
-	
+
 	if lockedSlots and not testonly then
 		compressLoopProtect = compressLoopProtect - 10
 		if compressLoopProtect > 0 then
@@ -81,7 +90,7 @@ function Baggins:DoCompressBags(bank,testonly)
 			return
 		end
 	end
-	
+
 	return Baggins:MoveToSpecialtyBags(bank,testonly)
 end
 
@@ -89,9 +98,9 @@ end
 local specialtyTargetBags = {} -- [family] = bag*1000 + slot
 
 function Baggins:MoveToSpecialtyBags(bank,testonly)
-	
+
 	wipe(specialtyTargetBags)
-	
+
 	for _,bag in ipairs(bank and bankBags or charBags) do
 		local free,bagFamily = LBU:GetContainerNumFreeSlots(bag)
 		if free>0 and bagFamily~=0 then
@@ -103,7 +112,7 @@ function Baggins:MoveToSpecialtyBags(bank,testonly)
 			end
 		end
 	end
-	
+
 	local lockedSlots
 
 	-- Find stuff that can go in specialty bags
@@ -122,11 +131,11 @@ function Baggins:MoveToSpecialtyBags(bank,testonly)
 								-- specialty bags dont go in specialty bags
 							else
 								for bagFamily,dest in pairs(specialtyTargetBags) do
-									if bit.band(itemFamily,bagFamily)~=0 then
+									if band(itemFamily,bagFamily)~=0 then
 										if testonly then return true end
 										compressLoopProtect = compressLoopProtect - 1
 										if compressLoopProtect < 0 then return end
-										
+
 										PickupContainerItem(bag,slot)
 										PickupContainerItem(floor(dest/1000),dest%1000)
 										self:ScheduleTimer("MoveToSpecialtyBags", 0.1, bank)
@@ -140,7 +149,7 @@ function Baggins:MoveToSpecialtyBags(bank,testonly)
 			end
 		end
 	end
-	
+
 	if lockedSlots and not testonly then
 		compressLoopProtect = compressLoopProtect - 10
 		if compressLoopProtect > 0 then
@@ -224,13 +233,13 @@ local function BagginsItemButton_Split(bag,slot,amount)
 	if(IsShiftKeyDown()) then
 		return;	-- Just split off if shift was held down, keep new stack in cursor
 	end
-	
+
 	-- First, try to put in specialty bags
 	local itemFamily = GetItemFamily(link)
 	if itemFamily~=0 then
 		for _,destbag in ipairs(charBags) do
 			local free,bagFamily = LBU:GetContainerNumFreeSlots(destbag)
-			if free>0 and bit.band(bagFamily,itemFamily)~=0 then
+			if free>0 and band(bagFamily,itemFamily)~=0 then
 				for destslot=1, GetContainerNumSlots(destbag) do
 					if not GetContainerItemLink(destbag, destslot) then
 						PickupContainerItem(destbag, destslot)
@@ -240,7 +249,7 @@ local function BagginsItemButton_Split(bag,slot,amount)
 			end
 		end
 	end
-	
+
 	-- Mkay, shove it in any bag with free slots
 	for _,destbag in ipairs(charBags) do
 		local free,bagFamily = GetContainerNumFreeSlots(destbag)
@@ -278,17 +287,17 @@ Baggins:RegisterSignal("Baggins_ItemButtonMenu",
 		if not link then return; end
 		local _, itemCount = GetContainerItemInfo(bag, slot);
 		local itemstring = link:match("(item:[-%d:]+)");
-	
+
 		if level==1 then
 			local b;
-			
+
 			-- "Use"
 			if not LBU:IsBank(bag) then
 				dewdrop:AddLine("text",L["Use"], "secure", { type="item", item=itemstring },
 					"closeWhenClicked",true, "tooltipText", L["Use/equip the item rather than bank/sell it"]);
 				b=true;
 			end
-			
+
 			-- "Split"
 			if itemCount>1 then
 				dewdrop:AddLine("text",format(L["Split %d"],lastSplitSliderValue),
@@ -307,14 +316,14 @@ Baggins:RegisterSignal("Baggins_ItemButtonMenu",
 				);
 				b=true;
 			end
-			
+
 			-- separator
 			if b then
 				dewdrop:AddLine("text","","disabled",1);
 			end
-		
+
 		end
-		
+
 	end,
 	Baggins
 );

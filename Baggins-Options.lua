@@ -1,17 +1,14 @@
+local _G = _G
+local Baggins = _G.Baggins
 
-local pairs, ipairs, tonumber, tostring, next, select, type, wipe = 
-      pairs, ipairs, tonumber, tostring, next, select, type, wipe
+local pairs, ipairs, tonumber, tostring, next, select, type, wipe, CopyTable =
+      _G.pairs, _G.ipairs, _G.tonumber, _G.tostring, _G.next, _G.select, _G.type, _G.wipe, _G.CopyTable
 
+local tinsert, tremove, tsort =
+      _G.tinsert, _G.tremove, _G.tsort
 
-local tinsert, tremove, tsort = tinsert, tremove, tsort
-
--- GLOBALS: LibStub, GetItemQualityColor
+-- GLOBALS: LibStub, GetItemQualityColor, EasyMenu
 -- GLOBALS: ITEM_QUALITY0_DESC, ITEM_QUALITY1_DESC, ITEM_QUALITY2_DESC, ITEM_QUALITY3_DESC, ITEM_QUALITY4_DESC, ITEM_QUALITY5_DESC, ITEM_QUALITY6_DESC
-
-
-
-
-local Baggins = Baggins
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Baggins")
 
@@ -21,7 +18,6 @@ local dbIcon = LibStub("LibDBIcon-1.0")
 
 local function noop()
 end
-
 
 local templates = {
 	allinone = {
@@ -1599,7 +1595,7 @@ function Baggins:UpdateDB()
 			-- remove item-types that have been removed from the game
 			if (rule.type == "ContainerType" and (rule.ctype == "Soul Bag" or rule.ctype == "Ammo Bag"))
 					or (rule.type == "ItemType" and (rule.isubtype == "Librams" or rule.isubtype == "Idols" or rule.isubtype == "Totems")) then
-				table.remove(rules, i)
+				tremove(rules, i)
 				i = i - 1
 			end
 			i = i + 1
@@ -1670,7 +1666,7 @@ end
 function Baggins:DoBagMenu(bagframe)
 	local p = self.db.profile
 	wipe(menu)
-	
+
 	if not p.disablebagmenu then
 		if p.highlightnew then
 			tinsert(menu, {
@@ -1857,7 +1853,7 @@ function Baggins:CopyBag(from_id, to_id)
 	for i, v in ipairs(bags[from_id].sections) do
 		tinsert(bags[to_id].sections,v)
 	end
-	
+
 	self:ChangeProfile()
 end
 
@@ -2385,7 +2381,7 @@ function Baggins:InitBagCategoryOptions()
 	self:RebuildBagOptions(opts)
 	self:BuildMoneyBagOptions()
 	self:BuildBankControlsBagOptions()
-	
+
 
 	AceConfig:RegisterOptionsTable("BagginsEdit", function()
 		Baggins:RebuildCategoryOptions()
