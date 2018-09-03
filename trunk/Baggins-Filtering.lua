@@ -1,39 +1,33 @@
-local ItemUpgradeInfo = LibStub("LibItemUpgradeInfo-1.0")
-
-local pairs, ipairs, next, select, type, tonumber, tostring, format =
-      pairs, ipairs, next, select, type, tonumber, tostring, format
-
 local _G = _G
+local Baggins = _G.Baggins
 
-local min, max =
-      min, max
+local pairs, ipairs, next, select, type, tonumber, tostring, format, min, max, wipe, ceil =
+      _G.pairs, _G.ipairs, _G.next, _G.select, _G.type, _G.tonumber, _G.tostring, _G.format, _G.min, _G.max, _G.wipe, _G.ceil
+local tinsert, tremove, tsort =
+      _G.tinsert, _G.tremove, _G.table.sort
+local band =
+      _G.bit.band
 
-local wipe=wipe
-local tinsert, tremove, tsort = tinsert, tremove, table.sort
-local band=bit.band
-
-local BANK_CONTAINER = BANK_CONTAINER
-
-local GetItemInfo, GetContainerItemLink, GetContainerItemID, GetContainerItemInfo, GetContainerNumFreeSlots, GetContainerNumSlots =
-      GetItemInfo, GetContainerItemLink, GetContainerItemID, GetContainerItemInfo, GetContainerNumFreeSlots, GetContainerNumSlots
-
+local BANK_CONTAINER = _G.BANK_CONTAINER
+local GetItemInfo, GetContainerItemLink, GetContainerItemID, GetContainerItemInfo, GetContainerNumFreeSlots, GetContainerNumSlots, GetContainerItemEquipmentSetInfo =
+      _G.GetItemInfo, _G.GetContainerItemLink, _G.GetContainerItemID, _G.GetContainerItemInfo, _G.GetContainerNumFreeSlots, _G.GetContainerNumSlots, _G.GetContainerItemEquipmentSetInfo
 local GetInventoryItemLink, GetItemQualityColor =
-      GetInventoryItemLink, GetItemQualityColor
-
+      _G.GetInventoryItemLink, _G.GetItemQualityColor
 local GetEquipmentSetInfo, GetEquipmentSetItemIDs, GetNumEquipmentSets =
-      GetEquipmentSetInfo, GetEquipmentSetItemIDs, GetNumEquipmentSets
+      _G.GetEquipmentSetInfo, _G.GetEquipmentSetItemIDs, _G.GetNumEquipmentSets
+local GetItemInfoInstant, GetItemClassInfo, GetItemSubClassInfo, GetAuctionItemSubClasses =
+      _G.GetItemInfoInstant, _G.GetItemClassInfo, _G.GetItemSubClassInfo, _G.GetAuctionItemSubClasses
+local UnitLevel = _G.UnitLevel
+local C_PetJournal = _G.C_PetJournal
+local C_Item, ItemLocation, C_EquipmentSet = _G.C_Item, _G.ItemLocation, _G.C_EquipmentSet
 
-local UnitLevel = UnitLevel
+--GLOBALS: UNKNOWN, EasyMenu
 
-local C_PetJournal = C_PetJournal
-
-local C_Item, ItemLocation = C_Item, ItemLocation
-
-local Baggins = Baggins
 local pt = LibStub("LibPeriodicTable-3.1", true)
 local gratuity = LibStub("LibGratuity-3.0")
 local L = LibStub("AceLocale-3.0"):GetLocale("Baggins")
 local BBI = LibStub("LibBabble-Inventory-3.0"):GetLookupTable()
+local ItemUpgradeInfo = LibStub("LibItemUpgradeInfo-1.0")
 
 local BattlePetTypes = {
 	["Battle Pets"] = L["Battle Pets"],
