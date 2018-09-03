@@ -10,6 +10,7 @@ local qt = LibStub('LibQTip-1.0')
 local dbIcon = LibStub("LibDBIcon-1.0")
 local console = LibStub("AceConsole-3.0")
 local gratuity = LibStub("LibGratuity-3.0")
+local iui = LibStub("LibItemUpgradeInfo-1.0")
 
 local next,unpack,pairs,ipairs,tonumber,select,strmatch =
       next,unpack,pairs,ipairs,tonumber,select,strmatch
@@ -1285,8 +1286,10 @@ local function IlvlComp(a, b)
 	local res,linka,linkb,baga,slota,bagb,slotb=baseComp(a,b)
 	if res~=nil then return res end
 
-	local namea, _, quala, ilvla = getCompInfo(linka)
-	local nameb, _, qualb, ilvlb = getCompInfo(linkb)
+	local namea, _, quala = getCompInfo(linka)
+	local nameb, _, qualb = getCompInfo(linkb)
+	local ilvla = iui:GetUpgradedItemLevel(linka)
+	local ilvlb = iui:GetUpgradedItemLevel(linkb)
 	if ilvla~=ilvlb then
 		return (ilvla or 0) > (ilvlb or 0)
 	end
