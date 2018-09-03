@@ -458,6 +458,12 @@ function Baggins:OnEnable()
 	self:RunBagUpdates()
 end
 
+function Baggins:FixInit()
+    self:ForceFullUpdate()
+    self:RebuildSectionLayouts()
+    self:UpdateBags()
+end
+
 function Baggins:Baggins_CategoriesChanged()
 	self:UpdateBags()
 	self.doInitialBankUpdate = true
@@ -3644,10 +3650,10 @@ function Baggins:OpenBag(bagid,noupdate)
 	-- reuse self.doInitialUpdate to only run once
 	-- this fixes the duplicate stacks bug upon login
 	if self.doInitialUpdate then
+    -- this time we set to nil so this only runs the first time
+    self.doInitialUpdate = nil
 		-- rebuild layouts to fix duplicate stacks
-		self:RebuildSectionLayouts()
-		-- this time we set to nil so this only runs the first time
-		self.doInitialUpdate = nil
+    self:ScheduleForNextFrame('FixInit')
 	end
 end
 
