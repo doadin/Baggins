@@ -405,6 +405,8 @@ function Baggins:OnEnable()
 	self:RegisterEvent("PLAYER_MONEY", "UpdateMoneyFrame")
 	self:RegisterEvent('AUCTION_HOUSE_SHOW', "AuctionHouse")
 	self:RegisterEvent('AUCTION_HOUSE_CLOSED', "CloseAllBags")
+	self:RegisterEvent('SCRAPPING_MACHINE_SHOW', "OpenAllBags")
+	self:RegisterEvent('SCRAPPING_MACHINE_CLOSE', "CloseAllBags")
 	self:RegisterBucketEvent('ADDON_LOADED', 5,'OnAddonLoaded')
 
 	self:RegisterSignal('CategoryMatchAdded', self.CategoryMatchAdded, self)
