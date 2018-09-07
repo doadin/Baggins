@@ -1199,13 +1199,16 @@ local function getBattlePetInfoFromLink(link)
 end
 
 local function getCompInfo(link)
-	if not link:match("battlepet:") then
-		return GetItemInfo(link)
-	end
-	local speciesID, level, quality, maxHealth, power, speed, petid, name = getBattlePetInfoFromLink(link)
-	local petType = C_PetJournal.GetPetInfoBySpeciesID(speciesID)
-	local subtype = _G["BATTLE_PET_NAME_" .. petType]
-	return name, nil, quality, level, nil, L["Battle Pets"], subtype
+  if link:match("keystone:") then
+    return GetItemInfo(158923)
+  elseif link:match("battlepet:") then
+    local speciesID, level, quality, maxHealth, power, speed, petid, name = getBattlePetInfoFromLink(link)
+    local petType = C_PetJournal.GetPetInfoBySpeciesID(speciesID)
+    local subtype = _G["BATTLE_PET_NAME_" .. petType]
+    return name, nil, quality, level, nil, L["Battle Pets"], subtype
+  else
+    return GetItemInfo(link)
+  end
 end
 
 local function NameComp(a, b)
