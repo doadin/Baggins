@@ -1,0 +1,22 @@
+language: minimal
+
+# Only build tags
+if: tag IS present
+ 
+addons:
+  apt:
+    packages:
+    - luarocks
+
+install: luarocks install --local luacheck
+
+script: uname -a
+
+after_success:
+    - curl -s https://raw.githubusercontent.com/BigWigsMods/packager/master/release.sh | bash -s -- -m .pkgmeta
+    - curl -s https://raw.githubusercontent.com/BigWigsMods/packager/master/release.sh | bash -s -- -g 1.13.2
+ 
+notifications:
+ email:
+   on_success: never
+   on_failure: always
