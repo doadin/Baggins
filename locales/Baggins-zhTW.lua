@@ -149,7 +149,7 @@ L["Bank Bag4"] = "銀行4號背包"
 L["Bank Bag5"] = "銀行5號背包"
 L["Bank Bag6"] = "銀行6號背包"
 L["Bank Bag7"] = "銀行7號背包"
-L["Reagent Bank"] = true
+L["Reagent Bank"] = "材料銀行"
 L["KeyRing"] = "鑰匙圈"
 
 		--qualoty names
@@ -437,25 +437,25 @@ L["Section Priority"] = "分類塊優先級"
 L["Allow Duplicates"] = "允許顯示重復物品"
 L["Import Sections From"] = "分類塊導入自："
 
-L["Buy Bank Bag Slot"] = true
-L["Buy Reagent Bank"] = true
-L["Deposit All Reagents"] = true
-L["Crafting Reagent"] = true
-L["Reagent Deposit"] = true
-L["Automatically deposits crafting reagents into the reagent bank if available."] = true
+L["Buy Bank Bag Slot"] = "購買銀行欄位"
+L["Buy Reagent Bank"] = "購買材料銀行"
+L["Deposit All Reagents"] = "存入所有材料"
+L["Crafting Reagent"] = "製作材料"
+L["Reagent Deposit"] = "物資存放"
+L["Automatically deposits crafting reagents into the reagent bank if available."] = "自動將製作材料存入材料銀行."
 
-L["Disable Bag Menu"] = true
-L["Disables the menu that pops up when right clicking on bags."] = true
+L["Disable Bag Menu"] = "關閉背包菜單"
+L["Disables the menu that pops up when right clicking on bags."] = "鼠標右鍵點擊背包時關閉已經打開的背包."
 
-L["Override Backpack Button"] = true
-L["Baggins will open when clicking the backpack. Holding alt will open the default backpack."] = true
-L["General"] = true
-L["Display and Overrides"] = true
-L["Display"] = true
-L["Overrides"] = true
+L["Override Backpack Button"] = "替代背包按鈕"
+L["Baggins will open when clicking the backpack. Holding alt will open the default backpack."] = "當點擊背包時, Baggins 將會被打開. 按住 ALT 鍵將會打開默認背包"
+L["General"] = "通用"
+L["Display and Overrides"] = "顯示並且替代"
+L["Display"] = "顯示"
+L["Overrides"] = "替代"
 
-L["New Item Duration"] = true
-L["Controls how long (in minutes) an item will be considered new. 0 disables the time limit."] = true
+L["New Item Duration"] = "新物品標識持續時間"
+L["Controls how long (in minutes) an item will be considered new. 0 disables the time limit."] = "新物品標識持續時間多少分鐘. 0 為關閉時間限制"
 
 --[[------------------- modified by lalibre -------------------------------
 	------ Baggins-Options.lua ------

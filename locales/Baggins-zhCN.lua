@@ -149,7 +149,7 @@ L["Bank Bag4"] = "银行背包4"
 L["Bank Bag5"] = "银行背包5"
 L["Bank Bag6"] = "银行背包6"
 L["Bank Bag7"] = "银行背包7"
-L["Reagent Bank"] = true
+L["Reagent Bank"] = "材料银行"
 L["KeyRing"] = "钥匙链"
 
 		--qualoty names
@@ -405,8 +405,8 @@ L["Bottom Left"] = "左下"
 L["Show Money On Bag"] = "在背包显示金钱"
 L["Which Bag to Show Money On"] = "选择显示金钱的背包"
 
-L["Show Bank Controls On Bag"] = true
-L["Which Bag to Show Bank Controls On"] = true
+L["Show Bank Controls On Bag"] = "在背包中顯示銀行管理"
+L["Which Bag to Show Bank Controls On"] = "在哪個背包中顯示銀行管理"
 
 L["User Defined"] = "自定义配置"
 L["Load a User Defined Profile"] = "加载一个自定义配置"
@@ -436,22 +436,22 @@ L["Section Priority"] = "分类块优先级"
 L["Allow Duplicates"] = "允许显示重复物品"
 L["Import Sections From"] = "分类块导入自："
 
-L["Buy Bank Bag Slot"] = true
-L["Buy Reagent Bank"] = true
-L["Deposit All Reagents"] = true
-L["Crafting Reagent"] = true
-L["Reagent Deposit"] = true
-L["Automatically deposits crafting reagents into the reagent bank if available."] = true
+L["Buy Bank Bag Slot"] = "购买银行栏位"
+L["Buy Reagent Bank"] = "购买材料银行"
+L["Deposit All Reagents"] = "存入所有材料"
+L["Crafting Reagent"] = "制作材料"
+L["Reagent Deposit"] = "物资存放"
+L["Automatically deposits crafting reagents into the reagent bank if available."] = "自动将制作材料存入材料银行."
 
-L["Disable Bag Menu"] = true
-L["Disables the menu that pops up when right clicking on bags."] = true
+L["Disable Bag Menu"] = "关闭背包菜单"
+L["Disables the menu that pops up when right clicking on bags."] = "鼠标右键点击背包时关闭已经打开的背包."
 
-L["Override Backpack Button"] = true
-L["Baggins will open when clicking the backpack. Holding alt will open the default backpack."] = true
-L["General"] = true
-L["Display and Overrides"] = true
-L["Display"] = true
-L["Overrides"] = true
+L["Override Backpack Button"] = "替代背包按钮"
+L["Baggins will open when clicking the backpack. Holding alt will open the default backpack."] = "当点击背包时, Baggins 将会被打开. 按住 ALT 键将会打开默认背包"
+L["General"] = "通用"
+L["Display and Overrides"] = "显示並且替代"
+L["Display"] = "显示"
+L["Overrides"] = "替代"
 
-L["New Item Duration"] = true
-L["Controls how long (in minutes) an item will be considered new. 0 disables the time limit."] = true
+L["New Item Duration"] = "新物品标识持续时间"
+L["Controls how long (in minutes) an item will be considered new. 0 disables the time limit."] = "新物品标识持续时间多少分钟. 0 为关闭时间限制"
