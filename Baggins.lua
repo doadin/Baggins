@@ -2857,7 +2857,7 @@ function Baggins:UpdateBankControlFrame()
 		anchoryoffset = -2
 	end
 
-	if IsReagentBankUnlocked() then
+	if not Baggins:IsClassicWow() and IsReagentBankUnlocked() then
 		frame.radeposit:SetPoint("TOPLEFT", anchorframe, anchorpoint, 0, anchoryoffset)
 		frame.radeposit:Show()
 		frame.rabuy:Hide()
