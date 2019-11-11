@@ -3488,7 +3488,7 @@ function Baggins:InitBagCategoryOptions()
 	    end)
     end
     if not Baggins:IsClassicWow() then
-	AceConfig:RegisterOptionsTable("BagginsEdit", function()
+	    AceConfig:RegisterOptionsTable("BagginsEdit", function()
 		return opts
 	end)
     end
