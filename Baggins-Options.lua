@@ -1751,7 +1751,7 @@ itemTypeReverse = {
 }
 end
 if not Baggins:IsClassicWow() then
-    local itemTypeReverse = {
+    itemTypeReverse = {
     	["Quiver"] = {
     		["id"] = 11,
     		["subTypes"] = {

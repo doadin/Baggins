@@ -267,20 +267,14 @@ local ldbdata = {
 		end,
 }
 Baggins.obj = LibStub("LibDataBroker-1.1"):NewDataObject("Baggins", ldbdata)
-
+if not Baggins:IsClassicWow() then
 do
 	local buttonCount = 0
 	local buttonPool = {}
 
 	local function createItemButton()
-        if Baggins:IsClassicWow() then
 		local frame = CreateFrame("Button","BagginsPooledItemButton"..buttonCount,nil,"ContainerFrameItemButtonTemplate")
                 frame.GetItemContextMatchResult = nil
-        end
-        if not Baggins:IsClassicWow() then
-		local frame = CreateFrame("ItemButton","BagginsPooledItemButton"..buttonCount,nil,"ContainerFrameItemButtonTemplate")
-                frame.GetItemContextMatchResult = nil
-        end
 		buttonCount = buttonCount + 1
 		if InCombatLockdown() then
 			print("Baggins: WARNING: item-frame will be tainted")
@@ -320,6 +314,56 @@ do
 		button.newtext:Hide()
 		tinsert(buttonPool, button)
 	end
+end
+end
+if Baggins:IsClassicWow() then
+do
+	local buttonCount = 0
+	local buttonPool = {}
+
+	local function createItemButton()
+		local frame = CreateFrame("Button","BagginsPooledItemButton"..buttonCount,nil,"ContainerFrameItemButtonTemplate")
+                frame.GetItemContextMatchResult = nil
+		buttonCount = buttonCount + 1
+		if InCombatLockdown() then
+			print("Baggins: WARNING: item-frame will be tainted")
+			Baggins:RegisterEvent("PLAYER_REGEN_ENABLED")
+			frame.tainted = true
+		end
+		return frame
+	end
+
+	function Baggins:RepopulateButtonPool(num)
+		if InCombatLockdown() then
+			Baggins:RegisterEvent("PLAYER_REGEN_ENABLED")
+			return
+		end
+		while #buttonPool < num do
+			local frame = createItemButton()
+			tinsert(buttonPool, frame)
+		end
+	end
+
+	local usedButtons = 0
+	function Baggins:GetItemButton()
+		usedButtons = usedButtons + 1
+		self.db.char.lastNumItemButtons = usedButtons
+		local frame
+		if next(buttonPool) then
+			frame = tremove(buttonPool, 1)
+		else
+			frame = createItemButton()
+		end
+		self:ScheduleTimer("RepopulateButtonPool", 0, Baggins.minSpareItemButtons)
+		return frame
+	end
+
+	function Baggins:ReleaseItemButton(button)
+		button.glow:Hide()
+		button.newtext:Hide()
+		tinsert(buttonPool, button)
+	end
+end
 end
 
 function Baggins:PLAYER_REGEN_ENABLED()
