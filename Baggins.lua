@@ -24,11 +24,7 @@ local band =
       _G.bit.band
 
 function Baggins:IsClassicWow()
-	local gameVersion = GetBuildInfo()
-	if (gameVersion:match ("%d") == "1") then
-		return true
-	end
-	return false
+	return WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
 end
 
 if Baggins:IsClassicWow() then
