@@ -5,7 +5,7 @@
 # ## Interface: 11302
 #@end-non-retail@
 ## Version: @project-version@
-## Title: Baggins2
+## Title: Baggins
 ## Notes: Inventory Management with virtual bags divided into sections.
 ## Notes-zhCN: 使用分类的形式来管理背包。
 ## Notes-zhTW: 智慧型自動分類背包
@@ -15,7 +15,7 @@
 ## Author: Nargiddley, Mikk, Profalbert
 ## SavedVariables: BagginsDB
 ## X-Category: Inventory
-## X-Curse-Project-ID: 351168
+## X-Curse-Project-ID: 13471
 
 ## OptionalDeps: Ace3, LibGratuity-3.0, LibQTip-1.0, LibBagUtils-1.0, LibPeriodicTable-3.1, LibBabble-Inventory-3.0, LibDBIcon-1.0, LibItemUpgradeInfo-1.0
 ## X-Embeds: Ace3, LibGratuity-3.0, LibQTip-1.0, LibBagUtils-1.0, LibPeriodicTable-3.1, LibBabble-Inventory-3.0, LibDBIcon-1.0, LibDataBroker-1.0
