@@ -3481,9 +3481,15 @@ function Baggins:InitBagCategoryOptions()
 	self:BuildMoneyBagOptions()
 	self:BuildBankControlsBagOptions()
 
-
+    if Baggins:IsClassicWow() then
+	    AceConfig:RegisterOptionsTable("BagginsEdit", function()
+	    	Baggins:RebuildCategoryOptions()
+	    	return opts
+	    end)
+    end
+    if not Baggins:IsClassicWow() then
 	AceConfig:RegisterOptionsTable("BagginsEdit", function()
-		Baggins:RebuildCategoryOptions()
 		return opts
 	end)
+    end
 end
