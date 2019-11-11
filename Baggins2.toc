@@ -13,7 +13,7 @@
 ## Notes-ruRU: Управление инвентарём, путём деления его на виртуальные сумки-секции
 
 ## Author: Nargiddley, Mikk, Profalbert
-## SavedVariables: Baggins2DB
+## SavedVariables: BagginsDB
 ## X-Category: Inventory
 ## X-Curse-Project-ID: 351168
 
