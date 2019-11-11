@@ -1486,9 +1486,9 @@ end
 
 if not Baggins:IsClassicWow() then
     Baggins:RegisterEvent("EQUIPMENT_SETS_CHANGED", fullUpdateSets)
-    required when AddonLoader is not installed
+    --required when AddonLoader is not installed
     Baggins:RegisterEvent("PLAYER_LOGIN", updateSets)
-    required when AddonLoader is installed
+    --required when AddonLoader is installed
     updateSets()
     
     local function getEquipmentSetChoices()

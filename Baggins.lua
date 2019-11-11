@@ -23,6 +23,14 @@ local format =
 local band =
       _G.bit.band
 
+function Baggins:IsClassicWow()
+	local gameVersion = GetBuildInfo()
+	if (gameVersion:match ("%d") == "1") then
+		return true
+	end
+	return false
+end
+
 if Baggins:IsClassicWow() then
 local GetItemCount, GetItemInfo, GetInventoryItemLink, GetItemQualityColor, GetItemFamily, BankButtonIDToInvSlotID, GetNumBankSlots =
       _G.GetItemCount, _G.GetItemInfo, _G.GetInventoryItemLink, _G.GetItemQualityColor, _G.GetItemFamily, _G.BankButtonIDToInvSlotID, _G.GetNumBankSlots
@@ -99,14 +107,6 @@ local currentsection
 local currentcategory
 
 Baggins.itemcounts = {}
-
-function Baggins:IsClassicWow()
-	local gameVersion = GetBuildInfo()
-	if (gameVersion:match ("%d") == "1") then
-		return true
-	end
-	return false
-end
 
 local timers = {}
 function Baggins:ScheduleNamedTimer(name, callback, delay, arg)
