@@ -273,7 +273,7 @@ do
 	local buttonPool = {}
 
 	local function createItemButton()
-		local frame = CreateFrame("Button","BagginsPooledItemButton"..buttonCount,nil,"ContainerFrameItemButtonTemplate")
+		local frame = CreateFrame("ItemButton","BagginsPooledItemButton"..buttonCount,nil,"ContainerFrameItemButtonTemplate")
                 frame.GetItemContextMatchResult = nil
 		buttonCount = buttonCount + 1
 		if InCombatLockdown() then

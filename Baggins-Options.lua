@@ -2608,9 +2608,9 @@ local function deepCopy(to, from)
 end
 
 local wipe=wipe
-local function new() return {} end
-local function del(t) wipe(t) end
-local rdel = del
+function new() return {} end
+function del(t) wipe(t) end
+rdel = del
 
 
 ---------------------
