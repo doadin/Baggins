@@ -1497,6 +1497,24 @@ if not Baggins:IsClassicWow() then
     end
 end
 
+function Baggins:UpdateDB()
+	local p = self.db.profile
+	for k, rules in pairs(p.categories) do
+		local i = 1
+		while(i < #rules + 1) do
+			local rule = rules[i]
+			if not rule then break end
+			-- remove item-types that have been removed from the game
+			if (rule.type == "ContainerType" and (rule.ctype == "Soul Bag" or rule.ctype == "Ammo Bag"))
+					or (rule.type == "ItemType" and (rule.isubtype == "Librams" or rule.isubtype == "Idols" or rule.isubtype == "Totems")) then
+				tremove(rules, i)
+				i = i - 1
+			end
+			i = i + 1
+		end
+	end
+end
+
 local oldskin
 function Baggins:InitOptions()
 	self.db = LibStub("AceDB-3.0"):New("Baggins2DB", dbDefaults, "Default")
@@ -1512,9 +1530,9 @@ function Baggins:InitOptions()
 	AceConfigDialog:AddToBlizOptions("Baggins", "Baggins")
 	oldskin = self.db.profile.skin
 end
-
+local itemTypeReverse = {}
 if Baggins:IsClassicWow() then
-local itemTypeReverse = {
+itemTypeReverse = {
 	["Quiver"] = {
 		["id"] = 11,
 		["subTypes"] = {

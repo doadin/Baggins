@@ -405,6 +405,42 @@ function Baggins:IsActive()
 	return true
 end
 
+function Baggins:OnProfileEnable()
+	local p = self.db.profile
+	--check if this profile has been setup before, if not add the default bags and categories
+	--cant leave these in the defaults since removing a bag would have it come back on reload
+	for k,m in pairs(migrations) do
+		if not self.db.profile.ranMigrations[k] then
+			self:Print("Running Migration " .. k)
+			m()
+			self.db.profile.ranMigrations[k] = true
+		end
+	end
+	local refresh = false
+	if not next(p.categories) then
+		deepCopy(p.categories, self.defaultcategories)
+		refresh = true
+	end
+	if #p.bags == 0 then
+		local templateName = self.db.global.template
+		local template = templates[templateName]
+		deepCopy(p.bags, template.bags)
+		refresh = true
+	end
+
+	if refresh then
+		self:ChangeProfile()
+	end
+
+	self:CreateAllBags()
+	self:SetCategoryTable(self.db.profile.categories)
+	self:ResortSections()
+	self:ForceFullRefresh()
+	self:UpdateBags()
+	self:BuildMoneyBagOptions()
+	self:BuildBankControlsBagOptions()
+end
+
 function Baggins:OnEnable()
 	--self:SetBagUpdateSpeed();
 	self:RegisterEvent("BAG_UPDATE")

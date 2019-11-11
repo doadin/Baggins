@@ -10,8 +10,8 @@ local band =
 
 local BANK_CONTAINER = _G.BANK_CONTAINER
 if not Baggins:IsClassicWow() then
-local GetItemInfo, GetContainerItemLink, GetContainerItemID, GetContainerItemInfo, GetContainerNumFreeSlots, GetContainerNumSlots, GetContainerItemEquipmentSetInfo =
-      _G.GetItemInfo, _G.GetContainerItemLink, _G.GetContainerItemID, _G.GetContainerItemInfo, _G.GetContainerNumFreeSlots, _G.GetContainerNumSlots, _G.GetContainerItemEquipmentSetInfo
+local GetItemInfo, GetContainerItemLink, GetContainerItemID, GetContainerItemInfo, GetContainerNumFreeSlots, GetContainerNumSlots, GetContainerItemEquipmentSetInfo, GetEquipmentSetIDs =
+      _G.GetItemInfo, _G.GetContainerItemLink, _G.GetContainerItemID, _G.GetContainerItemInfo, _G.GetContainerNumFreeSlots, _G.GetContainerNumSlots, _G.GetContainerItemEquipmentSetInfo, C_EquipmentSet.GetEquipmentSetIDs
 end
 if Baggins:IsClassicWow() then
 local GetItemInfo, GetContainerItemLink, GetContainerItemID, GetContainerItemInfo, GetContainerNumFreeSlots, GetContainerNumSlots, GetContainerItemEquipmentSetInfo =
@@ -87,13 +87,15 @@ local colors = {
 function Baggins:SetCategoryTable(cats)
 	categories = cats
 end
+local BagNames = {}
+local BagTypes = {}
 if Baggins:IsClassicWow() then
-local BagNames = {
+BagNames = {
 	[KEYRING_CONTAINER] = L["KeyRing"],
 	[BANK_CONTAINER] = L["Bank Frame"],
 	[BACKPACK_CONTAINER] = L["Backpack"],
 }
-local BagTypes = {
+BagTypes = {
 	[BACKPACK_CONTAINER] = 1,
 	[BANK_CONTAINER] = 2,
 	[KEYRING_CONTAINER] = 3,
@@ -1467,9 +1469,9 @@ end
 if not Baggins:IsClassicWow() then
     local equipmentSets = {}
     
-    local function updateSets()
+    function updateSets()
     	wipe(equipmentSets)
-    	for _, id in next, GetEquipmentSetIDs() do
+    	for _, id in next, C_EquipmentSet.GetEquipmentSetIDs() do
     		local name = 
     		GetEquipmentSetInfo(id)
     		equipmentSets[name] = name
@@ -1487,7 +1489,7 @@ end
 if not Baggins:IsClassicWow() then
     Baggins:RegisterEvent("EQUIPMENT_SETS_CHANGED", fullUpdateSets)
     --required when AddonLoader is not installed
-    Baggins:RegisterEvent("PLAYER_LOGIN", updateSets)
+    --Baggins:RegisterEvent("PLAYER_LOGIN", updateSets)
     --required when AddonLoader is installed
     updateSets()
     
