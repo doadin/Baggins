@@ -9,17 +9,28 @@ local band =
       _G.bit.band
 
 local BANK_CONTAINER = _G.BANK_CONTAINER
+if not Baggins:IsClassicWow() then
 local GetItemInfo, GetContainerItemLink, GetContainerItemID, GetContainerItemInfo, GetContainerNumFreeSlots, GetContainerNumSlots, GetContainerItemEquipmentSetInfo =
       _G.GetItemInfo, _G.GetContainerItemLink, _G.GetContainerItemID, _G.GetContainerItemInfo, _G.GetContainerNumFreeSlots, _G.GetContainerNumSlots, _G.GetContainerItemEquipmentSetInfo
+end
+if Baggins:IsClassicWow() then
+local GetItemInfo, GetContainerItemLink, GetContainerItemID, GetContainerItemInfo, GetContainerNumFreeSlots, GetContainerNumSlots, GetContainerItemEquipmentSetInfo =
+      _G.GetItemInfo, _G.GetContainerItemLink, _G.GetContainerItemID, _G.GetContainerItemInfo, _G.GetContainerNumFreeSlots, _G.GetContainerNumSlots, _G.GetContainerItemEquipmentSetInfo
+end
 local GetInventoryItemLink, GetItemQualityColor =
       _G.GetInventoryItemLink, _G.GetItemQualityColor
+if not Baggins:IsClassicWow() then
 local GetEquipmentSetInfo, GetEquipmentSetItemIDs, GetNumEquipmentSets =
       _G.GetEquipmentSetInfo, _G.GetEquipmentSetItemIDs, _G.GetNumEquipmentSets
+end
 local GetItemInfoInstant, GetItemClassInfo, GetItemSubClassInfo, GetAuctionItemSubClasses =
       _G.GetItemInfoInstant, _G.GetItemClassInfo, _G.GetItemSubClassInfo, _G.GetAuctionItemSubClasses
 local UnitLevel = _G.UnitLevel
 local C_PetJournal = _G.C_PetJournal
-local C_Item, ItemLocation, C_EquipmentSet = _G.C_Item, _G.ItemLocation, _G.C_EquipmentSet
+local C_Item, ItemLocation = _G.C_Item, _G.ItemLocation
+if not Baggins:IsClassicWow() then
+    local C_EquipmentSet = _G.C_EquipmentSet
+end
 
 --GLOBALS: UNKNOWN, EasyMenu
 
@@ -76,10 +87,8 @@ local colors = {
 function Baggins:SetCategoryTable(cats)
 	categories = cats
 end
-
-
+if Baggins:IsClassicWow() then
 local BagNames = {
-	[REAGENTBANK_CONTAINER] = L["Reagent Bank"],
 	[KEYRING_CONTAINER] = L["KeyRing"],
 	[BANK_CONTAINER] = L["Bank Frame"],
 	[BACKPACK_CONTAINER] = L["Backpack"],
@@ -88,8 +97,23 @@ local BagTypes = {
 	[BACKPACK_CONTAINER] = 1,
 	[BANK_CONTAINER] = 2,
 	[KEYRING_CONTAINER] = 3,
-	[REAGENTBANK_CONTAINER] = 4,
 }
+end
+if not Baggins:IsClassicWow() then
+local BagNames = {
+    [REAGENTBANK_CONTAINER] = L["Reagent Bank"],
+	[KEYRING_CONTAINER] = L["KeyRing"],
+	[BANK_CONTAINER] = L["Bank Frame"],
+	[BACKPACK_CONTAINER] = L["Backpack"],
+}
+local BagTypes = {
+	[BACKPACK_CONTAINER] = 1,
+	[BANK_CONTAINER] = 2,
+	[KEYRING_CONTAINER] = 3,
+    [REAGENTBANK_CONTAINER] = 4,
+}
+end
+
 for i=1,NUM_BAG_SLOTS do
 	BagNames[i] = L["Bag"..i]
 	BagTypes[i] = 1
@@ -99,9 +123,10 @@ for i=1,NUM_BANKBAGSLOTS do
 	BagTypes[NUM_BAG_SLOTS+i] = 2
 end
 
+if not Baggins:IsClassicWow() then
 BagNames[REAGENTBANK_CONTAINER] = L["Reagent Bank"]
 BagTypes[REAGENTBANK_CONTAINER] = 4
-
+end
 
 local QualityNames = {
 }
@@ -470,10 +495,12 @@ function Baggins:ForceFullBankUpdate()
 	for bagid in LBU:IterateBags("BANK") do
 		self:CheckSlotsChanged(bagid, true)
 	end
-
-	for bagid in LBU:IterateBags("REAGENTBANK") do
-		self:CheckSlotsChanged(bagid, true)
-	end
+    if not Baggins:IsClassicWow() then
+	    for bagid in LBU:IterateBags("REAGENTBANK") do
+	    	self:CheckSlotsChanged(bagid, true)
+	    end
+    end    
+    
 end
 
 function Baggins:GetIncludeRule(category,create)
@@ -563,7 +590,7 @@ local ItemTypes = {
   [2]="Weapon",
   [3]="Gem",
   [4]="Armor",
-  [5]="Reagent",
+  [5]="Reagent",--won't use in classic --
   [6]="Projectile",
   [7]="Tradeskill",
   [8]="Item Enhancement",
@@ -574,9 +601,9 @@ local ItemTypes = {
   [13]="Key",
   [14]="Permanent(OBSOLETE)",
   [15]="Miscellaneous",
-  [16]="Glyph",
-  [17]="Battle Pets",
-  [18]="WoW Token",
+  [16]="Glyph",--won't use in classic --
+  [17]="Battle Pets",--won't use in classic --
+  [18]="WoW Token",--won't use in classic --
   [0]="Consumable"
 }
 
@@ -1437,29 +1464,36 @@ end
 
 -----------------------------------------------------------------------
 -- Equipment Set
-local equipmentSets = {}
-
-local function updateSets()
-	wipe(equipmentSets)
-	for _, id in next, C_EquipmentSet.GetEquipmentSetIDs() do
-		local name = C_EquipmentSet.GetEquipmentSetInfo(id)
-		equipmentSets[name] = name
-	end
+if not Baggins:IsClassicWow() then
+    local equipmentSets = {}
+    
+    local function updateSets()
+    	wipe(equipmentSets)
+    	for _, id in next, GetEquipmentSetIDs() do
+    		local name = 
+    		GetEquipmentSetInfo(id)
+    		equipmentSets[name] = name
+    	end
+    end
 end
 
 local function fullUpdateSets()
-	updateSets()
+    if not Baggins:IsClassicWow() then
+    	updateSets()
+    end
 	Baggins:ForceFullUpdate()
 end
 
-Baggins:RegisterEvent("EQUIPMENT_SETS_CHANGED", fullUpdateSets)
--- required when AddonLoader is not installed
-Baggins:RegisterEvent("PLAYER_LOGIN", updateSets)
--- required when AddonLoader is installed
-updateSets()
-
-local function getEquipmentSetChoices()
-	return equipmentSets
+if not Baggins:IsClassicWow() then
+    Baggins:RegisterEvent("EQUIPMENT_SETS_CHANGED", fullUpdateSets)
+    required when AddonLoader is not installed
+    Baggins:RegisterEvent("PLAYER_LOGIN", updateSets)
+    required when AddonLoader is installed
+    updateSets()
+    
+    local function getEquipmentSetChoices()
+    	return equipmentSets
+    end
 end
 
 local function getSetValue(info, key)
@@ -1478,52 +1512,54 @@ local function isAnySet(info)
 	return info.arg.anyset
 end
 
-Baggins:AddCustomRule("EquipmentSet", {
-	DisplayName = L["Equipment Set"],
-	Description = L["Filter by Equipment Set"],
-	GetName = function(rule)
-			local result = ""
-			if rule.anySet then
-				return L["Any"]
-			elseif rule.sets then
-				for k in pairs(rule.sets) do
-					result = result .. " " .. k
-				end
-			end
-			return result
-		end,
-	Matches = function(bag, slot, rule)
-			local _, item = GetContainerItemInfo(bag, slot)
-			local inset, setstring = GetContainerItemEquipmentSetInfo(bag, slot)
-			if not inset then return false end
-			if rule.anyset then return true end
-			if not rule.sets then return false end
-			local sets = { (","):split(setstring) }
-			for i,v in ipairs(sets) do
-			local set = v:gsub("^ ", "")
-				if rule.sets[set] then
-					return true
-				end
-			end
-			return false
-		end,
-	Ace3Options = {
-		anyset = {
-			name = L["Any"],
-			desc = "",
-			type = 'toggle',
-		},
-		sets = {
-			name = L["Equipment Sets"],
-			desc = "",
-			type = 'multiselect',
-			values = getEquipmentSetChoices,
-			get = getSetValue,
-			set = toggleSetValue,
-			disabled = isAnySet,
-		},
-	},
-})
+if not Baggins:IsClassicWow() then
+    Baggins:AddCustomRule("EquipmentSet", {
+    	DisplayName = L["Equipment Set"],
+    	Description = L["Filter by Equipment Set"],
+    	GetName = function(rule)
+    			local result = ""
+    			if rule.anySet then
+    				return L["Any"]
+    			elseif rule.sets then
+    				for k in pairs(rule.sets) do
+    					result = result .. " " .. k
+    				end
+    			end
+    			return result
+    		end,
+    	Matches = function(bag, slot, rule)
+    			local _, item = GetContainerItemInfo(bag, slot)
+    			local inset, setstring = GetContainerItemEquipmentSetInfo(bag, slot)
+    			if not inset then return false end
+    			if rule.anyset then return true end
+    			if not rule.sets then return false end
+    			local sets = { (","):split(setstring) }
+    			for i,v in ipairs(sets) do
+    			local set = v:gsub("^ ", "")
+    				if rule.sets[set] then
+    					return true
+    				end
+    			end
+    			return false
+    		end,
+    	Ace3Options = {
+    		anyset = {
+    			name = L["Any"],
+    			desc = "",
+    			type = 'toggle',
+    		},
+    		sets = {
+    			name = L["Equipment Sets"],
+    			desc = "",
+    			type = 'multiselect',
+    			values = getEquipmentSetChoices,
+    			get = getSetValue,
+    			set = toggleSetValue,
+    			disabled = isAnySet,
+    		},
+    	},
+    })
+end
 
 local INV_TYPES = {
   INVTYPE_HEAD = INVTYPE_HEAD,

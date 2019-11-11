@@ -23,16 +23,20 @@ local format =
 local band =
       _G.bit.band
 
+if Baggins:IsClassicWow() then
+local GetItemCount, GetItemInfo, GetInventoryItemLink, GetItemQualityColor, GetItemFamily, BankButtonIDToInvSlotID, GetNumBankSlots =
+      _G.GetItemCount, _G.GetItemInfo, _G.GetInventoryItemLink, _G.GetItemQualityColor, _G.GetItemFamily, _G.BankButtonIDToInvSlotID, _G.GetNumBankSlots
+local GetContainerItemInfo, GetContainerItemLink, GetContainerNumFreeSlots, GetContainerItemCooldown =
+      _G.GetContainerItemInfo, _G.GetContainerItemLink, _G.GetContainerNumFreeSlots, _G.GetContainerItemCooldown
+end
+if not Baggins:IsClassicWow() then
 local GetItemCount, GetItemInfo, GetInventoryItemLink, GetItemQualityColor, GetItemFamily, BankButtonIDToInvSlotID, ReagentBankButtonIDToInvSlotID, GetNumBankSlots =
       _G.GetItemCount, _G.GetItemInfo, _G.GetInventoryItemLink, _G.GetItemQualityColor, _G.GetItemFamily, _G.BankButtonIDToInvSlotID, _G.ReagentBankButtonIDToInvSlotID, _G.GetNumBankSlots
 local GetContainerItemInfo, GetContainerItemLink, GetContainerItemQuestInfo, GetContainerNumFreeSlots, GetContainerItemCooldown, DepositReagentBank, IsReagentBankUnlocked =
       _G.GetContainerItemInfo, _G.GetContainerItemLink, _G.GetContainerItemQuestInfo, _G.GetContainerNumFreeSlots, _G.GetContainerItemCooldown, _G.DepositReagentBank, _G.IsReagentBankUnlocked
+end
 local C_Item, ItemLocation, InCombatLockdown, IsModifiedClick, GetDetailedItemLevelInfo, GetContainerItemID, InRepairMode, KeyRingButtonIDToInvSlotID, C_PetJournal, C_NewItems, PlaySound =
       _G.C_Item, _G.ItemLocation, _G.InCombatLockdown, _G.IsModifiedClick, _G.GetDetailedItemLevelInfo, _G.GetContainerItemID, _G.InRepairMode, _G.KeyRingButtonIDToInvSlotID, _G.C_PetJournal, _G.C_NewItems, _G.PlaySound
-
-local function new() return {} end
-local function del(t) wipe(t) end
-local rdel = del
 
 -- GLOBALS: UIParent, GameTooltip, BankFrame, CloseBankFrame, TEXTURE_ITEM_QUEST_BANG, TEXTURE_ITEM_QUEST_BORDER, REAGENTBANK_CONTAINER, REPAIR_COST, SOUNDKIT
 -- GLOBALS: CoinPickupFrame, ShowInspectCursor, this, CooldownFrame_Set, MerchantFrame, SetTooltipMoney, BagginsCategoryAddDropdown, error, CooldownFrame_SetTimer, StaticPopup_Show
@@ -45,7 +49,9 @@ local rdel = del
 -- Bank tab locals, for auto reagent deposit
 local BankFrame_ShowPanel = BankFrame_ShowPanel
 local BANK_TAB = BANK_PANELS[1].name
-local REAGENT_BANK_TAB = BANK_PANELS[2].name
+if not Baggins:IsClassicWow() then
+    local REAGENT_BANK_TAB = BANK_PANELS[2].name
+end
 
 Baggins.hasIcon = "Interface\\Icons\\INV_Jewelry_Ring_03"
 Baggins.cannotDetachTooltip = true
@@ -92,8 +98,15 @@ local currentbag
 local currentsection
 local currentcategory
 
-local catsorttable = {}
 Baggins.itemcounts = {}
+
+function Baggins:IsClassicWow()
+	local gameVersion = GetBuildInfo()
+	if (gameVersion:match ("%d") == "1") then
+		return true
+	end
+	return false
+end
 
 local timers = {}
 function Baggins:ScheduleNamedTimer(name, callback, delay, arg)
@@ -260,8 +273,14 @@ do
 	local buttonPool = {}
 
 	local function createItemButton()
+        if Baggins:IsClassicWow() then
+		local frame = CreateFrame("Button","BagginsPooledItemButton"..buttonCount,nil,"ContainerFrameItemButtonTemplate")
+                frame.GetItemContextMatchResult = nil
+        end
+        if not Baggins:IsClassicWow() then
 		local frame = CreateFrame("ItemButton","BagginsPooledItemButton"..buttonCount,nil,"ContainerFrameItemButtonTemplate")
                 frame.GetItemContextMatchResult = nil
+        end
 		buttonCount = buttonCount + 1
 		if InCombatLockdown() then
 			print("Baggins: WARNING: item-frame will be tainted")
@@ -394,16 +413,22 @@ function Baggins:OnEnable()
 	self:RegisterEvent("QUEST_ACCEPTED", "UpdateItemButtons")
 	self:RegisterEvent("UNIT_QUEST_LOG_CHANGED", "UpdateItemButtons")
 	self:RegisterEvent("PLAYERBANKSLOTS_CHANGED", "OnBankChanged")
-	self:RegisterEvent("PLAYERREAGENTBANKSLOTS_CHANGED", "OnReagentBankChanged")
-	self:RegisterEvent("REAGENTBANK_PURCHASED", "OnReagentBankPurchased")
+    if not Baggins:IsClassicWow() then
+        self:RegisterEvent("PLAYERREAGENTBANKSLOTS_CHANGED", "OnReagentBankChanged")
+	    self:RegisterEvent("REAGENTBANK_PURCHASED", "OnReagentBankChanged")
+    end
 	self:RegisterEvent("PLAYERBANKBAGSLOTS_CHANGED", "OnBankSlotPurchased")
 	self:RegisterEvent("BANKFRAME_CLOSED", "OnBankClosed")
 	self:RegisterEvent("BANKFRAME_OPENED", "OnBankOpened")
 	self:RegisterEvent("PLAYER_MONEY", "UpdateMoneyFrame")
 	self:RegisterEvent('AUCTION_HOUSE_SHOW', "AuctionHouse")
 	self:RegisterEvent('AUCTION_HOUSE_CLOSED', "CloseAllBags")
-	self:RegisterEvent('SCRAPPING_MACHINE_SHOW', "OpenAllBags")
-	self:RegisterEvent('SCRAPPING_MACHINE_CLOSE', "CloseAllBags")
+
+	-- Patch 8.0.1 Added
+    if not Baggins:IsClassicWow() then
+	    self:RegisterEvent('SCRAPPING_MACHINE_SHOW', "OpenAllBags")
+	    self:RegisterEvent('SCRAPPING_MACHINE_CLOSE', "CloseAllBags")
+    end
 	self:RegisterBucketEvent('ADDON_LOADED', 5,'OnAddonLoaded')
 
 	self:RegisterSignal('CategoryMatchAdded', self.CategoryMatchAdded, self)
@@ -530,14 +555,17 @@ function Baggins:SaveItemCounts()
 			end
 		end
 	end
-	for bag,slot,link in LBU:Iterate("REAGENTBANK") do
-		if link then
-			local id = tonumber(link:match("item:(%d+)"))
-			if id and not itemcounts[id] then
-				itemcounts[id] = { count = GetItemCount(id), ts = time() }
-			end
-		end
-	end
+    if not Baggins:IsClassicWow() then
+        for bag,slot,link in LBU:Iterate("REAGENTBANK") do
+	    	if link then
+	    		local id = tonumber(link:match("item:(%d+)"))
+	    		if id and not itemcounts[id] then
+	    			itemcounts[id] = { count = GetItemCount(id), ts = time() }
+	    		end
+	    	end
+	    end
+    end
+
 	for slot = 0, INVSLOT_LAST_EQUIPPED do	-- 0--19
 		local link = GetInventoryItemLink("player",slot)
 		if link then

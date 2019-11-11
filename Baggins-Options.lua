@@ -311,600 +311,1190 @@ end
 local function getCompressAll()
 	return Baggins.db.profile.compressall
 end
+if Baggins:IsClassicWow() then
+    function Baggins:RebuildOptions()
+    	local p = self.db.profile
+    	if not self.opts then
+    		self.opts = {
+    			icon = "Interface\\Icons\\INV_Jewelry_Ring_03",
+    			type = 'group',
+    			handler = self,
+    			args = {},
+    		}
+    	else
+    		wipe(self.opts.args)
+    	end
+    	self.opts.args = {
+    		Refresh = {
+    			name = L["Force Full Refresh"],
+    			type = "execute",
+    			order = 3,
+    			desc = L["Forces a Full Refresh of item sorting"],
+    			func = refresh,
+    		},
+    		BagCatEdit = {
+    			name = L["Bag/Category Config"],
+    			type = "execute",
+    			order = 2,
+    			desc = L["Opens the Waterfall Config window"],
+    			func = "OpenEditConfig",
+    		},
+    		Items = {
+    			name = L["Items"],
+    			type = 'group',
+    			order = 120,
+    			desc = L["Item display settings"],
+    			args = {
+    				Compress = {
+    					name = L["Compress"],
+    					desc = L["Compress Multiple stacks into one item button"],
+    					type = "group",
+    					order = 10,
+    					disabled = compressDisabled,
+    					args = {
+    						compressall = {
+    							name = L["Compress All"],
+    							type = "toggle",
+    							desc = L["Show all items as a single button with a count on it"],
+    							order = 10,
+    							get = getCompressAll,
+    							set = function(info, value)
+    								p.compressall = value
+    								self:RebuildSectionLayouts()
+    								self:UpdateBags()
+    							end,
+    						},
+    						CompressStackable = {
+    							name = L["Compress Stackable Items"],
+    							type = "toggle",
+    							desc = L["Show stackable items as a single button with a count on it"],
+    							order = 20,
+    							disabled = getCompressAll,
+    							get = function() return p.compressstackable or p.compressall end,
+    							set = function(info, value)
+    								p.compressstackable = value
+    								self:RebuildSectionLayouts()
+    								self:UpdateBags()
+    							end,
+    						},
+    						CompressEmptySlots = {
+    							name = L["Compress Empty Slots"],
+    							type = "toggle",
+    							desc = L["Show all empty slots as a single button with a count on it"],
+    							order = 100,
+    							disabled = getCompressAll,
+    							get = function() return p.compressempty or p.compressall end,
+    							set = function(info, value)
+    								p.compressempty = value
+    								self:RebuildSectionLayouts()
+    								self:UpdateBags()
+    							end,
+    						},
+    					}
+    				},
+    				QualityColor = {
+    					name = L["Quality Colors"],
+    					desc = L["Color item buttons based on the quality of the item"],
+    					type = "group",
+    					order = 15,
+    					args = {
+    						Enable = {
+    							name = L["Enable"],
+    							type = "toggle",
+    							desc = L["Enable quality coloring"],
+    							order = 10,
+    							get = function() return p.qualitycolor end,
+    							set = function(info, value)
+    								p.qualitycolor = value
+    								self:UpdateItemButtons()
+    							end,
+    						},
+    						Threshold = {
+    							name = L["Color Threshold"],
+    							type = 'select',
+    							desc = L["Only color items of this quality or above"],
+    							order = 15,
+    
+    							get = function() return ("%d"):format(p.qualitycolormin) end,
+    							set = function(info, value)
+    								p.qualitycolormin = tonumber(value)
+    								self:UpdateItemButtons()
+    							end,
+    							disabled = function() return not p.qualitycolor end,
+    							values = {
+    								["0"] = ('|c%s%s'):format(select(4,GetItemQualityColor(0)), ITEM_QUALITY0_DESC),
+    								["1"] = ('|c%s%s'):format(select(4,GetItemQualityColor(1)), ITEM_QUALITY1_DESC),
+    								["2"] = ('|c%s%s'):format(select(4,GetItemQualityColor(2)), ITEM_QUALITY2_DESC),
+    								["3"] = ('|c%s%s'):format(select(4,GetItemQualityColor(3)), ITEM_QUALITY3_DESC),
+    								["4"] = ('|c%s%s'):format(select(4,GetItemQualityColor(4)), ITEM_QUALITY4_DESC),
+    								["5"] = ('|c%s%s'):format(select(4,GetItemQualityColor(5)), ITEM_QUALITY5_DESC),
+    								["6"] = ('|c%s%s'):format(select(4,GetItemQualityColor(6)), ITEM_QUALITY6_DESC),
+    							}
+    						},
+    						Intensity = {
+    							name = L["Color Intensity"],
+    							type = "range",
+    							desc = L["Intensity of the quality coloring"],
+    							order = 20,
+    							max = 1,
+    							min = 0.1,
+    							step = 0.1,
+    							get = function() return p.qualitycolorintensity end,
+    							set = function(info, value)
+    								p.qualitycolorintensity = value
+    								self:UpdateItemButtons()
+    							end,
+    							disabled = function() return not p.qualitycolor end,
+    						},
+    					}
+    				},
+    				QuestItems = {
+    					name = L["Highlight quest items"],
+    					type = "toggle",
+    					desc = L["Displays a special border around quest items and a exclamation mark over items that starts new quests."],
+    					order = 17,
+    					get = function() return p.highlightquestitems end,
+    					set = function(info, value)
+    						p.highlightquestitems = value
+    						self:UpdateItemButtons()
+    					end,
+    				},
+    				HideDuplicates = {
+    					name = L["Hide Duplicate Items"],
+    					type = 'select',
+    					desc = L["Prevents items from appearing in more than one section/bag."],
+    					order = 20,
+    					get = function() return p.hideduplicates end,
+    					set = function(info, value)
+    						p.hideduplicates = value
+    						self:ResortSections()
+    						self:UpdateBags()
+    					end,
+    					values = dbl({ 'global', 'bag', 'disabled' }),
+    				},
+    				AlwaysReSort = {
+    					name = L["Always Resort"],
+    					type = "toggle",
+    					desc = L["Keeps Items sorted always, this will cause items to jump around when selling etc."],
+    					order = 22,
+    					get = function() return p.alwaysresort end,
+    					set = function(info, value)
+    						p.alwaysresort = value
+    					end
+    				},
+    				HighlightNew = {
+    					name = L["Highlight New Items"],
+    					type = "toggle",
+    					desc = L["Add *New* to new items, *+++* to items that you have gained more of."],
+    					order = 30,
+    					get = function() return p.highlightnew end,
+    					set = function(info, value)
+    						p.highlightnew = value
+    						self:UpdateItemButtons()
+    					end
+    				},
+    				ResetNew = {
+    					name = L["Reset New Items"],
+    					type = "execute",
+    					desc = L["Resets the new items highlights."],
+    					order = 35,
+    					func = function()
+    						self:SaveItemCounts()
+    						self:ForceFullUpdate()
+    					end,
+    					disabled = function() return not p.highlightnew end,
+    				},
+    			}
+    		},
+    		General = {
+    			name = L["General"],
+    			type = 'group',
+    			order = 1,
+    			desc = L["Display and Overrides"],
+    			args = {
+    				Display = {
+    					type = 'header',
+    					order = 1,
+    					name = L["Display"],
+    				},
+    				minimap = {
+    					name = L["Minimap icon"],
+    					type = 'toggle',
+    					order = 100,
+    					desc = L["Show an icon at the minimap if no Broker-Display is present."],
+    					get = function() return not Baggins.db.profile.minimap.hide end,
+    					set = function(info, value)
+    							Baggins.db.profile.minimap.hide = not value
+    							if value then
+    								dbIcon:Show("Baggins")
+    							else
+    								dbIcon:Hide("Baggins")
+    							end
+    						end
+    				},
+    				Skin = {
+    					name = L["Bag Skin"],
+    					type = 'select',
+    					desc = L["Select bag skin"],
+    					order = 300,
+    					get = function() return p.skin end,
+    					set = function(info, value)
+    							Baggins:ApplySkin(value)
+    						end,
+    					values = function() return dbl(CopyTable(self:GetSkinList())) end,
+    				},
+    				HideDefaultBank = {
+    					name = L["Hide Default Bank"],
+    					type = "toggle",
+    					desc = L["Hide the default bank window."],
+    					order = 200,
+    					get = function() return p.hidedefaultbank end,
+    					set = function(info, value) p.hidedefaultbank = value end,
+    				},
+    				NewItemDuration = {
+    					name = L["New Item Duration"],
+    					type = "range",
+    					desc = L["Controls how long (in minutes) an item will be considered new. 0 disables the time limit."],
+    					min = 0,
+    					max = 15,
+    					step = 1,
+    					bigStep = 1,
+    					order = 340,
+    					get = function() return p.newitemduration / 60 end,
+    					set = function(info, val) p.newitemduration = val * 60 end,
+    				},
+    				Overrides = {
+    					type = 'header',
+    					order = 500,
+    					name = L["Overrides"],
+    				},
+    				OverrideBags = {
+    					name = L["Override Default Bags"],
+    					type = "toggle",
+    					desc = L["Baggins will open instead of the default bags"],
+    					order = 600,
+    					get = function() return p.overridedefaultbags end,
+    					set = function(info, value) p.overridedefaultbags = value self:UpdateBagHooks() end,
+    				},
+    				OverrideBackpack = {
+    					name = L["Override Backpack Button"],
+    					type = "toggle",
+    					desc = L["Baggins will open when clicking the backpack. Holding alt will open the default backpack."],
+    					order = 700,
+    					get = function() return p.overridebackpack end,
+    					set = function(info, value) p.overridebackpack = value self:UpdateBackpackHook() end,
+    				},
+    			}
+    		},
+    		Layout = {
+    			name = L["Layout"],
+    			type = 'group',
+    			order = 125,
+    			desc = L["Appearance and layout"],
+    			args = {
+    				Bags = {
+    					type = 'header',
+    					order = 5,
+    					name = L["Bags"],
+    				},
+    				Type = {
+    					name = L["Layout Type"],
+    					type = 'select',
+    					order = 10,
+    					desc = L["Sets how all bags are laid out on screen."],
+    					get = function() return p.layout end,
+    					set = function(info, value) p.layout = value self:UpdateLayout() end,
+    					values = dbl({ "auto", "manual" }),
+    				},
+    				LayoutAnchor = {
+    					name = L["Layout Anchor"],
+    					type = 'select',
+    					order = 15,
+    					desc = L["Sets which corner of the layout bounds the bags will be anchored to."],
+    					get = function() return p.layoutanchor end,
+    					set = function(info, value) p.layoutanchor =  value self:LayoutBagFrames() end,
+    					values = { TOPRIGHT = L["Top Right"],
+    								TOPLEFT = L["Top Left"],
+    								BOTTOMRIGHT = L["Bottom Right"],
+    								BOTTOMLEFT = L["Bottom Left"] },
+    					disabled = function() return p.layout ~= 'auto' end,
+    				},
+    				SetLayoutBounds = {
+    					name = L["Set Layout Bounds"],
+    					type = "execute",
+    					order = 20,
+    					desc = L["Shows a frame you can drag and size to set where the bags will be placed when Layout is automatic"],
+    					func = function() self:ShowPlacementFrame() end,
+    					disabled = function() return p.layout ~= 'auto' end,
+    				},
+    				Lock = {
+    					name = L["Lock"],
+    					type = "toggle",
+    					desc = L["Locks the bag frames making them unmovable"],
+    					order = 30,
+    					get = function() return p.lock or p.layout == "auto" end,
+    					set = function(info, value) p.lock = value end,
+    					disabled = function() return p.layout == "auto" end,
+    				},
+    				OpenAtAuction = {
+    					name = L["Automatically open at auction house"],
+    					type = "toggle",
+    					desc = L["Automatically open at auction house"],
+    					order = 35,
+    					get = function() return p.openatauction end,
+    					set = function(info, value) p.openatauction = value end,
+    				},
+    				ShrinkWidth = {
+    					name = L["Shrink Width"],
+    					type = "toggle",
+    					desc = L["Shrink the bag's width to fit the items contained in them"],
+    					order = 40,
+    					get = function() return p.shrinkwidth end,
+    					set = function(info, value)
+    						p.shrinkwidth = value
+    						self:UpdateBags()
+    					end,
+    				},
+    				ShrinkTitle = {
+    					name = L["Shrink bag title"],
+    					type = "toggle",
+    					desc = L["Mangle bag title to fit to content width"],
+    					order = 50,
+    					get = function() return p.shrinkbagtitle end,
+    					set = function(info, value)
+    						p.shrinkbagtitle = value
+    						self:UpdateBags()
+    					end,
+    				},
+    				Scale = {
+    					name = L["Scale"],
+    					type = "range",
+    					desc = L["Scale of the bag frames"],
+    					order = 60,
+    					max = 2,
+    					min = 0.3,
+    					step = 0.1,
+    					get = function() return p.scale end,
+    					set = function(info, value)
+    						p.scale = value
+    						self:UpdateBagScale()
+    						self:UpdateLayout()
+    					end,
+    				},
+    				ShowMoney = {
+    					name = L["Show Money On Bag"],
+    					type = 'select',
+    					desc = L["Which Bag to Show Money On"],
+    					order = 63,
+    					arg = true,
+    					get = function() return p.moneybag < 0 and "None" or tostring(p.moneybag) end,
+    					set = function(info, value) p.moneybag = tonumber(value) or -1 self:UpdateBags() end,
+    					values = "GetMoneyBagChoices",
+    				},
+    				ShowBankControls = {
+    					name = L["Show Bank Controls On Bag"],
+    					type = 'select',
+    					desc = L["Which Bag to Show Bank Controls On"],
+    					order = 64,
+    					arg = true,
+    					get = function() return p.bankcontrolbag < 0 and "None" or tostring(p.bankcontrolbag) end,
+    					set = function(info, value) p.bankcontrolbag = tonumber(value) or -1 self:UpdateBags() end,
+    					values = "GetBankControlsBagChoices",
+    				},
+    				DisableBagRightClick = {
+    					name = L["Disable Bag Menu"],
+    					type = "toggle",
+    					desc = L["Disables the menu that pops up when right clicking on bags."],
+    					order = 65,
+    					get = function() return p.disablebagmenu end,
+    					set = function(info, value)
+    						p.disablebagmenu = value
+    					end,
+    				},
+    				Sections = {
+    					type = 'header',
+    					order = 69,
+    					name = L["Sections"],
+    				},
+    				SectionLayout = { -- TODO: Select for layout type?
+    					name = L["Layout Type"],
+    					type = "select",
+    					desc = '',
+    					order = 70,
+    					get = function() return p.section_layout end,
+    					set = function(info, value)
+    						p.section_layout = value
+    						self:UpdateBags()
+    					end,
+    					values = {
+    						default = "Default", -- TODO: Localize
+    						optimize = L["Optimize Section Layout"],
+    						flow = "Flow sections", -- TODO: Localize
+    					}
+    				},
+    				SectionTitle = {
+    					name = L["Show Section Title"],
+    					type = "toggle",
+    					desc = L["Show a title on each section of the bags"],
+    					order = 80,
+    					get = function() return p.showsectiontitle end,
+    					set = function(info, value)
+    						p.showsectiontitle = value
+    						self:UpdateBags()
+    					end
+    				},
+    				HideEmptySections = {
+    					name = L["Hide Empty Sections"],
+    					type = "toggle",
+    					desc = L["Hide sections that have no items in them."],
+    					order = 90,
+    					get = function() return p.hideemptysections end,
+    					set = function(info, value)
+    						p.hideemptysections = value
+    						self:UpdateBags()
+    					end
+    				},
+    				HideEmptyBags = {
+    					name = L["Hide Empty Bags"],
+    					type = "toggle",
+    					desc = L["Hide bags that have no items in them."],
+    					order = 90,
+    					get = function() return p.hideemptybags end,
+    					set = function(info, value)
+    						p.hideemptybags = value
+    						self:UpdateBags()
+    					end
+    				},
+    				Sort = {
+    					name = L["Sort"],
+    					type = 'select',
+    					desc = L["How items are sorted"],
+    					order = 100,
+    					get = function() return p.sort end,
+    					set = function(info, value) p.sort = value self:UpdateBags() end,
+    					values = dbl({'quality', 'name', 'type', 'slot', 'ilvl' }),
+    				},
+    				SortNewFirst = {
+    					name = L["Sort New First"],
+    					type = "toggle",
+    					desc = L["Sorts New Items to the beginning of sections"],
+    					order = 105,
+    					get = function() return p.sortnewfirst end,
+    					set = function(info, value) p.sortnewfirst = value end,
+    				},
+    				Columns = {
+    					name = L["Columns"],
+    					type = "range",
+    					desc = L["Number of Columns shown in the bag frames"],
+    					order = 110,
+    					get = function() return p.columns end,
+    					set = function(info, value) p.columns = value self:UpdateBags() end,
+    					min = 2,
+    					max = 20,
+    					step = 1,
+    				},
+    			}
+    		},
+    		FubarText = {
+    			name = L["FuBar Text"],
+    			type = "group",
+    			desc = L["Options for the text shown on fubar"],
+    			order = 130,
+    			args = {
+    				ShowEmpty = {
+    					name = L["Show empty bag slots"],
+    					type = "toggle",
+    					order = 10,
+    					desc = L["Show empty bag slots"],
+    					get = function() return p.showempty end,
+    					set = function(info, value)
+    						p.showempty = value
+    						self:UpdateText()
+    					end,
+    				},
+    				ShowUsed = {
+    					name = L["Show used bag slots"],
+    					type = "toggle",
+    					order = 20,
+    					desc = L["Show used bag slots"],
+    					get = function() return p.showused end,
+    					set = function(info, value)
+    						p.showused = value
+    						self:UpdateText()
+    					end,
+    				},
+    				ShowTotal = {
+    					name = L["Show Total bag slots"],
+    					type = "toggle",
+    					order = 30,
+    					desc = L["Show Total bag slots"],
+    					get = function() return p.showtotal end,
+    					set = function(info, value)
+    						p.showtotal = value
+    						self:UpdateText()
+    					end,
+    				},
+    				ShowSpecialty = {
+    					name = L["Show Specialty Bags Count"],
+    					type = "toggle",
+    					order = 60,
+    					desc = L["Show Specialty (profession etc) Bags Count"],
+    					get = function() return p.showspecialcount end,
+    					set = function(info, value)
+    						p.showspecialcount = value
+    						self:UpdateText()
+    					end,
+    				},
+    				Combine = {
+    					name = L["Combine Counts"],
+    					type = "toggle",
+    					order = 99,
+    					desc = L["Show only one count with all the seclected types included"],
+    					get = function() return p.combinecounts end,
+    					set = function(info, value)
+    						p.combinecounts = value
+    						self:UpdateText()
+    					end,
+    				},
+    			},
+    		},
+    	}
+    
+    	self.opts.args.profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)
+    	self.opts.args.presets = {
+    		type = 'group',
+    		name = L["Presets"],
+    		desc = "",
+    		args = {
+    			message1 = {
+    				order = 1,
+    				type = "description",
+    				name = L["You can use the preset defaults as a starting point for setting up your interface."]
+    			},
+    			message2 = {
+    				order = 2,
+    				type = "description",
+    				name = L["|cffff0000WARNING|cffffffff: Pressing the button will reset your complete profile! If you're not sure about this, create a new profile and use that to experiment."],
+    			},
+    			template = {
+    				type = 'select',
+    				name = L["Presets"],
+    				desc = "",
+    				get = function() return Baggins.db.global.template end,
+    				set = function(info, value) Baggins.db.global.template = value end,
+    				values = templateChoices,
+    				order = 5,
+    			},
+    			empty = {
+    				type = 'description',
+    				name = "",
+    			},
+    			reset = {
+    				type = 'execute',
+    				name = L["Reset Profile"],
+    				desc = "",
+    				func = function() Baggins.db:ResetProfile() end,
+    			},
+    		},
+    	}
+    end
+end
 
-function Baggins:RebuildOptions()
-	local p = self.db.profile
-	if not self.opts then
-		self.opts = {
-			icon = "Interface\\Icons\\INV_Jewelry_Ring_03",
-			type = 'group',
-			handler = self,
-			args = {},
-		}
-	else
-		wipe(self.opts.args)
-	end
-	self.opts.args = {
-		Refresh = {
-			name = L["Force Full Refresh"],
-			type = "execute",
-			order = 3,
-			desc = L["Forces a Full Refresh of item sorting"],
-			func = refresh,
-		},
-		BagCatEdit = {
-			name = L["Bag/Category Config"],
-			type = "execute",
-			order = 2,
-			desc = L["Opens the Waterfall Config window"],
-			func = "OpenEditConfig",
-		},
-		Items = {
-			name = L["Items"],
-			type = 'group',
-			order = 120,
-			desc = L["Item display settings"],
-			args = {
-				Compress = {
-					name = L["Compress"],
-					desc = L["Compress Multiple stacks into one item button"],
-					type = "group",
-					order = 10,
-					disabled = compressDisabled,
-					args = {
-						compressall = {
-							name = L["Compress All"],
-							type = "toggle",
-							desc = L["Show all items as a single button with a count on it"],
-							order = 10,
-							get = getCompressAll,
-							set = function(info, value)
-								p.compressall = value
-								self:RebuildSectionLayouts()
-								self:UpdateBags()
-							end,
-						},
-						CompressStackable = {
-							name = L["Compress Stackable Items"],
-							type = "toggle",
-							desc = L["Show stackable items as a single button with a count on it"],
-							order = 20,
-							disabled = getCompressAll,
-							get = function() return p.compressstackable or p.compressall end,
-							set = function(info, value)
-								p.compressstackable = value
-								self:RebuildSectionLayouts()
-								self:UpdateBags()
-							end,
-						},
-						CompressEmptySlots = {
-							name = L["Compress Empty Slots"],
-							type = "toggle",
-							desc = L["Show all empty slots as a single button with a count on it"],
-							order = 100,
-							disabled = getCompressAll,
-							get = function() return p.compressempty or p.compressall end,
-							set = function(info, value)
-								p.compressempty = value
-								self:RebuildSectionLayouts()
-								self:UpdateBags()
-							end,
-						},
-					}
-				},
-				QualityColor = {
-					name = L["Quality Colors"],
-					desc = L["Color item buttons based on the quality of the item"],
-					type = "group",
-					order = 15,
-					args = {
-						Enable = {
-							name = L["Enable"],
-							type = "toggle",
-							desc = L["Enable quality coloring"],
-							order = 10,
-							get = function() return p.qualitycolor end,
-							set = function(info, value)
-								p.qualitycolor = value
-								self:UpdateItemButtons()
-							end,
-						},
-						Threshold = {
-							name = L["Color Threshold"],
-							type = 'select',
-							desc = L["Only color items of this quality or above"],
-							order = 15,
-
-							get = function() return ("%d"):format(p.qualitycolormin) end,
-							set = function(info, value)
-								p.qualitycolormin = tonumber(value)
-								self:UpdateItemButtons()
-							end,
-							disabled = function() return not p.qualitycolor end,
-							values = {
-								["0"] = ('|c%s%s'):format(select(4,GetItemQualityColor(0)), ITEM_QUALITY0_DESC),
-								["1"] = ('|c%s%s'):format(select(4,GetItemQualityColor(1)), ITEM_QUALITY1_DESC),
-								["2"] = ('|c%s%s'):format(select(4,GetItemQualityColor(2)), ITEM_QUALITY2_DESC),
-								["3"] = ('|c%s%s'):format(select(4,GetItemQualityColor(3)), ITEM_QUALITY3_DESC),
-								["4"] = ('|c%s%s'):format(select(4,GetItemQualityColor(4)), ITEM_QUALITY4_DESC),
-								["5"] = ('|c%s%s'):format(select(4,GetItemQualityColor(5)), ITEM_QUALITY5_DESC),
-								["6"] = ('|c%s%s'):format(select(4,GetItemQualityColor(6)), ITEM_QUALITY6_DESC),
-							}
-						},
-						Intensity = {
-							name = L["Color Intensity"],
-							type = "range",
-							desc = L["Intensity of the quality coloring"],
-							order = 20,
-							max = 1,
-							min = 0.1,
-							step = 0.1,
-							get = function() return p.qualitycolorintensity end,
-							set = function(info, value)
-								p.qualitycolorintensity = value
-								self:UpdateItemButtons()
-							end,
-							disabled = function() return not p.qualitycolor end,
-						},
-					}
-				},
-				QuestItems = {
-					name = L["Highlight quest items"],
-					type = "toggle",
-					desc = L["Displays a special border around quest items and a exclamation mark over items that starts new quests."],
-					order = 17,
-					get = function() return p.highlightquestitems end,
-					set = function(info, value)
-						p.highlightquestitems = value
-						self:UpdateItemButtons()
-					end,
-				},
-				HideDuplicates = {
-					name = L["Hide Duplicate Items"],
-					type = 'select',
-					desc = L["Prevents items from appearing in more than one section/bag."],
-					order = 20,
-					get = function() return p.hideduplicates end,
-					set = function(info, value)
-						p.hideduplicates = value
-						self:ResortSections()
-						self:UpdateBags()
-					end,
-					values = dbl({ 'global', 'bag', 'disabled' }),
-				},
-				AlwaysReSort = {
-					name = L["Always Resort"],
-					type = "toggle",
-					desc = L["Keeps Items sorted always, this will cause items to jump around when selling etc."],
-					order = 22,
-					get = function() return p.alwaysresort end,
-					set = function(info, value)
-						p.alwaysresort = value
-					end
-				},
-				HighlightNew = {
-					name = L["Highlight New Items"],
-					type = "toggle",
-					desc = L["Add *New* to new items, *+++* to items that you have gained more of."],
-					order = 30,
-					get = function() return p.highlightnew end,
-					set = function(info, value)
-						p.highlightnew = value
-						self:UpdateItemButtons()
-					end
-				},
-				ResetNew = {
-					name = L["Reset New Items"],
-					type = "execute",
-					desc = L["Resets the new items highlights."],
-					order = 35,
-					func = function()
-						self:SaveItemCounts()
-						self:ForceFullUpdate()
-					end,
-					disabled = function() return not p.highlightnew end,
-				},
-			}
-		},
-		General = {
-			name = L["General"],
-			type = 'group',
-			order = 1,
-			desc = L["Display and Overrides"],
-			args = {
-				Display = {
-					type = 'header',
-					order = 1,
-					name = L["Display"],
-				},
-				minimap = {
-					name = L["Minimap icon"],
-					type = 'toggle',
-					order = 100,
-					desc = L["Show an icon at the minimap if no Broker-Display is present."],
-					get = function() return not Baggins.db.profile.minimap.hide end,
-					set = function(info, value)
-							Baggins.db.profile.minimap.hide = not value
-							if value then
-								dbIcon:Show("Baggins")
-							else
-								dbIcon:Hide("Baggins")
-							end
-						end
-				},
-				Skin = {
-					name = L["Bag Skin"],
-					type = 'select',
-					desc = L["Select bag skin"],
-					order = 300,
-					get = function() return p.skin end,
-					set = function(info, value)
-							Baggins:ApplySkin(value)
-						end,
-					values = function() return dbl(CopyTable(self:GetSkinList())) end,
-				},
-				HideDefaultBank = {
-					name = L["Hide Default Bank"],
-					type = "toggle",
-					desc = L["Hide the default bank window."],
-					order = 200,
-					get = function() return p.hidedefaultbank end,
-					set = function(info, value) p.hidedefaultbank = value end,
-				},
-				NewItemDuration = {
-					name = L["New Item Duration"],
-					type = "range",
-					desc = L["Controls how long (in minutes) an item will be considered new. 0 disables the time limit."],
-					min = 0,
-					max = 15,
-					step = 1,
-					bigStep = 1,
-					order = 340,
-					get = function() return p.newitemduration / 60 end,
-					set = function(info, val) p.newitemduration = val * 60 end,
-				},
-				Overrides = {
-					type = 'header',
-					order = 500,
-					name = L["Overrides"],
-				},
-				OverrideBags = {
-					name = L["Override Default Bags"],
-					type = "toggle",
-					desc = L["Baggins will open instead of the default bags"],
-					order = 600,
-					get = function() return p.overridedefaultbags end,
-					set = function(info, value) p.overridedefaultbags = value self:UpdateBagHooks() end,
-				},
-				OverrideBackpack = {
-					name = L["Override Backpack Button"],
-					type = "toggle",
-					desc = L["Baggins will open when clicking the backpack. Holding alt will open the default backpack."],
-					order = 700,
-					get = function() return p.overridebackpack end,
-					set = function(info, value) p.overridebackpack = value self:UpdateBackpackHook() end,
-				},
-				AutomaticReagentHandling = {
-					name = L["Reagent Deposit"],
-					type = "toggle",
-					desc = L["Automatically deposits crafting reagents into the reagent bank if available."],
-					order = 800,
-					get = function() return p.autoreagent end,
-					set = function(info, value) p.autoreagent = value end,
-				},
-			}
-		},
-		Layout = {
-			name = L["Layout"],
-			type = 'group',
-			order = 125,
-			desc = L["Appearance and layout"],
-			args = {
-				Bags = {
-					type = 'header',
-					order = 5,
-					name = L["Bags"],
-				},
-				Type = {
-					name = L["Layout Type"],
-					type = 'select',
-					order = 10,
-					desc = L["Sets how all bags are laid out on screen."],
-					get = function() return p.layout end,
-					set = function(info, value) p.layout = value self:UpdateLayout() end,
-					values = dbl({ "auto", "manual" }),
-				},
-				LayoutAnchor = {
-					name = L["Layout Anchor"],
-					type = 'select',
-					order = 15,
-					desc = L["Sets which corner of the layout bounds the bags will be anchored to."],
-					get = function() return p.layoutanchor end,
-					set = function(info, value) p.layoutanchor =  value self:LayoutBagFrames() end,
-					values = { TOPRIGHT = L["Top Right"],
-								TOPLEFT = L["Top Left"],
-								BOTTOMRIGHT = L["Bottom Right"],
-								BOTTOMLEFT = L["Bottom Left"] },
-					disabled = function() return p.layout ~= 'auto' end,
-				},
-				SetLayoutBounds = {
-					name = L["Set Layout Bounds"],
-					type = "execute",
-					order = 20,
-					desc = L["Shows a frame you can drag and size to set where the bags will be placed when Layout is automatic"],
-					func = function() self:ShowPlacementFrame() end,
-					disabled = function() return p.layout ~= 'auto' end,
-				},
-				Lock = {
-					name = L["Lock"],
-					type = "toggle",
-					desc = L["Locks the bag frames making them unmovable"],
-					order = 30,
-					get = function() return p.lock or p.layout == "auto" end,
-					set = function(info, value) p.lock = value end,
-					disabled = function() return p.layout == "auto" end,
-				},
-				OpenAtAuction = {
-					name = L["Automatically open at auction house"],
-					type = "toggle",
-					desc = L["Automatically open at auction house"],
-					order = 35,
-					get = function() return p.openatauction end,
-					set = function(info, value) p.openatauction = value end,
-				},
-				ShrinkWidth = {
-					name = L["Shrink Width"],
-					type = "toggle",
-					desc = L["Shrink the bag's width to fit the items contained in them"],
-					order = 40,
-					get = function() return p.shrinkwidth end,
-					set = function(info, value)
-						p.shrinkwidth = value
-						self:UpdateBags()
-					end,
-				},
-				ShrinkTitle = {
-					name = L["Shrink bag title"],
-					type = "toggle",
-					desc = L["Mangle bag title to fit to content width"],
-					order = 50,
-					get = function() return p.shrinkbagtitle end,
-					set = function(info, value)
-						p.shrinkbagtitle = value
-						self:UpdateBags()
-					end,
-				},
-				Scale = {
-					name = L["Scale"],
-					type = "range",
-					desc = L["Scale of the bag frames"],
-					order = 60,
-					max = 2,
-					min = 0.3,
-					step = 0.1,
-					get = function() return p.scale end,
-					set = function(info, value)
-						p.scale = value
-						self:UpdateBagScale()
-						self:UpdateLayout()
-					end,
-				},
-				ShowMoney = {
-					name = L["Show Money On Bag"],
-					type = 'select',
-					desc = L["Which Bag to Show Money On"],
-					order = 63,
-					arg = true,
-					get = function() return p.moneybag < 0 and "None" or tostring(p.moneybag) end,
-					set = function(info, value) p.moneybag = tonumber(value) or -1 self:UpdateBags() end,
-					values = "GetMoneyBagChoices",
-				},
-				ShowBankControls = {
-					name = L["Show Bank Controls On Bag"],
-					type = 'select',
-					desc = L["Which Bag to Show Bank Controls On"],
-					order = 64,
-					arg = true,
-					get = function() return p.bankcontrolbag < 0 and "None" or tostring(p.bankcontrolbag) end,
-					set = function(info, value) p.bankcontrolbag = tonumber(value) or -1 self:UpdateBags() end,
-					values = "GetBankControlsBagChoices",
-				},
-				DisableBagRightClick = {
-					name = L["Disable Bag Menu"],
-					type = "toggle",
-					desc = L["Disables the menu that pops up when right clicking on bags."],
-					order = 65,
-					get = function() return p.disablebagmenu end,
-					set = function(info, value)
-						p.disablebagmenu = value
-					end,
-				},
-				Sections = {
-					type = 'header',
-					order = 69,
-					name = L["Sections"],
-				},
-				SectionLayout = { -- TODO: Select for layout type?
-					name = L["Layout Type"],
-					type = "select",
-					desc = '',
-					order = 70,
-					get = function() return p.section_layout end,
-					set = function(info, value)
-						p.section_layout = value
-						self:UpdateBags()
-					end,
-					values = {
-						default = "Default", -- TODO: Localize
-						optimize = L["Optimize Section Layout"],
-						flow = "Flow sections", -- TODO: Localize
-					}
-				},
-				SectionTitle = {
-					name = L["Show Section Title"],
-					type = "toggle",
-					desc = L["Show a title on each section of the bags"],
-					order = 80,
-					get = function() return p.showsectiontitle end,
-					set = function(info, value)
-						p.showsectiontitle = value
-						self:UpdateBags()
-					end
-				},
-				HideEmptySections = {
-					name = L["Hide Empty Sections"],
-					type = "toggle",
-					desc = L["Hide sections that have no items in them."],
-					order = 90,
-					get = function() return p.hideemptysections end,
-					set = function(info, value)
-						p.hideemptysections = value
-						self:UpdateBags()
-					end
-				},
-				HideEmptyBags = {
-					name = L["Hide Empty Bags"],
-					type = "toggle",
-					desc = L["Hide bags that have no items in them."],
-					order = 90,
-					get = function() return p.hideemptybags end,
-					set = function(info, value)
-						p.hideemptybags = value
-						self:UpdateBags()
-					end
-				},
-				Sort = {
-					name = L["Sort"],
-					type = 'select',
-					desc = L["How items are sorted"],
-					order = 100,
-					get = function() return p.sort end,
-					set = function(info, value) p.sort = value self:UpdateBags() end,
-					values = dbl({'quality', 'name', 'type', 'slot', 'ilvl' }),
-				},
-				SortNewFirst = {
-					name = L["Sort New First"],
-					type = "toggle",
-					desc = L["Sorts New Items to the beginning of sections"],
-					order = 105,
-					get = function() return p.sortnewfirst end,
-					set = function(info, value) p.sortnewfirst = value end,
-				},
-				Columns = {
-					name = L["Columns"],
-					type = "range",
-					desc = L["Number of Columns shown in the bag frames"],
-					order = 110,
-					get = function() return p.columns end,
-					set = function(info, value) p.columns = value self:UpdateBags() end,
-					min = 2,
-					max = 20,
-					step = 1,
-				},
-			}
-		},
-		FubarText = {
-			name = L["FuBar Text"],
-			type = "group",
-			desc = L["Options for the text shown on fubar"],
-			order = 130,
-			args = {
-				ShowEmpty = {
-					name = L["Show empty bag slots"],
-					type = "toggle",
-					order = 10,
-					desc = L["Show empty bag slots"],
-					get = function() return p.showempty end,
-					set = function(info, value)
-						p.showempty = value
-						self:UpdateText()
-					end,
-				},
-				ShowUsed = {
-					name = L["Show used bag slots"],
-					type = "toggle",
-					order = 20,
-					desc = L["Show used bag slots"],
-					get = function() return p.showused end,
-					set = function(info, value)
-						p.showused = value
-						self:UpdateText()
-					end,
-				},
-				ShowTotal = {
-					name = L["Show Total bag slots"],
-					type = "toggle",
-					order = 30,
-					desc = L["Show Total bag slots"],
-					get = function() return p.showtotal end,
-					set = function(info, value)
-						p.showtotal = value
-						self:UpdateText()
-					end,
-				},
-				ShowSpecialty = {
-					name = L["Show Specialty Bags Count"],
-					type = "toggle",
-					order = 60,
-					desc = L["Show Specialty (profession etc) Bags Count"],
-					get = function() return p.showspecialcount end,
-					set = function(info, value)
-						p.showspecialcount = value
-						self:UpdateText()
-					end,
-				},
-				Combine = {
-					name = L["Combine Counts"],
-					type = "toggle",
-					order = 99,
-					desc = L["Show only one count with all the seclected types included"],
-					get = function() return p.combinecounts end,
-					set = function(info, value)
-						p.combinecounts = value
-						self:UpdateText()
-					end,
-				},
-			},
-		},
-	}
-
-	self.opts.args.profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)
-	self.opts.args.presets = {
-		type = 'group',
-		name = L["Presets"],
-		desc = "",
-		args = {
-			message1 = {
-				order = 1,
-				type = "description",
-				name = L["You can use the preset defaults as a starting point for setting up your interface."]
-			},
-			message2 = {
-				order = 2,
-				type = "description",
-				name = L["|cffff0000WARNING|cffffffff: Pressing the button will reset your complete profile! If you're not sure about this, create a new profile and use that to experiment."],
-			},
-			template = {
-				type = 'select',
-				name = L["Presets"],
-				desc = "",
-				get = function() return Baggins.db.global.template end,
-				set = function(info, value) Baggins.db.global.template = value end,
-				values = templateChoices,
-				order = 5,
-			},
-			empty = {
-				type = 'description',
-				name = "",
-			},
-			reset = {
-				type = 'execute',
-				name = L["Reset Profile"],
-				desc = "",
-				func = function() Baggins.db:ResetProfile() end,
-			},
-		},
-	}
+if not Baggins:IsClassicWow() then
+    function Baggins:RebuildOptions()
+    	local p = self.db.profile
+    	if not self.opts then
+    		self.opts = {
+    			icon = "Interface\\Icons\\INV_Jewelry_Ring_03",
+    			type = 'group',
+    			handler = self,
+    			args = {},
+    		}
+    	else
+    		wipe(self.opts.args)
+    	end
+    	self.opts.args = {
+    		Refresh = {
+    			name = L["Force Full Refresh"],
+    			type = "execute",
+    			order = 3,
+    			desc = L["Forces a Full Refresh of item sorting"],
+    			func = refresh,
+    		},
+    		BagCatEdit = {
+    			name = L["Bag/Category Config"],
+    			type = "execute",
+    			order = 2,
+    			desc = L["Opens the Waterfall Config window"],
+    			func = "OpenEditConfig",
+    		},
+    		Items = {
+    			name = L["Items"],
+    			type = 'group',
+    			order = 120,
+    			desc = L["Item display settings"],
+    			args = {
+    				Compress = {
+    					name = L["Compress"],
+    					desc = L["Compress Multiple stacks into one item button"],
+    					type = "group",
+    					order = 10,
+    					disabled = compressDisabled,
+    					args = {
+    						compressall = {
+    							name = L["Compress All"],
+    							type = "toggle",
+    							desc = L["Show all items as a single button with a count on it"],
+    							order = 10,
+    							get = getCompressAll,
+    							set = function(info, value)
+    								p.compressall = value
+    								self:RebuildSectionLayouts()
+    								self:UpdateBags()
+    							end,
+    						},
+    						CompressStackable = {
+    							name = L["Compress Stackable Items"],
+    							type = "toggle",
+    							desc = L["Show stackable items as a single button with a count on it"],
+    							order = 20,
+    							disabled = getCompressAll,
+    							get = function() return p.compressstackable or p.compressall end,
+    							set = function(info, value)
+    								p.compressstackable = value
+    								self:RebuildSectionLayouts()
+    								self:UpdateBags()
+    							end,
+    						},
+    						CompressEmptySlots = {
+    							name = L["Compress Empty Slots"],
+    							type = "toggle",
+    							desc = L["Show all empty slots as a single button with a count on it"],
+    							order = 100,
+    							disabled = getCompressAll,
+    							get = function() return p.compressempty or p.compressall end,
+    							set = function(info, value)
+    								p.compressempty = value
+    								self:RebuildSectionLayouts()
+    								self:UpdateBags()
+    							end,
+    						},
+    					}
+    				},
+    				QualityColor = {
+    					name = L["Quality Colors"],
+    					desc = L["Color item buttons based on the quality of the item"],
+    					type = "group",
+    					order = 15,
+    					args = {
+    						Enable = {
+    							name = L["Enable"],
+    							type = "toggle",
+    							desc = L["Enable quality coloring"],
+    							order = 10,
+    							get = function() return p.qualitycolor end,
+    							set = function(info, value)
+    								p.qualitycolor = value
+    								self:UpdateItemButtons()
+    							end,
+    						},
+    						Threshold = {
+    							name = L["Color Threshold"],
+    							type = 'select',
+    							desc = L["Only color items of this quality or above"],
+    							order = 15,
+    
+    							get = function() return ("%d"):format(p.qualitycolormin) end,
+    							set = function(info, value)
+    								p.qualitycolormin = tonumber(value)
+    								self:UpdateItemButtons()
+    							end,
+    							disabled = function() return not p.qualitycolor end,
+    							values = {
+    								["0"] = ('|c%s%s'):format(select(4,GetItemQualityColor(0)), ITEM_QUALITY0_DESC),
+    								["1"] = ('|c%s%s'):format(select(4,GetItemQualityColor(1)), ITEM_QUALITY1_DESC),
+    								["2"] = ('|c%s%s'):format(select(4,GetItemQualityColor(2)), ITEM_QUALITY2_DESC),
+    								["3"] = ('|c%s%s'):format(select(4,GetItemQualityColor(3)), ITEM_QUALITY3_DESC),
+    								["4"] = ('|c%s%s'):format(select(4,GetItemQualityColor(4)), ITEM_QUALITY4_DESC),
+    								["5"] = ('|c%s%s'):format(select(4,GetItemQualityColor(5)), ITEM_QUALITY5_DESC),
+    								["6"] = ('|c%s%s'):format(select(4,GetItemQualityColor(6)), ITEM_QUALITY6_DESC),
+    							}
+    						},
+    						Intensity = {
+    							name = L["Color Intensity"],
+    							type = "range",
+    							desc = L["Intensity of the quality coloring"],
+    							order = 20,
+    							max = 1,
+    							min = 0.1,
+    							step = 0.1,
+    							get = function() return p.qualitycolorintensity end,
+    							set = function(info, value)
+    								p.qualitycolorintensity = value
+    								self:UpdateItemButtons()
+    							end,
+    							disabled = function() return not p.qualitycolor end,
+    						},
+    					}
+    				},
+    				QuestItems = {
+    					name = L["Highlight quest items"],
+    					type = "toggle",
+    					desc = L["Displays a special border around quest items and a exclamation mark over items that starts new quests."],
+    					order = 17,
+    					get = function() return p.highlightquestitems end,
+    					set = function(info, value)
+    						p.highlightquestitems = value
+    						self:UpdateItemButtons()
+    					end,
+    				},
+    				HideDuplicates = {
+    					name = L["Hide Duplicate Items"],
+    					type = 'select',
+    					desc = L["Prevents items from appearing in more than one section/bag."],
+    					order = 20,
+    					get = function() return p.hideduplicates end,
+    					set = function(info, value)
+    						p.hideduplicates = value
+    						self:ResortSections()
+    						self:UpdateBags()
+    					end,
+    					values = dbl({ 'global', 'bag', 'disabled' }),
+    				},
+    				AlwaysReSort = {
+    					name = L["Always Resort"],
+    					type = "toggle",
+    					desc = L["Keeps Items sorted always, this will cause items to jump around when selling etc."],
+    					order = 22,
+    					get = function() return p.alwaysresort end,
+    					set = function(info, value)
+    						p.alwaysresort = value
+    					end
+    				},
+    				HighlightNew = {
+    					name = L["Highlight New Items"],
+    					type = "toggle",
+    					desc = L["Add *New* to new items, *+++* to items that you have gained more of."],
+    					order = 30,
+    					get = function() return p.highlightnew end,
+    					set = function(info, value)
+    						p.highlightnew = value
+    						self:UpdateItemButtons()
+    					end
+    				},
+    				ResetNew = {
+    					name = L["Reset New Items"],
+    					type = "execute",
+    					desc = L["Resets the new items highlights."],
+    					order = 35,
+    					func = function()
+    						self:SaveItemCounts()
+    						self:ForceFullUpdate()
+    					end,
+    					disabled = function() return not p.highlightnew end,
+    				},
+    			}
+    		},
+    		General = {
+    			name = L["General"],
+    			type = 'group',
+    			order = 1,
+    			desc = L["Display and Overrides"],
+    			args = {
+    				Display = {
+    					type = 'header',
+    					order = 1,
+    					name = L["Display"],
+    				},
+    				minimap = {
+    					name = L["Minimap icon"],
+    					type = 'toggle',
+    					order = 100,
+    					desc = L["Show an icon at the minimap if no Broker-Display is present."],
+    					get = function() return not Baggins.db.profile.minimap.hide end,
+    					set = function(info, value)
+    							Baggins.db.profile.minimap.hide = not value
+    							if value then
+    								dbIcon:Show("Baggins")
+    							else
+    								dbIcon:Hide("Baggins")
+    							end
+    						end
+    				},
+    				Skin = {
+    					name = L["Bag Skin"],
+    					type = 'select',
+    					desc = L["Select bag skin"],
+    					order = 300,
+    					get = function() return p.skin end,
+    					set = function(info, value)
+    							Baggins:ApplySkin(value)
+    						end,
+    					values = function() return dbl(CopyTable(self:GetSkinList())) end,
+    				},
+    				HideDefaultBank = {
+    					name = L["Hide Default Bank"],
+    					type = "toggle",
+    					desc = L["Hide the default bank window."],
+    					order = 200,
+    					get = function() return p.hidedefaultbank end,
+    					set = function(info, value) p.hidedefaultbank = value end,
+    				},
+    				NewItemDuration = {
+    					name = L["New Item Duration"],
+    					type = "range",
+    					desc = L["Controls how long (in minutes) an item will be considered new. 0 disables the time limit."],
+    					min = 0,
+    					max = 15,
+    					step = 1,
+    					bigStep = 1,
+    					order = 340,
+    					get = function() return p.newitemduration / 60 end,
+    					set = function(info, val) p.newitemduration = val * 60 end,
+    				},
+    				Overrides = {
+    					type = 'header',
+    					order = 500,
+    					name = L["Overrides"],
+    				},
+    				OverrideBags = {
+    					name = L["Override Default Bags"],
+    					type = "toggle",
+    					desc = L["Baggins will open instead of the default bags"],
+    					order = 600,
+    					get = function() return p.overridedefaultbags end,
+    					set = function(info, value) p.overridedefaultbags = value self:UpdateBagHooks() end,
+    				},
+    				OverrideBackpack = {
+    					name = L["Override Backpack Button"],
+    					type = "toggle",
+    					desc = L["Baggins will open when clicking the backpack. Holding alt will open the default backpack."],
+    					order = 700,
+    					get = function() return p.overridebackpack end,
+    					set = function(info, value) p.overridebackpack = value self:UpdateBackpackHook() end,
+    				},
+				    AutomaticReagentHandling = {
+				    	name = L["Reagent Deposit"],
+				    	type = "toggle",
+				    	desc = L["Automatically deposits crafting reagents into the reagent bank if available."],
+				    	order = 800,
+				    	get = function() return p.autoreagent end,
+				    	set = function(info, value) p.autoreagent = value end,
+				    },
+    			}
+    		},
+    		Layout = {
+    			name = L["Layout"],
+    			type = 'group',
+    			order = 125,
+    			desc = L["Appearance and layout"],
+    			args = {
+    				Bags = {
+    					type = 'header',
+    					order = 5,
+    					name = L["Bags"],
+    				},
+    				Type = {
+    					name = L["Layout Type"],
+    					type = 'select',
+    					order = 10,
+    					desc = L["Sets how all bags are laid out on screen."],
+    					get = function() return p.layout end,
+    					set = function(info, value) p.layout = value self:UpdateLayout() end,
+    					values = dbl({ "auto", "manual" }),
+    				},
+    				LayoutAnchor = {
+    					name = L["Layout Anchor"],
+    					type = 'select',
+    					order = 15,
+    					desc = L["Sets which corner of the layout bounds the bags will be anchored to."],
+    					get = function() return p.layoutanchor end,
+    					set = function(info, value) p.layoutanchor =  value self:LayoutBagFrames() end,
+    					values = { TOPRIGHT = L["Top Right"],
+    								TOPLEFT = L["Top Left"],
+    								BOTTOMRIGHT = L["Bottom Right"],
+    								BOTTOMLEFT = L["Bottom Left"] },
+    					disabled = function() return p.layout ~= 'auto' end,
+    				},
+    				SetLayoutBounds = {
+    					name = L["Set Layout Bounds"],
+    					type = "execute",
+    					order = 20,
+    					desc = L["Shows a frame you can drag and size to set where the bags will be placed when Layout is automatic"],
+    					func = function() self:ShowPlacementFrame() end,
+    					disabled = function() return p.layout ~= 'auto' end,
+    				},
+    				Lock = {
+    					name = L["Lock"],
+    					type = "toggle",
+    					desc = L["Locks the bag frames making them unmovable"],
+    					order = 30,
+    					get = function() return p.lock or p.layout == "auto" end,
+    					set = function(info, value) p.lock = value end,
+    					disabled = function() return p.layout == "auto" end,
+    				},
+    				OpenAtAuction = {
+    					name = L["Automatically open at auction house"],
+    					type = "toggle",
+    					desc = L["Automatically open at auction house"],
+    					order = 35,
+    					get = function() return p.openatauction end,
+    					set = function(info, value) p.openatauction = value end,
+    				},
+    				ShrinkWidth = {
+    					name = L["Shrink Width"],
+    					type = "toggle",
+    					desc = L["Shrink the bag's width to fit the items contained in them"],
+    					order = 40,
+    					get = function() return p.shrinkwidth end,
+    					set = function(info, value)
+    						p.shrinkwidth = value
+    						self:UpdateBags()
+    					end,
+    				},
+    				ShrinkTitle = {
+    					name = L["Shrink bag title"],
+    					type = "toggle",
+    					desc = L["Mangle bag title to fit to content width"],
+    					order = 50,
+    					get = function() return p.shrinkbagtitle end,
+    					set = function(info, value)
+    						p.shrinkbagtitle = value
+    						self:UpdateBags()
+    					end,
+    				},
+    				Scale = {
+    					name = L["Scale"],
+    					type = "range",
+    					desc = L["Scale of the bag frames"],
+    					order = 60,
+    					max = 2,
+    					min = 0.3,
+    					step = 0.1,
+    					get = function() return p.scale end,
+    					set = function(info, value)
+    						p.scale = value
+    						self:UpdateBagScale()
+    						self:UpdateLayout()
+    					end,
+    				},
+    				ShowMoney = {
+    					name = L["Show Money On Bag"],
+    					type = 'select',
+    					desc = L["Which Bag to Show Money On"],
+    					order = 63,
+    					arg = true,
+    					get = function() return p.moneybag < 0 and "None" or tostring(p.moneybag) end,
+    					set = function(info, value) p.moneybag = tonumber(value) or -1 self:UpdateBags() end,
+    					values = "GetMoneyBagChoices",
+    				},
+    				ShowBankControls = {
+    					name = L["Show Bank Controls On Bag"],
+    					type = 'select',
+    					desc = L["Which Bag to Show Bank Controls On"],
+    					order = 64,
+    					arg = true,
+    					get = function() return p.bankcontrolbag < 0 and "None" or tostring(p.bankcontrolbag) end,
+    					set = function(info, value) p.bankcontrolbag = tonumber(value) or -1 self:UpdateBags() end,
+    					values = "GetBankControlsBagChoices",
+    				},
+    				DisableBagRightClick = {
+    					name = L["Disable Bag Menu"],
+    					type = "toggle",
+    					desc = L["Disables the menu that pops up when right clicking on bags."],
+    					order = 65,
+    					get = function() return p.disablebagmenu end,
+    					set = function(info, value)
+    						p.disablebagmenu = value
+    					end,
+    				},
+    				Sections = {
+    					type = 'header',
+    					order = 69,
+    					name = L["Sections"],
+    				},
+    				SectionLayout = { -- TODO: Select for layout type?
+    					name = L["Layout Type"],
+    					type = "select",
+    					desc = '',
+    					order = 70,
+    					get = function() return p.section_layout end,
+    					set = function(info, value)
+    						p.section_layout = value
+    						self:UpdateBags()
+    					end,
+    					values = {
+    						default = "Default", -- TODO: Localize
+    						optimize = L["Optimize Section Layout"],
+    						flow = "Flow sections", -- TODO: Localize
+    					}
+    				},
+    				SectionTitle = {
+    					name = L["Show Section Title"],
+    					type = "toggle",
+    					desc = L["Show a title on each section of the bags"],
+    					order = 80,
+    					get = function() return p.showsectiontitle end,
+    					set = function(info, value)
+    						p.showsectiontitle = value
+    						self:UpdateBags()
+    					end
+    				},
+    				HideEmptySections = {
+    					name = L["Hide Empty Sections"],
+    					type = "toggle",
+    					desc = L["Hide sections that have no items in them."],
+    					order = 90,
+    					get = function() return p.hideemptysections end,
+    					set = function(info, value)
+    						p.hideemptysections = value
+    						self:UpdateBags()
+    					end
+    				},
+    				HideEmptyBags = {
+    					name = L["Hide Empty Bags"],
+    					type = "toggle",
+    					desc = L["Hide bags that have no items in them."],
+    					order = 90,
+    					get = function() return p.hideemptybags end,
+    					set = function(info, value)
+    						p.hideemptybags = value
+    						self:UpdateBags()
+    					end
+    				},
+    				Sort = {
+    					name = L["Sort"],
+    					type = 'select',
+    					desc = L["How items are sorted"],
+    					order = 100,
+    					get = function() return p.sort end,
+    					set = function(info, value) p.sort = value self:UpdateBags() end,
+    					values = dbl({'quality', 'name', 'type', 'slot', 'ilvl' }),
+    				},
+    				SortNewFirst = {
+    					name = L["Sort New First"],
+    					type = "toggle",
+    					desc = L["Sorts New Items to the beginning of sections"],
+    					order = 105,
+    					get = function() return p.sortnewfirst end,
+    					set = function(info, value) p.sortnewfirst = value end,
+    				},
+    				Columns = {
+    					name = L["Columns"],
+    					type = "range",
+    					desc = L["Number of Columns shown in the bag frames"],
+    					order = 110,
+    					get = function() return p.columns end,
+    					set = function(info, value) p.columns = value self:UpdateBags() end,
+    					min = 2,
+    					max = 20,
+    					step = 1,
+    				},
+    			}
+    		},
+    		FubarText = {
+    			name = L["FuBar Text"],
+    			type = "group",
+    			desc = L["Options for the text shown on fubar"],
+    			order = 130,
+    			args = {
+    				ShowEmpty = {
+    					name = L["Show empty bag slots"],
+    					type = "toggle",
+    					order = 10,
+    					desc = L["Show empty bag slots"],
+    					get = function() return p.showempty end,
+    					set = function(info, value)
+    						p.showempty = value
+    						self:UpdateText()
+    					end,
+    				},
+    				ShowUsed = {
+    					name = L["Show used bag slots"],
+    					type = "toggle",
+    					order = 20,
+    					desc = L["Show used bag slots"],
+    					get = function() return p.showused end,
+    					set = function(info, value)
+    						p.showused = value
+    						self:UpdateText()
+    					end,
+    				},
+    				ShowTotal = {
+    					name = L["Show Total bag slots"],
+    					type = "toggle",
+    					order = 30,
+    					desc = L["Show Total bag slots"],
+    					get = function() return p.showtotal end,
+    					set = function(info, value)
+    						p.showtotal = value
+    						self:UpdateText()
+    					end,
+    				},
+    				ShowSpecialty = {
+    					name = L["Show Specialty Bags Count"],
+    					type = "toggle",
+    					order = 60,
+    					desc = L["Show Specialty (profession etc) Bags Count"],
+    					get = function() return p.showspecialcount end,
+    					set = function(info, value)
+    						p.showspecialcount = value
+    						self:UpdateText()
+    					end,
+    				},
+    				Combine = {
+    					name = L["Combine Counts"],
+    					type = "toggle",
+    					order = 99,
+    					desc = L["Show only one count with all the seclected types included"],
+    					get = function() return p.combinecounts end,
+    					set = function(info, value)
+    						p.combinecounts = value
+    						self:UpdateText()
+    					end,
+    				},
+    			},
+    		},
+    	}
+    
+    	self.opts.args.profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)
+    	self.opts.args.presets = {
+    		type = 'group',
+    		name = L["Presets"],
+    		desc = "",
+    		args = {
+    			message1 = {
+    				order = 1,
+    				type = "description",
+    				name = L["You can use the preset defaults as a starting point for setting up your interface."]
+    			},
+    			message2 = {
+    				order = 2,
+    				type = "description",
+    				name = L["|cffff0000WARNING|cffffffff: Pressing the button will reset your complete profile! If you're not sure about this, create a new profile and use that to experiment."],
+    			},
+    			template = {
+    				type = 'select',
+    				name = L["Presets"],
+    				desc = "",
+    				get = function() return Baggins.db.global.template end,
+    				set = function(info, value) Baggins.db.global.template = value end,
+    				values = templateChoices,
+    				order = 5,
+    			},
+    			empty = {
+    				type = 'description',
+    				name = "",
+    			},
+    			reset = {
+    				type = 'execute',
+    				name = L["Reset Profile"],
+    				desc = "",
+    				func = function() Baggins.db:ResetProfile() end,
+    			},
+    		},
+    	}
+    end
 end
 
 local oldskin
@@ -923,6 +1513,7 @@ function Baggins:InitOptions()
 	oldskin = self.db.profile.skin
 end
 
+if Baggins:IsClassicWow() then
 local itemTypeReverse = {
 	["Quiver"] = {
 		["id"] = 11,
@@ -950,13 +1541,6 @@ local itemTypeReverse = {
 			["Leatherworking"] = 1,
 			["Inscription"] = 11,
 			["Enchanting"] = 8,
-		},
-	},
-	["Reagent"] = {
-		["id"] = 5,
-		["subTypes"] = {
-			["Reagent"] = 0,
-			["Keystone"] = 1,
 		},
 	},
 	["Key"] = {
@@ -1025,7 +1609,6 @@ local itemTypeReverse = {
 		["id"] = 15,
 		["subTypes"] = {
 			["Other"] = 4,
-			["Reagent"] = 1,
 			["Companion Pets"] = 2,
 			["Holiday"] = 3,
 			["Junk"] = 0,
@@ -1148,6 +1731,233 @@ local itemTypeReverse = {
 		},
 	},
 }
+end
+if not Baggins:IsClassicWow() then
+    local itemTypeReverse = {
+    	["Quiver"] = {
+    		["id"] = 11,
+    		["subTypes"] = {
+    		},
+    	},
+    	["WoW Token"] = {
+    		["id"] = 18,
+    		["subTypes"] = {
+    			["WoW Token"] = 0,
+    		},
+    	},
+    	["Recipe"] = {
+    		["id"] = 9,
+    		["subTypes"] = {
+    			["Tailoring"] = 2,
+    			["Blacksmithing"] = 4,
+    			["Alchemy"] = 6,
+    			["First Aid"] = 7,
+    			["Book"] = 0,
+    			["Cooking"] = 5,
+    			["Fishing"] = 9,
+    			["Jewelcrafting"] = 10,
+    			["Engineering"] = 3,
+    			["Leatherworking"] = 1,
+    			["Inscription"] = 11,
+    			["Enchanting"] = 8,
+    		},
+    	},
+        ["Reagent"] = {
+            ["id"] = 5,
+    		["subTypes"] = {
+    			["Reagent"] = 0,
+    			["Keystone"] = 1,
+    		},
+        },
+    	["Key"] = {
+    		["id"] = 13,
+    		["subTypes"] = {
+    			["Key"] = 0,
+    			["Lockpick"] = 1,
+    		},
+    	},
+    	["Armor"] = {
+    		["id"] = 4,
+    		["subTypes"] = {
+    			["Leather"] = 2,
+    			["Cosmetic"] = 5,
+    			["Shields"] = 6,
+    			["Mail"] = 3,
+    			["Plate"] = 4,
+    			["Cloth"] = 1,
+    			["Miscellaneous"] = 0,
+    		},
+    	},
+    	["Quest"] = {
+    		["id"] = 12,
+    		["subTypes"] = {
+    			["Quest"] = 0,
+    		},
+    	},
+    	["Container"] = {
+    		["id"] = 1,
+    		["subTypes"] = {
+    			["Bag"] = 0,
+    			["Mining Bag"] = 6,
+    			["Cooking Bag"] = 10,
+    			["Gem Bag"] = 5,
+    			["Herb Bag"] = 2,
+    			["Engineering Bag"] = 4,
+    			["Tackle Box"] = 9,
+    			["Leatherworking Bag"] = 7,
+    			["Inscription Bag"] = 8,
+    			["Enchanting Bag"] = 3,
+    		},
+    	},
+    	["Tradeskill"] = {
+    		["id"] = 7,
+    		["subTypes"] = {
+    			["Inscription"] = 16,
+    			["Elemental"] = 10,
+    			["Jewelcrafting"] = 4,
+    			["Leather"] = 6,
+    			["Herb"] = 9,
+    			["Other"] = 11,
+    			["Enchanting"] = 12,
+    			["Cloth"] = 5,
+    			["Cooking"] = 8,
+    			["Metal & Stone"] = 7,
+    			["Parts"] = 1,
+    		},
+    	},
+    	["Permanent(OBSOLETE)"] = {
+    		["id"] = 14,
+    		["subTypes"] = {
+    			["Permanent"] = 0,
+    		},
+    	},
+    	["Miscellaneous"] = {
+    		["id"] = 15,
+    		["subTypes"] = {
+    			["Other"] = 4,
+    			["Companion Pets"] = 2,
+    			["Holiday"] = 3,
+    			["Junk"] = 0,
+    			["Mount"] = 5,
+    		},
+    	},
+    	["Battle Pets"] = {
+    		["id"] = 17,
+    		["subTypes"] = {
+    			["Dragonkin"] = 1,
+    			["Humanoid"] = 0,
+    			["Elemental"] = 6,
+    			["Critter"] = 4,
+    			["Magic"] = 5,
+    			["Flying"] = 2,
+    			["Aquatic"] = 8,
+    			["Undead"] = 3,
+    			["Beast"] = 7,
+    			["Mechanical"] = 9,
+    		},
+    	},
+    	["Consumable"] = {
+    		["id"] = 0,
+    		["subTypes"] = {
+    			["Other"] = 8,
+    			["Elixir"] = 2,
+    			["Explosives and Devices"] = 0,
+    			["Potion"] = 1,
+    			["Food & Drink"] = 5,
+    			["Flask"] = 3,
+    			["Bandage"] = 7,
+    			["Vantus Runes"] = 9,
+    		},
+    	},
+    	["Gem"] = {
+    		["id"] = 3,
+    		["subTypes"] = {
+    			["Intellect"] = 0,
+    			["Artifact Relic"] = 11,
+    			["Haste"] = 7,
+    			["Strength"] = 2,
+    			["Multiple Stats"] = 10,
+    			["Agility"] = 1,
+    			["Other"] = 9,
+    			["Versatility"] = 8,
+    			["Stamina"] = 3,
+    			["Mastery"] = 6,
+    			["Spirit"] = 4,
+    			["Critical Strike"] = 5,
+    		},
+    	},
+    	["Money(OBSOLETE)"] = {
+    		["id"] = 10,
+    		["subTypes"] = {
+    			["Money(OBSOLETE)"] = 0,
+    		},
+    	},
+    	["Projectile"] = {
+    		["id"] = 6,
+    		["subTypes"] = {
+    		},
+    	},
+    	["Item Enhancement"] = {
+    		["id"] = 8,
+    		["subTypes"] = {
+    			["Waist"] = 7,
+    			["Head"] = 0,
+    			["Neck"] = 1,
+    			["Shield/Off-hand"] = 13,
+    			["Two-Handed Weapon"] = 12,
+    			["Feet"] = 9,
+    			["Chest"] = 4,
+    			["Cloak"] = 3,
+    			["Finger"] = 10,
+    			["Legs"] = 8,
+    			["Hands"] = 6,
+    			["Wrist"] = 5,
+    			["Shoulder"] = 2,
+    			["Weapon"] = 11,
+    		},
+    	},
+    	["Glyph"] = {
+    		["id"] = 16,
+    		["subTypes"] = {
+    			["Warrior"] = 1,
+    			["Paladin"] = 2,
+    			["Shaman"] = 7,
+    			["Monk"] = 10,
+    			["Rogue"] = 4,
+    			["Mage"] = 8,
+    			["Demon Hunter"] = 12,
+    			["Warlock"] = 9,
+    			["Priest"] = 5,
+    			["Hunter"] = 3,
+    			["Druid"] = 11,
+    			["Death Knight"] = 6,
+    		},
+    	},
+    	["Weapon"] = {
+    		["id"] = 2,
+    		["subTypes"] = {
+    			["One-Handed Axes"] = 0,
+    			["One-Handed Swords"] = 7,
+    			["Staves"] = 10,
+    			["Crossbows"] = 18,
+    			["Polearms"] = 6,
+    			["One-Handed Maces"] = 4,
+    			["Warglaives"] = 9,
+    			["Bows"] = 2,
+    			["Two-Handed Swords"] = 8,
+    			["Miscellaneous"] = 14,
+    			["Fishing Poles"] = 20,
+    			["Daggers"] = 15,
+    			["Guns"] = 3,
+    			["Fist Weapons"] = 13,
+    			["Two-Handed Maces"] = 5,
+    			["Wands"] = 19,
+    			["Thrown"] = 16,
+    			["Two-Handed Axes"] = 1,
+    		},
+    	},
+    }
+end
 
 local migrations = {
 	["0001_ItemTypes_7.0.3"] = function ()
@@ -1221,7 +2031,7 @@ end
 function Baggins:OpenEditConfig()
 	AceConfigDialog:Open("BagginsEdit")
 end
-
+if not Baggins:IsClassicWow() then
 Baggins.defaultcategories = {
 	[L["Misc Consumables"]] = {
 		name=L["Misc Consumables"],
@@ -1490,6 +2300,277 @@ Baggins.defaultcategories = {
 	},
 	[L["New"]] = { { ["name"] = L["New"], ["type"] = "NewItems" }, },
 }
+end
+if Baggins:IsClassicWow() then
+Baggins.defaultcategories = {
+	[L["Misc Consumables"]] = {
+		name=L["Misc Consumables"],
+		{
+			type="ItemType" ,
+			itype = itemTypeReverse["Consumable"].id,
+			isubtype = itemTypeReverse["Consumable"].subTypes["Other"],
+		}
+	},
+	[L["Consumables"]] = {
+		name=L["Consumables"],
+		{
+			type="ItemType",
+			itype = itemTypeReverse["Consumable"].id
+		}
+	},
+	[L["Armor"]] = {
+		name=L["Armor"],
+		{
+			type="ItemType",
+			itype = itemTypeReverse["Armor"].id
+		},
+		{
+			type="ItemType",
+			itype = itemTypeReverse["Armor"].id,
+			isubtype = itemTypeReverse["Armor"].subTypes["Shields"],
+			operation="NOT"
+		},
+	},
+	[L["Weapons"]] = {
+		name=L["Weapons"],
+		{
+			type="ItemType",
+			itype = itemTypeReverse["Weapon"].id
+		},
+		{
+			type="ItemType",
+			itype = itemTypeReverse["Armor"].id,
+			isubtype = itemTypeReverse["Armor"].subTypes["Shields"]
+		},
+		{
+			type="ItemType",
+			itype = itemTypeReverse["Weapon"].id,
+			isubtype = itemTypeReverse["Weapon"].subTypes["Miscellaneous"],
+			operation="NOT"
+		},
+	},
+	[L["Quest"]] = { name=L["Quest"], { type="ItemType", itype = itemTypeReverse["Quest"].id }, { type="Tooltip", text="ITEM_BIND_QUEST" } },
+	[L["Trash"]] = { name=L["Trash"], { type="Quality", quality = 0, comp = "<=" } },
+	[L["TrashEquip"]] = {
+		name=L["TrashEquip"],
+		{
+			type="ItemType",
+			itype = itemTypeReverse["Armor"].id
+		},
+		{
+			type="ItemType",
+			itype = itemTypeReverse["Weapon"].id,
+			operation="OR"
+		},
+		{
+			type="Quality",
+			quality = 1,
+			comp = "<=",
+			operation="AND"
+		},
+		{
+			type="PTSet",
+			setname="Tradeskill.Tool",
+			operation="NOT"
+		},
+		{
+			type="ItemType",
+			itype = itemTypeReverse["Quest"].id,
+			operation="NOT" },
+		},
+	[L["Other"]] = { name=L["Other"], { type="Other" } },
+	[L["Empty"]] = { name=L["Empty"], { type="Empty" }, },
+	[L["Bags"]] = { name=L["Bags"], { type="Bag", bagid=1 }, { type="Bag", bagid=2, operation="OR" }, { type="Bag", bagid=3, operation="OR" }, { type="Bag", bagid=4, operation="OR" }, { type="Bag", bagid=0, operation="OR" }, },
+	[L["BankBags"]] = { name=L["BankBags"], { type="Bag", bagid=-1 }, { type="Bag", bagid=5, operation="OR" }, { type="Bag", bagid=6, operation="OR" }, { type="Bag", bagid=7, operation="OR" }, { type="Bag", bagid=8, operation="OR" }, { type="Bag", bagid=9, operation="OR" }, { type="Bag", bagid=10, operation="OR" }, { type="Bag", bagid=11, operation="OR" }, },
+	[L["Potions"]] = {
+		name=L["Potions"],
+		{
+			type="ItemType",
+			itype = itemTypeReverse["Consumable"].id,
+			isubtype = itemTypeReverse["Consumable"].subTypes["Potion"],
+		},
+	},
+	[L["Flasks & Elixirs"]] = {
+		name=L["Flasks & Elixirs"],
+		{
+			type="ItemType",
+			itype = itemTypeReverse["Consumable"].id,
+			isubtype = itemTypeReverse["Consumable"].subTypes["Flask"],
+		},
+		{
+			operation = "OR",
+			type="ItemType",
+			itype = itemTypeReverse["Consumable"].id,
+			isubtype = itemTypeReverse["Consumable"].subTypes["Elixir"],
+		},
+	},
+	[L["Food & Drink"]] = {
+		name=L["Food & Drink"],
+		{
+			type="ItemType",
+			itype = itemTypeReverse["Consumable"].id,
+			isubtype = itemTypeReverse["Consumable"].subTypes["Food & Drink"],
+		},
+	},
+	[L["FirstAid"]] = {
+		name=L["FirstAid"],
+		{
+			type="ItemType",
+			itype = itemTypeReverse["Consumable"].id,
+			isubtype = itemTypeReverse["Consumable"].subTypes["Bandage"],
+		},
+	},
+	[L["Item Enhancements"]] = {
+		name=L["Item Enhancements"],
+		{
+			type="ItemType",
+			itype = itemTypeReverse["Item Enhancement"].id
+		},
+	},
+	[L["Tradeskill Mats"]] = {
+		name=L["Tradeskill Mats"],
+		{
+			type="ItemType",
+			itype = itemTypeReverse["Tradeskill"].id,
+		},
+	},
+	[L["Elemental"]] = {
+		name=L["Elemental"],
+		{
+			type = "ItemType",
+			itype = itemTypeReverse["Tradeskill"].id,
+			isubtype = itemTypeReverse["Tradeskill"].subTypes["Elemental"],
+		},
+	},
+	[L["Cloth"]] = {
+		name=L["Cloth"],
+		{
+			type = "ItemType",
+			itype = itemTypeReverse["Tradeskill"].id,
+			isubtype = itemTypeReverse["Tradeskill"].subTypes["Cloth"],
+		},
+	},
+	[L["Leather"]] = {
+		name=L["Leather"],
+		{
+			type = "ItemType",
+			itype = itemTypeReverse["Tradeskill"].id,
+			isubtype = itemTypeReverse["Tradeskill"].subTypes["Leather"],
+		},
+	},
+	[L["Metal & Stone"]] = {
+		name=L["Metal & Stone"],
+		{
+			type = "ItemType",
+			itype = itemTypeReverse["Tradeskill"].id,
+			isubtype = itemTypeReverse["Tradeskill"].subTypes["Metal & Stone"],
+		},
+	},
+	[L["Cooking"]] = {
+		name=L["Cooking"],
+		{
+			type = "ItemType",
+			itype = itemTypeReverse["Tradeskill"].id,
+			isubtype = itemTypeReverse["Tradeskill"].subTypes["Cooking"],
+		},
+	},
+	[L["Herb"]] = {
+		name=L["Herb"],
+		{
+			type = "ItemType",
+			itype = itemTypeReverse["Tradeskill"].id,
+			isubtype = itemTypeReverse["Tradeskill"].subTypes["Herb"],
+		},
+	},
+	[L["Enchanting"]] = {
+		name=L["Enchanting"],
+		{
+			type = "ItemType",
+			itype = itemTypeReverse["Tradeskill"].id,
+			isubtype = itemTypeReverse["Tradeskill"].subTypes["Enchanting"],
+		},
+	},
+	[L["Jewelcrafting"]] = {
+		name=L["Jewelcrafting"],
+		{
+			type = "ItemType",
+			itype = itemTypeReverse["Tradeskill"].id,
+			isubtype = itemTypeReverse["Tradeskill"].subTypes["Jewelcrafting"],
+		},
+	},
+	[L["Engineering"]] = {
+		name=L["Parts"],
+		{
+			type = "ItemType",
+			itype = itemTypeReverse["Tradeskill"].id,
+			isubtype = itemTypeReverse["Tradeskill"].subTypes["Parts"],
+		},
+		{
+			type = "ItemType",
+			itype = itemTypeReverse["Consumable"].id,
+			isubtype = itemTypeReverse["Consumable"].subTypes["Explosives and Devices"],
+			operation = "OR",
+		}
+	},
+	[L["Inscription"]] = {
+		name = L["Inscription"],
+		{
+			type = "ItemType",
+			itype = itemTypeReverse["Tradeskill"].id,
+			isubtype = itemTypeReverse["Tradeskill"].subTypes["Inscription"],
+		}
+	},
+	[L["Misc Trade Goods"]] = {
+		name=L["Other"],
+		{
+			type = "ItemType",
+			itype = itemTypeReverse["Tradeskill"].id,
+			isubtype = itemTypeReverse["Tradeskill"].subTypes["Other"],
+		}
+	},
+	[L["Item Enchantment"]] = {
+		name=L["Item Enchantment"],
+		{
+			type = "ItemType",
+			itype = itemTypeReverse["Item Enhancement"].id
+		},
+	},
+	[L["Recipes"]] = {
+		name=L["Recipes"],
+		{
+			type="ItemType",
+			itype = itemTypeReverse["Recipe"].id,
+		},
+	},
+	[L["Tools"]] = {
+		name=L["Tools"],
+		{
+			setname="Tradeskill.Tool",
+			type="PTSet"
+		},
+		{
+			operation="NOT",
+			type="PTSet",
+			setname="Tradeskill.Tool.Fishing"
+		},
+	},
+	[L["Fishing"]] = {
+		name=L["Fishing"],
+		{
+			setname="Tradeskill.Tool.Fishing",
+			type="PTSet"
+		},
+	},
+	-- [L["In Use"]] = {
+	-- 	name=L["In Use"],
+	-- 	{
+	-- 		anyset=true,
+	-- 		type="EquipmentSet"
+	-- 	},
+	-- },
+	[L["New"]] = { { ["name"] = L["New"], ["type"] = "NewItems" }, },
+}
+end
 
 
 --deep copy of a table, will NOT handle tables as keys or circular references
