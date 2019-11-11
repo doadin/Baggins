@@ -600,7 +600,7 @@ function Baggins:UnhookBagHooks()
 end
 
 function Baggins:UpdateBackpackHook()
-	if self.db.profile.overridebackpack then
+	if self.db.profile.overridebackpack and not self:IsHooked(MainMenuBarBackpackButton, "OnClick") then
 		self:RawHookScript(MainMenuBarBackpackButton, "OnClick", "MainMenuBarBackpackButtonOnClick")
 	else
 		self:UnhookBackpack()
