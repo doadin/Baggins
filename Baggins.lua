@@ -24,7 +24,7 @@ local band =
       _G.bit.band
 
 function Baggins:IsClassicWow()
-	return WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
+    return WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
 end
 
 if Baggins:IsClassicWow() then
@@ -3012,7 +3012,10 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
 	end
 	button:SetID(slot)
 	-- quest item glow introduced in 3.3 (with silly logic)
-	local isQuestItem, questId, isActive = GetContainerItemQuestInfo(bag, slot)
+    local isQuestItem, questId, isActive
+    if not Baggins:IsClassicWow() then
+	    isQuestItem, questId, isActive = GetContainerItemQuestInfo(bag, slot)
+    end
 	local questTexture = (questId and not isActive) and TEXTURE_ITEM_QUEST_BANG or (questId or isQuestItem) and TEXTURE_ITEM_QUEST_BORDER
 	if p.highlightquestitems and texture and questTexture then
 		button.glow:SetTexture(questTexture)
@@ -3061,7 +3064,12 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
 		if not itemid then
 			local bagtype, itemFamily = Baggins:IsSpecialBag(bag)
 			bagtype = bagtype or ""
+            if not Baggins:IsClassicWow() then
 			count = bagtype..LBU:CountSlots(LBU:IsBank(bag) and "BANK" or LBU:IsReagentBank(bag) and "REAGENTBANK" or "BAGS", itemFamily)
+            end
+            if Baggins:IsClassicWow() then
+            count = bagtype..LBU:CountSlots(LBU:IsBank(bag) and "BANK" and "REAGENTBANK" or "BAGS", itemFamily)
+            end
 		else
 			count = GetItemCount(itemid)
 			if LBU:IsBank(bag, true) then
