@@ -1517,7 +1517,7 @@ end
 
 local oldskin
 function Baggins:InitOptions()
-	self.db = LibStub("AceDB-3.0"):New("Baggins2DB", dbDefaults, "Default")
+	self.db = LibStub("AceDB-3.0"):New("BagginsDB", dbDefaults, "Default")
 	self:UpdateDB()
 	self:RebuildOptions()
 
