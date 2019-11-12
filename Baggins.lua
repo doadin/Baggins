@@ -3068,7 +3068,7 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
 			count = bagtype..LBU:CountSlots(LBU:IsBank(bag) and "BANK" or LBU:IsReagentBank(bag) and "REAGENTBANK" or "BAGS", itemFamily)
             end
             if Baggins:IsClassicWow() then
-            count = bagtype..LBU:CountSlots(LBU:IsBank(bag) and "BANK" and "REAGENTBANK" or "BAGS", itemFamily)
+            count = bagtype..LBU:CountSlots(LBU:IsBank(bag) and "BANK" or "BAGS", itemFamily)
             end
 		else
 			count = GetItemCount(itemid)
