@@ -4,6 +4,7 @@ os: linux
 jobs:
   include:
     - stage: Run luacheck
+      if: tag IS NOT present
       addons:
         apt:
          packages:
