@@ -33,3 +33,8 @@ externals:
     Libs/LibStub: 
        url: https://repos.curseforge.com/wow/libstub/trunk
        tag: 1.0
+   
+ignore:
+  - README.md
+  - .luacheckrc
+  - .travis.yml
