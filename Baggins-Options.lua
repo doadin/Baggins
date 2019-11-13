@@ -2947,6 +2947,8 @@ local function newSection(info)
 end
 
 function Baggins:CopyBag(from_id, to_id)
+	if from_id == to_id then return end
+
 	local bags = self.db.profile.bags
 
 	for i, v in ipairs(bags[from_id].sections) do
@@ -2957,10 +2959,12 @@ function Baggins:CopyBag(from_id, to_id)
 end
 
 local bags_list = { }
-local function ListBags()
+local function ListBagsExcept(bagid)
 	wipe(bags_list)
 	for id, bag in ipairs(Baggins.db.profile.bags) do
-		bags_list[id] = bag.name
+		if id ~= bagid then 
+			bags_list[id] = bag.name
+		end
 	end
 	return bags_list
 end
@@ -3116,7 +3120,9 @@ function Baggins:RebuildBagOptions()
 		desc = L["New Bag"],
 		func = newBag,
 	}
+
 	for bagid, bag in ipairs(bags) do
+		local bagListExceptSelected = ListBagsExcept(bagid)
 		local bagconfig = {
 			name = getArgName,
 			desc = getArgName,
@@ -3178,7 +3184,7 @@ function Baggins:RebuildBagOptions()
 					desc = "",
 					type = 'select',
 					set = CopyBagFromEdit,
-					values = ListBags,
+					values = bagListExceptSelected,
 					arg = bagid,
 					order = 6,
 				},
