@@ -2813,26 +2813,28 @@ function Baggins:CreateBankControlFrame()
 	frame.slotbuy:Hide()
 
 	-- A button to buy the reagent bank
-	frame.rabuy = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-	frame.rabuy:SetScript("OnClick", function(this)
-		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
-		StaticPopup_Show("CONFIRM_BUY_REAGENTBANK_TAB")
-	end)
-	frame.rabuy:SetWidth(160)
-	frame.rabuy:SetHeight(18)
-	frame.rabuy:SetText(L["Buy Reagent Bank"])
-	frame.rabuy:Hide()
+    if not Baggins:IsClassicWow() then
+	    frame.rabuy = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+	    frame.rabuy:SetScript("OnClick", function(this)
+	    	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
+	    	StaticPopup_Show("CONFIRM_BUY_REAGENTBANK_TAB")
+	    end)
+	    frame.rabuy:SetWidth(160)
+	    frame.rabuy:SetHeight(18)
+	    frame.rabuy:SetText(L["Buy Reagent Bank"])
+	    frame.rabuy:Hide()
 
-	-- Finally, a button to allow blizzards "Deposit All Reagents" feature to work.
-	-- this takes all your reagents and moves them into the reagent bank
-	frame.radeposit = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-	frame.radeposit:SetScript("OnClick", function(this)
-		DepositReagentBank()
-	end)
-	frame.radeposit:SetWidth(160)
-	frame.radeposit:SetHeight(18)
-	frame.radeposit:SetText(L["Deposit All Reagents"])
-	frame.radeposit:Hide()
+	    -- Finally, a button to allow blizzards "Deposit All Reagents" feature to work.
+	    -- this takes all your reagents and moves them into the reagent bank
+	    frame.radeposit = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+	    frame.radeposit:SetScript("OnClick", function(this)
+	    	DepositReagentBank()
+	    end)
+	    frame.radeposit:SetWidth(160)
+	    frame.radeposit:SetHeight(18)
+	    frame.radeposit:SetText(L["Deposit All Reagents"])
+	    frame.radeposit:Hide()
+    end
 
 	frame:Hide()
 end
@@ -2862,7 +2864,7 @@ function Baggins:UpdateBankControlFrame()
 		frame.radeposit:Show()
 		frame.rabuy:Hide()
 		numbuttons = numbuttons + 1
-	else
+	elseif not Baggins:IsClassicWow() then
 		frame.rabuy:SetPoint("TOPLEFT", anchorframe, anchorpoint, 0, anchoryoffset)
 		frame.rabuy:Show()
 		frame.radeposit:Hide()
