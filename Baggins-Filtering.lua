@@ -102,13 +102,13 @@ BagTypes = {
 }
 end
 if not Baggins:IsClassicWow() then
-local BagNames = {
+BagNames = {
     [REAGENTBANK_CONTAINER] = L["Reagent Bank"],
 	[KEYRING_CONTAINER] = L["KeyRing"],
 	[BANK_CONTAINER] = L["Bank Frame"],
 	[BACKPACK_CONTAINER] = L["Backpack"],
 }
-local BagTypes = {
+BagTypes = {
 	[BACKPACK_CONTAINER] = 1,
 	[BANK_CONTAINER] = 2,
 	[KEYRING_CONTAINER] = 3,
