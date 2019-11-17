@@ -2178,6 +2178,7 @@ do
 	-- some code to make the UIDropDownMenu scrollable
 	local offset = 0
 	local switchpage
+    local catsorttable = {}
 	local function pageup(self)
 		offset = max(offset - 1,0)
 		switchpage(self)

@@ -286,8 +286,6 @@ local dbDefaults = {
 	}
 }
 
-local catsorttable = {}
-
 local function dbl(tab)
 	for i=#tab,1,-1 do
 		local v = tab[i]
