@@ -2357,7 +2357,7 @@ do
 		-- It seems all crafting reagents now have a line in the tooltip called "Crafting Reagent" in enUS.
 
 		-- setup gratuity based on bag and slot
-		if LBU:IsReagentBank(bag) then
+		if not Baggins:IsClassicWow() and LBU:IsReagentBank(bag) then
 			gratuity:SetInventoryItem("player", ReagentBankButtonIDToInvSlotID(slot))
 		elseif LBU:IsBank(bag) then
 			gratuity:SetInventoryItem("player", BankButtonIDToInvSlotID(slot))
@@ -2366,10 +2366,12 @@ do
 		end
 
 		-- count remaining slots and switch the tab based on the item type
-		local count = LBU:CountSlots("REAGENTBANK")
-		if gratuity:Find(L["Crafting Reagent"]) and count ~= nil and count > 0 then
-			return REAGENT_BANK_TAB
-		end
+        if not Baggins:IsClassicWow() then
+		    local count = LBU:CountSlots("REAGENTBANK")
+		    if gratuity:Find(L["Crafting Reagent"]) and count ~= nil and count > 0 then
+		    	return REAGENT_BANK_TAB
+		    end
+        end
 
 		return BANK_TAB
 	end
