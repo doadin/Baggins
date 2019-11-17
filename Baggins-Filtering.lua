@@ -1472,8 +1472,7 @@ if not Baggins:IsClassicWow() then
     function updateSets()
     	wipe(equipmentSets)
     	for _, id in next, C_EquipmentSet.GetEquipmentSetIDs() do
-    		local name = 
-    		GetEquipmentSetInfo(id)
+    		local name = C_EquipmentSet.GetEquipmentSetInfo(id)
     		equipmentSets[name] = name
     	end
     end
