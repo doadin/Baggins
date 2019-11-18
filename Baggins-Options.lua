@@ -3454,6 +3454,7 @@ function Baggins:RebuildCategoryOptions()
 		}
 		self:RebuildCategoryRules(name)
 	end
+    return args
 end
 
 function Baggins:InitBagCategoryOptions()
@@ -3492,8 +3493,9 @@ function Baggins:InitBagCategoryOptions()
 	    end)
     end
     if not Baggins:IsClassicWow() then
-	    AceConfig:RegisterOptionsTable("BagginsEdit", function()
-		return opts
-	end)
+	    LibStub("AceConfigRegistry-3.0"):RegisterOptionsTable("BagginsEdit", function()
+            Baggins:RebuildCategoryOptions()
+		    return opts
+	    end, true)
     end
 end
