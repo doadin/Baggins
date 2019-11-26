@@ -3379,7 +3379,7 @@ function Baggins:RebuildCategoryRules(categoryname)
 		end
 
 		local addOpts = Baggins:GetAce3Opts(rule)
-		if addOpts then
+		if type(addOpts) == table then
 			for k,v in pairs(addOpts) do
 				ruleopt.args[k] = CopyTable(v) -- 60KB memory here
 				ruleopt.args[k].arg = rule
@@ -3454,7 +3454,7 @@ function Baggins:RebuildCategoryOptions()
 		}
 		self:RebuildCategoryRules(name)
 	end
-    return args
+
 end
 
 function Baggins:InitBagCategoryOptions()
@@ -3486,16 +3486,9 @@ function Baggins:InitBagCategoryOptions()
 	self:BuildMoneyBagOptions()
 	self:BuildBankControlsBagOptions()
 
-    if Baggins:IsClassicWow() then
-	    AceConfig:RegisterOptionsTable("BagginsEdit", function()
-	    	Baggins:RebuildCategoryOptions()
-	    	return opts
-	    end)
-    end
-    if not Baggins:IsClassicWow() then
-	    LibStub("AceConfigRegistry-3.0"):RegisterOptionsTable("BagginsEdit", function()
-            Baggins:RebuildCategoryOptions()
-		    return opts
-	    end, true)
-    end
+	AceConfig:RegisterOptionsTable("BagginsEdit", function()
+		Baggins:RebuildCategoryOptions()
+		return opts
+	end)
+
 end
