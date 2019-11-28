@@ -3379,7 +3379,7 @@ function Baggins:RebuildCategoryRules(categoryname)
 		end
 
 		local addOpts = Baggins:GetAce3Opts(rule)
-		if type(addOpts) == table then
+		if not type(addOpts) == nil then
 			for k,v in pairs(addOpts) do
 				ruleopt.args[k] = CopyTable(v) -- 60KB memory here
 				ruleopt.args[k].arg = rule
