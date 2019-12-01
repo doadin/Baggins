@@ -3379,16 +3379,30 @@ function Baggins:RebuildCategoryRules(categoryname)
 		end
 
 		local addOpts = Baggins:GetAce3Opts(rule)
-		if not type(addOpts) == nil then
-			for k,v in pairs(addOpts) do
-				ruleopt.args[k] = CopyTable(v) -- 60KB memory here
-				ruleopt.args[k].arg = rule
-			end
-		elseif Baggins:RuleIsDeprecated(rule) then
-			ruleopt.args.message = notCompatibleDesc
-		end
-
-		args[tostring(ruleid)] = ruleopt
+        if not Baggins:IsClassicWow() then
+            if type(addOpts) == table then
+		    	for k,v in pairs(addOpts) do
+		    		ruleopt.args[k] = CopyTable(v) -- 60KB memory here
+		    		ruleopt.args[k].arg = rule
+		    	end
+		    elseif Baggins:RuleIsDeprecated(rule) then
+		    	ruleopt.args.message = notCompatibleDesc
+		    end
+            
+		    args[tostring(ruleid)] = ruleopt
+        end
+        if Baggins:IsClassicWow() then
+            if addOpts then
+		    	for k,v in pairs(addOpts) do
+		    		ruleopt.args[k] = CopyTable(v) -- 60KB memory here
+		    		ruleopt.args[k].arg = rule
+		    	end
+		    elseif Baggins:RuleIsDeprecated(rule) then
+		    	ruleopt.args.message = notCompatibleDesc
+		    end
+            
+		    args[tostring(ruleid)] = ruleopt
+        end
 	end
 end
 
