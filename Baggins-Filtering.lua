@@ -1492,7 +1492,7 @@ if not Baggins:IsClassicWow() then
     --required when AddonLoader is installed
     updateSets()
     
-    local function getEquipmentSetChoices()
+    function getEquipmentSetChoices()
     	return equipmentSets
     end
 end
