@@ -3717,12 +3717,14 @@ function Baggins:CloseBag(bagid)
 			self:RebuildSectionLayouts()
 		end
 	end
+    PlaySound(863)
 end
 
 function Baggins:CloseAllBags()
 	for bagid, bag in ipairs(self.db.profile.bags) do
 		Baggins:CloseBag(bagid)
 	end
+    PlaySound(863)
 end
 
 function Baggins:MainMenuBarBackpackButtonOnClick(button)
@@ -3780,6 +3782,7 @@ function Baggins:OpenBag(bagid,noupdate)
 		-- rebuild layouts to fix duplicate stacks
     self:ScheduleForNextFrame('FixInit')
 	end
+    PlaySound(862)
 end
 
 -- "All Bags" in these 3 functions refers to bags that are set to openWithAll
@@ -3796,6 +3799,7 @@ function Baggins:OpenAllBags()
 	self:RunBagUpdates()
 	self:UpdateBags()
 	self:UpdateLayout()
+    PlaySound(862)
 end
 
 function Baggins:AuctionHouse()
