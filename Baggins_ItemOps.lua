@@ -30,7 +30,9 @@ local charBags = {}
 for i=0, NUM_BAG_SLOTS do
 	tinsert(charBags, i);
 end
+if Baggins:IsClassicWow() then
 tinsert(charBags, KEYRING_CONTAINER)
+end
 
 
 ------------------------------------------------------

@@ -104,14 +104,12 @@ end
 if not Baggins:IsClassicWow() then
 BagNames = {
     [REAGENTBANK_CONTAINER] = L["Reagent Bank"],
-	[KEYRING_CONTAINER] = L["KeyRing"],
 	[BANK_CONTAINER] = L["Bank Frame"],
 	[BACKPACK_CONTAINER] = L["Backpack"],
 }
 BagTypes = {
 	[BACKPACK_CONTAINER] = 1,
 	[BANK_CONTAINER] = 2,
-	[KEYRING_CONTAINER] = 3,
     [REAGENTBANK_CONTAINER] = 4,
 }
 end
