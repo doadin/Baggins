@@ -12,7 +12,7 @@
 ## Notes-deDE: Inventar Manager mit virtuellen Taschen unterteilt in Kategorien.
 ## Notes-ruRU: Управление инвентарём, путём деления его на виртуальные сумки-секции
 
-## Author: Nargiddley, Mikk, Profalbert
+## Author: Doadin, Nargiddley, Mikk, Profalbert
 ## SavedVariables: BagginsDB
 ## X-Category: Inventory
 ## X-Curse-Project-ID: 13471
