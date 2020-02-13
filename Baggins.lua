@@ -689,11 +689,21 @@ function Baggins:IsCompressed(itemID)
 		local itemFamily = GetItemFamily(itemID)
 		local _, _, _, _, _, _, _, itemStackCount, itemEquipLoc = GetItemInfo(itemID)
 		if itemFamily then	-- likes to be nil during login
-			if p.compressshards and band(itemFamily,4)~=0 and itemEquipLoc~="INVTYPE_BAG" then
-				return true
-			end
-			if p.compressammo and band(itemFamily,3)~=0 and itemEquipLoc~="INVTYPE_BAG" then
-				return true
+			if not Baggins:IsClassicWow() then
+				if p.compressshards and band(itemFamily,4)~=0 and itemEquipLoc~="INVTYPE_BAG" then
+					return true
+				end
+				if p.compressammo and band(itemFamily,3)~=0 and itemEquipLoc~="INVTYPE_BAG" then
+					return true
+				end
+			else
+				if p.compressshards and itemFamily ~=3 and itemEquipLoc~="INVTYPE_BAG" then
+					return true
+				end
+				if p.compressammo and itemFamily ~=2 and itemEquipLoc~="INVTYPE_BAG" then
+					return true
+				end
+
 			end
 		end
 		if p.compressstackable and itemStackCount and itemStackCount>1 then
