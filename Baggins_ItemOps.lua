@@ -133,8 +133,7 @@ function Baggins:MoveToSpecialtyBags(bank,testonly)
 								-- specialty bags dont go in specialty bags
 							else
 								for bagFamily,dest in pairs(specialtyTargetBags) do
-									if (not Baggins:IsClassicWow() and band(itemFamily,bagFamily)~=0)
-									 or (Baggins:IsClassicWow() and (itemFamily == bagFamily)) then
+									if (not Baggins:IsClassicWow() and band(itemFamily,bagFamily)~=0) or (Baggins:IsClassicWow() and (itemFamily == bagFamily)) then
 										if testonly then return true end
 										compressLoopProtect = compressLoopProtect - 1
 										if compressLoopProtect < 0 then return end
