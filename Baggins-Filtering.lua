@@ -23,8 +23,13 @@ if not Baggins:IsClassicWow() then
 local GetEquipmentSetInfo, GetEquipmentSetItemIDs, GetNumEquipmentSets =
       _G.GetEquipmentSetInfo, _G.GetEquipmentSetItemIDs, _G.GetNumEquipmentSets
 end
-local GetItemInfoInstant, GetItemClassInfo, GetItemSubClassInfo, GetAuctionItemSubClasses =
-      _G.GetItemInfoInstant, _G.GetItemClassInfo, _G.GetItemSubClassInfo, _G.GetAuctionItemSubClasses
+local GetItemInfoInstant, GetItemClassInfo, GetItemSubClassInfo =
+	  _G.GetItemInfoInstant, _G.GetItemClassInfo, _G.GetItemSubClassInfo
+if Baggins:IsClassicWow() then
+	GetAuctionItemSubClasses = _G.GetAuctionItemSubClasses
+else
+	GetAuctionItemSubClasses = _G.C_AuctionHouse.GetAuctionItemSubClasses
+end
 local UnitLevel = _G.UnitLevel
 local C_PetJournal = _G.C_PetJournal
 local C_Item, ItemLocation = _G.C_Item, _G.ItemLocation
@@ -730,9 +735,15 @@ Baggins:AddCustomRule("ItemType", {
 						local tmp = {}
 						tmp.ALL = _G.ALL
 						if rule.itype and ItemTypes[rule.itype] then
-							for _,k in pairs({GetAuctionItemSubClasses(rule.itype)}) do
-								tmp[tostring(k)] = GetItemSubClassInfo(rule.itype, k) or UNKNOWN
-							end
+							if Baggins:IsClassicWow() then
+							    for _,k in pairs({GetAuctionItemSubClasses(rule.itype)}) do
+							    	tmp[tostring(k)] = GetItemSubClassInfo(rule.itype, k) or UNKNOWN
+								end
+							else
+							    for _,k in pairs(GetAuctionItemSubClasses(rule.itype)) do
+							    	tmp[tostring(k)] = GetItemSubClassInfo(rule.itype, k) or UNKNOWN
+								end
+							end								
 						end
 						return tmp
 					end,
