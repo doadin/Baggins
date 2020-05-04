@@ -5,7 +5,7 @@
 ## Interface: 11303
 #@end-non-retail@
 ## Version: @project-version@
-## Title: Baggins
+
 ## Notes: Inventory Management with virtual bags divided into sections.
 ## Notes-zhCN: 使用分类的形式来管理背包。
 ## Notes-zhTW: 智慧型自動分類背包
@@ -17,11 +17,19 @@
 ## X-Category: Inventory
 ## X-Curse-Project-ID: 13471
 
-## OptionalDeps: Ace3, LibGratuity-3.0, LibQTip-1.0, LibBagUtils-1.0, LibPeriodicTable-3.1, LibBabble-Inventory-3.0, LibDBIcon-1.0, LibItemUpgradeInfo-1.0
-## X-Embeds: Ace3, LibGratuity-3.0, LibQTip-1.0, LibBagUtils-1.0, LibPeriodicTable-3.1, LibBabble-Inventory-3.0, LibDBIcon-1.0, LibDataBroker-1.0
-
 ## X-Localizations: enUS, enGB, deDE, frFR, esES, esMX, zhCN, zhTW, koKR, ruRU
 ## X-CompatibleLocales: enUS, enGB, deDE, frFR, esES, esMX, zhCN, zhTW, koKR, ruRU
+
+#@non-no-lib-strip@
+# ## Title: Baggins |cff1784d1[nolib]|r
+# ## Dependencies: Ace3, LibDBIcon-1.0, LibItemUpgradeInfo-1.0, LibQTip-1.0, LibGratuity-3.0, LibBagUtils-1.0
+# ## OptionalDeps: LibBabble-Inventory-3.0, LibPeriodicTable-3.1
+#@end-non-no-lib-strip@
+
+#@no-lib-strip@
+## Title: Baggins
+## OptionalDeps: Ace3, LibGratuity-3.0, LibQTip-1.0, LibBagUtils-1.0, LibPeriodicTable-3.1, LibBabble-Inventory-3.0, LibDBIcon-1.0, LibItemUpgradeInfo-1.0
+## X-Embeds: Ace3, LibGratuity-3.0, LibQTip-1.0, LibBagUtils-1.0, LibPeriodicTable-3.1, LibBabble-Inventory-3.0, LibDBIcon-1.0, LibDataBroker-1.0
 
 Libs\LibStub\LibStub.lua
 Libs\CallBackHandler-1.0\CallbackHandler-1.0.lua
@@ -55,6 +63,7 @@ Libs\LibPeriodicTable-3.1-Misc\LibPeriodicTable-3.1-Misc.lua
 Libs\LibPeriodicTable-3.1-Reputation\LibPeriodicTable-3.1-Reputation.lua
 Libs\LibPeriodicTable-3.1-Tradeskill\LibPeriodicTable-3.1-Tradeskill.lua
 Libs\LibPeriodicTable-3.1-TradeskillResultMats\LibPeriodicTable-3.1-TradeskillResultMats.lua
+#@end-no-lib-strip@
 
 Locales\Baggins-enUS.lua
 Locales\Baggins-deDE.lua
