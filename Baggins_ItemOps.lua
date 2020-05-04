@@ -30,9 +30,10 @@ local charBags = {}
 for i=0, NUM_BAG_SLOTS do
 	tinsert(charBags, i);
 end
-if Baggins:IsClassicWow() then
+
+--[===[@non-retail@
 tinsert(charBags, KEYRING_CONTAINER)
-end
+--@end-non-retail@]===]
 
 
 ------------------------------------------------------
@@ -133,7 +134,12 @@ function Baggins:MoveToSpecialtyBags(bank,testonly)
 								-- specialty bags dont go in specialty bags
 							else
 								for bagFamily,dest in pairs(specialtyTargetBags) do
-									if (not Baggins:IsClassicWow() and band(itemFamily,bagFamily)~=0) or (Baggins:IsClassicWow() and (itemFamily == bagFamily)) then
+									--@release@
+									if band(itemFamily,bagFamily) ~= 0 then 
+									--@end-release@
+									--[===[@non-retail@
+									if itemFamily == bagFamily then
+									--@end-non-retail@]===]
 										if testonly then return true end
 										compressLoopProtect = compressLoopProtect - 1
 										if compressLoopProtect < 0 then return end

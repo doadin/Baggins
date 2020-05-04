@@ -23,22 +23,16 @@ local format =
 local band =
       _G.bit.band
 
-function Baggins:IsClassicWow()
-    return WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
-end
-
-if Baggins:IsClassicWow() then
 local GetItemCount, GetItemInfo, GetInventoryItemLink, GetItemQualityColor, GetItemFamily, BankButtonIDToInvSlotID, GetNumBankSlots =
       _G.GetItemCount, _G.GetItemInfo, _G.GetInventoryItemLink, _G.GetItemQualityColor, _G.GetItemFamily, _G.BankButtonIDToInvSlotID, _G.GetNumBankSlots
 local GetContainerItemInfo, GetContainerItemLink, GetContainerNumFreeSlots, GetContainerItemCooldown =
       _G.GetContainerItemInfo, _G.GetContainerItemLink, _G.GetContainerNumFreeSlots, _G.GetContainerItemCooldown
-end
-if not Baggins:IsClassicWow() then
-local GetItemCount, GetItemInfo, GetInventoryItemLink, GetItemQualityColor, GetItemFamily, BankButtonIDToInvSlotID, ReagentBankButtonIDToInvSlotID, GetNumBankSlots =
-      _G.GetItemCount, _G.GetItemInfo, _G.GetInventoryItemLink, _G.GetItemQualityColor, _G.GetItemFamily, _G.BankButtonIDToInvSlotID, _G.ReagentBankButtonIDToInvSlotID, _G.GetNumBankSlots
-local GetContainerItemInfo, GetContainerItemLink, GetContainerItemQuestInfo, GetContainerNumFreeSlots, GetContainerItemCooldown, DepositReagentBank, IsReagentBankUnlocked =
-      _G.GetContainerItemInfo, _G.GetContainerItemLink, _G.GetContainerItemQuestInfo, _G.GetContainerNumFreeSlots, _G.GetContainerItemCooldown, _G.DepositReagentBank, _G.IsReagentBankUnlocked
-end
+
+--@retail@
+local ReagentBankButtonIDToInvSlotID, GetContainerItemQuestInfo, DepositReagentBank, IsReagentBankUnlocked =
+      _G.ReagentBankButtonIDToInvSlotID, _G.GetContainerItemQuestInfo, _G.DepositReagentBank, _G.IsReagentBankUnlocked
+--@end-retail@
+
 local C_Item, ItemLocation, InCombatLockdown, IsModifiedClick, GetDetailedItemLevelInfo, GetContainerItemID, InRepairMode, KeyRingButtonIDToInvSlotID, C_PetJournal, C_NewItems, PlaySound =
       _G.C_Item, _G.ItemLocation, _G.InCombatLockdown, _G.IsModifiedClick, _G.GetDetailedItemLevelInfo, _G.GetContainerItemID, _G.InRepairMode, _G.KeyRingButtonIDToInvSlotID, _G.C_PetJournal, _G.C_NewItems, _G.PlaySound
 
@@ -53,9 +47,9 @@ local C_Item, ItemLocation, InCombatLockdown, IsModifiedClick, GetDetailedItemLe
 -- Bank tab locals, for auto reagent deposit
 local BankFrame_ShowPanel = BankFrame_ShowPanel
 local BANK_TAB = BANK_PANELS[1].name
-if not Baggins:IsClassicWow() then
-    local REAGENT_BANK_TAB = BANK_PANELS[2].name
-end
+--@retail@
+local REAGENT_BANK_TAB = BANK_PANELS[2].name
+--@end-retail@
 
 Baggins.hasIcon = "Interface\\Icons\\INV_Jewelry_Ring_03"
 Baggins.cannotDetachTooltip = true
@@ -263,14 +257,24 @@ local ldbdata = {
 		end,
 }
 Baggins.obj = LibStub("LibDataBroker-1.1"):NewDataObject("Baggins", ldbdata)
-if not Baggins:IsClassicWow() then
+
 do
 	local buttonCount = 0
 	local buttonPool = {}
 
 	local function createItemButton()
-		local frame = CreateFrame("ItemButton","BagginsPooledItemButton"..buttonCount,nil,"ContainerFrameItemButtonTemplate")
-                frame.GetItemContextMatchResult = nil
+
+		--[===[@non-retail@
+		local frameType = "Button"
+		--@end-non-retail@]===]
+
+		--@retail@
+		local frameType = "ItemButton"
+		--@end-retail@
+
+		local frame = CreateFrame(frameType,"BagginsPooledItemButton"..buttonCount,nil,"ContainerFrameItemButtonTemplate")
+
+        frame.GetItemContextMatchResult = nil
 		buttonCount = buttonCount + 1
 		if InCombatLockdown() then
 			print("Baggins: WARNING: item-frame will be tainted")
@@ -310,56 +314,6 @@ do
 		button.newtext:Hide()
 		tinsert(buttonPool, button)
 	end
-end
-end
-if Baggins:IsClassicWow() then
-do
-	local buttonCount = 0
-	local buttonPool = {}
-
-	local function createItemButton()
-		local frame = CreateFrame("Button","BagginsPooledItemButton"..buttonCount,nil,"ContainerFrameItemButtonTemplate")
-                frame.GetItemContextMatchResult = nil
-		buttonCount = buttonCount + 1
-		if InCombatLockdown() then
-			print("Baggins: WARNING: item-frame will be tainted")
-			Baggins:RegisterEvent("PLAYER_REGEN_ENABLED")
-			frame.tainted = true
-		end
-		return frame
-	end
-
-	function Baggins:RepopulateButtonPool(num)
-		if InCombatLockdown() then
-			Baggins:RegisterEvent("PLAYER_REGEN_ENABLED")
-			return
-		end
-		while #buttonPool < num do
-			local frame = createItemButton()
-			tinsert(buttonPool, frame)
-		end
-	end
-
-	local usedButtons = 0
-	function Baggins:GetItemButton()
-		usedButtons = usedButtons + 1
-		self.db.char.lastNumItemButtons = usedButtons
-		local frame
-		if next(buttonPool) then
-			frame = tremove(buttonPool, 1)
-		else
-			frame = createItemButton()
-		end
-		self:ScheduleTimer("RepopulateButtonPool", 0, Baggins.minSpareItemButtons)
-		return frame
-	end
-
-	function Baggins:ReleaseItemButton(button)
-		button.glow:Hide()
-		button.newtext:Hide()
-		tinsert(buttonPool, button)
-	end
-end
 end
 
 function Baggins:PLAYER_REGEN_ENABLED()
@@ -489,10 +443,11 @@ function Baggins:OnEnable()
 	self:RegisterEvent("QUEST_ACCEPTED", "UpdateItemButtons")
 	self:RegisterEvent("UNIT_QUEST_LOG_CHANGED", "UpdateItemButtons")
 	self:RegisterEvent("PLAYERBANKSLOTS_CHANGED", "OnBankChanged")
-    if not Baggins:IsClassicWow() then
-        self:RegisterEvent("PLAYERREAGENTBANKSLOTS_CHANGED", "OnReagentBankChanged")
-	    self:RegisterEvent("REAGENTBANK_PURCHASED", "OnReagentBankChanged")
-    end
+    --@retail@
+	self:RegisterEvent("PLAYERREAGENTBANKSLOTS_CHANGED", "OnReagentBankChanged")
+	self:RegisterEvent("REAGENTBANK_PURCHASED", "OnReagentBankChanged")
+	--@end-retail@
+	
 	self:RegisterEvent("PLAYERBANKBAGSLOTS_CHANGED", "OnBankSlotPurchased")
 	self:RegisterEvent("BANKFRAME_CLOSED", "OnBankClosed")
 	self:RegisterEvent("BANKFRAME_OPENED", "OnBankOpened")
@@ -500,11 +455,12 @@ function Baggins:OnEnable()
 	self:RegisterEvent('AUCTION_HOUSE_SHOW', "AuctionHouse")
 	self:RegisterEvent('AUCTION_HOUSE_CLOSED', "CloseAllBags")
 
+    --@retail@
 	-- Patch 8.0.1 Added
-    if not Baggins:IsClassicWow() then
-	    self:RegisterEvent('SCRAPPING_MACHINE_SHOW', "OpenAllBags")
-	    self:RegisterEvent('SCRAPPING_MACHINE_CLOSE', "CloseAllBags")
-    end
+	self:RegisterEvent('SCRAPPING_MACHINE_SHOW', "OpenAllBags")
+	self:RegisterEvent('SCRAPPING_MACHINE_CLOSE', "CloseAllBags")
+	--@end-retail@
+
 	self:RegisterBucketEvent('ADDON_LOADED', 5,'OnAddonLoaded')
 
 	self:RegisterSignal('CategoryMatchAdded', self.CategoryMatchAdded, self)
@@ -631,16 +587,16 @@ function Baggins:SaveItemCounts()
 			end
 		end
 	end
-    if not Baggins:IsClassicWow() then
-        for bag,slot,link in LBU:Iterate("REAGENTBANK") do
-	    	if link then
-	    		local id = tonumber(link:match("item:(%d+)"))
-	    		if id and not itemcounts[id] then
-	    			itemcounts[id] = { count = GetItemCount(id), ts = time() }
-	    		end
-	    	end
-	    end
-    end
+    --@retail@
+	for bag,slot,link in LBU:Iterate("REAGENTBANK") do
+		if link then
+			local id = tonumber(link:match("item:(%d+)"))
+			if id and not itemcounts[id] then
+				itemcounts[id] = { count = GetItemCount(id), ts = time() }
+			end
+		end
+	end
+    --@end-retail@
 
 	for slot = 0, INVSLOT_LAST_EQUIPPED do	-- 0--19
 		local link = GetInventoryItemLink("player",slot)
@@ -689,22 +645,24 @@ function Baggins:IsCompressed(itemID)
 		local itemFamily = GetItemFamily(itemID)
 		local _, _, _, _, _, _, _, itemStackCount, itemEquipLoc = GetItemInfo(itemID)
 		if itemFamily then	-- likes to be nil during login
-			if not Baggins:IsClassicWow() then
-				if p.compressshards and band(itemFamily,4)~=0 and itemEquipLoc~="INVTYPE_BAG" then
-					return true
-				end
-				if p.compressammo and band(itemFamily,3)~=0 and itemEquipLoc~="INVTYPE_BAG" then
-					return true
-				end
-			else
-				if p.compressshards and itemFamily ~=3 and itemEquipLoc~="INVTYPE_BAG" then
-					return true
-				end
-				if p.compressammo and itemFamily ~=2 and itemEquipLoc~="INVTYPE_BAG" then
-					return true
-				end
-
+			--@retail@
+			if p.compressshards and band(itemFamily,4)~=0 and itemEquipLoc~="INVTYPE_BAG" then
+				return true
 			end
+			if p.compressammo and band(itemFamily,3)~=0 and itemEquipLoc~="INVTYPE_BAG" then
+				return true
+			end
+			--@end-retail@
+
+			--[===[@non-retail@
+			if p.compressshards and itemFamily ~=3 and itemEquipLoc~="INVTYPE_BAG" then
+				return true
+			end
+			if p.compressammo and itemFamily ~=2 and itemEquipLoc~="INVTYPE_BAG" then
+				return true
+			end
+			--@end-non-retail@]===]
+
 		end
 		if p.compressstackable and itemStackCount and itemStackCount>1 then
 			return true
@@ -2371,21 +2329,23 @@ do
 		-- It seems all crafting reagents now have a line in the tooltip called "Crafting Reagent" in enUS.
 
 		-- setup gratuity based on bag and slot
-		if not Baggins:IsClassicWow() and LBU:IsReagentBank(bag) then
-			gratuity:SetInventoryItem("player", ReagentBankButtonIDToInvSlotID(slot))
-		elseif LBU:IsBank(bag) then
+		if LBU:IsBank(bag) then
 			gratuity:SetInventoryItem("player", BankButtonIDToInvSlotID(slot))
+		--@retail@
+		elseif LBU:IsReagentBank(bag) then
+			gratuity:SetInventoryItem("player", ReagentBankButtonIDToInvSlotID(slot))
+		--@end-retail@
 		else
 			gratuity:SetBagItem(bag, slot)
 		end
 
 		-- count remaining slots and switch the tab based on the item type
-        if not Baggins:IsClassicWow() then
-		    local count = LBU:CountSlots("REAGENTBANK")
-		    if gratuity:Find(L["Crafting Reagent"]) and count ~= nil and count > 0 then
-		    	return REAGENT_BANK_TAB
-		    end
-        end
+        --@retail@
+		local count = LBU:CountSlots("REAGENTBANK")
+		if gratuity:Find(L["Crafting Reagent"]) and count ~= nil and count > 0 then
+			return REAGENT_BANK_TAB
+		end
+        --@end-retail@
 
 		return BANK_TAB
 	end
@@ -2830,28 +2790,28 @@ function Baggins:CreateBankControlFrame()
 	frame.slotbuy:Hide()
 
 	-- A button to buy the reagent bank
-    if not Baggins:IsClassicWow() then
-	    frame.rabuy = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-	    frame.rabuy:SetScript("OnClick", function(this)
-	    	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
-	    	StaticPopup_Show("CONFIRM_BUY_REAGENTBANK_TAB")
-	    end)
-	    frame.rabuy:SetWidth(160)
-	    frame.rabuy:SetHeight(18)
-	    frame.rabuy:SetText(L["Buy Reagent Bank"])
-	    frame.rabuy:Hide()
+    --@retail@
+	frame.rabuy = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+	frame.rabuy:SetScript("OnClick", function(this)
+		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
+		StaticPopup_Show("CONFIRM_BUY_REAGENTBANK_TAB")
+	end)
+	frame.rabuy:SetWidth(160)
+	frame.rabuy:SetHeight(18)
+	frame.rabuy:SetText(L["Buy Reagent Bank"])
+	frame.rabuy:Hide()
 
-	    -- Finally, a button to allow blizzards "Deposit All Reagents" feature to work.
-	    -- this takes all your reagents and moves them into the reagent bank
-	    frame.radeposit = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-	    frame.radeposit:SetScript("OnClick", function(this)
-	    	DepositReagentBank()
-	    end)
-	    frame.radeposit:SetWidth(160)
-	    frame.radeposit:SetHeight(18)
-	    frame.radeposit:SetText(L["Deposit All Reagents"])
-	    frame.radeposit:Hide()
-    end
+	-- Finally, a button to allow blizzards "Deposit All Reagents" feature to work.
+	-- this takes all your reagents and moves them into the reagent bank
+	frame.radeposit = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+	frame.radeposit:SetScript("OnClick", function(this)
+		DepositReagentBank()
+	end)
+	frame.radeposit:SetWidth(160)
+	frame.radeposit:SetHeight(18)
+	frame.radeposit:SetText(L["Deposit All Reagents"])
+	frame.radeposit:Hide()
+    --@end-retail@
 
 	frame:Hide()
 end
@@ -2876,17 +2836,19 @@ function Baggins:UpdateBankControlFrame()
 		anchoryoffset = -2
 	end
 
-	if not Baggins:IsClassicWow() and IsReagentBankUnlocked() then
+	--@retail@
+	if IsReagentBankUnlocked() then
 		frame.radeposit:SetPoint("TOPLEFT", anchorframe, anchorpoint, 0, anchoryoffset)
 		frame.radeposit:Show()
 		frame.rabuy:Hide()
 		numbuttons = numbuttons + 1
-	elseif not Baggins:IsClassicWow() then
+	else
 		frame.rabuy:SetPoint("TOPLEFT", anchorframe, anchorpoint, 0, anchoryoffset)
 		frame.rabuy:Show()
 		frame.radeposit:Hide()
 		numbuttons = numbuttons + 1
 	end
+	--@end-retail@
 
 	frame:SetHeight((18 + 2) * numbuttons)
 end
@@ -3032,9 +2994,9 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
 	button:SetID(slot)
 	-- quest item glow introduced in 3.3 (with silly logic)
     local isQuestItem, questId, isActive
-    if not Baggins:IsClassicWow() then
-	    isQuestItem, questId, isActive = GetContainerItemQuestInfo(bag, slot)
-    end
+    --@retail@
+	isQuestItem, questId, isActive = GetContainerItemQuestInfo(bag, slot)
+    --@end-retail@
 	local questTexture = (questId and not isActive) and TEXTURE_ITEM_QUEST_BANG or (questId or isQuestItem) and TEXTURE_ITEM_QUEST_BORDER
 	if p.highlightquestitems and texture and questTexture then
 		button.glow:SetTexture(questTexture)
@@ -3083,12 +3045,13 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
 		if not itemid then
 			local bagtype, itemFamily = Baggins:IsSpecialBag(bag)
 			bagtype = bagtype or ""
-            if not Baggins:IsClassicWow() then
+            --@retail@
 			count = bagtype..LBU:CountSlots(LBU:IsBank(bag) and "BANK" or LBU:IsReagentBank(bag) and "REAGENTBANK" or "BAGS", itemFamily)
-            end
-            if Baggins:IsClassicWow() then
-            count = bagtype..LBU:CountSlots(LBU:IsBank(bag) and "BANK" or "BAGS", itemFamily)
-            end
+			--@end-retail@
+			
+			--[===[@non-retail@
+			count = bagtype..LBU:CountSlots(LBU:IsBank(bag) and "BANK" or "BAGS", itemFamily)
+			--@end-non-retail@]===]
 		else
 			count = GetItemCount(itemid)
 			if LBU:IsBank(bag, true) then

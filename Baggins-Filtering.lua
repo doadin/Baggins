@@ -9,33 +9,32 @@ local band =
       _G.bit.band
 
 local BANK_CONTAINER = _G.BANK_CONTAINER
-if not Baggins:IsClassicWow() then
-local GetItemInfo, GetContainerItemLink, GetContainerItemID, GetContainerItemInfo, GetContainerNumFreeSlots, GetContainerNumSlots, GetContainerItemEquipmentSetInfo, GetEquipmentSetIDs =
-      _G.GetItemInfo, _G.GetContainerItemLink, _G.GetContainerItemID, _G.GetContainerItemInfo, _G.GetContainerNumFreeSlots, _G.GetContainerNumSlots, _G.GetContainerItemEquipmentSetInfo, C_EquipmentSet.GetEquipmentSetIDs
-end
-if Baggins:IsClassicWow() then
+
 local GetItemInfo, GetContainerItemLink, GetContainerItemID, GetContainerItemInfo, GetContainerNumFreeSlots, GetContainerNumSlots, GetContainerItemEquipmentSetInfo =
       _G.GetItemInfo, _G.GetContainerItemLink, _G.GetContainerItemID, _G.GetContainerItemInfo, _G.GetContainerNumFreeSlots, _G.GetContainerNumSlots, _G.GetContainerItemEquipmentSetInfo
-end
+
 local GetInventoryItemLink, GetItemQualityColor =
       _G.GetInventoryItemLink, _G.GetItemQualityColor
-if not Baggins:IsClassicWow() then
-local GetEquipmentSetInfo, GetEquipmentSetItemIDs, GetNumEquipmentSets =
-      _G.GetEquipmentSetInfo, _G.GetEquipmentSetItemIDs, _G.GetNumEquipmentSets
-end
+
 local GetItemInfoInstant, GetItemClassInfo, GetItemSubClassInfo =
 	  _G.GetItemInfoInstant, _G.GetItemClassInfo, _G.GetItemSubClassInfo
-if Baggins:IsClassicWow() then
-	GetAuctionItemSubClasses = _G.GetAuctionItemSubClasses
-else
-	GetAuctionItemSubClasses = _G.C_AuctionHouse.GetAuctionItemSubClasses
-end
+
+--[===[@non-retail@
+GetAuctionItemSubClasses = _G.GetAuctionItemSubClasses
+--@end-non-retail@]===]
+
+--@retail@
+GetAuctionItemSubClasses = _G.C_AuctionHouse.GetAuctionItemSubClasses
+--@end-retail@
+
+--@retail@
+local C_EquipmentSet, GetEquipmentSetInfo, GetEquipmentSetItemIDs, GetNumEquipmentSets, GetEquipmentSetIDs =
+	_G.C_EquipmentSet, _G.GetEquipmentSetInfo, _G.GetEquipmentSetItemIDs, _G.GetNumEquipmentSets, C_EquipmentSet.GetEquipmentSetIDs
+--@end-retail@
+
 local UnitLevel = _G.UnitLevel
 local C_PetJournal = _G.C_PetJournal
 local C_Item, ItemLocation = _G.C_Item, _G.ItemLocation
-if not Baggins:IsClassicWow() then
-    local C_EquipmentSet = _G.C_EquipmentSet
-end
 
 --GLOBALS: UNKNOWN, EasyMenu
 
@@ -92,46 +91,38 @@ local colors = {
 function Baggins:SetCategoryTable(cats)
 	categories = cats
 end
-local BagNames = {}
+
 local BagTypes = {}
-if Baggins:IsClassicWow() then
-BagNames = {
-	[KEYRING_CONTAINER] = L["KeyRing"],
-	[BANK_CONTAINER] = L["Bank Frame"],
-	[BACKPACK_CONTAINER] = L["Backpack"],
-}
-BagTypes = {
-	[BACKPACK_CONTAINER] = 1,
-	[BANK_CONTAINER] = 2,
-	[KEYRING_CONTAINER] = 3,
-}
-end
-if not Baggins:IsClassicWow() then
-BagNames = {
-    [REAGENTBANK_CONTAINER] = L["Reagent Bank"],
-	[BANK_CONTAINER] = L["Bank Frame"],
-	[BACKPACK_CONTAINER] = L["Backpack"],
-}
-BagTypes = {
-	[BACKPACK_CONTAINER] = 1,
-	[BANK_CONTAINER] = 2,
-    [REAGENTBANK_CONTAINER] = 4,
-}
-end
+local BagNames = {}
+
+BagNames[BACKPACK_CONTAINER] = L["Backpack"]
+BagTypes[BACKPACK_CONTAINER] = 1
+
+BagNames[BANK_CONTAINER] = L["Bank Frame"]
+BagTypes[BANK_CONTAINER] = 2
+
+--[===[@non-retail@
+BagNames[KEYRING_CONTAINER] = L["KeyRing"]
+BagTypes[KEYRING_CONTAINER] = 3
+--@end-non-retail@]===]
+
+--@retail@
+BagNames[REAGENTBANK_CONTAINER] = L["Reagent Bank"]
+BagTypes[REAGENTBANK_CONTAINER] = 4
+--@end-retail@
 
 for i=1,NUM_BAG_SLOTS do
 	BagNames[i] = L["Bag"..i]
 	BagTypes[i] = 1
 end
+
 for i=1,NUM_BANKBAGSLOTS do
 	BagNames[NUM_BAG_SLOTS+i] = L["Bank Bag"..i]
 	BagTypes[NUM_BAG_SLOTS+i] = 2
 end
 
-if not Baggins:IsClassicWow() then
-BagNames[REAGENTBANK_CONTAINER] = L["Reagent Bank"]
-BagTypes[REAGENTBANK_CONTAINER] = 4
-end
+
+
 
 local QualityNames = {
 }
@@ -270,63 +261,67 @@ function Baggins:IsSpecialBag(bag)
 	end
 	if bag>=1 and bag<= 11 then
 		local _,fam = GetContainerNumFreeSlots(bag)
-		if Baggins:IsClassicWow() then
-			if type(fam)~="number" then
-				-- assume normal bag
-			elseif fam==0 then
-				-- normal bag
-			elseif fam==1 or fam==2 then	-- quiver / ammo
-				return prefix.."a", fam
-			elseif fam==3 then		-- soul
-				return prefix.."s", fam
-			elseif fam==4 then		-- leatherworking?
-				return prefix.."l", fam
-			elseif fam==5 then		-- inscription?
-				return prefix.."i", fam
-			elseif fam==6 then		-- herb
-				return prefix.."h", fam
-			elseif fam==7 then		-- eNchant
-				return prefix.."n", fam
-			elseif fam==8 then	-- engineering
-				return prefix.."e", fam
-			elseif fam==9 then	-- keyring
-				return prefix.."k", fam
-			elseif fam==10 then	-- gems?
-				return prefix.."g", fam
-			elseif fam==11 then	-- mining?
-				return prefix.."m", fam
-			else
-				return prefix.."?", fam
-			end
-		else 
-			if type(fam)~="number" then
-				-- assume normal bag
-			elseif fam==0 then
-				-- normal bag
-			elseif fam==1 or fam==2 then	-- quiver / ammo
-				return prefix.."a", fam
-			elseif fam==4 then		-- soul
-				return prefix.."s", fam
-			elseif fam==8 then		-- leatherworking
-				return prefix.."l", fam
-			elseif fam==16 then		-- inscription
-				return prefix.."i", fam
-			elseif fam==32 then		-- herb
-				return prefix.."h", fam
-			elseif fam==64 then		-- eNchant
-				return prefix.."n", fam
-			elseif fam==128 then	-- engineering
-				return prefix.."e", fam
-			elseif fam==256 then	-- keyring
-				return prefix.."k", fam
-			elseif fam==512 then	-- gems
-				return prefix.."g", fam
-			elseif fam==1024 then	-- mining
-				return prefix.."m", fam
-			else
-				return prefix.."?", fam
-			end
+		
+		--[===[@non-retail@
+		if type(fam)~="number" then
+			-- assume normal bag
+		elseif fam==0 then
+			-- normal bag
+		elseif fam==1 or fam==2 then	-- quiver / ammo
+			return prefix.."a", fam
+		elseif fam==3 then		-- soul
+			return prefix.."s", fam
+		elseif fam==4 then		-- leatherworking?
+			return prefix.."l", fam
+		elseif fam==5 then		-- inscription?
+			return prefix.."i", fam
+		elseif fam==6 then		-- herb
+			return prefix.."h", fam
+		elseif fam==7 then		-- eNchant
+			return prefix.."n", fam
+		elseif fam==8 then	-- engineering
+			return prefix.."e", fam
+		elseif fam==9 then	-- keyring
+			return prefix.."k", fam
+		elseif fam==10 then	-- gems?
+			return prefix.."g", fam
+		elseif fam==11 then	-- mining?
+			return prefix.."m", fam
+		else
+			return prefix.."?", fam
 		end
+		--@end-non-retail@]===]
+
+		--@retail@
+		if type(fam)~="number" then
+			-- assume normal bag
+		elseif fam==0 then
+			-- normal bag
+		elseif fam==1 or fam==2 then	-- quiver / ammo
+			return prefix.."a", fam
+		elseif fam==4 then		-- soul
+			return prefix.."s", fam
+		elseif fam==8 then		-- leatherworking
+			return prefix.."l", fam
+		elseif fam==16 then		-- inscription
+			return prefix.."i", fam
+		elseif fam==32 then		-- herb
+			return prefix.."h", fam
+		elseif fam==64 then		-- eNchant
+			return prefix.."n", fam
+		elseif fam==128 then	-- engineering
+			return prefix.."e", fam
+		elseif fam==256 then	-- keyring
+			return prefix.."k", fam
+		elseif fam==512 then	-- gems
+			return prefix.."g", fam
+		elseif fam==1024 then	-- mining
+			return prefix.."m", fam
+		else
+			return prefix.."?", fam
+		end
+		--@end-retail@
+
 	end
 
 	if prefix ~= "" then
@@ -530,11 +525,11 @@ function Baggins:ForceFullBankUpdate()
 	for bagid in LBU:IterateBags("BANK") do
 		self:CheckSlotsChanged(bagid, true)
 	end
-    if not Baggins:IsClassicWow() then
-	    for bagid in LBU:IterateBags("REAGENTBANK") do
-	    	self:CheckSlotsChanged(bagid, true)
-	    end
-    end    
+	--@release@
+	for bagid in LBU:IterateBags("REAGENTBANK") do
+		self:CheckSlotsChanged(bagid, true)
+	end
+    --@end-release@    
     
 end
 
@@ -735,15 +730,16 @@ Baggins:AddCustomRule("ItemType", {
 						local tmp = {}
 						tmp.ALL = _G.ALL
 						if rule.itype and ItemTypes[rule.itype] then
-							if Baggins:IsClassicWow() then
-							    for _,k in pairs({GetAuctionItemSubClasses(rule.itype)}) do
-							    	tmp[tostring(k)] = GetItemSubClassInfo(rule.itype, k) or UNKNOWN
-								end
-							else
-							    for _,k in pairs(GetAuctionItemSubClasses(rule.itype)) do
-							    	tmp[tostring(k)] = GetItemSubClassInfo(rule.itype, k) or UNKNOWN
-								end
-							end								
+							
+							--[===[@non-retail@
+							for _,k in pairs({GetAuctionItemSubClasses(rule.itype)}) do
+							--@end-non-retail@]===]
+							--@retail@
+							for _,k in pairs(GetAuctionItemSubClasses(rule.itype)) do
+							--@end-retail@
+								tmp[tostring(k)] = GetItemSubClassInfo(rule.itype, k) or UNKNOWN
+							end
+
 						end
 						return tmp
 					end,
@@ -1505,35 +1501,31 @@ end
 
 -----------------------------------------------------------------------
 -- Equipment Set
-if not Baggins:IsClassicWow() then
-    local equipmentSets = {}
-    
-    function updateSets()
-    	wipe(equipmentSets)
-    	for _, id in next, C_EquipmentSet.GetEquipmentSetIDs() do
-    		local name = C_EquipmentSet.GetEquipmentSetInfo(id)
-    		equipmentSets[name] = name
-    	end
-    end
+
+--@release@
+local equipmentSets = {}
+
+function updateSets()
+	wipe(equipmentSets)
+	for _, id in next, C_EquipmentSet.GetEquipmentSetIDs() do
+		local name = C_EquipmentSet.GetEquipmentSetInfo(id)
+		equipmentSets[name] = name
+	end
 end
 
 local function fullUpdateSets()
-    if not Baggins:IsClassicWow() then
-    	updateSets()
-    end
+    updateSets()
 	Baggins:ForceFullUpdate()
 end
 
-if not Baggins:IsClassicWow() then
-    Baggins:RegisterEvent("EQUIPMENT_SETS_CHANGED", fullUpdateSets)
-    --required when AddonLoader is not installed
-    --Baggins:RegisterEvent("PLAYER_LOGIN", updateSets)
-    --required when AddonLoader is installed
-    updateSets()
-    
-    function getEquipmentSetChoices()
-    	return equipmentSets
-    end
+Baggins:RegisterEvent("EQUIPMENT_SETS_CHANGED", fullUpdateSets)
+--required when AddonLoader is not installed
+--Baggins:RegisterEvent("PLAYER_LOGIN", updateSets)
+--required when AddonLoader is installed
+updateSets()
+
+function getEquipmentSetChoices()
+	return equipmentSets
 end
 
 local function getSetValue(info, key)
@@ -1552,54 +1544,53 @@ local function isAnySet(info)
 	return info.arg.anyset
 end
 
-if not Baggins:IsClassicWow() then
-    Baggins:AddCustomRule("EquipmentSet", {
-    	DisplayName = L["Equipment Set"],
-    	Description = L["Filter by Equipment Set"],
-    	GetName = function(rule)
-    			local result = ""
-    			if rule.anySet then
-    				return L["Any"]
-    			elseif rule.sets then
-    				for k in pairs(rule.sets) do
-    					result = result .. " " .. k
-    				end
-    			end
-    			return result
-    		end,
-    	Matches = function(bag, slot, rule)
-    			local _, item = GetContainerItemInfo(bag, slot)
-    			local inset, setstring = GetContainerItemEquipmentSetInfo(bag, slot)
-    			if not inset then return false end
-    			if rule.anyset then return true end
-    			if not rule.sets then return false end
-    			local sets = { (","):split(setstring) }
-    			for i,v in ipairs(sets) do
-    			local set = v:gsub("^ ", "")
-    				if rule.sets[set] then
-    					return true
-    				end
-    			end
-    			return false
-    		end,
-    	Ace3Options = {
-    		anyset = {
-    			name = L["Any"],
-    			desc = "",
-    			type = 'toggle',
-    		},
-    		sets = {
-    			name = L["Equipment Sets"],
-    			desc = "",
-    			type = 'multiselect',
-    			values = getEquipmentSetChoices,
-    			get = getSetValue,
-    			set = toggleSetValue,
-    			disabled = isAnySet,
-    		},
-    	},
-    })
-end
+Baggins:AddCustomRule("EquipmentSet", {
+	DisplayName = L["Equipment Set"],
+	Description = L["Filter by Equipment Set"],
+	GetName = function(rule)
+			local result = ""
+			if rule.anySet then
+				return L["Any"]
+			elseif rule.sets then
+				for k in pairs(rule.sets) do
+					result = result .. " " .. k
+				end
+			end
+			return result
+		end,
+	Matches = function(bag, slot, rule)
+			local _, item = GetContainerItemInfo(bag, slot)
+			local inset, setstring = GetContainerItemEquipmentSetInfo(bag, slot)
+			if not inset then return false end
+			if rule.anyset then return true end
+			if not rule.sets then return false end
+			local sets = { (","):split(setstring) }
+			for i,v in ipairs(sets) do
+			local set = v:gsub("^ ", "")
+				if rule.sets[set] then
+					return true
+				end
+			end
+			return false
+		end,
+	Ace3Options = {
+		anyset = {
+			name = L["Any"],
+			desc = "",
+			type = 'toggle',
+		},
+		sets = {
+			name = L["Equipment Sets"],
+			desc = "",
+			type = 'multiselect',
+			values = getEquipmentSetChoices,
+			get = getSetValue,
+			set = toggleSetValue,
+			disabled = isAnySet,
+		},
+	},
+})
+--@end-release@
 
 local INV_TYPES = {
   INVTYPE_HEAD = INVTYPE_HEAD,
