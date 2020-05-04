@@ -79,3 +79,6 @@ Baggins-Options.lua
 Baggins-Skins.lua
 Baggins-Filtering.lua
 Baggins_ItemOps.lua
+
+# Filters
+src\filters\EquipmentSet.lua
