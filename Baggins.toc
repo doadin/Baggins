@@ -21,9 +21,9 @@
 ## X-CompatibleLocales: enUS, enGB, deDE, frFR, esES, esMX, zhCN, zhTW, koKR, ruRU
 
 #@non-no-lib-strip@
-# ## Title: Baggins |cff1784d1[nolib]|r
-# ## Dependencies: Ace3, LibDBIcon-1.0, LibItemUpgradeInfo-1.0, LibQTip-1.0, LibGratuity-3.0, LibBagUtils-1.0
-# ## OptionalDeps: LibBabble-Inventory-3.0, LibPeriodicTable-3.1
+# ## Title: Baggins |cff1784d1[nolibs]|r
+# ## Dependencies: Ace3, LibDBIcon-1.0, LibItemUpgradeInfo-1.0, LibQTip-1.0, LibGratuity-3.0, LibBagUtils-1.0, LibBabble-Inventory-3.0
+# ## OptionalDeps: LibPeriodicTable-3.1
 #@end-non-no-lib-strip@
 
 #@no-lib-strip@
