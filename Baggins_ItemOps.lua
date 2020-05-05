@@ -134,9 +134,9 @@ function Baggins:MoveToSpecialtyBags(bank,testonly)
 								-- specialty bags dont go in specialty bags
 							else
 								for bagFamily,dest in pairs(specialtyTargetBags) do
-									--@release@
+									--@retail@
 									if band(itemFamily,bagFamily) ~= 0 then 
-									--@end-release@
+									--@end-retail@
 									--[===[@non-retail@
 									if itemFamily == bagFamily then
 									--@end-non-retail@]===]
