@@ -20,6 +20,7 @@ Steps to reproduce (One of many ways):
 
 --]]
 
+--@retail@
 local _G = _G
 
 local AddOnName, _ = ...
@@ -145,3 +146,4 @@ AddOn:AddCustomRule(
 -- Initialize filter
 BuildContainerTypes()
 
+--@end-retail@
