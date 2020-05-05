@@ -82,4 +82,5 @@ Baggins_ItemOps.lua
 # Filters
 src\filters\ContainerType.lua
 src\filters\EquipmentSet.lua
+src\filters\Quality.lua
 src\filters\Tooltip.lua

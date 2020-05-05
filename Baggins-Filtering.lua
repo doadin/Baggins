@@ -13,9 +13,6 @@ local BANK_CONTAINER = _G.BANK_CONTAINER
 local GetItemInfo, GetContainerItemLink, GetContainerItemID, GetContainerItemInfo, GetContainerNumFreeSlots, GetContainerNumSlots =
       _G.GetItemInfo, _G.GetContainerItemLink, _G.GetContainerItemID, _G.GetContainerItemInfo, _G.GetContainerNumFreeSlots, _G.GetContainerNumSlots
 
-local GetInventoryItemLink, GetItemQualityColor =
-      _G.GetInventoryItemLink, _G.GetItemQualityColor
-
 local GetItemInfoInstant, GetItemClassInfo, GetItemSubClassInfo =
 	  _G.GetItemInfoInstant, _G.GetItemClassInfo, _G.GetItemSubClassInfo
 
@@ -36,25 +33,7 @@ local C_Item, ItemLocation = _G.C_Item, _G.ItemLocation
 local pt = LibStub("LibPeriodicTable-3.1", true)
 local gratuity = LibStub("LibGratuity-3.0")
 local L = LibStub("AceLocale-3.0"):GetLocale("Baggins")
-local BBI = LibStub("LibBabble-Inventory-3.0"):GetLookupTable()
 local ItemUpgradeInfo = LibStub("LibItemUpgradeInfo-1.0")
-
-local BattlePetTypes = {
-	["Battle Pets"] = L["Battle Pets"],
-	["Humanoid"] = _G["BATTLE_PET_NAME_" .. 1],
-	["Dragonkin"] = _G["BATTLE_PET_NAME_" .. 2],
-	["Flying"] = _G["BATTLE_PET_NAME_" .. 3],
-	["Undead"] = _G["BATTLE_PET_NAME_" .. 4],
-	["Critter"] = _G["BATTLE_PET_NAME_" .. 5],
-	["Magic"] = _G["BATTLE_PET_NAME_" .. 6],
-	["Elemental"] = _G["BATTLE_PET_NAME_" .. 7],
-	["Beast"] = _G["BATTLE_PET_NAME_" .. 8],
-	["Aquatic"] = _G["BATTLE_PET_NAME_" .. 9],
-	["Mechanical"] = _G["BATTLE_PET_NAME_" .. 10],
-}
-local BI = setmetatable({}, { __index = function(self, key)
-		return BattlePetTypes[key] or BBI[key]
-	end})
 
 local LBU = LibStub("LibBagUtils-1.0")
 local AceConfigRegistry = LibStub("AceConfigRegistry-3.0")
@@ -118,15 +97,6 @@ end
 
 
 
-
-local QualityNames = {
-}
-for i=0,99 do
-	QualityNames[i]=_G["ITEM_QUALITY"..i.."_DESC"]
-	if not QualityNames[i] then
-		break
-	end
-end
 
 local EquipLocs = {
 	"INVTYPE_AMMO",
@@ -966,58 +936,6 @@ Baggins:AddCustomRule("Category", {
 					end,
 			},
 		},
-})
-
------------------------------------------------------------------------
--- Quality
-
-Baggins:AddCustomRule("Quality", {
-		DisplayName = L["Quality"],
-		Description = L["Filter by Item Quality"],
-		Matches = function(bag,slot,rule)
-			if not (rule.comp and rule.quality) then return end
-			local link = GetContainerItemLink(bag, slot)
-			if link then
-				local Rarity = select(3, GetItemInfo(link))
-				if Rarity then
-					return ( rule.comp == "==" and Rarity == rule.quality ) or
-					       ( rule.comp == "<=" and Rarity <= rule.quality ) or
-					       ( rule.comp == ">=" and Rarity >= rule.quality )
-				end
-			end
-		end,
-		GetName = function(rule)
-			local qualname
-			if rule.quality then
-				local r,g,b,hex = GetItemQualityColor(rule.quality)
-				qualname = hex..QualityNames[rule.quality]
-			else
-				qualname = "*none*"
-			end
-			return L["Quality"].." "..(rule.comp or "==").." "..qualname
-		end,
-		Ace3Options = {
-			comp = {
-				type = 'select',
-				name = L["Comparison"],
-				desc = "",
-				values = {
-					["=="] = "==",
-					["<="] = "<=",
-					[">="] = ">=",
-				},
-			},
-			quality = {
-				name = L["Quality"],
-				desc = "",
-				type = "select",
-				values = QualityNames,
-			}
-		},
-		CleanRule = function(rule)
-			rule.quality = 1
-			rule.comp = "=="
-		end,
 })
 
 
