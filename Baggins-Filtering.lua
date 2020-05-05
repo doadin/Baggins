@@ -189,6 +189,7 @@ end
 
 -- TODO: [#24] https://github.com/doadin/Baggins/issues/24
 function Baggins:GetRuleDesc(rule)
+    assert(rule, "Baggins Plugin attemped use of GetRuleDesc please report this along with plugins in use to Baggins author. Thanks!")
 	if RuleTypes[rule.type] then
 		return RuleTypes[rule.type].GetName(rule)
 	else
