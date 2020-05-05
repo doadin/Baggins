@@ -126,12 +126,12 @@ AddOn:AddCustomRule(
 			anyset = 
 			{
 				name = L["Any"],
-				type = 'toggle',
+				type = "toggle",
 			},
 			sets = 
 			{
 				name = L["Equipment Sets"],
-				type = 'multiselect',
+				type = "multiselect",
 				values = EquipmentSets,
 				get = GetOptionSets,
 				set = SetOptionSets,
