@@ -217,6 +217,7 @@ function Baggins:GetRuleTypes()
 	return types
 end
 
+-- TODO: [#24] https://github.com/doadin/Baggins/issues/24
 function Baggins:GetRuleDesc(rule)
 	if RuleTypes[rule.type] then
 		return RuleTypes[rule.type].GetName(rule)
@@ -792,6 +793,7 @@ Baggins:AddCustomRule("ContainerType", {
 						local tmp = {
 							ALL = _G.ALL,
 						}
+						-- BUG: [#23] https://github.com/doadin/Baggins/issues/23
 						for _,v in ipairs(ItemTypes["Container"]) do
 							tmp[v] = v
 						end
