@@ -4,22 +4,6 @@ ContainerType.lua
 
 ========================================================================== ]]--
 
-
---[[
--- BUG: [#25] https://github.com/doadin/Baggins/issues/25
-
-ContainerType does not react to container changes.
-
-Needs to execute Baggins:ForceFullRefresh() when bags are changed.
-
-Steps to reproduce (One of many ways):
-
-    1. Put Herb bag in bag bar
-    2. Create filter 'Container Type' -> 'Herb Bag'
-    3. Remove Herb bag from bar
-
---]]
-
 --@retail@
 local _G = _G
 

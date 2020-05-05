@@ -437,6 +437,7 @@ end
 
 function Baggins:OnEnable()
 	--self:SetBagUpdateSpeed();
+    self:RegisterEvent("BAG_CLOSED", "ForceFullRefresh")
 	self:RegisterEvent("BAG_UPDATE")
 	self:RegisterEvent("BAG_UPDATE_COOLDOWN", "UpdateItemButtonCooldowns")
 	self:RegisterEvent("ITEM_LOCK_CHANGED", "UpdateItemButtonLocks")
