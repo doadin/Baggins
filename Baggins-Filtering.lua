@@ -747,63 +747,6 @@ Baggins:AddCustomRule("ItemType", {
 		end
 })
 
------------------------------------------------------------------------
--- ContainerType
-
-local ContainerIDToInventoryID = ContainerIDToInventoryID
-
-Baggins:AddCustomRule("ContainerType", {
-		DisplayName = L["Container Type"],
-		Description = L["Filter by the type of container the item is in."],
-		Matches = function(bag,slot,rule)
-			if bag < 1 or bag > 11 then return end
-			if not rule.ctype then return end
-			local link = GetInventoryItemLink("player",ContainerIDToInventoryID(bag))
-			if link then
-				local _, _, SubType = GetItemInfoInstant(link)
-				if SubType then
-					return SubType == BI[rule.ctype]
-				end
-			end
-		end,
-		GetName = function(rule)
-			local ctype
-			if rule.ctype then
-				ctype = BI[rule.ctype]
-			else
-				ctype = L["None"]
-			end
-			return L["Container : "]..ctype
-		end,
-		Ace3Options = {
-			ctype = {
-				name = L["Container Type"],
-				desc = "",
-				type = 'select',
-				get = function(info) return info.arg.ctype or "ALL" end,
-				set = function(info, value)
-						if value == "ALL" then
-							info.arg.ctype = nil
-						else
-							info.arg.ctype = value
-						end
-						Baggins:OnRuleChanged()
-					end,
-				values = function()
-						local tmp = {
-							ALL = _G.ALL,
-						}
-						-- BUG: [#23] https://github.com/doadin/Baggins/issues/23
-						for _,v in ipairs(ItemTypes["Container"]) do
-							tmp[v] = v
-						end
-						return tmp
-					end,
-			},
-		},
-})
-
-
 
 
 
