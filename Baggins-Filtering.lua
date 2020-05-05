@@ -492,11 +492,11 @@ function Baggins:ForceFullBankUpdate()
 	for bagid in LBU:IterateBags("BANK") do
 		self:CheckSlotsChanged(bagid, true)
 	end
-	--@release@
+	--@retail@
 	for bagid in LBU:IterateBags("REAGENTBANK") do
 		self:CheckSlotsChanged(bagid, true)
 	end
-    --@end-release@    
+    --@end-retail@    
     
 end
 
