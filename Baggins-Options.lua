@@ -681,7 +681,7 @@ function Baggins:RebuildOptions()
 					order = 60,
 					max = 2,
 					min = 0.3,
-					step = 0.1,
+					step = 0.01,
 					get = function() return p.scale end,
 					set = function(info, value)
 						p.scale = value
