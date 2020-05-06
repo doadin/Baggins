@@ -3,7 +3,10 @@ local _G = _G
 _G.Baggins = LibStub("AceAddon-3.0"):NewAddon("Baggins", "AceEvent-3.0", "AceHook-3.0", "AceBucket-3.0", "AceTimer-3.0", "AceConsole-3.0")
 
 local Baggins = _G.Baggins
-local pt = LibStub("LibPeriodicTable-3.1", true)
+
+-- XXX: [#26] LibPeriodicTable data is ancient.
+-- local pt = LibStub("LibPeriodicTable-3.1", true)
+
 local L = LibStub("AceLocale-3.0"):GetLocale("Baggins")
 local LBU = LibStub("LibBagUtils-1.0")
 local qt = LibStub('LibQTip-1.0')
@@ -155,6 +158,8 @@ function Baggins:FireSignal(name, ...)		-- Example: FireSignal("MySignal", 1, 2,
 	end
 end
 
+-- XXX: [#26] LibPeriodicTable data is ancient.
+--[[
 local function PT3ModuleSet(info, value)
 	local name = info[#info]
 	Baggins.db.global.pt3mods[name] = value
@@ -167,6 +172,7 @@ local function PT3ModuleGet(info)
 	local name = info[#info]
 	return Baggins.db.global.pt3mods[name]
 end
+]]--
 
 local tooltip
 
@@ -350,6 +356,8 @@ function Baggins:OnInitialize()
 
 	dbIcon:Register("Baggins", ldbdata, self.db.profile.minimap)
 
+	-- XXX: [#26] LibPeriodicTable data is ancient.
+	--[[
 	self.ptsetsdirty = true
 
 	local PT3Modules
@@ -390,6 +398,7 @@ function Baggins:OnInitialize()
 			order = order + 1
 		end
 	end
+	]]--
 
 	-- self:RegisterChatCommand({ "/baggins" }, self.opts, "BAGGINS")
 
@@ -462,7 +471,8 @@ function Baggins:OnEnable()
 	self:RegisterEvent('SCRAPPING_MACHINE_CLOSE', "CloseAllBags")
 	--@end-retail@
 
-	self:RegisterBucketEvent('ADDON_LOADED', 5,'OnAddonLoaded')
+	-- XXX: [#26] LibPeriodicTable data is ancient.
+	-- self:RegisterBucketEvent('ADDON_LOADED', 5,'OnAddonLoaded')
 
 	self:RegisterSignal('CategoryMatchAdded', self.CategoryMatchAdded, self)
 	self:RegisterSignal('CategoryMatchRemoved', self.CategoryMatchRemoved, self)
@@ -488,6 +498,8 @@ function Baggins:OnEnable()
 	self:UpdateText()
 	--self:SetDebugging(true)
 
+	-- XXX: [#26] LibPeriodicTable data is ancient.
+	--[[
 	if pt then
 		for name, load in pairs(self.db.global.pt3mods) do
 			if GetAddOnMetadata(name, "X-PeriodicTable-3.1-Module") then
@@ -499,6 +511,7 @@ function Baggins:OnEnable()
 			end
 		end
 	end
+	]]--
 
 	if self.db.profile.hideduplicates == true then
 		self.db.profile.hideduplicates = "global"
@@ -671,6 +684,8 @@ function Baggins:IsCompressed(itemID)
 	end
 end
 
+-- XXX: [#26] LibPeriodicTable data is ancient.
+--[[
 function Baggins:OnAddonLoaded(name)
 	if not pt and name then return end
 	local module
@@ -685,6 +700,7 @@ function Baggins:OnAddonLoaded(name)
 		self.ptsetsdirty = true
 	end
 end
+]]--
 
 function Baggins:OnBankClosed()
 	-- don't remove the test, it prevents infinite recursion loop on CloseBankFrame()

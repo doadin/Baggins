@@ -30,7 +30,9 @@ local C_Item, ItemLocation = _G.C_Item, _G.ItemLocation
 
 --GLOBALS: UNKNOWN, EasyMenu
 
-local pt = LibStub("LibPeriodicTable-3.1", true)
+-- XXX: [#26] LibPeriodicTable data is ancient.
+-- local pt = LibStub("LibPeriodicTable-3.1", true)
+
 local gratuity = LibStub("LibGratuity-3.0")
 local L = LibStub("AceLocale-3.0"):GetLocale("Baggins")
 local ItemUpgradeInfo = LibStub("LibItemUpgradeInfo-1.0")
@@ -48,7 +50,8 @@ function Baggins:GetCategoryCache()
     return categorycache
 end
 
-local ptsets = {}
+-- XXX: [#26] LibPeriodicTable data is ancient.
+-- local ptsets = {}
 
 local bankuseditems = {}
 local bankcategorycache = {}
@@ -1171,7 +1174,8 @@ Baggins:AddCustomRule("Bind", {
 
 
 
-
+-- XXX: [#26] LibPeriodicTable data is ancient.
+--[[
 -----------------------------------------------------------------------
 -- PTSet
 
@@ -1320,8 +1324,8 @@ if pt then
 		},
 	})
 end
+]]--
 
--- ============================================================================
 
 local INV_TYPES = {
   INVTYPE_HEAD = INVTYPE_HEAD,
@@ -1397,3 +1401,4 @@ Baggins:AddCustomRule("EquipmentSlot", {
 		},
 	},
 })
+
