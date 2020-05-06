@@ -4,9 +4,6 @@ _G.Baggins = LibStub("AceAddon-3.0"):NewAddon("Baggins", "AceEvent-3.0", "AceHoo
 
 local Baggins = _G.Baggins
 
--- XXX: [#26] LibPeriodicTable data is ancient.
--- local pt = LibStub("LibPeriodicTable-3.1", true)
-
 local L = LibStub("AceLocale-3.0"):GetLocale("Baggins")
 local LBU = LibStub("LibBagUtils-1.0")
 local qt = LibStub('LibQTip-1.0')
@@ -157,22 +154,6 @@ function Baggins:FireSignal(name, ...)		-- Example: FireSignal("MySignal", 1, 2,
 		end
 	end
 end
-
--- XXX: [#26] LibPeriodicTable data is ancient.
---[[
-local function PT3ModuleSet(info, value)
-	local name = info[#info]
-	Baggins.db.global.pt3mods[name] = value
-	if value then
-		LoadAddOn(name)
-	end
-end
-
-local function PT3ModuleGet(info)
-	local name = info[#info]
-	return Baggins.db.global.pt3mods[name]
-end
-]]--
 
 local tooltip
 
@@ -356,50 +337,6 @@ function Baggins:OnInitialize()
 
 	dbIcon:Register("Baggins", ldbdata, self.db.profile.minimap)
 
-	-- XXX: [#26] LibPeriodicTable data is ancient.
-	--[[
-	self.ptsetsdirty = true
-
-	local PT3Modules
-	if pt then
-		for i = 1, GetNumAddOns() do
-			local metadata = GetAddOnMetadata(i, "X-PeriodicTable-3.1-Module")
-			if metadata then
-				local name, _, _, enabled = GetAddOnInfo(i)
-				if enabled then
-					PT3Modules = PT3Modules or {}
-				  PT3Modules[name] = true
-				end
-		  end
-		end
-	end
-
-	if PT3Modules then
-		self.opts.args.PT3LOD = {
-				name = L["PT3 LoD Modules"],
-				type = "group",
-				desc = L["Choose PT3 LoD Modules to load at startup, Will load immediately when checked"],
-				order = 135,
-				args = {
-
-				},
-			}
-		local order = 1
-		for name in pairs(PT3Modules) do
-			self.opts.args.PT3LOD.args[name] = {
-				name = name,
-				type = "toggle",
-				order = order,
-				desc = L["Load %s at Startup"]:format(name),
-				arg = name,
-				get = PT3ModuleGet,
-				set = PT3ModuleSet,
-			}
-			order = order + 1
-		end
-	end
-	]]--
-
 	-- self:RegisterChatCommand({ "/baggins" }, self.opts, "BAGGINS")
 
 end
@@ -471,9 +408,6 @@ function Baggins:OnEnable()
 	self:RegisterEvent('SCRAPPING_MACHINE_CLOSE', "CloseAllBags")
 	--@end-retail@
 
-	-- XXX: [#26] LibPeriodicTable data is ancient.
-	-- self:RegisterBucketEvent('ADDON_LOADED', 5,'OnAddonLoaded')
-
 	self:RegisterSignal('CategoryMatchAdded', self.CategoryMatchAdded, self)
 	self:RegisterSignal('CategoryMatchRemoved', self.CategoryMatchRemoved, self)
 	self:RegisterSignal('SlotMoved', self.SlotMoved, self)
@@ -497,21 +431,6 @@ function Baggins:OnEnable()
 	self:ResortSections()
 	self:UpdateText()
 	--self:SetDebugging(true)
-
-	-- XXX: [#26] LibPeriodicTable data is ancient.
-	--[[
-	if pt then
-		for name, load in pairs(self.db.global.pt3mods) do
-			if GetAddOnMetadata(name, "X-PeriodicTable-3.1-Module") then
-				if load then
-					LoadAddOn(name)
-				end
-			else
-				self.db.global.pt3mods[name] = nil
-			end
-		end
-	end
-	]]--
 
 	if self.db.profile.hideduplicates == true then
 		self.db.profile.hideduplicates = "global"
@@ -684,23 +603,6 @@ function Baggins:IsCompressed(itemID)
 	end
 end
 
--- XXX: [#26] LibPeriodicTable data is ancient.
---[[
-function Baggins:OnAddonLoaded(name)
-	if not pt and name then return end
-	local module
-	if type(name) == "string" then
-		module = GetAddOnMetadata(name, "X-PeriodicTable-3.1-Module")
-	else
-		for k in pairs(name) do
-			module = module or GetAddOnMetadata(k, "X-PeriodicTable-3.1-Module")
-		end
-	end
-	if module then
-		self.ptsetsdirty = true
-	end
-end
-]]--
 
 function Baggins:OnBankClosed()
 	-- don't remove the test, it prevents infinite recursion loop on CloseBankFrame()
