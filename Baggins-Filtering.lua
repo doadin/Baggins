@@ -64,31 +64,24 @@ function Baggins:SetCategoryTable(cats)
 end
 
 local BagTypes = {}
-local BagNames = {}
 
-BagNames[BACKPACK_CONTAINER] = L["Backpack"]
 BagTypes[BACKPACK_CONTAINER] = 1
 
-BagNames[BANK_CONTAINER] = L["Bank Frame"]
 BagTypes[BANK_CONTAINER] = 2
 
 --[===[@non-retail@
-BagNames[KEYRING_CONTAINER] = L["KeyRing"]
 BagTypes[KEYRING_CONTAINER] = 3
 --@end-non-retail@]===]
 
 --@retail@
-BagNames[REAGENTBANK_CONTAINER] = L["Reagent Bank"]
 BagTypes[REAGENTBANK_CONTAINER] = 4
 --@end-retail@
 
 for i=1,NUM_BAG_SLOTS do
-	BagNames[i] = L["Bag"..i]
 	BagTypes[i] = 1
 end
 
 for i=1,NUM_BANKBAGSLOTS do
-	BagNames[NUM_BAG_SLOTS+i] = L["Bank Bag"..i]
 	BagTypes[NUM_BAG_SLOTS+i] = 2
 end
 
@@ -787,43 +780,6 @@ Baggins:AddCustomRule("ItemID", {
 		},
 })
 
-
------------------------------------------------------------------------
--- Bag
-
-Baggins:AddCustomRule("Bag", {
-		DisplayName = L["Bag"],
-		Description = L["Filter by the bag the item is in"],
-		Matches = function(bag,slot,rule)
-			if rule.noempty then
-				local link = GetContainerItemLink(bag, slot)
-				if link then
-					return bag == rule.bagid
-				end
-			else
-				return bag == rule.bagid
-			end
-		end,
-		GetName = function(rule)
-			return "Bag "..(BagNames[rule.bagid] or rule.bagid or "*none*")..((rule.noempty and " *NotEmpty*") or "")
-		end,
-		Ace3Options = {
-			bagid = {
-				name = L["Bag"],
-				desc = "",
-				type = 'select',
-				values = BagNames,
-			},
-			noempty = {
-				name = L["Ignore Empty Slots"],
-				desc = "",
-				type = 'toggle',
-			},
-		},
-		CleanRule = function(rule)
-			rule.bagid=0
-		end,
-})
 
 
 -----------------------------------------------------------------------

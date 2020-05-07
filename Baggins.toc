@@ -69,6 +69,7 @@ Baggins-Filtering.lua
 Baggins_ItemOps.lua
 
 # Filters
+src\filters\Bag.lua
 src\filters\ContainerType.lua
 src\filters\EquipmentSet.lua
 src\filters\Quality.lua
