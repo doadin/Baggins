@@ -1,6 +1,16 @@
-local _G = _G
-local Baggins = _G.Baggins
+--[[ ==========================================================================
 
+Baggins-Filtering.lua
+
+========================================================================== ]]--
+
+local _G = _G
+
+local AddOnName, _ = ...
+local AddOn = _G[AddOnName]
+
+-- TODO: Clean up this section
+-- LUA Functions
 local pairs, ipairs, next, select, type, tonumber, tostring, format, min, max, wipe, ceil =
       _G.pairs, _G.ipairs, _G.next, _G.select, _G.type, _G.tonumber, _G.tostring, _G.format, _G.min, _G.max, _G.wipe, _G.ceil
 local tinsert, tremove, tsort =
@@ -8,34 +18,65 @@ local tinsert, tremove, tsort =
 local band =
       _G.bit.band
 
+-- TODO: Clean up this section
+-- WoW API
 local BANK_CONTAINER = _G.BANK_CONTAINER
 
 local GetItemInfo, GetContainerItemLink, GetContainerItemID, GetContainerItemInfo, GetContainerNumFreeSlots, GetContainerNumSlots =
       _G.GetItemInfo, _G.GetContainerItemLink, _G.GetContainerItemID, _G.GetContainerItemInfo, _G.GetContainerNumFreeSlots, _G.GetContainerNumSlots
-
 local GetItemInfoInstant, GetItemClassInfo, GetItemSubClassInfo =
 	  _G.GetItemInfoInstant, _G.GetItemClassInfo, _G.GetItemSubClassInfo
-
+local UnitLevel = _G.UnitLevel
+local C_PetJournal = _G.C_PetJournal
+local C_Item, ItemLocation = _G.C_Item, _G.ItemLocation
 --[===[@non-retail@
 GetAuctionItemSubClasses = _G.GetAuctionItemSubClasses
 --@end-non-retail@]===]
-
 --@retail@
 GetAuctionItemSubClasses = _G.C_AuctionHouse.GetAuctionItemSubClasses
 --@end-retail@
 
-local UnitLevel = _G.UnitLevel
-local C_PetJournal = _G.C_PetJournal
-local C_Item, ItemLocation = _G.C_Item, _G.ItemLocation
-
---GLOBALS: UNKNOWN, EasyMenu
-
-local gratuity = LibStub("LibGratuity-3.0")
-local L = LibStub("AceLocale-3.0"):GetLocale("Baggins")
-local ItemUpgradeInfo = LibStub("LibItemUpgradeInfo-1.0")
-
+-- Libs
+local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
+local LG = LibStub("LibGratuity-3.0")
+local LIUI = LibStub("LibItemUpgradeInfo-1.0")
 local LBU = LibStub("LibBagUtils-1.0")
-local AceConfigRegistry = LibStub("AceConfigRegistry-3.0")
+
+-- Local storage
+local BagTypes = {}
+
+-- Build list of bag types
+local function BuildBagTypes()
+
+	-- Common bags
+	BagTypes[BACKPACK_CONTAINER] = 1
+	BagTypes[BANK_CONTAINER] = 2
+
+    for i = 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS do
+
+        local name
+        if i <= NUM_BAG_SLOTS then
+			BagTypes[i] = 1 -- Bags
+        else
+			BagTypes[i] = 2 -- Bank bags
+        end
+
+    end
+
+	-- Classic specific bag
+	--[===[@non-retail@
+	BagTypes[KEYRING_CONTAINER] = 3
+	--@end-non-retail@]===]
+
+	-- Retail specific bag
+	--@retail@
+	BagTypes[REAGENTBANK_CONTAINER] = 4
+	--@end-retail@
+	
+end
+
+-- TODO: Lots of cleaning up belopw this line :)
+-- ... old code ...
 
 local RuleTypes = {}
 
@@ -62,30 +103,6 @@ local colors = {
 function Baggins:SetCategoryTable(cats)
 	categories = cats
 end
-
-local BagTypes = {}
-
-BagTypes[BACKPACK_CONTAINER] = 1
-
-BagTypes[BANK_CONTAINER] = 2
-
---[===[@non-retail@
-BagTypes[KEYRING_CONTAINER] = 3
---@end-non-retail@]===]
-
---@retail@
-BagTypes[REAGENTBANK_CONTAINER] = 4
---@end-retail@
-
-for i=1,NUM_BAG_SLOTS do
-	BagTypes[i] = 1
-end
-
-for i=1,NUM_BANKBAGSLOTS do
-	BagTypes[NUM_BAG_SLOTS+i] = 2
-end
-
-
 
 
 local EquipLocs = {
@@ -1168,3 +1185,5 @@ Baggins:AddCustomRule("EquipmentSlot", {
 	},
 })
 
+-- Initialize module
+BuildBagTypes()
