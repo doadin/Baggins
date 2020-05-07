@@ -783,36 +783,6 @@ Baggins:AddCustomRule("ItemID", {
 
 
 -----------------------------------------------------------------------
--- ItemName
-
-Baggins:AddCustomRule("ItemName", {
-		DisplayName = L["Item Name"],
-		Description = L["Filter by Name or partial name"],
-		Matches = function(bag,slot,rule)
-			if not rule.match then return end
-			local link = GetContainerItemLink(bag, slot)
-
-			if link then
-				local itemname = GetItemInfo(link)
-				if itemname and itemname:lower():match(rule.match:lower()) then
-					return true
-				end
-			end
-		end,
-		GetName = function(rule)
-			return L["Name: "]..(rule.match or "")
-		end,
-		Ace3Options = {
-			match = {
-				name = L["String to Match"],
-				desc = "",
-				type = 'input',
-			},
-		},
-})
-
-
------------------------------------------------------------------------
 -- Empty
 
 Baggins:AddCustomRule("Empty", {
