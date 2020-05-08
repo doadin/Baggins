@@ -29,7 +29,7 @@ local QualityNames = { }
 
 -- Build list of qualities
 local function BuildQualityNames()
-    
+
     for k,_ in ipairs(_G.ITEM_QUALITY_COLORS) do
         QualityNames[k] = _G["ITEM_QUALITY" .. k .. "_DESC"]
     end
@@ -39,12 +39,12 @@ end
 
 -- Test for match
 local function Matches(bag, slot, rule)
-    
+
     -- Empty rule?
-    if not (rule.comp and rule.quality) then 
+    if not (rule.comp and rule.quality) then
         return false
     end
-    
+
     -- Correct quality?
     local link = GetContainerItemLink(bag, slot)
     if link then
@@ -71,7 +71,7 @@ local function GetName(rule)
         local _, _, _, hex = GetItemQualityColor(rule.quality)
         name = hex .. QualityNames[rule.quality]
     else
-        name = "*none*" 
+        name = "*none*"
     end
 
     return L["Quality"] .. " " .. (rule.comp or "==") .. " " .. name
@@ -89,15 +89,15 @@ end
 
 -- Register filter
 Baggins:AddCustomRule(
-    "Quality", 
+    "Quality",
     {
         DisplayName = L["Quality"],
         Description = L["Filter by Item Quality"],
         Matches = Matches,
-		GetName = GetName, -- TODO: [#24] https://github.com/doadin/Baggins/issues/24
-        Ace3Options = 
+        GetName = GetName, -- TODO: [#24] https://github.com/doadin/Baggins/issues/24
+        Ace3Options =
         {
-            comp = 
+            comp =
             {
                 name = L["Comparison"],
                 type = "select",
@@ -107,7 +107,7 @@ Baggins:AddCustomRule(
                     [">="] = ">=",
                 },
             },
-            quality = 
+            quality =
             {
                 name = L["Quality"],
                 type = "select",

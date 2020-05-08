@@ -22,7 +22,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
 local function Matches(bag, slot, rule)
 
     -- Empty rule?
-    if not rule.match then 
+    if not rule.match then
         return false
     end
 
@@ -30,7 +30,7 @@ local function Matches(bag, slot, rule)
     local link = GetContainerItemLink(bag, slot)
     if link then
         local itemname = GetItemInfo(link)
-        if itemname and 
+        if itemname and
            itemname:lower():match(rule.match:lower()) then
             return true
         end
@@ -48,15 +48,15 @@ end
 
 -- Register filter
 AddOn:AddCustomRule(
-    "ItemName", 
+    "ItemName",
     {
         DisplayName = L["Item Name"],
         Description = L["Filter by Name or partial name"],
         GetName = GetName, -- TODO: [#24] https://github.com/doadin/Baggins/issues/24
         Matches = Matches,
-        Ace3Options = 
+        Ace3Options =
         {
-            match = 
+            match =
             {
                 name = L["String to Match"],
                 type = "input",

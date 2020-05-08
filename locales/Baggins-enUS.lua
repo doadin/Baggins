@@ -78,7 +78,7 @@ L["All in one"] = true
 L["A single bag containing your whole inventory, sorted by quality"] = true
 L["Scale"] = true
 L["Scale of the bag frames"] = true
-		--bagtypes
+        --bagtypes
 L["Backpack"] = true
 L["Bag 1"] = true
 L["Bag 2"] = true
@@ -95,7 +95,7 @@ L["Bank Bag 7"] = true
 L["Reagent Bank"] = true
 L["KeyRing"] = true
 
-		--quality names
+        --quality names
 L["Poor"] = true
 L["Common"] = true
 L["Uncommon"] = true
@@ -243,8 +243,8 @@ L["In Use"] = true
 L["Weapons"] = true
 L["Quest Items"] = true
 L["Consumables"] = true
-	L["Water"] = true -- Deprecated
-	L["Food"] = true -- Deprecated
+    L["Water"] = true -- Deprecated
+    L["Food"] = true -- Deprecated
 L["FirstAid"] = true
 L["Potions"] = true
 L["Scrolls"] = true
@@ -275,7 +275,7 @@ L["Trade Goods"] = true
 L["Mats"] = true
 L["Tradeskill Mats"] = true
 L["Recipes"] = true
-	L["Gathered"] = true -- Deprecated
+    L["Gathered"] = true -- Deprecated
 L["Bag"] = true
 L["BankBags"] = true
 L["Ammo"] = true
@@ -296,7 +296,7 @@ L["Add To Category"] = true
 L["Exclude From Category"] = true
 L["Item Info"] = true
 L["Use"] = true
-	L["Use/equip the item rather than bank/sell it"] = true
+    L["Use/equip the item rather than bank/sell it"] = true
 L["Quality: "] = true
 L["Item Level: "] = true
 L["Required Level: "] = true

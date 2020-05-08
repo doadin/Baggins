@@ -3,67 +3,67 @@ if not L then return end
 
 --itemtypes, these must match the Type and SubType returns from GetItemInfo for the ItemType rule to work
 L["Armor"] = "護甲"
-	L["Cloth"] = "布甲"
-	L["Idols"] = "雕像"
-	L["Leather"] = "皮甲"
-	L["Librams"] = "聖契"
-	L["Mail"] = "鎖甲"
-	L["Miscellaneous"] = "其他"
-	L["Shields"] = "盾牌"
-	L["Totems"] = "圖騰"
-	L["Plate"] = "鎧甲"
+    L["Cloth"] = "布甲"
+    L["Idols"] = "雕像"
+    L["Leather"] = "皮甲"
+    L["Librams"] = "聖契"
+    L["Mail"] = "鎖甲"
+    L["Miscellaneous"] = "其他"
+    L["Shields"] = "盾牌"
+    L["Totems"] = "圖騰"
+    L["Plate"] = "鎧甲"
 L["Consumable"] = "消耗品"
 L["Container"] = "容器"
-	L["Bag"] = "容器"
-	L["Enchanting Bag"] = "附魔包"
-	L["Engineering Bag"] = "工程包"
-	L["Herb Bag"] = "草藥包"
-	L["Soul Bag"] = "靈魂碎片背包"
+    L["Bag"] = "容器"
+    L["Enchanting Bag"] = "附魔包"
+    L["Engineering Bag"] = "工程包"
+    L["Herb Bag"] = "草藥包"
+    L["Soul Bag"] = "靈魂碎片背包"
 L["Key"] = "鑰匙"
 L["Miscellaneous"] = "其他"
-	L["Junk"] = "垃圾"
+    L["Junk"] = "垃圾"
 L["Reagent"] = "材料"
 L["Recipe"] = "配方"
-	L["Alchemy"] = "煉金術"
-	L["Blacksmithing"] = "鍛造"
-	L["Book"] = "書籍"
-	L["Cooking"] = "烹飪"
-	L["Enchanting"] = "附魔"
-	L["Engineering"] = "工程學"
-	L["First Aid"] = "急救"
-	L["Leatherworking"] = "制皮"
-	L["Tailoring"] = "剝皮"
+    L["Alchemy"] = "煉金術"
+    L["Blacksmithing"] = "鍛造"
+    L["Book"] = "書籍"
+    L["Cooking"] = "烹飪"
+    L["Enchanting"] = "附魔"
+    L["Engineering"] = "工程學"
+    L["First Aid"] = "急救"
+    L["Leatherworking"] = "制皮"
+    L["Tailoring"] = "剝皮"
 L["Projectile"] = "彈藥"
-	L["Arrow"] = "箭"
-	L["Bullet"] = "子彈"
+    L["Arrow"] = "箭"
+    L["Bullet"] = "子彈"
 L["Quest"] = "任務"
 L["Quiver"] = "箭袋"
-	L["Ammo Pouch"] = "彈藥袋"
-	L["Quiver"] = "箭袋"
+    L["Ammo Pouch"] = "彈藥袋"
+    L["Quiver"] = "箭袋"
 L["Trade Goods"] = "商品"
-	L["Devices"] = "裝置"
-	L["Explosives"] = "爆炸物"
-	L["Parts"] = "零件"
-	L["Gems"] = "寶石"
+    L["Devices"] = "裝置"
+    L["Explosives"] = "爆炸物"
+    L["Parts"] = "零件"
+    L["Gems"] = "寶石"
 L["Weapon"] = "武器"
-	L["Bows"] = "弓"
-	L["Crossbows"] = "弩"
-	L["Daggers"] = "匕首"
-	L["Guns"] = "槍械"
-	L["Fishing Pole"] = "魚竿"
-	L["Fist Weapons"] = "拳套"
-	L["Miscellaneous"] = "其他"
-	L["One-Handed Axes"] = "單手斧"
-	L["One-Handed Maces"] = "單手錘"
-	L["One-Handed Swords"] = "單手劍"
-	L["Polearms"] = "長柄武器"
-	L["Staves"] = "法杖"
-	L["Thrown"] = "投擲武器"
-	L["Two-Handed Axes"] = "雙手斧"
-	L["Two-Handed Maces"] = "雙手錘"
-	L["Two-Handed Swords"] = "雙手劍"
-	L["Wands"] = "魔杖"
-		--end of localizations needed for rules to work
+    L["Bows"] = "弓"
+    L["Crossbows"] = "弩"
+    L["Daggers"] = "匕首"
+    L["Guns"] = "槍械"
+    L["Fishing Pole"] = "魚竿"
+    L["Fist Weapons"] = "拳套"
+    L["Miscellaneous"] = "其他"
+    L["One-Handed Axes"] = "單手斧"
+    L["One-Handed Maces"] = "單手錘"
+    L["One-Handed Swords"] = "單手劍"
+    L["Polearms"] = "長柄武器"
+    L["Staves"] = "法杖"
+    L["Thrown"] = "投擲武器"
+    L["Two-Handed Axes"] = "雙手斧"
+    L["Two-Handed Maces"] = "雙手錘"
+    L["Two-Handed Swords"] = "雙手劍"
+    L["Wands"] = "魔杖"
+        --end of localizations needed for rules to work
 
 
 L["Baggins"] = "Baggins"
@@ -135,7 +135,7 @@ L["All in one"] = "整合背包"
 L["A single bag containing your whole inventory, sorted by quality"] = "將所有背包整合成一個，按品質排序。"
 L["Scale"] = "縮放"
 L["Scale of the bag frames"] = "縮放所有窗體"
-		--bagtypes
+        --bagtypes
 L["Backpack"] = "行囊"
 L["Bag 1"] = "1號背包"
 L["Bag 2"] = "2號背包"
@@ -152,7 +152,7 @@ L["Bank Bag 7"] = "銀行7號背包"
 L["Reagent Bank"] = "材料銀行"
 L["KeyRing"] = "鑰匙圈"
 
-		--qualoty names
+        --qualoty names
 L["Poor"] = "粗糙"
 L["Common"] = "普通"
 L["Uncommon"] = "優秀"
@@ -328,7 +328,7 @@ L["Add To Category"] = "添加到分類"
 L["Exclude From Category"] = "從分類中刪除"
 L["Item Info"] = "物品信息"
 L["Use"] = "使用"
-	L["Use/equip the item rather than bank/sell it"] = "使用/裝備這件物品而不是放銀行/出售"
+    L["Use/equip the item rather than bank/sell it"] = "使用/裝備這件物品而不是放銀行/出售"
 L["Quality: "] = "品質："
 L["Item Level: "] = "等級："
 L["Required Level: "] = "最小等級："
@@ -458,23 +458,23 @@ L["New Item Duration"] = "新物品標識持續時間"
 L["Controls how long (in minutes) an item will be considered new. 0 disables the time limit."] = "新物品標識持續時間多少分鐘. 0 為關閉時間限制"
 
 --[[------------------- modified by lalibre -------------------------------
-	------ Baggins-Options.lua ------
+    ------ Baggins-Options.lua ------
 $38		hideduplicates = 'global'
 $330						validate = {
-							global = L["global"]
-							bag = L["bag"]
-							disabled = L["disabled"]
-						}
+                            global = L["global"]
+                            bag = L["bag"]
+                            disabled = L["disabled"]
+                        }
 $392						validate = {
-							auto = L["auto"]
-							manual = L["manual"]
-						 }
+                            auto = L["auto"]
+                            manual = L["manual"]
+                         }
 $536						validate = {
-							quality = L["quality"]
-							name = L["name"]
-							type = L["type"]
-							slot = L["slot"]
-						}
+                            quality = L["quality"]
+                            name = L["name"]
+                            type = L["type"]
+                            slot = L["slot"]
+                        }
 $1424		return L["Select a Bag/Category"]
 $1508				waterfall:AddControl("type","linklabel","text",L["Remove"],"noNewLine",true,"r",1,"g",0.82,"b",0
 $1530			if not category then return L["Invalid Category"] end

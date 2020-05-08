@@ -71,24 +71,24 @@ end
 
 -- Test for match
 local function Matches(bag, slot, rule)
-    
+
     -- Empty rule?
-    if not rule.ctype then 
+    if not rule.ctype then
         return false
     end
 
     -- Valid bag number?
-    if bag < 1 or bag > NUM_BAG_SLOTS + NUM_BANKBAGSLOTS then 
+    if bag < 1 or bag > NUM_BAG_SLOTS + NUM_BANKBAGSLOTS then
         return false
     end
-    
+
     local link = GetInventoryItemLink("player",ContainerIDToInventoryID(bag))
     if link then
         local _, _, _, _, _, itemClassID, itemSubClassID = GetItemInfoInstant(link)
-        -- Is Container? 
+        -- Is Container?
         if itemClassID == LE_ITEM_CLASS_CONTAINER then
             -- Is correct type of Container?
-            return ContainerTypes[itemSubClassID] == rule.ctype 
+            return ContainerTypes[itemSubClassID] == rule.ctype
         end
     end
 
@@ -109,21 +109,21 @@ end
 -- Register filter
 AddOn:AddCustomRule(
     "ContainerType", {
-		DisplayName = L["Container Type"],
-		Description = L["Filter by the type of container the item is in."],
+        DisplayName = L["Container Type"],
+        Description = L["Filter by the type of container the item is in."],
         Matches = Matches,
-		GetName = GetName, -- TODO: [#24] https://github.com/doadin/Baggins/issues/24
-        Ace3Options = 
+        GetName = GetName, -- TODO: [#24] https://github.com/doadin/Baggins/issues/24
+        Ace3Options =
         {
-            ctype = 
+            ctype =
             {
-				name = L["Container Type"],
-				type = "select",
+                name = L["Container Type"],
+                type = "select",
                 get = GetOptionCType,
-				set = SetOptionCType,
-				values = EnumOptionValuesCType,
-			},
-		},
+                set = SetOptionCType,
+                values = EnumOptionValuesCType,
+            },
+        },
     }
 )
 

@@ -20,9 +20,9 @@ local LG = LibStub("LibGratuity-3.0")
 
 -- Test for match
 local function Matches(bag, slot, rule)
-    
+
     -- Empty rule?
-    if not rule.text then 
+    if not rule.text then
         return false
     end
 
@@ -34,7 +34,7 @@ local function Matches(bag, slot, rule)
             text = gtext
         end
     end
-    
+
     -- Is item in bags or in bank bags?
     if bag == -1 then
         LG:SetInventoryItem("player", BankButtonIDToInvSlotID(slot))
@@ -59,15 +59,15 @@ end
 
 -- Register filter
 AddOn:AddCustomRule(
-    "Tooltip", 
+    "Tooltip",
     {
         DisplayName = L["Tooltip"],
         Description = L["Filter based on text contained in its tooltip"],
         GetName = GetName, -- TODO: [#24] https://github.com/doadin/Baggins/issues/24
         Matches = Matches,
-        Ace3Options = 
+        Ace3Options =
         {
-            text = 
+            text =
             {
                 name = L["String to Match"],
                 type = "input",

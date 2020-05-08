@@ -7,7 +7,7 @@ Bag.lua
 local _G = _G
 
 local AddOnName, _ = ...
-local AddOn = _G[AddOnName]
+local AddOn = _G[AddOnName] --luacheck: ignore 211
 
 -- LUA Functions
 
@@ -23,7 +23,7 @@ local BagNames = {}
 
 -- Build list of bag names
 local function BuildBagNames()
-    
+
     -- Common bags
     BagNames[BACKPACK_CONTAINER] = L["Backpack"]
     BagNames[BANK_CONTAINER] = L["Bank Frame"]
@@ -44,7 +44,7 @@ local function BuildBagNames()
     --[===[@non-retail@
     BagNames[KEYRING_CONTAINER] = L["KeyRing"]
     --@end-non-retail@]===]
-    
+
     -- Retail specific bag
     --@retail@
     BagNames[REAGENTBANK_CONTAINER] = L["Reagent Bank"]
@@ -83,28 +83,28 @@ end
 
 -- Register filter
 Baggins:AddCustomRule(
-    "Bag", 
+    "Bag",
     {
-		DisplayName = L["Bag"],
-		Description = L["Filter by the bag the item is in"],
+        DisplayName = L["Bag"],
+        Description = L["Filter by the bag the item is in"],
         GetName = GetName, -- TODO: [#24] https://github.com/doadin/Baggins/issues/24
         Matches = Matches,
-        Ace3Options = 
+        Ace3Options =
         {
-            bagid = 
+            bagid =
             {
-				name = L["Bag"],
-				type = "select",
-				values = BagNames,
+                name = L["Bag"],
+                type = "select",
+                values = BagNames,
             },
             -- BUG: [#31] https://github.com/doadin/Baggins/issues/31
-            -- noempty = 
+            -- noempty =
             -- {
-			-- 	name = L["Ignore Empty Slots"],
-			-- 	type = "toggle",
-			-- },
-		},
-		CleanRule = CleanRule
+            -- 	name = L["Ignore Empty Slots"],
+            -- 	type = "toggle",
+            -- },
+        },
+        CleanRule = CleanRule
 })
 
 
