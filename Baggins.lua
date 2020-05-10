@@ -2960,7 +2960,26 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
             --@end-retail@
 
             --[===[@non-retail@
-            count = bagtype..LBU:CountSlots(LBU:IsBank(bag) and "BANK" or "BAGS", itemFamily)
+			if itemFamily == 0 then
+				-- lbu is screwing this up because it doesn't support classic keyring
+				-- So we do it manually
+				freeslots = 0
+				local startslot, endslot = 0, NUM_BAG_SLOTS
+				if LBU:IsBank(bag) then
+					startslot, endslot = NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS
+				else
+					startslot, endslot = 0, NUM_BAG_SLOTS
+				end
+				for i=startslot, endslot do
+					local freeCount, bagType = GetContainerNumFreeSlots( i )
+					if bagType == 0 then
+						freeslots = freeslots + freeCount
+					end
+				end
+				count = bagtype..freeslots
+			else
+				count = bagtype..LBU:CountSlots(LBU:IsBank(bag) and "BANK" or "BAGS", itemFamily)
+			end
             --@end-non-retail@]===]
         else
             count = GetItemCount(itemid)
@@ -3303,85 +3322,156 @@ end
 
 local texts={}
 function Baggins:OnTextUpdate()
-    local p = self.db.profile
-    local color
+	local p = self.db.profile
+	local color
 
-    if p.combinecounts then
-        local normalempty,normaltotal = LBU:CountSlots("BAGS", 0)
-        local itemFamilies
-        if p.showspecialcount then
-            itemFamilies = 2047-256-4-2-1   -- all except keyring, ammo, quiver, soul
-        else
-            itemFamilies = 0
-        end
-        if p.showammocount then
-            itemFamilies = itemFamilies +1 +2
-        end
-        if p.showsoulcount then
-            itemFamilies = itemFamilies +4
-        end
+	if p.combinecounts then
+		local normalempty, normaltotal = Baggins:CountNormalSlots("BAGS")
+		local specialempty, specialtotal = 0,0
+		local e, t
 
-        local empty, total = LBU:CountSlots("BAGS", itemFamilies)
-        empty=empty+normalempty
-        total=total+normaltotal
+		if p.showspecialcount then
+			e, t = Baggins:CountSpecialSlots("BAGS")
+			specialempty = specialempty + e
+			specialtotal = specialtotal + t
+		end
+		if p.showammocount then
+			e, t = Baggins:CountAmmoSlots("BAGS")
+			specialempty = specialempty + e
+			specialtotal = specialtotal + t
+		end
+		if p.showsoulcount then
+			e, t = Baggins.CountSoulSlots("BAGS")
+			specialempty = specialempty + e --luacheck: ignore 311
+			specialtotal = specialtotal + t --luacheck: ignore 311
+		end
 
-        local fullness = 1 - (empty/total)
-        local r, g
-        r = min(1,fullness * 2)
-        g = min(1,(1-fullness) *2)
-        color = ("|cFF%2X%2X00"):format(r*255,g*255)
+		local empty, total = 0,0
+		empty=empty+normalempty
+		total=total+normaltotal
 
-        self:SetText(self:BuildCountString(empty,total,color))
-        return
-    end
+		local fullness = 1 - (empty/total)
+		local r, g
+		r = min(1,fullness * 2)
+		g = min(1,(1-fullness) *2)
+		color = ("|cFF%2X%2X00"):format(r*255,g*255)
 
-    -- separate normal/ammo/soul/special counts
+		self:SetText(self:BuildCountString(empty,total,color))
+		return
+	end
 
-    local n=0	-- count of strings in texts{}
+	-- separate normal/ammo/soul/special counts
 
-    local normalempty, normaltotal = LBU:CountSlots("BAGS", 0)
+	local n=0	-- count of strings in texts{}
 
-    local fullness = 1 - (normalempty/normaltotal)
-    local r, g
-    r = min(1,fullness * 2)
-    g = min(1,(1-fullness) *2)
-    color = ("|cFF%2X%2X00"):format(r*255,g*255)
+	local normalempty, normaltotal = Baggins:CountNormalSlots("BAGS")
 
-    n=n+1
-    texts[n] = self:BuildCountString(normalempty,normaltotal,color)
+	local fullness = 1 - (normalempty/normaltotal)
+	local r, g
+	r = min(1,fullness * 2)
+	g = min(1,(1-fullness) *2)
+	color = ("|cFF%2X%2X00"):format(r*255,g*255)
 
-    if self.db.profile.showsoulcount then
-        local soulempty, soultotal = LBU:CountSlots("BAGS", 4)
-        if soultotal>0 then
-            color = self.colors.purple.hex
-            n=n+1
-            texts[n] = self:BuildCountString(soulempty,soultotal,color)
-        end
-    end
+	n=n+1
+	texts[n] = self:BuildCountString(normalempty,normaltotal,color)
 
-    if self.db.profile.showammocount then
-        local ammoempty, ammototal = LBU:CountSlots("BAGS", 1+2)
-        if ammototal>0 then
-            color = self.colors.white.hex
-            n=n+1
-            texts[n] = self:BuildCountString(ammoempty,ammototal,color)
-        end
-    end
+	if self.db.profile.showsoulcount then
+		local soulempty, soultotal = Baggins:CountSoulSlots("BAGS")
+		if soultotal>0 then
+			color = self.colors.purple.hex
+			n=n+1
+			texts[n] = self:BuildCountString(soulempty,soultotal,color)
+		end
+	end
 
-    if self.db.profile.showspecialcount then
-        local specialempty, specialtotal = LBU:CountSlots("BAGS", 2047-256-4-2-1)
-        if specialtotal>0 then
-            color = self.colors.blue.hex
-            n=n+1
-            texts[n] = self:BuildCountString(specialempty,specialtotal,color)
-        end
-    end
+	if self.db.profile.showammocount then
+		local ammoempty, ammototal = Baggins:CountAmmoSlots("BAGS")
+		if ammototal>0 then
+			color = self.colors.white.hex
+			n=n+1
+			texts[n] = self:BuildCountString(ammoempty,ammototal,color)
+		end
+	end
 
-    if n==1 then
-        self:SetText(texts[1])
-    else
-        self:SetText(tconcat(texts, " ", 1, n))
-    end
+	if self.db.profile.showspecialcount then
+		local specialempty, specialtotal = Baggins:CountSpecialSlots("BAGS")
+		if specialtotal>0 then
+			color = self.colors.blue.hex
+			n=n+1
+			texts[n] = self:BuildCountString(specialempty,specialtotal,color)
+		end
+	end
+
+	if n==1 then
+		self:SetText(texts[1])
+	else
+		self:SetText(tconcat(texts, " ", 1, n))
+	end
+end
+
+function Baggins:CountNormalSlots(which) --luacheck: ignore 212
+	return LBU:CountSlots(which, 0)
+end
+
+function Baggins:CountAmmoSlots(which) --luacheck: ignore 212
+	if Baggins:IsClassicWow() then
+	-- This version of LBU doesn't index special bags properly. but we can work around it by looking up each type individually.
+		local qiverempty, quivertotal = LBU:CountSlots(which, 1)
+		local ammoempty, ammototal = LBU:CountSlots(which, 2)
+		return qiverempty+ammoempty, quivertotal+ammototal
+	else
+		return LBU:CountSlots(which, 1+2)
+	end
+end
+
+function Baggins:CountSoulSlots(which) --luacheck: ignore 212
+	return LBU:CountSlots(which, 3)
+end
+
+function Baggins:CountSpecialSlots(which) --luacheck: ignore 212
+	if Baggins:IsClassicWow() then
+		local empty, total = 0,0
+		-- This version of LBU doesn't index special bags properly. but we can work around it by looking up each type individually.
+		local e, t = LBU:CountSlots(which, 4) -- leather?
+		empty = empty + e
+		total = total + t
+
+		local e, t = LBU:CountSlots(which, 5) --luacheck: ignore 411 -- inscription?
+		empty = empty + e
+		total = total + t
+
+		local e, t = LBU:CountSlots(which, 6) --luacheck: ignore 411 -- herb
+		empty = empty + e
+		total = total + t
+
+		local e, t = LBU:CountSlots(which, 7) --luacheck: ignore 411 -- enchant
+		empty = empty + e
+		total = total + t
+
+		local e, t = LBU:CountSlots(which, 8) --luacheck: ignore 411 -- engineering?
+		empty = empty + e
+		total = total + t
+
+		local e, t = LBU:CountSlots(which, 10) --luacheck: ignore 411 -- gems?
+		empty = empty + e
+		total = total + t
+
+		local e, t = LBU:CountSlots(which, 11) --luacheck: ignore 411 -- mining?
+		empty = empty + e
+		total = total + t
+
+		return empty, total
+	else
+		return LBU:CountSlots(which, 2047-256-4-2-1)
+	end
+end
+
+function Baggins:CountKeySlots(which) --luacheck: ignore 212
+	if Baggins:IsClassicWow() then
+		return LBU:CountSlots(which, 9)
+	else
+		return LBU:CountSlots(which,256)
+	end
 end
 
 ---------------------
