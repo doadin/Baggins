@@ -70,7 +70,7 @@ end
 
 
 -- Test for match
-local function Matches(bag, slot, rule)
+local function Matches(bag, _, rule)
 
     -- Empty rule?
     if not rule.ctype then
