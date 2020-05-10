@@ -7,7 +7,7 @@ Quality.lua
 local _G = _G
 
 local AddOnName, _ = ...
-local AddOn = _G[AddOnName]
+local AddOn = _G[AddOnName] --luacheck: ignore 211
 
 
 -- LUA Functions
