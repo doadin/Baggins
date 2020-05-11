@@ -1054,8 +1054,8 @@ function Baggins:OnBagUpdate(bagid)
         -- Update panel text.
         -- Optimization mostly for hunters - their bags change for every damn arrow they fire:
         local free=GetContainerNumFreeSlots(bagid)
-        if lastbag==bagid and lastbagfree==free then
-            self:Debug("OnBagUpdate LastBag and LastBagFree")
+        if lastbag==bagid and lastbagfree==free then --luacheck: ignore 542
+            --self:Debug("OnBagUpdate LastBag and LastBagFree")
         else
             lastbag=bagid
             lastbagfree=free
