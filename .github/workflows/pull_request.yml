@@ -15,9 +15,6 @@ jobs:
         luarocks install --local luacheck
         /home/runner/.luarocks/bin/luacheck . --no-color -q
 
-    - name: Update Build Date
-      run: sed -i "s/@build-time@/`date +%Y%m%d%H%M%S`/" WeakAuras/Init.lua
-
     - name: Create Retail Package
       run: curl -s https://raw.githubusercontent.com/BigWigsMods/packager/master/release.sh | bash -s -- -d -z
       env:
