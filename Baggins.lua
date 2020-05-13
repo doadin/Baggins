@@ -1482,14 +1482,14 @@ function Baggins:OptimizeSectionLayout(bagid)
                             sectionframe.layout_columns = cols
                             sectionframe.layout_areaid = areaid
                             --self:Debug("    -> best fit")
-                        else
+                        else --luacheck: ignore 542
                             --self:Debug("    -> do not fit")
                         end
 
-                    else
+                    else --luacheck: ignore 542
                         --self:Debug("  -> too short")
                     end
-                else
+                else --luacheck: ignore 542
                     --self:Debug("  -> too small")
                 end
             end

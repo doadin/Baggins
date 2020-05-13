@@ -912,7 +912,7 @@ Baggins:AddCustomRule("ItemLevel", {
             if not link then return false end
 
             local _,_,_, itemLevel, itemMinLevel = GetItemInfo(link) --luacheck: ignore 211
-            local itemLevel = ItemUpgradeInfo:GetUpgradedItemLevel(link) --luacheck: ignore 411
+            local itemLevel = LIUI:GetUpgradedItemLevel(link) --luacheck: ignore 411
             -- local itemLevel = GetDetailedItemLevelInfo(link)
             local lvl = rule.useminlvl and itemMinLevel or itemLevel
 
@@ -1062,14 +1062,14 @@ Baggins:AddCustomRule("Bind", {
             local status = rule.status
             if not status then return	end
             if bag == -1 then
-                gratuity:SetInventoryItem("player", BankButtonIDToInvSlotID(slot))
+                LG:SetInventoryItem("player", BankButtonIDToInvSlotID(slot))
             else
-                gratuity:SetBagItem(bag,slot)
+                LG:SetBagItem(bag,slot)
             end
             if status == 'unset' or status == 'unbound' then
-                return not (gratuity:Find(_G.ITEM_SOULBOUND, 2, 6, false, true))
+                return not (LG:Find(_G.ITEM_SOULBOUND, 2, 6, false, true))
             end
-            return (gratuity:Find(status, 2, 6, false, true))
+            return (LG:Find(status, 2, 6, false, true))
         end,
         GetName = function(rule)
             if not rule.status then
@@ -1156,6 +1156,9 @@ Baggins:AddCustomRule("EquipmentSlot", {
         end,
     Matches = function(bag, slot, rule)
             local itemId = GetContainerItemID(bag, slot)
+            if not rule.slots then
+                return ""
+            end
             if not itemId then return end
             local _, _, _, equiploc = GetItemInfoInstant(itemId)
             return rule.slots[equiploc] ~= nil
