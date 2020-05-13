@@ -1062,14 +1062,14 @@ Baggins:AddCustomRule("Bind", {
             local status = rule.status
             if not status then return	end
             if bag == -1 then
-                gratuity:SetInventoryItem("player", BankButtonIDToInvSlotID(slot))
+                LG:SetInventoryItem("player", BankButtonIDToInvSlotID(slot))
             else
-                gratuity:SetBagItem(bag,slot)
+                LG:SetBagItem(bag,slot)
             end
             if status == 'unset' or status == 'unbound' then
-                return not (gratuity:Find(_G.ITEM_SOULBOUND, 2, 6, false, true))
+                return not (LG:Find(_G.ITEM_SOULBOUND, 2, 6, false, true))
             end
-            return (gratuity:Find(status, 2, 6, false, true))
+            return (LG:Find(status, 2, 6, false, true))
         end,
         GetName = function(rule)
             if not rule.status then
