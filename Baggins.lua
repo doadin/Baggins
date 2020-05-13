@@ -1483,14 +1483,14 @@ function Baggins:OptimizeSectionLayout(bagid)
                             sectionframe.layout_areaid = areaid
                             --self:Debug("    -> best fit")
                         else
-                            self:Debug("    -> do not fit")
+                            --self:Debug("    -> do not fit")
                         end
 
                     else
-                        self:Debug("  -> too short")
+                        --self:Debug("  -> too short")
                     end
                 else
-                    self:Debug("  -> too small")
+                    --self:Debug("  -> too small")
                 end
             end
             local areaid = sectionframe.layout_areaid
