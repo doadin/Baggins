@@ -82,7 +82,7 @@ end
 
 
 -- Register filter
-Baggins:AddCustomRule(
+AddOn:AddCustomRule(
     "Bag",
     {
         DisplayName = L["Bag"],

@@ -1532,9 +1532,9 @@ local function deepCopy(to, from)
     end
 end
 
-function new() return {} end
-function del(t) wipe(t) end
-rdel = del
+--function new() return {} end
+--function del(t) wipe(t) end
+--rdel = del
 
 
 ---------------------

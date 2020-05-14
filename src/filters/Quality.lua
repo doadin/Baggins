@@ -88,7 +88,7 @@ local function CleanRule(rule)
 end
 
 -- Register filter
-Baggins:AddCustomRule(
+AddOn:AddCustomRule(
     "Quality",
     {
         DisplayName = L["Quality"],

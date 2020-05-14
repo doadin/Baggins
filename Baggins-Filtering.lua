@@ -8,6 +8,7 @@ local _G = _G
 
 local AddOnName, _ = ...
 local AddOn = _G[AddOnName] --luacheck: ignore 211
+local Baggins = _G.Baggins
 
 -- TODO: Clean up this section
 -- LUA Functions
@@ -26,11 +27,12 @@ local GetItemInfoInstant, GetItemClassInfo, GetItemSubClassInfo =
       _G.GetItemInfoInstant, _G.GetItemClassInfo, _G.GetItemSubClassInfo
 local UnitLevel = _G.UnitLevel
 local C_Item, ItemLocation = _G.C_Item, _G.ItemLocation
+local BankButtonIDToInvSlotID = _G.BankButtonIDToInvSlotID
 --[===[@non-retail@
-GetAuctionItemSubClasses = _G.GetAuctionItemSubClasses
+local GetAuctionItemSubClassesGetAuctionItemSubClasses = _G.GetAuctionItemSubClasses
 --@end-non-retail@]===]
 --@retail@
-GetAuctionItemSubClasses = _G.C_AuctionHouse.GetAuctionItemSubClasses
+local GetAuctionItemSubClasses = _G.C_AuctionHouse.GetAuctionItemSubClasses
 --@end-retail@
 
 -- Libs
@@ -147,7 +149,6 @@ end
 
 function Baggins:OpenRuleDewdrop(rule,...) --luacheck: ignore 212
     if RuleTypes[rule.type] then
-        currentRule = rule
         RuleTypes[rule.type].DewDropOptions(rule, ...)
     end
 end
@@ -440,7 +441,6 @@ end
 
 function Baggins:OnRuleChanged()
     self:ForceFullUpdate()
-    currentRule = nil
     self:CategoriesChanged()
 end
 
@@ -1052,8 +1052,6 @@ Baggins:AddCustomRule("Other", {
 
 -----------------------------------------------------------------------
 -- Bind
-
-local BankButtonIDToInvSlotID = BankButtonIDToInvSlotID
 
 Baggins:AddCustomRule("Bind", {
         DisplayName = L["Bind"],

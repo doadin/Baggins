@@ -341,6 +341,287 @@ function Baggins:IsActive() --luacheck: ignore 212
     return true
 end
 
+--deep copy of a table, will NOT handle tables as keys or circular references
+local function deepCopy(to, from)
+    for k in pairs(to) do
+        to[k] = nil
+    end
+
+    for k, v in pairs(from) do
+        if type(v) == "table" then
+            to[k] = {}
+            deepCopy(to[k], from[k])
+        else
+            to[k] = from[k]
+        end
+    end
+end
+
+local itemTypeReverse
+
+itemTypeReverse = {
+    ["Quiver"] = {
+        ["id"] = 11,
+        ["subTypes"] = {
+        },
+    },
+    ["WoW Token"] = {
+        ["id"] = 18,
+        ["subTypes"] = {
+            ["WoW Token"] = 0,
+        },
+    },
+    ["Recipe"] = {
+        ["id"] = 9,
+        ["subTypes"] = {
+            ["Tailoring"] = 2,
+            ["Blacksmithing"] = 4,
+            ["Alchemy"] = 6,
+            ["First Aid"] = 7,
+            ["Book"] = 0,
+            ["Cooking"] = 5,
+            ["Fishing"] = 9,
+            ["Jewelcrafting"] = 10,
+            ["Engineering"] = 3,
+            ["Leatherworking"] = 1,
+            ["Inscription"] = 11,
+            ["Enchanting"] = 8,
+        },
+    },
+    --[===[@non-retail@
+    ["Reagent"] = {
+        ["id"] = 5,
+        ["subTypes"] = {
+            ["Reagent"] = 0,
+            ["Keystone"] = 1,
+        },
+    },
+    --@end-non-retail@]===]
+    ["Key"] = {
+        ["id"] = 13,
+        ["subTypes"] = {
+            ["Key"] = 0,
+            ["Lockpick"] = 1,
+        },
+    },
+    ["Armor"] = {
+        ["id"] = 4,
+        ["subTypes"] = {
+            ["Leather"] = 2,
+            ["Cosmetic"] = 5,
+            ["Shields"] = 6,
+            ["Mail"] = 3,
+            ["Plate"] = 4,
+            ["Cloth"] = 1,
+            ["Miscellaneous"] = 0,
+        },
+    },
+    ["Quest"] = {
+        ["id"] = 12,
+        ["subTypes"] = {
+            ["Quest"] = 0,
+        },
+    },
+    ["Container"] = {
+        ["id"] = 1,
+        ["subTypes"] = {
+            ["Bag"] = 0,
+            ["Mining Bag"] = 6,
+            ["Cooking Bag"] = 10,
+            ["Gem Bag"] = 5,
+            ["Herb Bag"] = 2,
+            ["Engineering Bag"] = 4,
+            ["Tackle Box"] = 9,
+            ["Leatherworking Bag"] = 7,
+            ["Inscription Bag"] = 8,
+            ["Enchanting Bag"] = 3,
+        },
+    },
+    ["Tradeskill"] = {
+        ["id"] = 7,
+        ["subTypes"] = {
+            ["Inscription"] = 16,
+            ["Elemental"] = 10,
+            ["Jewelcrafting"] = 4,
+            ["Leather"] = 6,
+            ["Herb"] = 9,
+            ["Other"] = 11,
+            ["Enchanting"] = 12,
+            ["Cloth"] = 5,
+            ["Cooking"] = 8,
+            ["Metal & Stone"] = 7,
+            ["Parts"] = 1,
+        },
+    },
+    ["Permanent(OBSOLETE)"] = {
+        ["id"] = 14,
+        ["subTypes"] = {
+            ["Permanent"] = 0,
+        },
+    },
+    ["Miscellaneous"] = {
+        ["id"] = 15,
+        ["subTypes"] = {
+            ["Other"] = 4,
+            ["Companion Pets"] = 2,
+            ["Holiday"] = 3,
+            ["Junk"] = 0,
+            ["Mount"] = 5,
+        },
+    },
+    ["Battle Pets"] = {
+        ["id"] = 17,
+        ["subTypes"] = {
+            ["Dragonkin"] = 1,
+            ["Humanoid"] = 0,
+            ["Elemental"] = 6,
+            ["Critter"] = 4,
+            ["Magic"] = 5,
+            ["Flying"] = 2,
+            ["Aquatic"] = 8,
+            ["Undead"] = 3,
+            ["Beast"] = 7,
+            ["Mechanical"] = 9,
+        },
+    },
+    ["Consumable"] = {
+        ["id"] = 0,
+        ["subTypes"] = {
+            ["Other"] = 8,
+            ["Elixir"] = 2,
+            ["Explosives and Devices"] = 0,
+            ["Potion"] = 1,
+            ["Food & Drink"] = 5,
+            ["Flask"] = 3,
+            ["Bandage"] = 7,
+            ["Vantus Runes"] = 9,
+        },
+    },
+    ["Gem"] = {
+        ["id"] = 3,
+        ["subTypes"] = {
+            ["Intellect"] = 0,
+            ["Artifact Relic"] = 11,
+            ["Haste"] = 7,
+            ["Strength"] = 2,
+            ["Multiple Stats"] = 10,
+            ["Agility"] = 1,
+            ["Other"] = 9,
+            ["Versatility"] = 8,
+            ["Stamina"] = 3,
+            ["Mastery"] = 6,
+            ["Spirit"] = 4,
+            ["Critical Strike"] = 5,
+        },
+    },
+    ["Money(OBSOLETE)"] = {
+        ["id"] = 10,
+        ["subTypes"] = {
+            ["Money(OBSOLETE)"] = 0,
+        },
+    },
+    ["Projectile"] = {
+        ["id"] = 6,
+        ["subTypes"] = {
+        },
+    },
+    ["Item Enhancement"] = {
+        ["id"] = 8,
+        ["subTypes"] = {
+            ["Waist"] = 7,
+            ["Head"] = 0,
+            ["Neck"] = 1,
+            ["Shield/Off-hand"] = 13,
+            ["Two-Handed Weapon"] = 12,
+            ["Feet"] = 9,
+            ["Chest"] = 4,
+            ["Cloak"] = 3,
+            ["Finger"] = 10,
+            ["Legs"] = 8,
+            ["Hands"] = 6,
+            ["Wrist"] = 5,
+            ["Shoulder"] = 2,
+            ["Weapon"] = 11,
+        },
+    },
+    ["Glyph"] = {
+        ["id"] = 16,
+        ["subTypes"] = {
+            ["Warrior"] = 1,
+            ["Paladin"] = 2,
+            ["Shaman"] = 7,
+            ["Monk"] = 10,
+            ["Rogue"] = 4,
+            ["Mage"] = 8,
+            ["Demon Hunter"] = 12,
+            ["Warlock"] = 9,
+            ["Priest"] = 5,
+            ["Hunter"] = 3,
+            ["Druid"] = 11,
+            ["Death Knight"] = 6,
+        },
+    },
+    ["Weapon"] = {
+        ["id"] = 2,
+        ["subTypes"] = {
+            ["One-Handed Axes"] = 0,
+            ["One-Handed Swords"] = 7,
+            ["Staves"] = 10,
+            ["Crossbows"] = 18,
+            ["Polearms"] = 6,
+            ["One-Handed Maces"] = 4,
+            ["Warglaives"] = 9,
+            ["Bows"] = 2,
+            ["Two-Handed Swords"] = 8,
+            ["Miscellaneous"] = 14,
+            ["Fishing Poles"] = 20,
+            ["Daggers"] = 15,
+            ["Guns"] = 3,
+            ["Fist Weapons"] = 13,
+            ["Two-Handed Maces"] = 5,
+            ["Wands"] = 19,
+            ["Thrown"] = 16,
+            ["Two-Handed Axes"] = 1,
+        },
+    },
+}
+
+local migrations = {
+    ["0001_ItemTypes_7.0.3"] = function ()
+        Baggins:Print("Migrating Item Type Filters to 7.0.3")
+        itemTypeReverse["Consumable"].subTypes["Scroll"] = -1
+        itemTypeReverse["Consumable"].subTypes["Consumable"] = -2
+        itemTypeReverse["Trade Goods"] = itemTypeReverse["Tradeskill"]
+        itemTypeReverse["Trade Goods"].subTypes["Materials"] = -1
+        for _, category in pairs(Baggins.db.profile.categories) do
+            for _, rule in ipairs(category) do
+                if (rule.type == "ItemType") then
+                    if ((rule.itype == "Trade Goods" and rule.isubtype == "Devices")
+                        or
+                       (rule.itype == "Trade Goods" and rule.isubtype == "Explosives"))
+                        then
+                        rule.itype = 0
+                        rule.subtype = 0
+                    elseif ((rule.itype == "Consumable" and rule.isubtype == "Item Enhancement")
+                                or
+                            (rule.itype == "Trade Goods" and rule.isubtype == "Item Enchantment")
+                            ) then
+                        rule.itype = 8
+                        rule.isubtype = nil
+                    else
+                        if (type(rule.itype) == 'string') then
+                            if (type(rule.isubtype) == 'string') then
+                                rule.isubtype = itemTypeReverse[rule.itype].subTypes[rule.isubtype]
+                            end
+                            rule.itype = itemTypeReverse[rule.itype].id
+                        end
+                    end
+                end
+            end
+        end
+    end
+}
+
 function Baggins:OnProfileEnable()
     local p = self.db.profile
     --check if this profile has been setup before, if not add the default bags and categories
@@ -359,6 +640,7 @@ function Baggins:OnProfileEnable()
     end
     if #p.bags == 0 then
         local templateName = self.db.global.template
+        local templates = {}
         local template = templates[templateName]
         deepCopy(p.bags, template.bags)
         refresh = true
@@ -700,6 +982,10 @@ local function GetSlotInfo(item)
     end
     return bag, slot, itemID, bagType
 end
+
+local function new() return {} end
+local function del(t) wipe(t) end
+--local rdel = del
 
 function Baggins:CategoryMatchAdded(category, slot, isbank)
     local p = self.db.profile
@@ -1904,7 +2190,7 @@ end
 
 local function BagginsItemButton_OnEnter(button)
     if ( not button ) then
-        button = this
+        return
     end
 
     local x
@@ -3277,11 +3563,6 @@ function ldbdata:OnTooltipUpdate()
     tooltip:AddLine()
     for bagid, bag in ipairs(Baggins.db.profile.bags) do
         if not bag.isBank or (bag.isBank and self.bankIsOpen) then
-            if bag.isBank then
-                color = Baggins.colors.blue
-            else
-                color = Baggins.colors.white
-            end
             local name = bag.name
             if Baggins.bagframes[bagid] and Baggins.bagframes[bagid]:IsVisible() then
                 name = "* "..name
