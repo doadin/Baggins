@@ -4,7 +4,6 @@ ContainerType.lua
 
 ========================================================================== ]]--
 
---@retail@
 local _G = _G
 
 local AddOnName, _ = ...
@@ -14,7 +13,12 @@ local AddOn = _G[AddOnName]
 local pairs = _G.pairs
 
 -- WoW API
+--@retail@
 local GetAuctionItemSubClasses = _G.C_AuctionHouse.GetAuctionItemSubClasses
+--@end-retail@
+--[===[@non-retail@
+local GetAuctionItemSubClasses = _G.GetAuctionItemSubClasses
+--@end-non-retail@]===]
 local GetItemSubClassInfo = _G.GetItemSubClassInfo
 local ContainerIDToInventoryID = _G.ContainerIDToInventoryID
 local GetInventoryItemLink = _G.GetInventoryItemLink
@@ -31,12 +35,19 @@ local ContainerTypes = {}
 
 -- Initialize filter
 local function BuildContainerTypes()
-
+    --[===[@non-retail@
+    -- Build array of containers
+    for _, subClassID in pairs({GetAuctionItemSubClasses(LE_ITEM_CLASS_CONTAINER)}) do
+        --print(subClassID, (GetItemSubClassInfo(LE_ITEM_CLASS_CONTAINER, subClassID)))
+        ContainerTypes[subClassID] = GetItemSubClassInfo(LE_ITEM_CLASS_CONTAINER, subClassID)
+    end
+    --@end-non-retail@]===]
+    --@retail@
     -- Build array of containers
     for _, subClassID in pairs(GetAuctionItemSubClasses(LE_ITEM_CLASS_CONTAINER)) do
         ContainerTypes[subClassID] = GetItemSubClassInfo(LE_ITEM_CLASS_CONTAINER, subClassID)
     end
-
+    --@end-retail@
 end
 
 -- Get argument 'ctype'
@@ -130,4 +141,3 @@ AddOn:AddCustomRule(
 -- Initialize filter
 BuildContainerTypes()
 
---@end-retail@
