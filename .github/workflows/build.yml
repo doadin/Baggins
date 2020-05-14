@@ -11,7 +11,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-
+    - name: Set up container
+      run: |
+        echo "Update package lists."
+        apt-get update
+        echo "Install base packages."
+        apt-get install -y subversion
     - name: Create Retail Package
       run: curl -s https://raw.githubusercontent.com/BigWigsMods/packager/master/release.sh | bash -s -- -d
       env:
