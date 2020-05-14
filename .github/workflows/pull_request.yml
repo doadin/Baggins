@@ -9,6 +9,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
+    - name: Set up source download tools
+      run: |
+        echo "Update package lists."
+        sudo apt-get update
+        echo "Install base packages."
+        sudo apt-get install -y subversion
     - name: Install and run Luacheck
       run: |
         sudo apt-get install luarocks
@@ -23,17 +29,17 @@ jobs:
 
     - uses: actions/upload-artifact@master
       with:
-        name: WeakAuras-PR
+        name: Baggins-PR
         path: .release/
 
     - name: Create Classic Package
-      run: curl -s https://raw.githubusercontent.com/BigWigsMods/packager/master/release.sh | bash -s -- -d -z -g 1.13.3 -m .pkgmeta-classic
+      run: curl -s https://raw.githubusercontent.com/BigWigsMods/packager/master/release.sh | bash -s -- -d -z -g 1.13.3
       env:
         CF_API_KEY: ${{ secrets.CF_API_KEY }}
         GITHUB_OAUTH: ${{ secrets.OAUTH }}
 
     - uses: actions/upload-artifact@master
       with:
-        name: WeakAuras-PR-classic
+        name: Baggins-PR-classic
         path: .release/
 

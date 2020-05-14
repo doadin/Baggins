@@ -10,13 +10,13 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up container
+    - uses: actions/checkout@v1
+    - name: Set up source download tools
       run: |
         echo "Update package lists."
-        apt-get update
+        sudo apt-get update
         echo "Install base packages."
-        apt-get install -y subversion
+        sudo apt-get install -y subversion
     - name: Create Retail Package
       run: curl -s https://raw.githubusercontent.com/BigWigsMods/packager/master/release.sh | bash -s -- -d
       env:
@@ -24,7 +24,7 @@ jobs:
         GITHUB_OAUTH: ${{ secrets.OAUTH }}
 
     - name: Create Classic Package
-      run: curl -s https://raw.githubusercontent.com/BigWigsMods/packager/master/release.sh | bash -s -- -d -g 1.13.3 -m .pkgmeta-classic
+      run: curl -s https://raw.githubusercontent.com/BigWigsMods/packager/master/release.sh | bash -s -- -d -g 1.13.3
       env:
         CF_API_KEY: ${{ secrets.CF_API_KEY }}
         GITHUB_OAUTH: ${{ secrets.OAUTH }}
