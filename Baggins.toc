@@ -27,8 +27,8 @@
 
 #@no-lib-strip@
 ## Title: Baggins
-## OptionalDeps: Ace3, LibGratuity-3.0, LibQTip-1.0, LibBagUtils-1.0, LibDBIcon-1.0, LibItemUpgradeInfo-1.0
-## X-Embeds: Ace3, LibGratuity-3.0, LibQTip-1.0, LibBagUtils-1.0, LibDBIcon-1.0, LibDataBroker-1.0
+## OptionalDeps: Ace3, LibGratuity-3.0, LibQTip-1.0, LibBagUtils-1.0, LibPeriodicTable-3.1, LibDBIcon-1.0, LibItemUpgradeInfo-1.0
+## X-Embeds: Ace3, LibGratuity-3.0, LibQTip-1.0, LibBagUtils-1.0, LibPeriodicTable-3.1, LibDBIcon-1.0, LibDataBroker-1.0
 
 Libs\LibStub\LibStub.lua
 Libs\CallBackHandler-1.0\CallbackHandler-1.0.lua
@@ -51,6 +51,14 @@ Libs\LibQTip-1.0\lib.xml
 Libs\LibGratuity-3.0\lib.xml
 Libs\LibDBIcon-1.0\LibDBIcon-1.0.lua
 Libs\LibItemUpgradeInfo-1.0\LibItemUpgradeInfo-1.0.xml
+
+Libs\LibPeriodicTable-3.1\LibPeriodicTable-3.1.lua
+Libs\LibPeriodicTable-3.1-Consumable\LibPeriodicTable-3.1-Consumable.lua
+Libs\LibPeriodicTable-3.1-Gear\LibPeriodicTable-3.1-Gear.lua
+Libs\LibPeriodicTable-3.1-Misc\LibPeriodicTable-3.1-Misc.lua
+Libs\LibPeriodicTable-3.1-Reputation\LibPeriodicTable-3.1-Reputation.lua
+Libs\LibPeriodicTable-3.1-Tradeskill\LibPeriodicTable-3.1-Tradeskill.lua
+Libs\LibPeriodicTable-3.1-TradeskillResultMats\LibPeriodicTable-3.1-TradeskillResultMats.lua
 #@end-no-lib-strip@
 
 Locales\Baggins-enUS.lua
@@ -73,5 +81,6 @@ src\filters\Bag.lua
 src\filters\ContainerType.lua
 src\filters\EquipmentSet.lua
 src\filters\ItemName.lua
+src\filters\PeriodicTable.lua
 src\filters\Quality.lua
 src\filters\Tooltip.lua
