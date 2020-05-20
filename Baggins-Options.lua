@@ -1207,9 +1207,11 @@ local migrations = {
 }
 
 function Baggins:NewProfile(_, key)
+    --@retail@
     for k in pairs(migrations) do
         key.profile.ranMigrations[k] = true
     end
+    --@end-retail@
     self:ChangeProfile();
 end
 
@@ -1630,6 +1632,7 @@ function Baggins:OnProfileEnable()
     local p = self.db.profile
     --check if this profile has been setup before, if not add the default bags and categories
     --cant leave these in the defaults since removing a bag would have it come back on reload
+    --@retail@
     for k,m in pairs(migrations) do
         if not self.db.profile.ranMigrations[k] then
             self:Print("Running Migration " .. k)
@@ -1637,6 +1640,7 @@ function Baggins:OnProfileEnable()
             self.db.profile.ranMigrations[k] = true
         end
     end
+    --@end-retail@
     local refresh = false --luacheck: ignore 431
     if not next(p.categories) then
         deepCopy(p.categories, self.defaultcategories)
