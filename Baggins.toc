@@ -81,9 +81,19 @@ Baggins_ItemOps.lua
 
 # Filters
 src\filters\Bag.lua
+src\filters\Category.lua
 src\filters\ContainerType.lua
+src\filters\Empty.lua
+src\filters\EquipLocation.lua
 src\filters\EquipmentSet.lua
+src\filters\EquipmentSlot.lua
+src\filters\ItemBind.lua
+src\filters\ItemID.lua
+src\filters\ItemLevel.lua
 src\filters\ItemName.lua
+src\filters\ItemType.lua
+src\filters\NewItems.lua
+src\filters\Other.lua
 src\filters\PeriodicTable.lua
 src\filters\Quality.lua
 src\filters\Tooltip.lua
