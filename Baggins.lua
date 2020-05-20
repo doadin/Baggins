@@ -3985,7 +3985,7 @@ function Baggins:MainMenuBarBackpackButtonOnClick(button)
         BackpackButton_OnClick(button)
     else
         self:ToggleAllBags()
-        button:SetChecked(false)
+        --button:SetChecked(false)
     end
 end
 

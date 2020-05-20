@@ -29,7 +29,7 @@ local UnitLevel = _G.UnitLevel
 local C_Item, ItemLocation = _G.C_Item, _G.ItemLocation
 local BankButtonIDToInvSlotID = _G.BankButtonIDToInvSlotID
 --[===[@non-retail@
-local GetAuctionItemSubClassesGetAuctionItemSubClasses = _G.GetAuctionItemSubClasses
+local GetAuctionItemSubClasses = _G.GetAuctionItemSubClasses
 --@end-non-retail@]===]
 --@retail@
 local GetAuctionItemSubClasses = _G.C_AuctionHouse.GetAuctionItemSubClasses
