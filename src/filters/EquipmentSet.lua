@@ -66,11 +66,6 @@ end
 -- Test for match
 local function Matches(bag, slot, rule)
 
-    -- Empty rule?
-    if not rule.sets then
-        return false
-    end
-
     -- Item belongs to a set?
     local inset, setstring = GetContainerItemEquipmentSetInfo(bag, slot)
     if not inset then
@@ -80,6 +75,11 @@ local function Matches(bag, slot, rule)
     -- Match all sets?
     if rule.anyset then
         return true
+    end
+
+    -- Empty rule?
+    if not rule.sets then
+        return false
     end
 
     -- Item belongs to a set in rule.sets[]?
