@@ -55,6 +55,9 @@ Libs\LibItemUpgradeInfo-1.0\LibItemUpgradeInfo-1.0.xml
 Libs\LibPeriodicTable-3.1\LibPeriodicTable-3.1.lua
 Libs\LibPeriodicTable-3.1-Consumable\LibPeriodicTable-3.1-Consumable.lua
 Libs\LibPeriodicTable-3.1-Gear\LibPeriodicTable-3.1-Gear.lua
+Libs\LibPeriodicTable-3.1-GearSet\LibPeriodicTable-3.1-GearSet.lua
+Libs\LibPeriodicTable-3.1-InstanceLoot\LibPeriodicTable-3.1-InstanceLoot.lua
+Libs\LibPeriodicTable-3.1-InstanceLootHeroic\LibPeriodicTable-3.1-InstanceLootHeroic.lua
 Libs\LibPeriodicTable-3.1-Misc\LibPeriodicTable-3.1-Misc.lua
 Libs\LibPeriodicTable-3.1-Reputation\LibPeriodicTable-3.1-Reputation.lua
 Libs\LibPeriodicTable-3.1-Tradeskill\LibPeriodicTable-3.1-Tradeskill.lua

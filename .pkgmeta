@@ -21,8 +21,11 @@ externals:
     Libs/LibPeriodicTable-3.1-Tradeskill: https://repos.curseforge.com/wow/libperiodictable-3-1/trunk/LibPeriodicTable-3.1-Tradeskill
     Libs/LibPeriodicTable-3.1-Misc: https://repos.curseforge.com/wow/libperiodictable-3-1/trunk/LibPeriodicTable-3.1-Misc
     Libs/LibPeriodicTable-3.1-Gear: https://repos.curseforge.com/wow/libperiodictable-3-1/trunk/LibPeriodicTable-3.1-Gear
+    Libs/LibPeriodicTable-3.1-GearSet: https://repos.curseforge.com/wow/libperiodictable-3-1/trunk/LibPeriodicTable-3.1-GearSet
     Libs/LibPeriodicTable-3.1-Consumable: https://repos.curseforge.com/wow/libperiodictable-3-1/trunk/LibPeriodicTable-3.1-Consumable
     Libs/LibPeriodicTable-3.1-Reputation: https://repos.curseforge.com/wow/libperiodictable-3-1/trunk/LibPeriodicTable-3.1-Reputation
+    Libs/LibPeriodicTable-3.1-InstanceLoot: https://repos.curseforge.com/wow/libperiodictable-3-1/trunk/LibPeriodicTable-3.1-InstanceLoot
+    Libs/LibPeriodicTable-3.1-InstanceLootHeroic: https://repos.curseforge.com/wow/libperiodictable-3-1/trunk/LibPeriodicTable-3.1-InstanceLootHeroic
     Libs/LibQTip-1.0: https://repos.curseforge.com/wow/libqtip-1-0/trunk
     Libs/LibDBIcon-1.0: https://repos.curseforge.com/wow/libdbicon-1-0/trunk/LibDBIcon-1.0
     Libs/LibItemUpgradeInfo-1.0: https://repos.curseforge.com/wow/libitemupgradeinfo-1-0
