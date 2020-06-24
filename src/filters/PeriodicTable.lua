@@ -108,7 +108,7 @@ local function buildMenu(tab, name)
                 hasArrow = true,
                 menuList = subMenu,
                 notCheckable = true,
-                notClickable = true,
+                notClickable = false,
             })
         end
         menu = newMenu
