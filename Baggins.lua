@@ -3421,8 +3421,8 @@ function Baggins:LayoutBagFrames()
     self:ScheduleRefresh()
 end
 
-local CONTAINER_SPACING, VISIBLE_CONTAINER_SPACING =
-      CONTAINER_SPACING, VISIBLE_CONTAINER_SPACING
+local CONTAINER_SPACING = 0
+local VISIBLE_CONTAINER_SPACING = 3
 
 function Baggins:ReallyLayoutBagFrames()
     local p = self.db.profile
