@@ -2768,7 +2768,7 @@ function Baggins:CreateBagFrame(bagid)
     if not bagid then return end
     local bagname = "BagginsBag"..bagid
 
-    local frame = CreateFrame("Frame",bagname,UIParent)
+    local frame = CreateFrame("Frame",bagname,UIParent, BackdropTemplateMixin and "BackdropTemplate" or nil)
     self.bagframes[bagid] = frame
     frame.bagid = bagid
     frame:SetToplevel(true)
