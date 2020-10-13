@@ -19,12 +19,12 @@ jobs:
       if: tag IS present
       before_install: sudo apt-get update
       install: sudo apt-get install curl -y
-      script: curl -s https://raw.githubusercontent.com/BigWigsMods/packager/master/release.sh | bash
+      script: curl -s https://raw.githubusercontent.com/doadin/packager/test/release.sh | bash
     - stage: Create Classic package
       if: tag IS present
       before_install: sudo apt-get update
       install: sudo apt-get install curl -y
-      script: curl -s https://raw.githubusercontent.com/BigWigsMods/packager/master/release.sh | bash -s -- -g 1.13.4
+      script: curl -s https://raw.githubusercontent.com/doadin/packager/test/release.sh | bash -s -- -g classic
  
 notifications:
  email:
