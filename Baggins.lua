@@ -2122,7 +2122,7 @@ end
 -- Frame Creation  --
 ---------------------
 function Baggins:CreateBagPlacementFrame()
-local f = CreateFrame("frame","BagginsBagPlacement",UIParent)
+local f = CreateFrame("frame","BagginsBagPlacement",UIParent, BackdropTemplateMixin and "BackdropTemplate" or nil)
 
     f:SetWidth(130)
     f:SetHeight(300)
