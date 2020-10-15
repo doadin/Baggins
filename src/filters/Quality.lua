@@ -11,7 +11,7 @@ local AddOn = _G[AddOnName] --luacheck: ignore 211
 
 
 -- LUA Functions
-local ipairs = _G.ipairs
+local pairs = _G.pairs
 
 -- WoW API
 local GetItemQualityColor = _G.GetItemQualityColor
