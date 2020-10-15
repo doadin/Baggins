@@ -2122,7 +2122,7 @@ end
 -- Frame Creation  --
 ---------------------
 function Baggins:CreateBagPlacementFrame()
-local f = CreateFrame("frame","BagginsBagPlacement",UIParent, BackdropTemplateMixin and "BackdropTemplate" or nil)
+local f = CreateFrame("frame","BagginsBagPlacement",UIParent, BackdropTemplateMixin and "BackdropTemplate" or nil) --luacheck: ignore 113
 
     f:SetWidth(130)
     f:SetHeight(300)
@@ -2140,7 +2140,7 @@ local f = CreateFrame("frame","BagginsBagPlacement",UIParent, BackdropTemplateMi
     f:SetScript("OnMouseDown",function(this, button) if button == "RightButton" then this:Hide() else this:StartMoving() end end)
     f:SetScript("OnMouseUp", function(this) this:StopMovingOrSizing() self:SaveBagPlacement() end)
 
-    f.t = CreateFrame("frame","BagginsBagPlacementTopMover",f, BackdropTemplateMixin and "BackdropTemplate" or nil)
+    f.t = CreateFrame("frame","BagginsBagPlacementTopMover",f, BackdropTemplateMixin and "BackdropTemplate" or nil) --luacheck: ignore 113
     f.t:SetPoint("TOPLEFT",f,"TOPLEFT",0,0)
     f.t:SetPoint("TOPRIGHT",f,"TOPRIGHT",0,0)
     f.t:SetHeight(20)
@@ -2153,7 +2153,7 @@ local f = CreateFrame("frame","BagginsBagPlacement",UIParent, BackdropTemplateMi
     f.t:SetScript("OnMouseDown",function(this) this:GetParent():StartSizing("TOP") end)
     f.t:SetScript("OnMouseUp", function(this) this:GetParent():StopMovingOrSizing() self:SaveBagPlacement() end)
 
-    f.b = CreateFrame("frame","BagginsBagPlacementTopMover",f, BackdropTemplateMixin and "BackdropTemplate" or nil)
+    f.b = CreateFrame("frame","BagginsBagPlacementTopMover",f, BackdropTemplateMixin and "BackdropTemplate" or nil) --luacheck: ignore 113
     f.b:SetPoint("BOTTOMLEFT",f,"BOTTOMLEFT",0,0)
     f.b:SetPoint("BOTTOMRIGHT",f,"BOTTOMRIGHT",0,0)
     f.b:SetHeight(20)
@@ -2768,7 +2768,7 @@ function Baggins:CreateBagFrame(bagid)
     if not bagid then return end
     local bagname = "BagginsBag"..bagid
 
-    local frame = CreateFrame("Frame",bagname,UIParent, BackdropTemplateMixin and "BackdropTemplate" or nil)
+    local frame = CreateFrame("Frame",bagname,UIParent, BackdropTemplateMixin and "BackdropTemplate" or nil) --luacheck: ignore 113
     self.bagframes[bagid] = frame
     frame.bagid = bagid
     frame:SetToplevel(true)
