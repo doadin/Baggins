@@ -30,10 +30,14 @@ local QualityNames = { }
 -- Build list of qualities
 local function BuildQualityNames()
 
-    for k,_ in ipairs(_G.ITEM_QUALITY_COLORS) do
+    for k,_ in pairs(_G.ITEM_QUALITY_COLORS) do
+        --print(k)
         QualityNames[k] = _G["ITEM_QUALITY" .. k .. "_DESC"]
     end
-
+    --table.insert(QualityNames, 0, "Poor")
+    --for k,v in pairs(QualityNames) do
+    --    print("k:", k, "v: ", v)
+    --end
 end
 
 
