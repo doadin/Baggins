@@ -2624,8 +2624,8 @@ do
         end
     end
 
-    function Baggins:SpawnMenuFromKeybind()
-        local button=GetMouseFocus()
+    function Baggins:SpawnMenuFromKeybind() --luacheck:ignore 212
+        local button=GetMouseFocus() --luacheck:ignore 113
         local _, ret1 = pcall(button:GetParent())
         if ret1 == "attempt to call a table value" then
             local bag = button:GetParent():GetID();
