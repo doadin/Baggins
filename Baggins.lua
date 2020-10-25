@@ -2625,8 +2625,9 @@ do
     end
 
     function Baggins:SpawnMenuFromKeybind()
-        local p = self.db.profile
         local button=GetMouseFocus()
+        local _, ret1 = pcall(button:GetParent())
+        if ret1 == "attempt to call a table value" then
             local bag = button:GetParent():GetID();
             local slot = button:GetID();
             local itemid = GetContainerItemID(bag, slot)
@@ -2651,6 +2652,7 @@ do
                     hideUseButton()
                 end
             end
+        end
     end
 
     function Baggins:CreateItemButton()
