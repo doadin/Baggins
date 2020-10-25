@@ -61,6 +61,7 @@ Baggins.minSpareItemButtons = 10
 
 _G.BINDING_HEADER_BAGGINS = L["Baggins"]
 _G.BINDING_NAME_BAGGINS_TOGGLEALL = L["Toggle All Bags"]
+_G.BINDING_NAME_BAGGINS_ITEMBUTTONMENU = "Item Menu"
 
 local equiplocs = {
     INVTYPE_AMMO = 0,
@@ -2592,7 +2593,40 @@ do
                 break
             end
         end
-        if (IsControlKeyDown() or IsAltKeyDown()) and GetMouseButtonClicked() == "RightButton" then
+        local p = Baggins.db.profile
+        if not p.DisableDefaultItemMenu then
+            if (IsControlKeyDown() or IsAltKeyDown()) and GetMouseButtonClicked() == "RightButton" then
+                local bag = button:GetParent():GetID();
+                local slot = button:GetID();
+                local itemid = GetContainerItemID(bag, slot)
+                if itemid then
+                    if DropDownList1:IsShown() then
+                        DropDownList1:Hide()
+                        return
+                    end
+                    makeMenu(bag, slot)
+                    EasyMenu(menu, itemDropdownFrame, "cursor", 0, 0, "MENU")
+                    -- make sure we restore the original scroll-wheel behavior for the DropdownList2-Frame
+                    -- when the item-dropdown is closed
+                    Baggins:SecureHookScript(DropDownList1, "OnHide", function()
+                        DropDownList2:EnableMouseWheel(false)
+                        DropDownList2:SetScript("OnMouseWheel", nil)
+                        Baggins:Unhook(DropDownList1, "OnHide")
+                    end)
+
+                    if not LBU:IsBank(bag, true) and not InCombatLockdown() then
+                        showUseButton(bag, slot)
+                    else
+                        hideUseButton()
+                    end
+                end
+            end
+        end
+    end
+
+    function Baggins:SpawnMenuFromKeybind()
+        local p = self.db.profile
+        local button=GetMouseFocus()
             local bag = button:GetParent():GetID();
             local slot = button:GetID();
             local itemid = GetContainerItemID(bag, slot)
@@ -2617,7 +2651,6 @@ do
                     hideUseButton()
                 end
             end
-        end
     end
 
     function Baggins:CreateItemButton()

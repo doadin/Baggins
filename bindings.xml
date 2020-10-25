@@ -2,4 +2,7 @@
 	<Binding name="BAGGINS_TOGGLEALL" header="BAGGINS" category="ADDONS">
 		Baggins:ToggleAllBags()
 	</Binding>
+	<Binding name="BAGGINS_ITEMBUTTONMENU" category="ADDONS">
+		Baggins:SpawnMenuFromKeybind()
+	</Binding>
 </Bindings>
