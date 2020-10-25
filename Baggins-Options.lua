@@ -276,6 +276,7 @@ local dbDefaults = {
         disablebagmenu = false,
         openatauction = true,
         ranMigrations = {},
+        DisableDefaultItemMenu = false,
         minimap = {
             hide = false,
         }
@@ -592,6 +593,14 @@ function Baggins:RebuildOptions()
                     set = function(info, value) p.autoreagent = value end, --luacheck: ignore 212
                 },
                 --@end-retail@
+                DisableDefaultItemMenu = {
+                    name = "DisableDefaultItemMenu",
+                    type = "toggle",
+                    desc = "DisableDefaultItemMenu MouseClick and Use KeyBinding",
+                    order = 900,
+                    get = function() return p.DisableDefaultItemMenu end,
+                    set = function(info, value) p.DisableDefaultItemMenu = value end, --luacheck: ignore 212
+                },
             }
         },
         Layout = {
