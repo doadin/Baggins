@@ -256,3 +256,67 @@ function oSkin:UnskinBag(frame) --luacheck: ignore 212
 end
 
 Baggins:RegisterSkin('oSkin', oSkin)
+
+------------------------
+-- LSM Skins --
+------------------------
+local LSM = LibStub:GetLibrary("LibSharedMedia-3.0", true) --luacheck:ignore 113
+if LSM then
+    local backgrounds = LSM:List("background")
+    for _,v in pairs(backgrounds) do
+        local validatebackground = LSM:IsValid("background", v)
+        local validateborder = LSM:IsValid("border", v)
+        if validatebackground then
+            local background = LSM:Fetch("background", v)
+            local border
+            if not validateborder then
+                border = ""
+            end
+            if validateborder then
+                border = LSM:Fetch("border", v)
+            end
+            local LSMSkin = setmetatable({
+
+                EmptySlotTexture = background,
+
+                BagLeftPadding = 12,
+                BagRightPadding = 11,
+                BagTopPadding = 50,
+                BagBottomPadding = 11,
+                TitlePadding = 80,
+
+                BagFrameBackdrop = {
+                    bgFile = background,
+                    edgeFile = border,
+                    tile = true, tileSize = 256, edgeSize = 0,
+                    insets = { left = 7, right = 6, top = 7, bottom = 6 }
+                },
+
+                NormalBagColor = 'white',
+
+            }, {__index = defaultSkin}) -- inherits from defaultSkin
+
+            function LSMSkin:SkinBag(frame)
+                defaultSkin.SkinBag(self, frame) -- call inherited skinning
+                if not frame.tfade then
+                    frame.tfade = frame:CreateTexture(nil, 'BORDER')
+                    frame.tfade:SetTexture(background)
+                    frame.tfade:SetPoint('TOPLEFT', frame, 'TOPLEFT',1,-1)
+                    frame.tfade:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT',-1,1)
+                    frame.tfade:SetBlendMode('ADD')
+                    frame.tfade:SetGradientAlpha('VERTICAL', .1, .1, .1, 0, .2, .2, .2, 0.6)
+                    frame.tfade:SetPoint('TOPLEFT', frame, 'TOPLEFT', 6, -6)
+                    frame.tfade:SetPoint('BOTTOMRIGHT', frame, 'TOPRIGHT', -6, -30)
+                end
+                frame.tfade:Show()
+
+            end
+
+            function LSMSkin:UnskinBag(frame) --luacheck: ignore 212
+                frame.tfade:Hide()
+            end
+
+            Baggins:RegisterSkin(v, LSMSkin)
+        end
+    end
+end

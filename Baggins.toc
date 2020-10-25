@@ -22,13 +22,13 @@
 
 #@non-no-lib-strip@
 # ## Title: Baggins |cff1784d1[nolibs]|r
-# ## Dependencies: Ace3, LibDBIcon-1.0, LibItemUpgradeInfo-1.0, LibQTip-1.0, LibGratuity-3.0, LibBagUtils-1.0
+# ## Dependencies: Ace3, LibDBIcon-1.0, LibItemUpgradeInfo-1.0, LibQTip-1.0, LibGratuity-3.0, LibBagUtils-1.0, LibSharedMedia-3.0
 #@end-non-no-lib-strip@
 
 #@no-lib-strip@
 ## Title: Baggins
-## OptionalDeps: Ace3, LibGratuity-3.0, LibQTip-1.0, LibBagUtils-1.0, LibPeriodicTable-3.1, LibDBIcon-1.0, LibItemUpgradeInfo-1.0
-## X-Embeds: Ace3, LibGratuity-3.0, LibQTip-1.0, LibBagUtils-1.0, LibPeriodicTable-3.1, LibDBIcon-1.0, LibDataBroker-1.0
+## OptionalDeps: Ace3, LibGratuity-3.0, LibQTip-1.0, LibBagUtils-1.0, LibPeriodicTable-3.1, LibDBIcon-1.0, LibItemUpgradeInfo-1.0, LibSharedMedia-3.0
+## X-Embeds: Ace3, LibGratuity-3.0, LibQTip-1.0, LibBagUtils-1.0, LibPeriodicTable-3.1, LibDBIcon-1.0, LibDataBroker-1.0, LibSharedMedia-3.0
 
 Libs\LibStub\LibStub.lua
 Libs\CallBackHandler-1.0\CallbackHandler-1.0.lua
@@ -62,6 +62,7 @@ Libs\LibPeriodicTable-3.1-Misc\LibPeriodicTable-3.1-Misc.lua
 Libs\LibPeriodicTable-3.1-Reputation\LibPeriodicTable-3.1-Reputation.lua
 Libs\LibPeriodicTable-3.1-Tradeskill\LibPeriodicTable-3.1-Tradeskill.lua
 Libs\LibPeriodicTable-3.1-TradeskillResultMats\LibPeriodicTable-3.1-TradeskillResultMats.lua
+Libs\LibSharedMedia-3.0\LibSharedMedia-3.0\lib.xml
 #@end-no-lib-strip@
 
 Locales\Baggins-enUS.lua
