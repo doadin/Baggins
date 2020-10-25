@@ -16,6 +16,7 @@ local UnitLevel = _G.UnitLevel
 
 -- Libs
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
+local LIUI = LibStub("LibItemUpgradeInfo-1.0") --luacheck: ignore 211
 
 local function Matches(bag,slot,rule)
     local link = GetContainerItemLink(bag, slot)

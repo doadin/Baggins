@@ -27,7 +27,6 @@ local C_Item, ItemLocation = _G.C_Item, _G.ItemLocation
 
 -- Libs
 --local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
-local LIUI = LibStub("LibItemUpgradeInfo-1.0") --luacheck: ignore 211
 local LBU = LibStub("LibBagUtils-1.0")
 
 -- Local storage
