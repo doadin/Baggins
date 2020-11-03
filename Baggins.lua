@@ -2626,31 +2626,30 @@ do
 
     function Baggins:SpawnMenuFromKeybind() --luacheck:ignore 212
         local button=GetMouseFocus() --luacheck:ignore 113
-        local _, ret1 = pcall(button:GetParent())
-        if ret1 == "attempt to call a table value" then
-            local bag = button:GetParent():GetID();
-            local slot = button:GetID();
-            local itemid = GetContainerItemID(bag, slot)
-            if itemid then
-                if DropDownList1:IsShown() then
-                    DropDownList1:Hide()
-                    return
-                end
-                makeMenu(bag, slot)
-                EasyMenu(menu, itemDropdownFrame, "cursor", 0, 0, "MENU")
-                -- make sure we restore the original scroll-wheel behavior for the DropdownList2-Frame
-                -- when the item-dropdown is closed
-                Baggins:SecureHookScript(DropDownList1, "OnHide", function()
-                    DropDownList2:EnableMouseWheel(false)
-                    DropDownList2:SetScript("OnMouseWheel", nil)
-                    Baggins:Unhook(DropDownList1, "OnHide")
-                end)
+        self:Debug('Mouse focused on fame: ', button:GetName())
+        if not string.find(button:GetName(),"Baggins") then return end
+        local bag = button:GetParent():GetID();
+        local slot = button:GetID();
+        local itemid = GetContainerItemID(bag, slot)
+        if itemid then
+            if DropDownList1:IsShown() then
+                DropDownList1:Hide()
+                return
+            end
+            makeMenu(bag, slot)
+            EasyMenu(menu, itemDropdownFrame, "cursor", 0, 0, "MENU")
+            -- make sure we restore the original scroll-wheel behavior for the DropdownList2-Frame
+            -- when the item-dropdown is closed
+            Baggins:SecureHookScript(DropDownList1, "OnHide", function()
+                DropDownList2:EnableMouseWheel(false)
+                DropDownList2:SetScript("OnMouseWheel", nil)
+                Baggins:Unhook(DropDownList1, "OnHide")
+            end)
 
-                if not LBU:IsBank(bag, true) and not InCombatLockdown() then
-                    showUseButton(bag, slot)
-                else
-                    hideUseButton()
-                end
+            if not LBU:IsBank(bag, true) and not InCombatLockdown() then
+                showUseButton(bag, slot)
+            else
+                hideUseButton()
             end
         end
     end
