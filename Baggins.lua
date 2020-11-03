@@ -2630,7 +2630,7 @@ do
 
     function Baggins:SpawnMenuFromKeybind() --luacheck:ignore 212
         local button=GetMouseFocus() --luacheck:ignore 113
-        self:Debug('Mouse focused on fame: ', button:GetName())
+        --self:Debug('Mouse focused on fame: ', button:GetName())
         if not string.find(button:GetName(),"Baggins") then return end
         local bag = button:GetParent():GetID();
         local slot = button:GetID();
