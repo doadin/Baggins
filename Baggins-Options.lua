@@ -135,8 +135,10 @@ local templates = {
                 sections =
                 {
                     { name=L["Elemental"], cats={ L["Elemental"] } },
+--@retail@
                     { name=L["Cloth"], cats={ L["Cloth"] } },
                     { name=L["Leather"], cats={ L["Leather"] } },
+--@end-retail@
                     { name=L["Metal & Stone"], cats={ L["Metal & Stone"] } },
                     { name=L["Cooking"], cats={ L["Cooking"] } },
                     { name=L["Herb"], cats={ L["Herb"] } },
@@ -147,6 +149,9 @@ local templates = {
                     { name=L["Misc Trade Goods"], cats={ L["Misc Trade Goods"] } },
                     { name=L["Item Enchantment"], cats={ L["Item Enchantment"] } },
                     { name=L["Recipes"], cats={ L["Recipes"] } },
+ --[===[@non-retail@
+                    { name = L["Tradeskill Mats"], cats = { L["Tradeskill Mats"] } },
+--@end-non-retail@]===]
                 }
             },
             {
@@ -1395,6 +1400,7 @@ Baggins.defaultcategories = {
             isubtype = itemTypeReverse["Tradeskill"].subTypes["Elemental"],
         },
     },
+ --@retail@
     [L["Cloth"]] = {
         name=L["Cloth"],
         {
@@ -1403,6 +1409,8 @@ Baggins.defaultcategories = {
             isubtype = itemTypeReverse["Tradeskill"].subTypes["Cloth"],
         },
     },
+--@end-retail@
+ --@retail@
     [L["Leather"]] = {
         name=L["Leather"],
         {
@@ -1411,6 +1419,7 @@ Baggins.defaultcategories = {
             isubtype = itemTypeReverse["Tradeskill"].subTypes["Leather"],
         },
     },
+--@end-retail@
     [L["Metal & Stone"]] = {
         name=L["Metal & Stone"],
         {
