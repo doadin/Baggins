@@ -71,19 +71,6 @@ local function Matches(bag, slot, rule)
     return rule.slots[equiploc] ~= nil
 end
 
-local function GetName(rule)
-    if not rule.slots then
-        return ""
-    end
-    local slotlist = {}
-    for k in pairs(rule.slots) do
-        tinsert(slotlist, k)
-    end
-    local result = (","):join(slotlist)
-    wipe(slotlist)
-    return result
-end
-
 AddOn:AddCustomRule("EquipmentSlot",
     {
         DisplayName = L["Equipment Slot"],

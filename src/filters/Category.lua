@@ -30,14 +30,6 @@ local function Matches(bag,slot,rule)
     end
 end
 
-local function GetName(rule)
-    if rule.category then
-        return L["Category"].." :"..rule.category
-    else
-        return L["Category"]
-    end
-end
-
 AddOn:AddCustomRule("Category",
     {
         DisplayName = L["Category"],

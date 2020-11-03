@@ -64,25 +64,6 @@ local function Matches(bag, slot, rule)
 
 end
 
-
--- TODO: [#24] https://github.com/doadin/Baggins/issues/24
--- Return name for specific rule
-local function GetName(rule)
-
-    local name
-
-    if rule.quality then
-        local _, _, _, hex = GetItemQualityColor(rule.quality)
-        name = hex .. QualityNames[rule.quality]
-    else
-        name = "*none*"
-    end
-
-    return L["Quality"] .. " " .. (rule.comp or "==") .. " " .. name
-
-end
-
-
 -- Clean rule
 local function CleanRule(rule)
 

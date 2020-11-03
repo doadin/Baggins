@@ -30,15 +30,6 @@ local function Matches(bag, slot, rule)
     return (LG:Find(status, 2, 6, false, true))
 end
 
-local function GetName(rule)
-    if not rule.status then
-        return L["Bind *unset*"]
-    elseif rule.status == 'unbound' then
-        return L["Unbound"]
-    end
-    return rule.status
-end
-
 AddOn:AddCustomRule("Bind", {
     DisplayName = L["Bind"],
     Description = L["Filter based on if the item binds, or if it is already bound"],

@@ -130,17 +130,6 @@ local function Matches(bag,slot,rule)
     end
 end
 
-local function GetName(rule)
-    local ltype, lsubtype = "*", "*"
-    if rule.itype then
-        ltype = GetItemClassInfo(rule.itype) or "?"
-    end
-    if rule.isubtype then
-        lsubtype = GetItemSubClassInfo(rule.itype, rule.isubtype) or "?"
-    end
-    return L["ItemType - "]..ltype..":"..lsubtype
-end
-
 AddOn:AddCustomRule("ItemType",
     {
         DisplayName = L["Item Type"],

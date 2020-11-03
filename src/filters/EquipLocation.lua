@@ -62,10 +62,6 @@ local function Matches(bag,slot,rule)
     end
 end
 
-local function GetName(rule)
-    return "Equip Location: "..(_G[rule.equiploc] or rule.equiploc or "*None*")
-end
-
 AddOn:AddCustomRule("EquipLoc",
     {
         DisplayName = L["Equip Location"],

@@ -50,22 +50,6 @@ local function Matches(bag,slot,rule)
     return lvl>=minlvl and lvl<=maxlvl
 end
 
-local function GetName(rule)
-    local minlvl = rule.minlvl or -9999
-    local maxlvl = rule.maxlvl or 9999
-    if rule.minlvl_rel then
-        minlvl = UnitLevel("player")+minlvl
-    end
-    if rule.maxlvl_rel then
-        maxlvl = UnitLevel("player")+maxlvl
-    end
-    return (rule.useminlvl and L["ReqLvl"] or L["ILvl"]) .. ": " ..
-        (rule.include0 and "0, " or "") ..
-        (rule.include1 and "1, " or "") ..
-        max(minlvl,0) .. "-" ..
-        min(maxlvl,9999);
-end
-
 AddOn:AddCustomRule("ItemLevel",
     {
         DisplayName = L["Item Level"],

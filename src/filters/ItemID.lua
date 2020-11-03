@@ -64,10 +64,6 @@ local function Matches(bag,slot,rule)
     return rule.ids[itemid]
 end
 
-local function GetName(rule) --luacheck: ignore 212
-    return L["ItemIDs "]
-end
-
 AddOn:AddCustomRule("ItemID",
     {
         DisplayName = L["Item ID"],

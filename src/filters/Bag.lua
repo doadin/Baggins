@@ -67,12 +67,6 @@ local function Matches(bag, slot, rule)
     -- end
 end
 
--- TODO: [#24] https://github.com/doadin/Baggins/issues/24
--- Return name for specific rule
-local function GetName(rule)
-    return "Bag "..(BagNames[rule.bagid] or rule.bagid or "*none*")..((rule.noempty and " *NotEmpty*") or "")
-end
-
 -- Clean rule
 local function CleanRule(rule)
 

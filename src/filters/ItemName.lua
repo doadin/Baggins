@@ -40,12 +40,6 @@ local function Matches(bag, slot, rule)
 
 end
 
--- TODO: [#24] https://github.com/doadin/AddOn/issues/24
--- Return name for specific rule
-local function GetName(rule)
-    return L["Name: "] .. (rule.match or "")
-end
-
 -- Register filter
 AddOn:AddCustomRule(
     "ItemName",

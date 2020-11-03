@@ -146,12 +146,6 @@ local function Matches(bag, slot, rule)
 	end
 end
 
--- TODO: [#24] https://github.com/doadin/Baggins/issues/24
--- Return name for specific rule
-local function GetName(rule)
-    return L["Tooltip"]..": "..(rule.text or "")
-end
-
 AddOn.ptsetsdirty = true
 AddOn:BuildPTSetTable()
 AddOn:AddCustomRule(

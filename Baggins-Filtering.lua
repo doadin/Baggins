@@ -142,16 +142,6 @@ function Baggins:GetRuleTypes() --luacheck: ignore 212
     return types
 end
 
--- TODO: [#24] https://github.com/doadin/Baggins/issues/24
-function Baggins:GetRuleDesc(rule) --luacheck: ignore 212
-    assert(rule, "Baggins Plugin attemped use of GetRuleDesc please report this along with plugins in use to Baggins author. Thanks!")
-    if RuleTypes[rule.type] then
-        return RuleTypes[rule.type].GetName(rule)
-    else
-        return format("(|cffff8080%s not loaded|r)", rule.type);
-    end
-end
-
 function Baggins:GetAce3Opts(rule) --luacheck: ignore 212
     if RuleTypes[rule.type] then
         return RuleTypes[rule.type].Ace3Options

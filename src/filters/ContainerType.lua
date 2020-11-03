@@ -105,18 +105,6 @@ local function Matches(bag, _, rule)
 
 end
 
--- TODO: [#24] https://github.com/doadin/Baggins/issues/24
--- Return name for specific rule
-local function GetName(rule)
-    local ctype
-    if rule.ctype then
-        ctype = BBI[rule.ctype]
-    else
-        ctype = L["None"]
-    end
-    return L["Container : "]..ctype
-end
-
 -- Register filter
 AddOn:AddCustomRule(
     "ContainerType", {

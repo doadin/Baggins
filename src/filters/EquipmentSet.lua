@@ -95,24 +95,6 @@ local function Matches(bag, slot, rule)
 
 end
 
--- TODO: [#24] https://github.com/doadin/Baggins/issues/24
--- Return name for specific rule
-local function GetName(rule)
-
-    local result = ""
-
-    if rule.anySet then
-        return L["Any"]
-    elseif rule.sets then
-        for k in pairs(rule.sets) do
-            result = result .. " " .. k
-        end
-    end
-
-    return result
-
-end
-
 -- Register filter
 AddOn:AddCustomRule(
     "EquipmentSet",
