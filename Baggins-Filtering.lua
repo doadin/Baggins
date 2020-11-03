@@ -67,6 +67,7 @@ end
 local RuleTypes = {}
 
 local categorycache = {}
+local bankcategorycache = {}
 local useditems = {}
 local slotcache = {}
 
@@ -74,8 +75,15 @@ function Baggins:GetCategoryCache() --luacheck: ignore 212
     return categorycache
 end
 
+function Baggins:GetBankCategoryCache() --luacheck: ignore 212
+    return bankcategorycache
+end
+
+function Baggins:GetBagTypes() --luacheck: ignore 212
+    return BagTypes
+end
+
 local bankuseditems = {}
-local bankcategorycache = {}
 
 local categories
 
@@ -522,44 +530,6 @@ end
 function Baggins:GetCachedItem(item) --luacheck: ignore 212
     return slotcache[item]
 end
-
------------------------------------------------------------------------
--- Category
-
-Baggins:AddCustomRule("Category", {
-    DisplayName = "Category",
-    Description = "Items that match another category",
-    Matches = function(bag,slot,rule)
-        if not (bag and slot and rule.category) then return end
-        local key = bag..":"..slot
-        if BagTypes[bag] == 2 or BagTypes[bag] == 4 then
-            return bankcategorycache[rule.category] and bankcategorycache[rule.category][key]
-        else
-            return categorycache[rule.category] and categorycache[rule.category][key]
-        end
-    end,
-    GetName = function(rule)
-        if rule.category then
-            return "Category".." :"..rule.category
-        else
-            return "Category"
-        end
-    end,
-    Ace3Options = {
-        category = {
-            name = "Category",
-            desc = "",
-            type = 'select',
-            values = function()
-                    local tmp = {}
-                    for k in pairs(Baggins.db.profile.categories) do
-                        tmp[k] = k
-                    end
-                    return tmp
-                end,
-        },
-    },
-})
 
 -- Initialize module
 BuildBagTypes()

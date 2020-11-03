@@ -82,7 +82,7 @@ Baggins_ItemOps.lua
 
 # Filters
 src\filters\Bag.lua
-#src\filters\Category.lua
+src\filters\Category.lua
 src\filters\ContainerType.lua
 src\filters\Empty.lua
 src\filters\EquipLocation.lua
