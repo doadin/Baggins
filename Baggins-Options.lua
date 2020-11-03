@@ -915,7 +915,7 @@ function Baggins:RebuildOptions()
                 type = 'execute',
                 name = L["Reset Profile"],
                 desc = "",
-                func = function() Baggins.db:ResetProfile() end,
+                func = function() Baggins:CloseAllBags(); Baggins.db:ResetProfile() end,
             },
         },
     }
