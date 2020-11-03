@@ -2334,6 +2334,7 @@ local function addNewRule(info, value)
     local name = info[#info - 1]:sub(2)
     tinsert(info.arg, { type = value })
     Baggins:RebuildCategoryRules(name)
+    Baggins:AddRule()
 end
 
 function Baggins:RebuildCategoryOptions()

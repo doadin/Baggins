@@ -3906,10 +3906,21 @@ function Baggins:RemoveSection(bagid, sectionid)
     self:UpdateLayout()
 end
 
+function Baggins:AddRule()
+    --tablet:Refresh("BagginsEditCategories")
+    Baggins:OnRuleChanged()
+    self:ForceFullRefresh()
+    self:UpdateBags()
+    self:UpdateLayout()
+end
+
 function Baggins:RemoveRule(catid, ruleid)
     tremove(self.db.profile.categories[catid], ruleid)
     --tablet:Refresh("BagginsEditCategories")
     Baggins:OnRuleChanged()
+    self:ForceFullRefresh()
+    self:UpdateBags()
+    self:UpdateLayout()
 end
 
 function Baggins:AddCategory(bagid,sectionid,category)
