@@ -2880,10 +2880,10 @@ function Baggins:CreateBagFrame(bagid)
     frame.compressbutton:SetHeight(32);
     frame.compressbutton:SetWidth(32);
     frame.compressbutton:SetNormalTexture("Interface\\AddOns\\Baggins\\Textures\\compressbutton.tga");
-    self:RegisterSignal("Baggins_CanCompress", function(_, bank, compressable)
-            if Baggins.db.profile.bags[self.bagid] then
-                if (not Baggins.db.profile.bags[self.bagid].isBank) == (not bank) then
-                    (compressable and self.compressbutton.Show or self.compressbutton.Hide)(self.compressbutton);
+    self:RegisterSignal("Baggins_CanCompress", function(BagTable, bank, compressable)
+            if Baggins.db.profile.bags[BagTable.bagid] then
+                if (not Baggins.db.profile.bags[BagTable.bagid].isBank) == (not bank) then
+                    (compressable and BagTable.compressbutton.Show or BagTable.compressbutton.Hide)(BagTable.compressbutton);
                 end
             end
         end,
