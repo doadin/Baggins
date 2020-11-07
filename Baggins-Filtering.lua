@@ -207,10 +207,10 @@ function Baggins:IsSpecialBag(bag) --luacheck: ignore 212
         --@retail@
         if type(fam)~="number" then --luacheck: ignore 542
             -- assume normal bag
-            --self:Debug('IsSpecialBag Got Normal Bag')
+            --Baggins:Debug('IsSpecialBag Got Normal Bag')
         elseif fam==0 then --luacheck: ignore 542
             -- normal bag
-            --self:Debug('IsSpecialBag Got Normal Bag')
+            --Baggins:Debug('IsSpecialBag Got Normal Bag')
         elseif fam==1 or fam==2 then	-- quiver / ammo
             return prefix.."a", fam
         elseif fam==4 then		-- soul

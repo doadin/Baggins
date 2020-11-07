@@ -130,7 +130,7 @@ function Baggins:MoveToSpecialtyBags(bank,testonly)
                         local itemFamily = GetItemFamily(link)
                         if itemFamily and itemFamily~=0 then	-- itemFamily can apparently be null? (before item is cached?)
                             if select(9, GetItemInfo(link))=="INVTYPE_BAG" then
-                                self:Debug('specialtyTargetBags Item Info', select(9, GetItemInfo(link))=="INVTYPE_BAG")
+                                Baggins:Debug('specialtyTargetBags Item Info', select(9, GetItemInfo(link))=="INVTYPE_BAG")
                             else
                                 for bagFamilySpecial,dest in pairs(specialtyTargetBags) do
                                     --@retail@

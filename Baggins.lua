@@ -95,6 +95,21 @@ local equiplocs = {
 
 Baggins.itemcounts = {}
 
+function Baggins:Debug(str, ...) --luacheck: ignore 212
+    if not str or strlen(str) == 0 then return end
+
+    if (...) then
+        if strfind(str, "%%%.%d") or strfind(str, "%%[dfqsx%d]") then
+            str = format(str, ...)
+        else
+            str = strjoin(" ", str, tostringall(...))
+        end
+    end
+
+    local name = "Baggins"
+    DEFAULT_CHAT_FRAME:AddMessage(format("|cffff9933%s:|r %s", name, str))
+end
+
 local timers = {}
 function Baggins:ScheduleNamedTimer(name, callback, delay, arg)
     local alreadyScheduled = timers[name]
@@ -261,7 +276,7 @@ do
         frame.GetItemContextMatchResult = nil
         buttonCount = buttonCount + 1
         if InCombatLockdown() then
-            print("Baggins: WARNING: item-frame will be tainted")
+            Baggins:Debug("Baggins: WARNING: item-frame will be tainted")
             Baggins:RegisterEvent("PLAYER_REGEN_ENABLED")
             frame.tainted = true
         end
@@ -945,13 +960,13 @@ end
 
 function Baggins:Baggins_RefreshBags()
     if self.dirtyBags then
-        --self:Debug('Updating bags')
+        --Baggins:Debug('Updating bags')
         self:ReallyUpdateBags()
     end
     for bagid,bagframe in pairs(self.bagframes) do
         for _,sectionframe in pairs(bagframe.sections) do
             if sectionframe.used and sectionframe.dirty then
-                --self:Debug('Updating section #%d-%d', bagid, secid)
+                --Baggins:Debug('Updating section #%d-%d', bagid, secid)
                 self:ReallyLayoutSection(sectionframe)
             end
         end
@@ -1354,7 +1369,7 @@ function Baggins:OnBagUpdate(bagid)
         -- Optimization mostly for hunters - their bags change for every damn arrow they fire:
         local free=GetContainerNumFreeSlots(bagid)
         if lastbag==bagid and lastbagfree==free then --luacheck: ignore 542
-            --self:Debug("OnBagUpdate LastBag and LastBagFree")
+            --Baggins:Debug("OnBagUpdate LastBag and LastBagFree")
         else
             lastbag=bagid
             lastbagfree=free
@@ -1675,7 +1690,7 @@ function Baggins:FlowSections(bagid)
 
             -- Give collapsed sections a virtual size to account for title length
             local x, y, section_items = self:GetSectionSize(section, max_cols)
-            if not section_items then print('oops') return nil end
+            if not section_items then Baggins:Debug('oops') return nil end
             local title_length = ceil(section.title:GetStringWidth()/39)
             if sections_conf[id] and sections_conf[id].hidden then
                 section_items = title_length
@@ -1740,7 +1755,7 @@ function Baggins:OptimizeSectionLayout(bagid)
 
     tinsert(areas, format('0:0:%d:3000', self.db.profile.columns * 39))
 
-    --self:Debug("**** Laying out bag #%d ***", bagid)
+    --Baggins:Debug("**** Laying out bag #%d ***", bagid)
     local bagempty = true
 
     for _,sectionframe in ipairs(bagframe.sections) do
@@ -1751,7 +1766,7 @@ function Baggins:OptimizeSectionLayout(bagid)
             local minheight = select(2, self:GetSectionSize(sectionframe))
 
             --[[
-            self:Debug("Section #%d, %d item(s), title width: %q, min width: %q, min height: %q",
+            Baggins:Debug("Section #%d, %d item(s), title width: %q, min width: %q, min height: %q",
                 secid,	sectionframe.itemcount, sectionframe.title:GetWidth(), minwidth,
                 minheight)
             --]]
@@ -1761,7 +1776,7 @@ function Baggins:OptimizeSectionLayout(bagid)
             sectionframe.layout_area_index = nil
 
             for areaid,area in pairs(areas) do
-                --self:Debug("  Area #%d: %s", areaid, area)
+                --Baggins:Debug("  Area #%d: %s", areaid, area)
 
                 local area_w,area_h = area:match('^%d+:%d+:(%d+):(%d+)$')
                 area_w = tonumber(area_w)
@@ -1770,26 +1785,26 @@ function Baggins:OptimizeSectionLayout(bagid)
                 if area_w >= minwidth and area_h >= minheight then
                     local cols = floor(area_w / 39)
                     local width, height = self:GetSectionSize(sectionframe, cols)
-                    --self:Debug("    %d columns", cols)
+                    --Baggins:Debug("    %d columns", cols)
 
                     if area_h >= height then
                         local waste = (area_w * area_h) - (width * height)
-                        --self:Debug("    area waste: %d", waste)
+                        --Baggins:Debug("    area waste: %d", waste)
 
                         if not sectionframe.layout_waste or waste < sectionframe.layout_waste then
                             sectionframe.layout_waste = waste
                             sectionframe.layout_columns = cols
                             sectionframe.layout_areaid = areaid
-                            --self:Debug("    -> best fit")
+                            --Baggins:Debug("    -> best fit")
                         else --luacheck: ignore 542
-                            --self:Debug("    -> do not fit")
+                            --Baggins:Debug("    -> do not fit")
                         end
 
                     else --luacheck: ignore 542
-                        --self:Debug("  -> too short")
+                        --Baggins:Debug("  -> too short")
                     end
                 else --luacheck: ignore 542
-                    --self:Debug("  -> too small")
+                    --Baggins:Debug("  -> too small")
                 end
             end
             local areaid = sectionframe.layout_areaid
@@ -1812,12 +1827,12 @@ function Baggins:OptimizeSectionLayout(bagid)
             height = height + 10
             if area_w - width >= 39 then
                 local area = format('%d:%d:%d:%d', area_x + width, area_y, area_w - width, height)
-                --self:Debug("Created new area: %s", area)
+                --Baggins:Debug("Created new area: %s", area)
                 tinsert(areas, area)
             end
             if area_h - height >= 39 then
                 local area = format('%d:%d:%d:%d', area_x, area_y + height, area_w, area_h - height)
-                --self:Debug("Created new area: %s", area)
+                --Baggins:Debug("Created new area: %s", area)
                 tinsert(areas, area)
             end
         end
@@ -1841,7 +1856,7 @@ function Baggins:ReallyUpdateBagFrameSize(bagid)
     local p = self.db.profile
     local s = self.currentSkin
 
-    --self:Debug('Updating bag #%d', bagid)
+    --Baggins:Debug('Updating bag #%d', bagid)
     bagframe.isempty = false
 
     local hpadding = s.BagLeftPadding + s.BagRightPadding
@@ -2416,7 +2431,7 @@ do
                 disabled = InCombatLockdown(),
                 func = function()
                     if InCombatLockdown() then
-                        print("Baggins: Could not use item because you are in combat.")
+                        Baggins:Debug("Baggins: Could not use item because you are in combat.")
                     end
                 end,
             }
@@ -2638,7 +2653,7 @@ do
 
     function Baggins:SpawnMenuFromKeybind() --luacheck:ignore 212
         local button=GetMouseFocus() --luacheck:ignore 113
-        --self:Debug('Mouse focused on fame: ', button:GetName())
+        --Baggins:Debug('Mouse focused on fame: ', button:GetName())
         if not string.find(button:GetName(),"Baggins") then return end
         local bag = button:GetParent():GetID();
         local slot = button:GetID();
