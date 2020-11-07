@@ -12,8 +12,8 @@ local Baggins = _G.Baggins
 
 -- TODO: Clean up this section
 -- LUA Functions
-local pairs, ipairs, type, tonumber, format, wipe =
-      _G.pairs, _G.ipairs, _G.type, _G.tonumber, _G.format, _G.wipe
+local pairs, ipairs, type, tonumber, wipe =
+      _G.pairs, _G.ipairs, _G.type, _G.tonumber, _G.wipe
 local tinsert, tsort =
       _G.tinsert, _G.table.sort
 
