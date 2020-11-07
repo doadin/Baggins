@@ -69,7 +69,6 @@ AddOn:AddCustomRule("ItemID",
         DisplayName = L["Item ID"],
         Description = L["Filter by ItemID, this can be a space delimited list or ids to match."],
         Matches = Matches,
-        GetName = GetName,
         Ace3Options = {
             ids = {
                 type = 'input',

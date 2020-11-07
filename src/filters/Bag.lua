@@ -81,7 +81,6 @@ AddOn:AddCustomRule(
     {
         DisplayName = L["Bag"],
         Description = L["Filter by the bag the item is in"],
-        GetName = GetName, -- TODO: [#24] https://github.com/doadin/Baggins/issues/24
         Matches = Matches,
         Ace3Options =
         {

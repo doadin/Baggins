@@ -153,7 +153,6 @@ AddOn:AddCustomRule(
     {
         DisplayName = L["PeriodicTable Set"],
 		Description = L["Filter by PeriodicTable Set"],
-		GetName = GetName,
         Matches = Matches,
 		Ace3Options =
 		{

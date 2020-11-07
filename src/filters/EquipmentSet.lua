@@ -12,7 +12,6 @@ local AddOn = _G[AddOnName]
 
 -- LUA Functions
 local ipairs = _G.ipairs
-local pairs = _G.pairs
 
 -- WoW API
 local GetEquipmentSetIDs = _G.C_EquipmentSet.GetEquipmentSetIDs
@@ -101,7 +100,6 @@ AddOn:AddCustomRule(
     {
         DisplayName = L["Equipment Set"],
         Description = L["Filter by Equipment Set"],
-        GetName = GetName, -- TODO: [#24] https://github.com/doadin/Baggins/issues/24
         Matches = Matches,
         Ace3Options =
         {

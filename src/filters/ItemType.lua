@@ -135,7 +135,6 @@ AddOn:AddCustomRule("ItemType",
         DisplayName = L["Item Type"],
         Description = L["Filter by Item type and sub-type as returned by GetItemInfo"],
         Matches = Matches,
-        GetName = GetName,
         Ace3Options = {
             itype = {
                 type = 'select',

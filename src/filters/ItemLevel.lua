@@ -55,7 +55,6 @@ AddOn:AddCustomRule("ItemLevel",
         DisplayName = L["Item Level"],
         Description = L["Filter by item's level - either \"ilvl\" or minimum required level"],
         Matches = Matches,
-        GetName = GetName,
         Ace3Options = {
             include0 = {
                 name = L["Include Level 0"],

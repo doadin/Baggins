@@ -67,7 +67,6 @@ AddOn:AddCustomRule("EquipLoc",
         DisplayName = L["Equip Location"],
         Description = L["Filter by Equip Location as returned by GetItemInfo"],
         Matches = Matches,
-        GetName = GetName,
         Ace3Options = {
             equiploc = {
                 name = L["Location"],

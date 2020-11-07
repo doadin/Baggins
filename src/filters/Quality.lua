@@ -14,7 +14,6 @@ local AddOn = _G[AddOnName] --luacheck: ignore 211
 local pairs = _G.pairs
 
 -- WoW API
-local GetItemQualityColor = _G.GetItemQualityColor
 local GetContainerItemLink = _G.GetContainerItemLink
 local GetItemInfo = _G.GetItemInfo
 
@@ -79,7 +78,6 @@ AddOn:AddCustomRule(
         DisplayName = L["Quality"],
         Description = L["Filter by Item Quality"],
         Matches = Matches,
-        GetName = GetName, -- TODO: [#24] https://github.com/doadin/Baggins/issues/24
         Ace3Options =
         {
             comp =

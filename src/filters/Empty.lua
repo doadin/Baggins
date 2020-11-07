@@ -58,13 +58,8 @@ local function Matches(bag,slot,_)
     end
 end
 
-local function GetName()
-    return L["Empty Slots"]
-end
-
 AddOn:AddCustomRule("Empty", {
     DisplayName = L["Empty Slots"],
     Description = L["Empty bag slots"],
     Matches = Matches,
-    GetName = GetName,
 })

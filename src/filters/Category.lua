@@ -35,7 +35,6 @@ AddOn:AddCustomRule("Category",
         DisplayName = L["Category"],
         Description = L["Items that match another category"],
         Matches = Matches,
-        GetName = GetName,
         Ace3Options = {
             category = {
                 name = L["Category"],

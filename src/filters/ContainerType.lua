@@ -111,7 +111,6 @@ AddOn:AddCustomRule(
         DisplayName = L["Container Type"],
         Description = L["Filter by the type of container the item is in."],
         Matches = Matches,
-        GetName = GetName, -- TODO: [#24] https://github.com/doadin/Baggins/issues/24
         Ace3Options =
         {
             ctype =

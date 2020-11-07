@@ -17,13 +17,8 @@ local function Matches()
 --return not useditems[key]
 end
 
-local function GetName()
-    return L["Unfiltered"]
-end
-
 AddOn:AddCustomRule("Other", {
     DisplayName = L["Unfiltered Items"],
     Description = L["Matches all items that arent matched by any other bag, NOTE: this should be the only rule in a category, others will be ignored"],
     Matches = Matches,
-    GetName = GetName,
 })

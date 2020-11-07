@@ -10,7 +10,6 @@ local AddOnName, _ = ...
 local AddOn = _G[AddOnName]
 
 -- LUA Functions
-local pairs = _G.pairs
 
 -- WoW API
 local GetContainerItemID = _G.GetContainerItemID
@@ -75,7 +74,6 @@ AddOn:AddCustomRule("EquipmentSlot",
     {
         DisplayName = L["Equipment Slot"],
         Description = L["Filter by Equipment Slot"],
-        GetName = GetName,
         Matches = Matches,
         Ace3Options = {
             slots = {

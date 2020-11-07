@@ -57,7 +57,6 @@ AddOn:AddCustomRule(
     {
         DisplayName = L["Tooltip"],
         Description = L["Filter based on text contained in its tooltip"],
-        GetName = GetName, -- TODO: [#24] https://github.com/doadin/Baggins/issues/24
         Matches = Matches,
         Ace3Options =
         {

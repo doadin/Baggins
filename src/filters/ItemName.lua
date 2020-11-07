@@ -46,7 +46,6 @@ AddOn:AddCustomRule(
     {
         DisplayName = L["Item Name"],
         Description = L["Filter by Name or partial name"],
-        GetName = GetName, -- TODO: [#24] https://github.com/doadin/Baggins/issues/24
         Matches = Matches,
         Ace3Options =
         {

@@ -34,7 +34,6 @@ AddOn:AddCustomRule("Bind", {
     DisplayName = L["Bind"],
     Description = L["Filter based on if the item binds, or if it is already bound"],
     Matches = Matches,
-    GetName = GetName,
     Ace3Options = {
         status = {
             name = L["Bind Type"],
