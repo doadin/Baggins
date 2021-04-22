@@ -704,6 +704,9 @@ function Baggins:OnEnable()
     -- Patch 8.0.1 Added
     self:RegisterEvent('SCRAPPING_MACHINE_SHOW', "OpenAllBags")
     self:RegisterEvent('SCRAPPING_MACHINE_CLOSE', "CloseAllBags")
+    -- Patch 9.0.5 Added
+    --self:RegisterEvent('ITEM_UPGRADE_MASTER_OPENED', "OpenAllBags")
+    --self:RegisterEvent('ITEM_UPGRADE_MASTER_CLOSED', "CloseAllBags")
     --@end-retail@
 
     self:RegisterSignal('CategoryMatchAdded', self.CategoryMatchAdded, self)
@@ -770,6 +773,8 @@ function Baggins:UpdateBagHooks()
         self:RawHook("ToggleAllBags", true)
         self:RawHook('ToggleBackpack', 'ToggleAllBags', true)
         self:RawHook("CloseAllBags", true)
+        self:RawHook("OpenAllBagsMatchingContext", "ToggleAllBags", true)
+        --self:RawHook("OpenAndFilterBags", "ToggleAllBags", true)
 
         --self:RawHook('ToggleBag', 'ToggleBags', true)
         --self:RawHook('OpenBackpack', 'OpenBags', true)
@@ -4151,6 +4156,19 @@ function Baggins:ToggleAllBags(forceopen)
             self:OpenAllBags()
         end
     end
+    --@retail@
+    local count = 0;
+	for i = 0, NUM_BAG_FRAMES do
+		if ItemButtonUtil.GetItemContextMatchResultForContainer(i) == ItemButtonUtil.ItemContextMatchResult.Match then
+			if not IsBagOpen(i) then
+				--OpenBag(i);
+				count = count + 1;
+			end
+		end
+	end
+
+    return count
+    --@end-retail@
 end
 
 function Baggins:IsAllOpen()
