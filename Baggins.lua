@@ -773,8 +773,10 @@ function Baggins:UpdateBagHooks()
         self:RawHook("ToggleAllBags", true)
         self:RawHook('ToggleBackpack', 'ToggleAllBags', true)
         self:RawHook("CloseAllBags", true)
+        --@retail@
         self:RawHook("OpenAllBagsMatchingContext", "ToggleAllBags", true)
         --self:RawHook("OpenAndFilterBags", "ToggleAllBags", true)
+        --@end-retail@
 
         --self:RawHook('ToggleBag', 'ToggleBags', true)
         --self:RawHook('OpenBackpack', 'OpenBags', true)
