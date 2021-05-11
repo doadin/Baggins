@@ -348,7 +348,6 @@ function Baggins:OnInitialize()
     self.OnMenuRequest = self.opts
 
     dbIcon:Register("Baggins", ldbdata, self.db.profile.minimap)
-
     -- self:RegisterChatCommand({ "/baggins" }, self.opts, "BAGGINS")
 
 end
