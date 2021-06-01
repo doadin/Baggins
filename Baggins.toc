@@ -80,6 +80,9 @@ Baggins-ItemOps.lua
 Baggins-Search.lua
 
 # Filters
+#@retail@
+src\filters\Anima.lua
+#@end-retail@
 src\filters\Bag.lua
 src\filters\Category.lua
 src\filters\ContainerType.lua
