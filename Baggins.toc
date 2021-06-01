@@ -76,7 +76,7 @@ Baggins.lua
 Baggins-Options.lua
 Baggins-Skins.lua
 Baggins-Filtering.lua
-Baggins_ItemOps.lua
+Baggins-ItemOps.lua
 
 # Filters
 src\filters\Bag.lua
