@@ -95,6 +95,9 @@ src\filters\ItemID.lua
 src\filters\ItemLevel.lua
 src\filters\ItemName.lua
 src\filters\ItemType.lua
+#@retail@
+src\filters\Keystone.lua
+#@end-retail@
 src\filters\NewItems.lua
 src\filters\Other.lua
 src\filters\PeriodicTable.lua
