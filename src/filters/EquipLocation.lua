@@ -14,6 +14,7 @@ local GetContainerItemLink = _G.GetContainerItemLink
 local GetItemInfoInstant = _G.GetItemInfoInstant
 
 -- Libs
+local LibStub = _G.LibStub
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
 
 local EquipLocs = {

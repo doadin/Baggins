@@ -13,6 +13,7 @@ local AddOn = _G[AddOnName]
 local BankButtonIDToInvSlotID = _G.BankButtonIDToInvSlotID
 
 -- Libs
+local LibStub = _G.LibStub
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
 local LG = LibStub("LibGratuity-3.0") --luacheck: ignore 211
 
@@ -41,10 +42,10 @@ AddOn:AddCustomRule("Bind", {
             type = 'select',
             values = {
                 unbound = L["Unbound"],
-                [ITEM_SOULBOUND] = ITEM_SOULBOUND,
-                [ITEM_BIND_ON_EQUIP] = ITEM_BIND_ON_EQUIP,
-                [ITEM_ACCOUNTBOUND] = ITEM_ACCOUNTBOUND,
-                [ITEM_BIND_ON_USE] = ITEM_BIND_ON_USE,
+                [_G.ITEM_SOULBOUND] = _G.ITEM_SOULBOUND,
+                [_G.ITEM_BIND_ON_EQUIP] = _G.ITEM_BIND_ON_EQUIP,
+                [_G.ITEM_ACCOUNTBOUND] = _G.ITEM_ACCOUNTBOUND,
+                [_G.ITEM_BIND_ON_USE] = _G.ITEM_BIND_ON_USE,
             }
         },
     },

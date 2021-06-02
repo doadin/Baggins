@@ -16,7 +16,11 @@ local PickupContainerItem, SplitContainerItem, IsShiftKeyDown =
       _G.PickupContainerItem, _G.SplitContainerItem, _G.IsShiftKeyDown
 local band =
       _G.bit.band
+local BANK_CONTAINER = _G.BANK_CONTAINER
+local NUM_BAG_SLOTS = _G.NUM_BAG_SLOTS
+local NUM_BANKBAGSLOTS = _G.NUM_BANKBAGSLOTS
 
+local LibStub = _G.LibStub
 local L = LibStub("AceLocale-3.0"):GetLocale("Baggins")
 local LBU = LibStub("LibBagUtils-1.0")
 

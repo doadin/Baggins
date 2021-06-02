@@ -13,12 +13,13 @@ local AddOn = _G[AddOnName]
 local pairs = _G.pairs
 
 -- Libs
-local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName) --luacheck: ignore 113
+local LibStub = _G.LibStub
+local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
 
 -- Local storage
-local BagTypes = Baggins:GetBagTypes() --luacheck: ignore 113
-local bankcategorycache = Baggins:GetBankCategoryCache() --luacheck: ignore 113
-local categorycache = Baggins:GetCategoryCache() --luacheck: ignore 113
+local BagTypes = AddOnName:GetBagTypes()
+local bankcategorycache = AddOnName:GetBankCategoryCache()
+local categorycache = AddOnName:GetCategoryCache()
 
 local function Matches(bag,slot,rule)
     if not (bag and slot and rule.category) then return end

@@ -19,6 +19,7 @@ local GetEquipmentSetInfo = _G.C_EquipmentSet.GetEquipmentSetInfo
 local GetContainerItemEquipmentSetInfo = _G.GetContainerItemEquipmentSetInfo
 
 -- Libs
+local LibStub = _G.LibStub
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
 
 -- Local storage

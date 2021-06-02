@@ -7,9 +7,13 @@ local pairs, ipairs, tonumber, tostring, next, select, type, wipe, CopyTable =
 local tinsert, tremove =
       _G.tinsert, _G.tremove
 
+local ITEM_QUALITY0_DESC, ITEM_QUALITY1_DESC, ITEM_QUALITY2_DESC, ITEM_QUALITY3_DESC, ITEM_QUALITY4_DESC, ITEM_QUALITY5_DESC, ITEM_QUALITY6_DESC =
+_G.ITEM_QUALITY0_DESC, _G.ITEM_QUALITY1_DESC, _G.ITEM_QUALITY2_DESC, _G.ITEM_QUALITY3_DESC, _G.ITEM_QUALITY4_DESC, _G.ITEM_QUALITY5_DESC, _G.ITEM_QUALITY6_DESC
+
 -- GLOBALS: LibStub, GetItemQualityColor, EasyMenu
 -- GLOBALS: ITEM_QUALITY0_DESC, ITEM_QUALITY1_DESC, ITEM_QUALITY2_DESC, ITEM_QUALITY3_DESC, ITEM_QUALITY4_DESC, ITEM_QUALITY5_DESC, ITEM_QUALITY6_DESC
 
+local LibStub = _G.LibStub
 local L = LibStub("AceLocale-3.0"):GetLocale("Baggins")
 
 local AceConfig = LibStub("AceConfig-3.0")
@@ -1627,24 +1631,6 @@ function Baggins:ApplyProfile(profile)
     self:ForceFullRefresh()
     self:BuildMoneyBagOptions()
     self:BuildBankControlsBagOptions()
-end
-
-function Baggins:UpdateDB()
-    local p = self.db.profile
-    for _, rules in pairs(p.categories) do
-        local i = 1
-        while(i < #rules + 1) do
-            local rule = rules[i]
-            if not rule then break end
-            -- remove item-types that have been removed from the game
-            if (rule.type == "ContainerType" and (rule.ctype == "Soul Bag" or rule.ctype == "Ammo Bag"))
-                    or (rule.type == "ItemType" and (rule.isubtype == "Librams" or rule.isubtype == "Idols" or rule.isubtype == "Totems")) then
-                tremove(rules, i)
-                i = i - 1
-            end
-            i = i + 1
-        end
-    end
 end
 
 function Baggins:OnProfileEnable()

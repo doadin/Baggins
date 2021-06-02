@@ -9,7 +9,6 @@ local _G = _G
 local AddOnName, _ = ...
 local AddOn = _G[AddOnName] --luacheck: ignore 211
 
-
 -- LUA Functions
 local pairs = _G.pairs
 
@@ -17,14 +16,12 @@ local pairs = _G.pairs
 local GetContainerItemLink = _G.GetContainerItemLink
 local GetItemInfo = _G.GetItemInfo
 
-
 -- Libs
+local LibStub = _G.LibStub
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
-
 
 -- Local storage
 local QualityNames = { }
-
 
 -- Build list of qualities
 local function BuildQualityNames()
@@ -38,7 +35,6 @@ local function BuildQualityNames()
     --    print("k:", k, "v: ", v)
     --end
 end
-
 
 -- Test for match
 local function Matches(bag, slot, rule)
@@ -100,7 +96,6 @@ AddOn:AddCustomRule(
         CleanRule = CleanRule
     }
 )
-
 
 -- Initialize filter
 BuildQualityNames()

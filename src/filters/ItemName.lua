@@ -16,6 +16,7 @@ local GetContainerItemLink = _G.GetContainerItemLink
 local GetItemInfo = _G.GetItemInfo
 
 -- Libs
+local LibStub = _G.LibStub
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
 
 -- Test for match

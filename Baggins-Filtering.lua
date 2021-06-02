@@ -20,6 +20,10 @@ local tinsert, tsort =
 -- TODO: Clean up this section
 -- WoW API
 local BANK_CONTAINER = _G.BANK_CONTAINER
+local BACKPACK_CONTAINER = _G.BACKPACK_CONTAINER
+local REAGENTBANK_CONTAINER = _G.REAGENTBANK_CONTAINER
+local NUM_BAG_SLOTS = _G.NUM_BAG_SLOTS
+local NUM_BANKBAGSLOTS = _G.NUM_BANKBAGSLOTS
 
 local GetContainerItemInfo, GetContainerNumFreeSlots, GetContainerNumSlots =
       _G.GetContainerItemInfo, _G.GetContainerNumFreeSlots, _G.GetContainerNumSlots
@@ -27,6 +31,7 @@ local C_Item, ItemLocation = _G.C_Item, _G.ItemLocation
 
 -- Libs
 --local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
+local LibStub = _G.LibStub
 local LBU = LibStub("LibBagUtils-1.0")
 
 -- Local storage

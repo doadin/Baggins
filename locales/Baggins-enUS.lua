@@ -1,3 +1,4 @@
+local LibStub = _G.LibStub
 local debug = false
 local L = LibStub("AceLocale-3.0"):NewLocale("Baggins", "enUS", true, debug)
 if not L then return end

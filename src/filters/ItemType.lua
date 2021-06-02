@@ -28,6 +28,7 @@ local GetAuctionItemSubClasses = _G.C_AuctionHouse.GetAuctionItemSubClasses
 --@end-retail@
 
 -- Libs
+local LibStub = _G.LibStub
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
 
 --@retail@
@@ -176,7 +177,7 @@ AddOn:AddCustomRule("ItemType",
                             --@retail@
                             for _,k in pairs(GetAuctionItemSubClasses(rule.itype)) do
                             --@end-retail@
-                                tmp[tostring(k)] = GetItemSubClassInfo(rule.itype, k) or UNKNOWN
+                                tmp[tostring(k)] = GetItemSubClassInfo(rule.itype, k) or "UNKNOWN"
                             end
                         end
                         return tmp

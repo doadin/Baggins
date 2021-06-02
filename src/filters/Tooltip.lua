@@ -15,6 +15,7 @@ local AddOn = _G[AddOnName]
 local BankButtonIDToInvSlotID = _G.BankButtonIDToInvSlotID
 
 -- Libs
+local LibStub = _G.LibStub
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
 local LG = LibStub("LibGratuity-3.0")
 

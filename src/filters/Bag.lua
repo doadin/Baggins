@@ -13,8 +13,14 @@ local AddOn = _G[AddOnName] --luacheck: ignore 211
 
 -- WoW API
 local GetContainerItemLink = _G.GetContainerItemLink
+local BACKPACK_CONTAINER = _G.BACKPACK_CONTAINER
+local BANK_CONTAINER = _G.BANK_CONTAINER
+local NUM_BAG_SLOTS = _G.NUM_BAG_SLOTS
+local NUM_BANKBAGSLOTS = _G.NUM_BANKBAGSLOTS
+local REAGENTBANK_CONTAINER = _G.REAGENTBANK_CONTAINER
 
 -- Libs
+local LibStub = _G.LibStub
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
 
 -- Local storage

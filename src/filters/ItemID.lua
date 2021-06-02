@@ -20,6 +20,7 @@ local GetItemInfo = _G.GetItemInfo
 local GetContainerItemID = _G.GetContainerItemID
 
 -- Libs
+local LibStub = _G.LibStub
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
 local function getItemIdSummary(info)
     local ids = info.arg.ids

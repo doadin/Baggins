@@ -10,7 +10,8 @@ local AddOnName, _ = ...
 local AddOn = _G[AddOnName]
 
 -- Libs
-local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
+--local LibStub = _G.LibStub
+--local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
 
 local C_Item = _G.C_Item
 local IsAnimaItemByID = C_Item.IsAnimaItemByID

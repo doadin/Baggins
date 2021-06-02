@@ -20,6 +20,7 @@ local tinsert, tsort =
       _G.tinsert, _G.table.sort
 
 -- Libs
+local LibStub = _G.LibStub
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
 
 local pt = LibStub("LibPeriodicTable-3.1", true)

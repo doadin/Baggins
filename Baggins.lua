@@ -1,5 +1,6 @@
 local _G = _G
 
+local LibStub = _G.LibStub
 _G.Baggins = LibStub("AceAddon-3.0"):NewAddon("Baggins", "AceEvent-3.0", "AceHook-3.0", "AceBucket-3.0", "AceTimer-3.0", "AceConsole-3.0")
 
 local Baggins = _G.Baggins
@@ -27,6 +28,9 @@ local GetItemCount, GetItemInfo, GetInventoryItemLink, GetItemQualityColor, GetI
       _G.GetItemCount, _G.GetItemInfo, _G.GetInventoryItemLink, _G.GetItemQualityColor, _G.GetItemFamily, _G.BankButtonIDToInvSlotID, _G.GetNumBankSlots
 local GetContainerItemInfo, GetContainerItemLink, GetContainerNumFreeSlots, GetContainerItemCooldown =
       _G.GetContainerItemInfo, _G.GetContainerItemLink, _G.GetContainerNumFreeSlots, _G.GetContainerItemCooldown
+local BANK_PANELS = _G.BANK_PANELS
+local ItemButtonUtil = _G.ItemButtonUtil
+local IsBagOpen = _G.IsBagOpen
 
 --@retail@
 local ReagentBankButtonIDToInvSlotID, GetContainerItemQuestInfo, DepositReagentBank, IsReagentBankUnlocked =
