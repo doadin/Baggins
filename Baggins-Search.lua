@@ -197,7 +197,26 @@ function Baggins:UpdateBagScale()
     _G.BagginsSearch_EditBox:SetScale(Baggins.db.profile.scale)
 end
 
---Baggins:RegisterSignal("Baggins_AllBagsClosed", BagginsSearch:UpdateEditBoxPosition, "BagginsSearch")
+Baggins:RegisterSignal("Baggins_AllBagsClosed",function() --luacheck: ignore 212
+    local lastBag
+    if type(Baggins.bagframes) == "table" then
+        for bagid, _ in ipairs(Baggins.bagframes) do --bagid, bag
+            if Baggins.bagframes[bagid]:IsVisible() then
+                lastBag = bagid
+            end
+        end
+    end
+    if _G.BagginsSearch_EditBox and lastBag then
+        _G.BagginsSearch_EditBox:ClearAllPoints()
+        _G.BagginsSearch_EditBox:SetPoint("BOTTOMRIGHT", "BagginsBag"..lastBag, "TOPRIGHT", 0, 0)
+        _G.BagginsSearch_EditBox:SetWidth(getglobal("BagginsBag"..lastBag):GetWidth())
+        _G.BagginsSearch_EditBox:Show()
+    else
+        if _G.BagginsSearch_EditBox then
+            _G.BagginsSearch_EditBox:Hide()
+        end
+    end
+end, Baggins)
 
 
 --Baggins.OnMenuRequest.args.BagginsSearch = {
