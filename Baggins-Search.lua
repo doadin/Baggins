@@ -62,8 +62,6 @@ BagginsAce3 = BagginsAce3 and BagginsAce3:GetOptionsTable("Baggins") and true
 -- Simple search inspired by vBagnon for Baggins
 
 local BagginsSearch = {}
-local BagginsSearch_Save = {}
-
 
 function BagginsSearch:Search(search) --luacheck: ignore 212
     local itemName, itemType, itemSubType
@@ -89,7 +87,7 @@ function BagginsSearch:Search(search) --luacheck: ignore 212
                             button:SetAlpha(1)
                         else
                             button:UnlockHighlight()
-                            button:SetAlpha(tonumber(BagginsSearch_Save.unmatchedAlpha) or 0.2)
+                            button:SetAlpha(tonumber(Baggins.db.profile.unmatchedAlpha) or 0.2)
                         end
                     end
                 end
@@ -124,7 +122,6 @@ local function BagginsSearch_CreateEditBox()
     editBox:SetWidth(100)
     editBox:SetHeight(24)
     --editBox:SetScale(Baggins.db.profile.scale)
-    --editBox:SetScale(UIParent:GetScale())
     editBox:SetFrameStrata("HIGH")
 
     editBox:SetFontObject(ChatFontNormal)
@@ -178,9 +175,6 @@ local function BagginsSearch_CreateEditBox()
     label:SetPoint("BOTTOMLEFT", -8, 0)
     label:Show()
 
-    if not BagginsSearch_Save.unmatchedAlpha then
-        BagginsSearch_Save.unmatchedAlpha = 0.2
-    end
 end
 
 -- I hate hooks too
@@ -219,32 +213,6 @@ Baggins:RegisterSignal("Baggins_AllBagsClosed",function() --luacheck: ignore 212
     end
 end, Baggins)
 
-
---Baggins.OnMenuRequest.args.BagginsSearch = {
---    name = "Search Item Fade",
---    type = "range",
---    desc = "Set the transparency for unmatched items",
---    order = 200,
---    max = 1,
---    min = 0,
---    step = 0.05,
---    get = function() return BagginsSearch_Save.unmatchedAlpha end,
---    set = function(value)
---        BagginsSearch_Save.unmatchedAlpha = value;
---        Search(_G.BagginsSearch_EditBox:GetText())
---    end
---}
-
-if BagginsAce3 then
-    Baggins.OnMenuRequest.args.BagginsSearch.set = function(_, value) --info, value
-        BagginsSearch_Save.unmatchedAlpha = value;
-        BagginsSearch:Search(_G.BagginsSearch_EditBox:GetText())
-    end
-    Baggins.OnMenuRequest.args.BagginsSearch.isPercent = true
-end
-
-
-
 -- Do it
 BagginsSearch_CreateEditBox()
 --BagginsSearch_CreateEditBox = nil
@@ -252,7 +220,6 @@ BagginsSearch:UpdateEditBoxPosition()
 local f = CreateFrame('Frame')
 f:RegisterEvent("PLAYER_ENTERING_WORLD")
 f:SetScript("OnEvent", function()
-    print(Baggins.db.profile.scale)
     _G.BagginsSearch_EditBox:SetScale(Baggins.db.profile.scale)
     Baggins.OnMenuRequest.args.General.args.BagginsSearch = {
         name = "Search Item Fade",
