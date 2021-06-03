@@ -803,6 +803,11 @@ function Baggins:UnhookBagHooks()
     if self:IsHooked("CloseAllBags") then
         self:Unhook("CloseAllBags")
     end
+    --@retail@
+    if self:IsHooked("OpenAllBagsMatchingContext") then
+        self:Unhook("OpenAllBagsMatchingContext")
+    end
+    --@end-retail@
 end
 
 function Baggins:UpdateBackpackHook()
