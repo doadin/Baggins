@@ -124,7 +124,7 @@ local function BagginsSearch_CreateEditBox()
     editBox:SetWidth(100)
     editBox:SetHeight(24)
     --editBox:SetScale(Baggins.db.profile.scale)
-    editBox:SetScale(UIParent:GetScale())
+    --editBox:SetScale(UIParent:GetScale())
     editBox:SetFrameStrata("HIGH")
 
     editBox:SetFontObject(ChatFontNormal)
@@ -249,3 +249,9 @@ end
 BagginsSearch_CreateEditBox()
 --BagginsSearch_CreateEditBox = nil
 BagginsSearch:UpdateEditBoxPosition()
+local f = CreateFrame('Frame')
+f:RegisterEvent("PLAYER_ENTERING_WORLD")
+f:SetScript("OnEvent", function()
+    print(Baggins.db.profile.scale)
+    _G.BagginsSearch_EditBox:SetScale(Baggins.db.profile.scale)
+end)
