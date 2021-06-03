@@ -254,4 +254,18 @@ f:RegisterEvent("PLAYER_ENTERING_WORLD")
 f:SetScript("OnEvent", function()
     print(Baggins.db.profile.scale)
     _G.BagginsSearch_EditBox:SetScale(Baggins.db.profile.scale)
+    Baggins.OnMenuRequest.args.General.args.BagginsSearch = {
+        name = "Search Item Fade",
+        type = "range",
+        desc = "Set the transparency for unmatched items",
+        order = 200,
+        max = 1,
+        min = 0,
+        step = 0.05,
+        get = function() return Baggins.db.profile.unmatchedAlpha end,
+        set = function(_, value)
+            Baggins.db.profile.unmatchedAlpha = value
+            BagginsSearch:Search(_G.BagginsSearch_EditBox:GetText())
+        end
+    }
 end)

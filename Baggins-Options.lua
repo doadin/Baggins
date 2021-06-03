@@ -288,7 +288,8 @@ local dbDefaults = {
         DisableDefaultItemMenu = false,
         minimap = {
             hide = false,
-        }
+        },
+        unmatchedAlpha = 0.2
     },
     global = {
         pt3mods = {},
