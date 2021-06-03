@@ -85,6 +85,9 @@ src\filters\Anima.lua
 #@end-retail@
 src\filters\Bag.lua
 src\filters\Category.lua
+#@retail@
+src\filters\Conduit.lua
+#@end-retail@
 src\filters\ContainerType.lua
 src\filters\Empty.lua
 src\filters\EquipLocation.lua
