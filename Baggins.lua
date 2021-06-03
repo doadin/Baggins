@@ -156,7 +156,7 @@ end
 local signals = {}
 
 function Baggins:RegisterSignal(name, handler, arg1) --luacheck: ignore 212		-- Example: RegisterSignal("MySignal", self.SomeHandler, self)
-    if not arg1 then error("want arg1 noob!") end
+    if not arg1 then error("Usage: Baggins:RegisterSignal(name, handler, arg1)") end
     if not signals[name] then
         signals[name] = {}
     end
