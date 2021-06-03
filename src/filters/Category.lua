@@ -17,9 +17,9 @@ local LibStub = _G.LibStub
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
 
 -- Local storage
-local BagTypes = AddOnName:GetBagTypes()
-local bankcategorycache = AddOnName:GetBankCategoryCache()
-local categorycache = AddOnName:GetCategoryCache()
+local BagTypes = _G.Baggins:GetBagTypes()
+local bankcategorycache = _G.Baggins:GetBankCategoryCache()
+local categorycache = _G.Baggins:GetCategoryCache()
 
 local function Matches(bag,slot,rule)
     if not (bag and slot and rule.category) then return end
