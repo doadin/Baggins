@@ -124,6 +124,7 @@ local function BagginsSearch_CreateEditBox()
     editBox:SetWidth(100)
     editBox:SetHeight(24)
     --editBox:SetScale(Baggins.db.profile.scale)
+    editBox:SetScale(UIParent:GetScale())
     editBox:SetFrameStrata("HIGH")
 
     editBox:SetFontObject(ChatFontNormal)
