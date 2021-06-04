@@ -96,6 +96,12 @@ function BagginsSearch:Search(search) --luacheck: ignore 212
     end
 end
 function BagginsSearch:UpdateEditBoxPosition() --luacheck: ignore 212
+    if not Baggins.db.profile.enableSearch then
+        if _G.BagginsSearch_EditBox then
+            _G.BagginsSearch_EditBox:Hide()
+            return
+        end
+    end
     local lastBag
     if type(Baggins.bagframes) == "table" then
         for bagid, _ in ipairs(Baggins.bagframes) do --bagid, bag
