@@ -289,7 +289,8 @@ local dbDefaults = {
         minimap = {
             hide = false,
         },
-        unmatchedAlpha = 0.2
+        unmatchedAlpha = 0.2,
+        enableSearch = true
     },
     global = {
         pt3mods = {},

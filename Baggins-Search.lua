@@ -96,6 +96,11 @@ function BagginsSearch:Search(search) --luacheck: ignore 212
     end
 end
 function BagginsSearch:UpdateEditBoxPosition() --luacheck: ignore 212
+    if not Baggins.db.profile.enableSearch then
+        if _G.BagginsSearch_EditBox then
+            _G.BagginsSearch_EditBox:Hide()
+        end
+    end
     local lastBag
     if type(Baggins.bagframes) == "table" then
         for bagid, _ in ipairs(Baggins.bagframes) do --bagid, bag
@@ -213,14 +218,25 @@ Baggins:RegisterSignal("Baggins_AllBagsClosed",function() --luacheck: ignore 212
     end
 end, Baggins)
 
--- Do it
-BagginsSearch_CreateEditBox()
---BagginsSearch_CreateEditBox = nil
-BagginsSearch:UpdateEditBoxPosition()
 local f = CreateFrame('Frame')
 f:RegisterEvent("PLAYER_ENTERING_WORLD")
 f:SetScript("OnEvent", function()
-    _G.BagginsSearch_EditBox:SetScale(Baggins.db.profile.scale)
+    if Baggins.db.profile.enableSearch then
+        BagginsSearch_CreateEditBox()
+        BagginsSearch:UpdateEditBoxPosition()
+        _G.BagginsSearch_EditBox:SetScale(Baggins.db.profile.scale)
+    end
+    Baggins.OnMenuRequest.args.General.args.BagginsSearch = {
+        name = "Enable Search",
+        type = "toggle",
+        desc = "Enable/Disable Search",
+        order = 100,
+        get = function() return Baggins.db.profile.enableSearch end,
+        set = function(_, value)
+            Baggins.db.profile.enableSearch = value
+            BagginsSearch:UpdateEditBoxPosition()
+        end
+    }
     Baggins.OnMenuRequest.args.General.args.BagginsSearch = {
         name = "Search Item Fade",
         type = "range",
