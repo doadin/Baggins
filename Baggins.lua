@@ -996,6 +996,7 @@ function Baggins:Baggins_RefreshBags()
     end
 
     scheduled_refresh = nil
+    self:FireSignal("Baggins_RefreshBags")
 end
 
 function Baggins:UpdateBags()
@@ -3599,6 +3600,7 @@ function Baggins:UpdateBagScale()
     for _, frame in ipairs(self.bagframes) do
         frame:SetScale(self.db.profile.scale)
     end
+    self:FireSignal("Baggins_UpdateBagScale")
 end
 
 ---------------------

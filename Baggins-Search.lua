@@ -96,11 +96,6 @@ function BagginsSearch:Search(search) --luacheck: ignore 212
     end
 end
 function BagginsSearch:UpdateEditBoxPosition() --luacheck: ignore 212
-    if not Baggins.db.profile.enableSearch then
-        if _G.BagginsSearch_EditBox then
-            _G.BagginsSearch_EditBox:Hide()
-        end
-    end
     local lastBag
     if type(Baggins.bagframes) == "table" then
         for bagid, _ in ipairs(Baggins.bagframes) do --bagid, bag
@@ -109,7 +104,7 @@ function BagginsSearch:UpdateEditBoxPosition() --luacheck: ignore 212
             end
         end
     end
-    if lastBag then
+    if _G.BagginsSearch_EditBox and lastBag then
         _G.BagginsSearch_EditBox:ClearAllPoints()
         _G.BagginsSearch_EditBox:SetPoint("BOTTOMRIGHT", "BagginsBag"..lastBag, "TOPRIGHT", 0, 0)
         _G.BagginsSearch_EditBox:SetWidth(getglobal("BagginsBag"..lastBag):GetWidth())
@@ -182,20 +177,17 @@ local function BagginsSearch_CreateEditBox()
 
 end
 
--- I hate hooks too
-Baggins.BagginsSearch_BRB = Baggins.Baggins_RefreshBags
-function Baggins:Baggins_RefreshBags()
-    self:BagginsSearch_BRB()
+Baggins:RegisterSignal("Baggins_UpdateBagScale",function() --luacheck: ignore 212
+    _G.BagginsSearch_EditBox:SetScale(Baggins.db.profile.scale)
+end, Baggins)
+
+
+Baggins:RegisterSignal("Baggins_RefreshBags",function() --luacheck: ignore 212
     BagginsSearch:UpdateEditBoxPosition()
     if _G.BagginsSearch_EditBox then
         BagginsSearch:Search(_G.BagginsSearch_EditBox:GetText())
     end
-end
-Baggins.BagginsSearch_UpdateBagScale = Baggins.UpdateBagScale
-function Baggins:UpdateBagScale()
-    self:BagginsSearch_UpdateBagScale()
-    _G.BagginsSearch_EditBox:SetScale(Baggins.db.profile.scale)
-end
+end, Baggins)
 
 Baggins:RegisterSignal("Baggins_AllBagsClosed",function() --luacheck: ignore 212
     local lastBag
@@ -226,22 +218,22 @@ f:SetScript("OnEvent", function()
         BagginsSearch:UpdateEditBoxPosition()
         _G.BagginsSearch_EditBox:SetScale(Baggins.db.profile.scale)
     end
-    Baggins.OnMenuRequest.args.General.args.BagginsSearch = {
+    Baggins.OnMenuRequest.args.General.args.BagginsSearchEnable = {
         name = "Enable Search",
         type = "toggle",
         desc = "Enable/Disable Search",
-        order = 100,
+        order = 200,
         get = function() return Baggins.db.profile.enableSearch end,
         set = function(_, value)
             Baggins.db.profile.enableSearch = value
             BagginsSearch:UpdateEditBoxPosition()
         end
     }
-    Baggins.OnMenuRequest.args.General.args.BagginsSearch = {
+    Baggins.OnMenuRequest.args.General.args.BagginsSearchFade = {
         name = "Search Item Fade",
         type = "range",
         desc = "Set the transparency for unmatched items",
-        order = 200,
+        order = 201,
         max = 1,
         min = 0,
         step = 0.05,
