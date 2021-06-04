@@ -49,15 +49,10 @@ local strfind = _G.strfind
 local GetContainerItemLink = _G.GetContainerItemLink
 local CreateFrame = _G.CreateFrame
 local ChatFontNormal = _G.ChatFontNormal
-local LibStub = _G.LibStub
 local GameTooltip = _G.GameTooltip
 local GameTooltip_SetDefaultAnchor = _G.GameTooltip_SetDefaultAnchor
 local getglobal = _G.getglobal
 local IsControlKeyDown = _G.IsControlKeyDown
-
-local BagginsAce3 = LibStub and LibStub("AceConfigRegistry-3.0")
-BagginsAce3 = BagginsAce3 and BagginsAce3:GetOptionsTable("Baggins") and true
-
 
 -- Simple search inspired by vBagnon for Baggins
 
@@ -96,6 +91,11 @@ function BagginsSearch:Search(search) --luacheck: ignore 212
     end
 end
 function BagginsSearch:UpdateEditBoxPosition() --luacheck: ignore 212
+    if Baggins.db.profile.enableSearch then
+        if not _G.BagginsSearch_EditBox then
+            BagginsSearch:BagginsSearch_CreateEditBox()
+        end
+    end
     if not Baggins.db.profile.enableSearch then
         if _G.BagginsSearch_EditBox then
             _G.BagginsSearch_EditBox:Hide()
@@ -122,7 +122,7 @@ function BagginsSearch:UpdateEditBoxPosition() --luacheck: ignore 212
     end
 end
 
-local function BagginsSearch_CreateEditBox()
+function BagginsSearch:BagginsSearch_CreateEditBox()
     -- Create Baggins Search EditBox
     local editBox = CreateFrame('EditBox', 'BagginsSearch_EditBox', UIParent, BackdropTemplateMixin and "BackdropTemplate") --luacheck: ignore 113
     editBox:SetWidth(100)
@@ -220,7 +220,7 @@ local f = CreateFrame('Frame')
 f:RegisterEvent("PLAYER_ENTERING_WORLD")
 f:SetScript("OnEvent", function()
     if Baggins.db.profile.enableSearch then
-        BagginsSearch_CreateEditBox()
+        BagginsSearch:BagginsSearch_CreateEditBox()
         BagginsSearch:UpdateEditBoxPosition()
         _G.BagginsSearch_EditBox:SetScale(Baggins.db.profile.scale)
     end
