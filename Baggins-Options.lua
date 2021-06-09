@@ -286,6 +286,7 @@ local dbDefaults = {
         openatauction = true,
         ranMigrations = {},
         DisableDefaultItemMenu = false,
+        EnableItemUpgradeArrow = true,
         minimap = {
             hide = false,
         },
@@ -611,6 +612,14 @@ function Baggins:RebuildOptions()
                     order = 900,
                     get = function() return p.DisableDefaultItemMenu end,
                     set = function(info, value) p.DisableDefaultItemMenu = value end, --luacheck: ignore 212
+                },
+                EnableItemUpgradeArrow = {
+                    name = "Enable Item Upgrade Arrow",
+                    type = "toggle",
+                    desc = "Enable Item Upgrade Arrow For Higher Item Level Gear or Pawn Upgrade!",
+                    order = 1000,
+                    get = function() return p.EnableItemUpgradeArrow end,
+                    set = function(info, value) p.EnableItemUpgradeArrow = value end, --luacheck: ignore 212
                 },
             }
         },

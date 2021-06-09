@@ -35,6 +35,7 @@ local IsBagOpen = _G.IsBagOpen
 --@retail@
 local ReagentBankButtonIDToInvSlotID, GetContainerItemQuestInfo, DepositReagentBank, IsReagentBankUnlocked =
       _G.ReagentBankButtonIDToInvSlotID, _G.GetContainerItemQuestInfo, _G.DepositReagentBank, _G.IsReagentBankUnlocked
+local IsContainerItemAnUpgrade = _G.IsContainerItemAnUpgrade
 --@end-retail@
 
 local C_Item, ItemLocation, InCombatLockdown, IsModifiedClick, GetDetailedItemLevelInfo, GetContainerItemID, InRepairMode, KeyRingButtonIDToInvSlotID, C_PetJournal, C_NewItems, PlaySound =
@@ -3374,6 +3375,12 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
     end
 
     button.readable = readable
+
+    if p.EnableItemUpgradeArrow then
+        local itemIsUpgrade = _G.PawnIsContainerItemAnUpgrade and _G.PawnIsContainerItemAnUpgrade(bag, slot) or IsContainerItemAnUpgrade and IsContainerItemAnUpgrade(bag, slot)
+        button.UpgradeIcon:SetShown(itemIsUpgrade or false)
+    end
+
     --local normalTexture = getglobal(name.."Item"..j.."NormalTexture")
     --if ( quality and quality ~= -1) then
     --	local color = getglobal("ITEM_QUALITY".. quality .."_COLOR")
