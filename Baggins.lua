@@ -3389,10 +3389,12 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
         if link then
             --itemName, itemLink, itemQuality, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount,itemEquipLoc, itemTexture, sellPrice, classID, subclassID, bindType, expacID, setID, isCraftingReagent
             local _, _, _, itemLevel, _, itemType = GetItemInfo(link)
-            if itemLevel and itemType == "Armor" or itemType == "Weapon" then
+            local item = Item:CreateFromBagAndSlot(bag, slot)
+            local level = item and item:GetCurrentItemLevel() or 0
+            if level and itemType == "Armor" or itemType == "Weapon" then
                 --text:SetText(itemLevel)
                 --text:Show()
-                self:SetItemButtonCount(button, itemLevel)
+                self:SetItemButtonCount(button, level)
             end
         end
     end
