@@ -317,10 +317,6 @@ local function refresh()
     Baggins:UpdateBags()
 end
 
-local function compressDisabled()
-    return Baggins.db.profile.sort == "slot"
-end
-
 local function getCompressAll()
     return Baggins.db.profile.compressall
 end
@@ -363,7 +359,6 @@ function Baggins:RebuildOptions()
                     desc = L["Compress Multiple stacks into one item button"],
                     type = "group",
                     order = 10,
-                    disabled = compressDisabled,
                     args = {
                         compressall = {
                             name = L["Compress All"],
