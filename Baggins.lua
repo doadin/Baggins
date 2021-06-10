@@ -3385,6 +3385,18 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
         button.UpgradeIcon:SetShown(itemIsUpgrade or false)
     end
 
+    if p.EnableItemLevelText then
+        if link then
+            --itemName, itemLink, itemQuality, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount,itemEquipLoc, itemTexture, sellPrice, classID, subclassID, bindType, expacID, setID, isCraftingReagent
+            local _, _, _, itemLevel, _, itemType = GetItemInfo(link)
+            if itemLevel and itemType == "Armor" or itemType == "Weapon" then
+                --text:SetText(itemLevel)
+                --text:Show()
+                self:SetItemButtonCount(button, itemLevel)
+            end
+        end
+    end
+
     --local normalTexture = getglobal(name.."Item"..j.."NormalTexture")
     --if ( quality and quality ~= -1) then
     --	local color = getglobal("ITEM_QUALITY".. quality .."_COLOR")
