@@ -3529,7 +3529,7 @@ local VISIBLE_CONTAINER_SPACING = 3
 
 function Baggins:ReallyLayoutBagFrames()
     local p = self.db.profile
-    if p.layout ~= "auto" then return end
+    --if p.layout ~= "auto" then return end
     local xOffset, yOffset, screenHeight, freeScreenHeight, column, maxwidth
 
     screenHeight = GetScreenHeight()
