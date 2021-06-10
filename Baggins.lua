@@ -886,9 +886,9 @@ function Baggins:IsCompressed(itemID)
         return false
     end
     --slot sorting will break compression horribly
-    if p.sort == "slot" then
-        return false
-    end
+    --if p.sort == "slot" then
+    --    return false
+    --end
     if p.compressall then
         return true
     end
