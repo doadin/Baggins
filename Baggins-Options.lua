@@ -291,7 +291,8 @@ local dbDefaults = {
             hide = false,
         },
         unmatchedAlpha = 0.2,
-        enableSearch = true
+        enableSearch = true,
+        FontSize = 10,
     },
     global = {
         pt3mods = {},
@@ -620,6 +621,37 @@ function Baggins:RebuildOptions()
                     order = 1000,
                     get = function() return p.EnableItemUpgradeArrow end,
                     set = function(info, value) p.EnableItemUpgradeArrow = value end, --luacheck: ignore 212
+                },
+                Font = {
+                    name = "Change Font",
+                    type = "select",
+                    desc = "Change the font used in baggins",
+                    order = 1100,
+                    get = function() return p.Font end,
+                    set = function(info, value) p.Font = value end, --luacheck: ignore 212
+                    values = function()
+                                local LSM = LibStub:GetLibrary("LibSharedMedia-3.0", true) --luacheck:ignore 113
+                                if LSM then
+                                    local fonts = {}
+                                    --return fonts-
+                                    for _,v in pairs(LSM:List("font")) do
+                                        fonts[v] = v
+                                    end
+                                    return fonts
+                                end
+                            end
+                    ,
+                },
+                FontSize = {
+                    name = "Change Font Size",
+                    type = "range",
+                    desc = "Change the font size used in baggins",
+                    order = 1200,
+                    max = 50,
+                    min = 1,
+                    step = 1,
+                    get = function() return p.FontSize end,
+                    set = function(info, value) p.FontSize = value end, --luacheck: ignore 212
                 },
             }
         },

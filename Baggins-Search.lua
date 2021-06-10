@@ -126,6 +126,7 @@ end
 
 function BagginsSearch:BagginsSearch_CreateEditBox()
     -- Create Baggins Search EditBox
+    local LSM = LibStub:GetLibrary("LibSharedMedia-3.0", true) --luacheck:ignore 113
     local editBox = CreateFrame('EditBox', 'BagginsSearch_EditBox', UIParent, BackdropTemplateMixin and "BackdropTemplate") --luacheck: ignore 113
     editBox:SetWidth(100)
     editBox:SetHeight(24)
@@ -133,6 +134,7 @@ function BagginsSearch:BagginsSearch_CreateEditBox()
     editBox:SetFrameStrata("HIGH")
 
     editBox:SetFontObject(ChatFontNormal)
+    editBox:SetFont(LSM and LSM:Fetch("font", Baggins.db.profile.Font) or _G.STANDARD_TEXT_FONT,Baggins.db.profile.FontSize or 10)
     editBox:SetTextInsets(8, 8, 0, 0)
     editBox:SetAutoFocus(false)
 
@@ -178,6 +180,7 @@ function BagginsSearch:BagginsSearch_CreateEditBox()
 
     local label = editBox:CreateFontString("BagginsSearch_Label", "OVERLAY", "GameFontHighlight")
     label:SetAlpha(0.2)
+    label:SetFont(LSM and LSM:Fetch("font", Baggins.db.profile.Font) or _G.STANDARD_TEXT_FONT,Baggins.db.profile.FontSize or 10)
     label:SetText("Search")
     label:SetPoint("TOPLEFT", 8, 0)
     label:SetPoint("BOTTOMLEFT", -8, 0)
@@ -230,7 +233,7 @@ f:SetScript("OnEvent", function()
         name = "Enable Search",
         type = "toggle",
         desc = "Enable/Disable Search",
-        order = 200,
+        order = 250,
         get = function() return Baggins.db.profile.enableSearch end,
         set = function(_, value)
             Baggins.db.profile.enableSearch = value
@@ -241,7 +244,7 @@ f:SetScript("OnEvent", function()
         name = "Search Item Fade",
         type = "range",
         desc = "Set the transparency for unmatched items",
-        order = 201,
+        order = 251,
         max = 1,
         min = 0,
         step = 0.05,

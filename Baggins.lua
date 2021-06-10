@@ -2144,6 +2144,8 @@ function Baggins:ReallyLayoutSection(sectionframe, cols)
         else
             title = ("- %s"):format(title)
         end
+        local LSM = LibStub:GetLibrary("LibSharedMedia-3.0", true) --luacheck:ignore 113
+        sectionframe.title:SetFont(LSM and LSM:Fetch("font", p.Font) or _G.STANDARD_TEXT_FONT,p.FontSize or 10)
         sectionframe.title:SetText(title)
         totalwidth = max(totalwidth,sectionframe.title:GetWidth())
     else
@@ -3129,7 +3131,9 @@ function Baggins:UpdateBankControlFrame() --luacheck: ignore 212
 end
 
 function Baggins:SetBagTitle(bagid,title)
+    local LSM = LibStub:GetLibrary("LibSharedMedia-3.0", true) --luacheck:ignore 113
     if self.bagframes[bagid] then
+        self.bagframes[bagid].title:SetFont(LSM and LSM:Fetch("font", Baggins.db.profile.Font) or _G.STANDARD_TEXT_FONT,Baggins.db.profile.FontSize or 10)
         self.bagframes[bagid].title:SetText(title)
         self:UpdateBagFrameSize(bagid)
     end
