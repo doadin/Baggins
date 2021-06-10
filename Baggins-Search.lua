@@ -59,25 +59,27 @@ local IsControlKeyDown = _G.IsControlKeyDown
 local BagginsSearch = {}
 
 function BagginsSearch:Search(search) --luacheck: ignore 212
-    local itemName, itemType, itemSubType
+    local itemName, itemType, itemSubType, itemEquipLoc
     for _, bag in ipairs(Baggins.bagframes) do --bagid,bag
         for _, section in ipairs(bag.sections) do --sectionid, section
             for _, button in ipairs(section.items) do --buttonid, button
                 if button:IsVisible() then
                     local link = GetContainerItemLink(button:GetParent():GetID(), button:GetID())
                     if link then
-                        itemName, _, _, _, _, itemType, itemSubType, _, _ = GetItemInfo(link)
+                        --itemName, itemLink, itemQuality, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount,itemEquipLoc, itemTexture, sellPrice, classID, subclassID, bindType, expacID, setID, isCraftingReagent
+                        itemName, _, _, _, _, itemType, itemSubType, _,itemEquipLoc = GetItemInfo(link)
                         if not itemName then
                             -- hack hack hack
                             itemName = string.match(link, "|h%[(.*)%]") or ""
                             -- TODO: should figure out what type of thing this is so we can populate these:
                             itemType = ""
                             itemSubType = ""
+                            itemEquipLoc = ""
                         end
                         if strlen(search) == 0 then
                             button:UnlockHighlight()
                             button:SetAlpha(1)
-                        elseif strfind(itemName:lower(), search:lower(),1,1) or strfind(itemType:lower(), search:lower(),1,1) or strfind(itemSubType:lower(), search:lower(),1,1) then
+                        elseif strfind(itemName:lower(), search:lower(),1,1) or strfind(itemType:lower(), search:lower(),1,1) or strfind(itemSubType:lower(), search:lower(),1,1) or strfind(itemEquipLoc:lower(), search:lower(),1,1) then
                             button:LockHighlight()
                             button:SetAlpha(1)
                         else
