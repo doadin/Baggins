@@ -3529,7 +3529,24 @@ local VISIBLE_CONTAINER_SPACING = 3
 
 function Baggins:ReallyLayoutBagFrames()
     local p = self.db.profile
-    --if p.layout ~= "auto" then return end
+    if p.layout ~= "auto" then
+        for _, frame in ipairs(self.bagframes) do
+            if (p.hideemptybags) then
+                if (frame.isempty) then
+                    if (frame:IsVisible()) then
+                        frame.autohide = true
+                        frame:Hide()
+                    end
+                else
+                    if (frame.autohide) then
+                        frame.autohide = false
+                        frame:Show()
+                    end
+                end
+            end
+        end
+        return
+    end
     local xOffset, yOffset, screenHeight, freeScreenHeight, column, maxwidth
 
     screenHeight = GetScreenHeight()
