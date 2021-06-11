@@ -1,10 +1,19 @@
-name: PR-CI
+name: CI-ReleaseBuild
 
-on: [pull_request]
+on:
+  push:
+    tags:
+      - '*'
+    paths-ignore:
+      - '.github/**'
+
+env:
+  CF_API_KEY: ${{ secrets.CF_API_KEY }}
+  GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
+
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -12,6 +21,7 @@ jobs:
         uses: actions/checkout@v1
         with:
           fetch-depth: 100
+
       - name: Run luacheck
         uses: BigWigsMods/actions/luacheck@master
         with:
@@ -20,15 +30,14 @@ jobs:
       - name: Package Retail
         uses: BigWigsMods/packager@master
         with:
-            args: -g retail -d
+            args: -g retail
 
       - name: Package Classic
         uses: BigWigsMods/packager@master
         with:
-            args: -g classic -d
+            args: -g classic
 
       - name: Package BC Classic
         uses: BigWigsMods/packager@master
         with:
-          args: -g bcc -m .pkgmeta-bc -d
-
+          args: -g bcc -m .pkgmeta-bc
