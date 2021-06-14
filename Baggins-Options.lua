@@ -294,6 +294,8 @@ local dbDefaults = {
         enableSearch = true,
         FontSize = 10,
         EnableItemLevelText = true,
+        ItemLevelQualityColor = true,
+        ItemLevelAncor = "BOTTOMRIGHT",
     },
     global = {
         pt3mods = {},
@@ -608,7 +610,7 @@ function Baggins:RebuildOptions()
                     desc = "Enable Item Upgrade Arrow For Higher Item Level Gear or Pawn Upgrade!",
                     order = 343,
                     get = function() return p.EnableItemUpgradeArrow end,
-                    set = function(info, value) p.EnableItemUpgradeArrow = value end, --luacheck: ignore 212
+                    set = function(info, value) p.EnableItemUpgradeArrow = value;self:UpdateItemButtons() end, --luacheck: ignore 212
                 },
                 EnableItemLevelText = {
                     name = "Enable Item Level text",
@@ -616,7 +618,34 @@ function Baggins:RebuildOptions()
                     desc = "Enable Item level shown on armor and weapons.",
                     order = 344,
                     get = function() return p.EnableItemLevelText end,
-                    set = function(info, value) p.EnableItemLevelText = value end, --luacheck: ignore 212
+                    set = function(info, value) p.EnableItemLevelText = value;self:UpdateItemButtons() end, --luacheck: ignore 212
+                },
+                ItemLevelQualityColor = {
+                    name = "Item Level text Quality Color",
+                    type = "toggle",
+                    desc = "Set item level text color based on quality of item.",
+                    order = 345,
+                    get = function() return p.ItemLevelQualityColor end,
+                    set = function(info, value) p.ItemLevelQualityColor = value;self:UpdateItemButtons() end, --luacheck: ignore 212
+                },
+                ItemLevelAncor = {
+                    name = "Item Level text ancor",
+                    type = "select",
+                    desc = "Set item level text location.",
+                    order = 346,
+                    get = function() return p.ItemLevelAncor end,
+                    set = function(info, value) p.ItemLevelAncor = value;self:UpdateItemButtons() end, --luacheck: ignore 212
+                    values = {
+                        TOPLEFT = "TOPLEFT",
+                        TOP = "TOP",
+                        TOPRIGHT = "TOPRIGHT",
+                        LEFT = "LEFT",
+                        CENTER = "CENTER",
+                        RIGHT = "RIGHT",
+                        BOTTOMLEFT = "BOTTOMTOPLEFT",
+                        BOTTOM = "BOTTOM",
+                        BOTTOMRIGHT = "BOTTOMRIGHT",
+                    }
                 },
                 Overrides = {
                     type = 'header',
