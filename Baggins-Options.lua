@@ -1603,13 +1603,61 @@ Baggins.defaultcategories = {
             type="PTSet"
         },
     },
+    [L["Mounts"]] = {
+        name=L["Mounts"],
+        {
+            type="ItemType",
+            itype = itemTypeReverse["Miscellaneous"].id,
+            isubtype = itemTypeReverse["Miscellaneous"].subTypes["Mount"],
+        }
+    },
     --@retail@
+    [L["Mount Equipment"]] = {
+        name=L["Mounts"],
+        {
+            type="ItemType",
+            itype = itemTypeReverse["Miscellaneous"].id,
+            isubtype = itemTypeReverse["Miscellaneous"].subTypes["Mount Equipment"],
+        }
+    },
     [L["In Use"]] = {
         name=L["In Use"],
         {
             anyset=true,
             type="EquipmentSet"
         },
+    },
+    [L["Pets"]] = {
+        name=L["Pets"],
+        {
+            type="ItemType",
+            itype = itemTypeReverse["Battle Pets"].id,
+            isubtype = itemTypeReverse["Battle Pets"].subTypes["All"],
+        },
+        {
+            operation="OR",
+            type="ItemType",
+            itype = itemTypeReverse["Miscellaneous"].id,
+            isubtype = itemTypeReverse["Miscellaneous"].subTypes["Companion Pets"],
+        },
+    },
+    [L["Teleport Items"]] = {
+        name=L["Teleport Items"],
+        {
+            type="Teleport",
+        }
+    },
+    [L["Conduit"]] = {
+        name=L["Conduit Items"],
+        {
+            type="Conduit",
+        }
+    },
+    [L["Keystone"]] = {
+        name=L["Keystone"],
+        {
+            type="Keystone",
+        }
     },
     --@end-retail@
     [L["New"]] = { { ["name"] = L["New"], ["type"] = "NewItems" }, },
