@@ -105,4 +105,5 @@ src\filters\NewItems.lua
 src\filters\Other.lua
 src\filters\PeriodicTable.lua
 src\filters\Quality.lua
+src\filters\Teleport.lua
 src\filters\Tooltip.lua
