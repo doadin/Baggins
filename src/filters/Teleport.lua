@@ -28,8 +28,8 @@ local ids = {
 
 local function Matches(bag, slot, _)
     local itemId = GetContainerItemID(bag, slot)
-    for id in (ids) do
-        if itemId == id then
+    for _, itemlistid in pairs(ids) do
+        if itemId == itemlistid then
             return true
         end
     end
