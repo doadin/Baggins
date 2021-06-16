@@ -1603,8 +1603,8 @@ Baggins.defaultcategories = {
             type="PTSet"
         },
     },
-    [L["Mounts"]] = {
-        name=L["Mounts"],
+    ["Mounts"] = {
+        name="Mounts",
         {
             type="ItemType",
             itype = itemTypeReverse["Miscellaneous"].id,
@@ -1612,8 +1612,8 @@ Baggins.defaultcategories = {
         }
     },
     --@retail@
-    [L["Mount Equipment"]] = {
-        name=L["Mounts"],
+    ["Mount Equipment"] = {
+        name="Mount Equipment",
         {
             type="ItemType",
             itype = itemTypeReverse["Miscellaneous"].id,
@@ -1627,8 +1627,8 @@ Baggins.defaultcategories = {
             type="EquipmentSet"
         },
     },
-    [L["Pets"]] = {
-        name=L["Pets"],
+    ["Pets"] = {
+        name="Pets",
         {
             type="ItemType",
             itype = itemTypeReverse["Battle Pets"].id,
@@ -1641,20 +1641,20 @@ Baggins.defaultcategories = {
             isubtype = itemTypeReverse["Miscellaneous"].subTypes["Companion Pets"],
         },
     },
-    [L["Teleport Items"]] = {
-        name=L["Teleport Items"],
+    ["Teleport Items"] = {
+        name="Teleport Items",
         {
             type="Teleport",
         }
     },
-    [L["Conduit"]] = {
-        name=L["Conduit Items"],
+    ["Conduit"] = {
+        name="Conduit Items",
         {
             type="Conduit",
         }
     },
-    [L["Keystone"]] = {
-        name=L["Keystone"],
+    ["Keystone"] = {
+        name="Keystone",
         {
             type="Keystone",
         }
