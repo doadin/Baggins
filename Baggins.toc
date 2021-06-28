@@ -100,6 +100,7 @@ src\filters\ItemName.lua
 src\filters\ItemType.lua
 #@retail@
 src\filters\Keystone.lua
+src\filters\Lockbox.lua
 #@end-retail@
 src\filters\NewItems.lua
 src\filters\Other.lua
