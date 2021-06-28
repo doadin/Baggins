@@ -17,7 +17,7 @@ local GetContainerItemID = _G.GetContainerItemID
 
 local function Matches(bag, slot, _)
     local itemId = GetContainerItemID(bag, slot)
-    local itemLink = C_ToyBox.GetToyLink(itemID)
+    local itemLink = C_ToyBox.GetToyLink(itemId)
     if type(itemLink) == "string" then
         return true
     end
