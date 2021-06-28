@@ -108,3 +108,6 @@ src\filters\PeriodicTable.lua
 src\filters\Quality.lua
 src\filters\Teleport.lua
 src\filters\Tooltip.lua
+#@retail@
+src\filters\Toy.lua
+#@end-retail@
