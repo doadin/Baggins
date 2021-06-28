@@ -1603,6 +1603,7 @@ Baggins.defaultcategories = {
             type="PTSet"
         },
     },
+    --@retail@
     ["Mounts"] = {
         name="Mounts",
         {
@@ -1611,7 +1612,6 @@ Baggins.defaultcategories = {
             isubtype = itemTypeReverse["Miscellaneous"].subTypes["Mount"],
         }
     },
-    --@retail@
     ["Mount Equipment"] = {
         name="Mount Equipment",
         {
@@ -1657,6 +1657,18 @@ Baggins.defaultcategories = {
         name="Keystone",
         {
             type="Keystone",
+        }
+    },
+    ["Lockbox"] = {
+        name="Lockbox",
+        {
+            type="Lockbox",
+        }
+    },
+    ["Toys"] = {
+        name="Toys",
+        {
+            type="Toys",
         }
     },
     --@end-retail@
