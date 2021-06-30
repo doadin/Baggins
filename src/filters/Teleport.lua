@@ -23,7 +23,9 @@ local ids = {
     103678, -- Time-Lost Artifact
     37863, -- Direbrew's Remote
     141605, -- Flight Master's Whistle
-    128353 -- Admiral's Compass
+    128353, -- Admiral's Compass
+    103678, -- Time-Lost Artifact
+    65274, -- Cloak of Coordination
 }
 
 local function Matches(bag, slot, _)
