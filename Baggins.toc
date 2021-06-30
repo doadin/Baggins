@@ -1,5 +1,5 @@
-## Interface: 90005
-## Interface-Retail: 90005
+## Interface: 90100
+## Interface-Retail: 90100
 ## Interface-Classic: 11307
 ## Interface-BCC: 20501
 ## Version: @project-version@
@@ -99,6 +99,7 @@ src\filters\ItemLevel.lua
 src\filters\ItemName.lua
 src\filters\ItemType.lua
 #@retail@
+src\filters\Gems.lua
 src\filters\Keystone.lua
 src\filters\Lockbox.lua
 #@end-retail@
