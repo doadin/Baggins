@@ -1144,6 +1144,7 @@ itemTypeReverse = {
             ["Holiday"] = 3,
             ["Junk"] = 0,
             ["Mount"] = 5,
+            ["Mount Equipment"] = 6,
         },
     },
     ["Battle Pets"] = {
@@ -1620,8 +1621,8 @@ Baggins.defaultcategories = {
             isubtype = itemTypeReverse["Miscellaneous"].subTypes["Mount Equipment"],
         }
     },
-    [L["In Use"]] = {
-        name=L["In Use"],
+    [L["Equipment Set"]] = {
+        name=L["Equipment Set"],
         {
             anyset=true,
             type="EquipmentSet"
@@ -1669,6 +1670,13 @@ Baggins.defaultcategories = {
         name="Toys",
         {
             type="Toys",
+        }
+    },
+    ["Gems"] = {
+        name="Gems",
+        {
+            type="ItemType",
+            itype = itemTypeReverse["Gem"].id,
         }
     },
     --@end-retail@

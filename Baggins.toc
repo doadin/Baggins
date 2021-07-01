@@ -99,7 +99,6 @@ src\filters\ItemLevel.lua
 src\filters\ItemName.lua
 src\filters\ItemType.lua
 #@retail@
-src\filters\Gems.lua
 src\filters\Keystone.lua
 src\filters\Lockbox.lua
 #@end-retail@
