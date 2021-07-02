@@ -104,13 +104,20 @@ function BagginsSearch:UpdateEditBoxPosition() --luacheck: ignore 212
             return
         end
     end
+    local initialcorner = Baggins.db.profile.layoutanchor
     local lastBag
-    if type(Baggins.bagframes) == "table" then
+    if (initialcorner == "BOTTOMRIGHT" or initialcorner == "BOTTOMLEFT") then
+      if type(Baggins.bagframes) == "table" then
         for bagid, _ in ipairs(Baggins.bagframes) do --bagid, bag
-            if Baggins.bagframes[bagid]:IsVisible() then
-                lastBag = bagid
-            end
+          if Baggins.bagframes[bagid]:IsVisible() then
+            lastBag = bagid
+          end
         end
+      end
+    elseif (initialcorner == "TOPRIGHT" or initialcorner == "TOPLEFT") then
+     if Baggins.bagframes[1]:IsVisible() then
+        lastBag = 1
+      end
     end
     if _G.BagginsSearch_EditBox and lastBag then
         _G.BagginsSearch_EditBox:ClearAllPoints()
@@ -203,13 +210,20 @@ Baggins:RegisterSignal("Baggins_RefreshBags",function() --luacheck: ignore 212
 end, Baggins)
 
 Baggins:RegisterSignal("Baggins_AllBagsClosed",function() --luacheck: ignore 212
+    local initialcorner = Baggins.db.profile.layoutanchor
     local lastBag
-    if type(Baggins.bagframes) == "table" then
+    if (initialcorner == "BOTTOMRIGHT" or initialcorner == "BOTTOMLEFT") then
+      if type(Baggins.bagframes) == "table" then
         for bagid, _ in ipairs(Baggins.bagframes) do --bagid, bag
-            if Baggins.bagframes[bagid]:IsVisible() then
-                lastBag = bagid
-            end
+          if Baggins.bagframes[bagid]:IsVisible() then
+            lastBag = bagid
+          end
         end
+      end
+    elseif (initialcorner == "TOPRIGHT" or initialcorner == "TOPLEFT") then
+     if Baggins.bagframes[1]:IsVisible() then
+        lastBag = 1
+      end
     end
     if _G.BagginsSearch_EditBox and lastBag then
         _G.BagginsSearch_EditBox:ClearAllPoints()

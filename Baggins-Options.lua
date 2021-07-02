@@ -639,7 +639,7 @@ function Baggins:RebuildOptions()
                         LEFT = "LEFT",
                         CENTER = "CENTER",
                         RIGHT = "RIGHT",
-                        BOTTOMLEFT = "BOTTOMTOPLEFT",
+                        BOTTOMLEFT = "BOTTOMLEFT",
                         BOTTOM = "BOTTOM",
                         BOTTOMRIGHT = "BOTTOMRIGHT",
                     }
