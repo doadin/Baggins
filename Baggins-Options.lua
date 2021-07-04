@@ -1680,7 +1680,7 @@ if Baggins:IsRetailWow() then
                 operation="AND"
             },
             {
-                type="PTSet",
+                type="PeriodicTable Set",
                 setname="Tradeskill.Tool",
                 operation="NOT"
             },
@@ -1849,19 +1849,19 @@ if Baggins:IsRetailWow() then
             name=L["Tools"],
             {
                 setname="Tradeskill.Tool",
-                type="PTSet"
+                type="PeriodicTable Set"
             },
             {
                 operation="NOT",
-                type="PTSet",
+                type="PeriodicTable Set",
                 setname="Tradeskill.Tool.Fishing"
             },
         },
         [L["Fishing"]] = {
             name=L["Fishing"],
             {
-                setname="Tradeskill.Tool.Fishing",
-                type="PTSet"
+                setname="Tradeskill.Gather.Fishing",
+                type="PeriodicTable Set"
             },
         },
         ["Mounts"] = {
@@ -2010,7 +2010,7 @@ if Baggins:IsClassicWow() then
                 operation="AND"
             },
             {
-                type="PTSet",
+                type="PeriodicTable Set",
                 setname="Tradeskill.Tool",
                 operation="NOT"
             },
@@ -2133,19 +2133,19 @@ if Baggins:IsClassicWow() then
             name=L["Tools"],
             {
                 setname="Tradeskill.Tool",
-                type="PTSet"
+                type="PeriodicTable Set"
             },
             {
                 operation="NOT",
-                type="PTSet",
+                type="PeriodicTable Set",
                 setname="Tradeskill.Tool.Fishing"
             },
         },
         [L["Fishing"]] = {
             name=L["Fishing"],
             {
-                setname="Tradeskill.Tool.Fishing",
-                type="PTSet"
+                setname="Tradeskill.Gather.Fishing",
+                type="PeriodicTable Set"
             },
         },
         [L["New"]] = { { ["name"] = L["New"], ["type"] = "NewItems" }, },
@@ -2220,7 +2220,7 @@ if Baggins:IsTBCWow() then
                 operation="AND"
             },
             {
-                type="PTSet",
+                type="PeriodicTable Set",
                 setname="Tradeskill.Tool",
                 operation="NOT"
             },
@@ -2343,19 +2343,19 @@ if Baggins:IsTBCWow() then
             name=L["Tools"],
             {
                 setname="Tradeskill.Tool",
-                type="PTSet"
+                type="PeriodicTable Set"
             },
             {
                 operation="NOT",
-                type="PTSet",
+                type="PeriodicTable Set",
                 setname="Tradeskill.Tool.Fishing"
             },
         },
         [L["Fishing"]] = {
             name=L["Fishing"],
             {
-                setname="Tradeskill.Tool.Fishing",
-                type="PTSet"
+                setname="Tradeskill.Gather.Fishing",
+                type="PeriodicTable Set"
             },
         },
         ["Gems"] = {
