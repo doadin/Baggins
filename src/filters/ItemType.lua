@@ -59,7 +59,7 @@ if Baggins:IsRetailWow() then
 end
 if Baggins:IsClassicWow() then
     -- scanned Thu Jul 1 15:27:04 2021 - patch 1.13.7
-    local ItemTypes = {
+    ItemTypes = {
         [0]="Consumable",
         [1]="Container",
         [2]="Weapon",
