@@ -1944,14 +1944,6 @@ end
 
 if Baggins:IsClassicWow() then
     Baggins.defaultcategories = {
-        [L["Misc Consumables"]] = {
-            name=L["Misc Consumables"],
-            {
-                type="ItemType" ,
-                itype = itemTypeReverse["Consumable"].id,
-                isubtype = itemTypeReverse["Consumable"].subTypes["Other"],
-            }
-        },
         [L["Consumables"]] = {
             name=L["Consumables"],
             {
@@ -2023,44 +2015,6 @@ if Baggins:IsClassicWow() then
         [L["Empty"]] = { name=L["Empty"], { type="Empty" }, },
         [L["Bags"]] = { name=L["Bags"], { type="Bag", bagid=1 }, { type="Bag", bagid=2, operation="OR" }, { type="Bag", bagid=3, operation="OR" }, { type="Bag", bagid=4, operation="OR" }, { type="Bag", bagid=0, operation="OR" }, },
         [L["BankBags"]] = { name=L["BankBags"], { type="Bag", bagid=-1 }, { type="Bag", bagid=5, operation="OR" }, { type="Bag", bagid=6, operation="OR" }, { type="Bag", bagid=7, operation="OR" }, { type="Bag", bagid=8, operation="OR" }, { type="Bag", bagid=9, operation="OR" }, { type="Bag", bagid=10, operation="OR" }, { type="Bag", bagid=11, operation="OR" }, },
-        [L["Potions"]] = {
-            name=L["Potions"],
-            {
-                type="ItemType",
-                itype = itemTypeReverse["Consumable"].id,
-                isubtype = itemTypeReverse["Consumable"].subTypes["Potion"],
-            },
-        },
-        [L["Flasks & Elixirs"]] = {
-            name=L["Flasks & Elixirs"],
-            {
-                type="ItemType",
-                itype = itemTypeReverse["Consumable"].id,
-                isubtype = itemTypeReverse["Consumable"].subTypes["Flask"],
-            },
-            {
-                operation = "OR",
-                type="ItemType",
-                itype = itemTypeReverse["Consumable"].id,
-                isubtype = itemTypeReverse["Consumable"].subTypes["Elixir"],
-            },
-        },
-        [L["Food & Drink"]] = {
-            name=L["Food & Drink"],
-            {
-                type="ItemType",
-                itype = itemTypeReverse["Consumable"].id,
-                isubtype = itemTypeReverse["Consumable"].subTypes["Food & Drink"],
-            },
-        },
-        [L["FirstAid"]] = {
-            name=L["FirstAid"],
-            {
-                type="ItemType",
-                itype = itemTypeReverse["Consumable"].id,
-                isubtype = itemTypeReverse["Consumable"].subTypes["Bandage"],
-            },
-        },
         [L["Tradeskill Mats"]] = {
             name=L["Tradeskill Mats"],
             {
@@ -2076,38 +2030,6 @@ if Baggins:IsClassicWow() then
                 isubtype = itemTypeReverse["Trade Goods"].subTypes["Elemental"],
             },
         },
-        [L["Metal & Stone"]] = {
-            name=L["Metal & Stone"],
-            {
-                type = "ItemType",
-                itype = itemTypeReverse["Trade Goods"].id,
-                isubtype = itemTypeReverse["Trade Goods"].subTypes["Metal & Stone"],
-            },
-        },
-        [L["Cooking"]] = {
-            name=L["Cooking"],
-            {
-                type = "ItemType",
-                itype = itemTypeReverse["Trade Goods"].id,
-                isubtype = itemTypeReverse["Trade Goods"].subTypes["Cooking"],
-            },
-        },
-        [L["Herb"]] = {
-            name=L["Herb"],
-            {
-                type = "ItemType",
-                itype = itemTypeReverse["Trade Goods"].id,
-                isubtype = itemTypeReverse["Trade Goods"].subTypes["Herb"],
-            },
-        },
-        [L["Enchanting"]] = {
-            name=L["Enchanting"],
-            {
-                type = "ItemType",
-                itype = itemTypeReverse["Trade Goods"].id,
-                isubtype = itemTypeReverse["Trade Goods"].subTypes["Enchanting"],
-            },
-        },
         [L["Engineering"]] = {
             name=L["Parts"],
             {
@@ -2117,8 +2039,14 @@ if Baggins:IsClassicWow() then
             },
             {
                 type = "ItemType",
-                itype = itemTypeReverse["Consumable"].id,
-                isubtype = itemTypeReverse["Consumable"].subTypes["Explosives and Devices"],
+                itype = itemTypeReverse["Trade Goods"].id,
+                isubtype = itemTypeReverse["Trade Goods"].subTypes["Explosives"],
+                operation = "OR",
+            },
+            {
+                type = "ItemType",
+                itype = itemTypeReverse["Trade Goods"].id,
+                isubtype = itemTypeReverse["Trade Goods"].subTypes["Devices"],
                 operation = "OR",
             }
         },
@@ -2324,12 +2252,6 @@ if Baggins:IsTBCWow() then
                 type = "ItemType",
                 itype = itemTypeReverse["Trade Goods"].id,
                 isubtype = itemTypeReverse["Trade Goods"].subTypes["Parts"],
-            },
-            {
-                type = "ItemType",
-                itype = itemTypeReverse["Consumable"].id,
-                isubtype = itemTypeReverse["Consumable"].subTypes["Explosives and Devices"],
-                operation = "OR",
             }
         },
         [L["Recipes"]] = {
