@@ -1495,6 +1495,8 @@ if Baggins:IsTBCWow() then
                 ["Meat"] = 8,
                 ["Metal & Stone"] = 7,
                 ["Parts"] = 1,
+                ["Explosives"] = 2,
+                ["Devices"] = 3,
             },
         },
         ["Permanent(OBSOLETE)"] = {
