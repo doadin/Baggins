@@ -1578,7 +1578,8 @@ if Baggins:IsTBCWow() then
     }
 end
 
-function Baggins:NewProfile(_, key)
+function Baggins:NewProfile(_, _)
+    --_,key
     self:ChangeProfile();
 end
 

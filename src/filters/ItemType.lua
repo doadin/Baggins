@@ -33,7 +33,7 @@ local LibStub = _G.LibStub
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
 
 local ItemTypes
-if Baggins:IsRetailWow() then
+if AddOn:IsRetailWow() then
     -- scanned Thu Jul 1 21:30:01 2021 - patch 9.1.0
     ItemTypes = {
         [0]="Consumable",
@@ -57,7 +57,7 @@ if Baggins:IsRetailWow() then
         [18]="WoW Token"
     }
 end
-if Baggins:IsClassicWow() then
+if AddOn:IsClassicWow() then
     -- scanned Thu Jul 1 15:27:04 2021 - patch 1.13.7
     ItemTypes = {
         [0]="Consumable",
@@ -80,7 +80,7 @@ if Baggins:IsClassicWow() then
     }
 end
 
-if Baggins:IsTBCWow() then
+if AddOn:IsTBCWow() then
     -- scanned Thu Jul 1 16:14:05 2021 - patch 2.5.1
     ItemTypes = {
         [0]="Consumable",
@@ -196,12 +196,12 @@ AddOn:AddCustomRule("ItemType",
                         local tmp = {}
                         tmp.ALL = _G.ALL
                         if rule.itype and ItemTypes[rule.itype] then
-                            if Baggins:IsClassicWow() or Baggins:IsTBCWow() then
+                            if AddOn:IsClassicWow() or AddOn:IsTBCWow() then
                                 for _,k in pairs({GetAuctionItemSubClasses(rule.itype)}) do
                                     tmp[tostring(k)] = GetItemSubClassInfo(rule.itype, k) or "UNKNOWN"
                                 end
                             end
-                            if Baggins:IsRetailWow() then
+                            if AddOn:IsRetailWow() then
                                 for _,k in pairs(GetAuctionItemSubClasses(rule.itype)) do
                                     tmp[tostring(k)] = GetItemSubClassInfo(rule.itype, k) or "UNKNOWN"
                                 end
