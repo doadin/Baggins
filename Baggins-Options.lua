@@ -150,7 +150,6 @@ local templates = {
                     { name=L["Jewelcrafting"], cats={ L["Jewelcrafting"] } },
                     { name=L["Engineering"], cats={ L["Engineering"] } },
                     { name=L["Inscription"], cats={ L["Inscription"] } },
-                    { name=L["Misc Trade Goods"], cats={ L["Misc Trade Goods"] } },
                     { name=L["Item Enchantment"], cats={ L["Item Enchantment"] } },
                     { name=L["Recipes"], cats={ L["Recipes"] } },
  --[===[@non-retail@
@@ -215,7 +214,6 @@ local templates = {
                     { name=L["Jewelcrafting"], cats={ L["Jewelcrafting"] } },
                     { name=L["Engineering"], cats={ L["Engineering"] } },
                     { name=L["Inscription"], cats={ L["Inscription"] } },
-                    { name=L["Misc Trade Goods"], cats={ L["Misc Trade Goods"] } },
                     { name=L["Item Enchantment"], cats={ L["Item Enchantment"] } },
                     { name=L["Recipes"], cats={ L["Recipes"] } },
                 }
@@ -284,7 +282,6 @@ local dbDefaults = {
         bankcontrolbag = 11, -- "Bank Other"
         disablebagmenu = false,
         openatauction = true,
-        ranMigrations = {},
         DisableDefaultItemMenu = false,
         EnableItemUpgradeArrow = true,
         minimap = {
@@ -1036,278 +1033,552 @@ function Baggins:InitOptions()
 end
 local itemTypeReverse
 
-itemTypeReverse = {
-    ["Quiver"] = {
-        ["id"] = 11,
-        ["subTypes"] = {
+if Baggins:IsRetailWow() then
+    itemTypeReverse = {
+        ["Quiver"] = {
+            ["id"] = 11,
+            ["subTypes"] = {
+            },
         },
-    },
-    ["WoW Token"] = {
-        ["id"] = 18,
-        ["subTypes"] = {
-            ["WoW Token"] = 0,
+        ["WoW Token"] = {
+            ["id"] = 18,
+            ["subTypes"] = {
+                ["WoW Token"] = 0,
+            },
         },
-    },
-    ["Recipe"] = {
-        ["id"] = 9,
-        ["subTypes"] = {
-            ["Tailoring"] = 2,
-            ["Blacksmithing"] = 4,
-            ["Alchemy"] = 6,
-            ["First Aid"] = 7,
-            ["Book"] = 0,
-            ["Cooking"] = 5,
-            ["Fishing"] = 9,
-            ["Jewelcrafting"] = 10,
-            ["Engineering"] = 3,
-            ["Leatherworking"] = 1,
-            ["Inscription"] = 11,
-            ["Enchanting"] = 8,
+        ["Recipe"] = {
+            ["id"] = 9,
+            ["subTypes"] = {
+                ["Tailoring"] = 2,
+                ["Blacksmithing"] = 4,
+                ["Alchemy"] = 6,
+                ["First Aid"] = 7,
+                ["Book"] = 0,
+                ["Cooking"] = 5,
+                ["Fishing"] = 9,
+                ["Jewelcrafting"] = 10,
+                ["Engineering"] = 3,
+                ["Leatherworking"] = 1,
+                ["Inscription"] = 11,
+                ["Enchanting"] = 8,
+            },
         },
-    },
-    --[===[@non-retail@
-    ["Reagent"] = {
-        ["id"] = 5,
-        ["subTypes"] = {
-            ["Reagent"] = 0,
-            ["Keystone"] = 1,
+        ["Reagent"] = {
+            ["id"] = 5,
+            ["subTypes"] = {
+                ["Reagent"] = 0,
+                ["Keystone"] = 1,
+                ["Context Token"] = 2,
+            },
         },
-    },
-    --@end-non-retail@]===]
-    ["Key"] = {
-        ["id"] = 13,
-        ["subTypes"] = {
-            ["Key"] = 0,
-            ["Lockpick"] = 1,
+        ["Key"] = {
+            ["id"] = 13,
+            ["subTypes"] = {
+                ["Key"] = 0,
+                ["Lockpick"] = 1,
+            },
         },
-    },
-    ["Armor"] = {
-        ["id"] = 4,
-        ["subTypes"] = {
-            ["Leather"] = 2,
-            ["Cosmetic"] = 5,
-            ["Shields"] = 6,
-            ["Mail"] = 3,
-            ["Plate"] = 4,
-            ["Cloth"] = 1,
-            ["Miscellaneous"] = 0,
+        ["Armor"] = {
+            ["id"] = 4,
+            ["subTypes"] = {
+                ["Leather"] = 2,
+                ["Cosmetic"] = 5,
+                ["Shields"] = 6,
+                ["Mail"] = 3,
+                ["Plate"] = 4,
+                ["Cloth"] = 1,
+                ["Miscellaneous"] = 0,
+            },
         },
-    },
-    ["Quest"] = {
-        ["id"] = 12,
-        ["subTypes"] = {
-            ["Quest"] = 0,
+        ["Quest"] = {
+            ["id"] = 12,
+            ["subTypes"] = {
+                ["Quest"] = 0,
+            },
         },
-    },
-    ["Container"] = {
-        ["id"] = 1,
-        ["subTypes"] = {
-            ["Bag"] = 0,
-            ["Mining Bag"] = 6,
-            ["Cooking Bag"] = 10,
-            ["Gem Bag"] = 5,
-            ["Herb Bag"] = 2,
-            ["Engineering Bag"] = 4,
-            ["Tackle Box"] = 9,
-            ["Leatherworking Bag"] = 7,
-            ["Inscription Bag"] = 8,
-            ["Enchanting Bag"] = 3,
+        ["Container"] = {
+            ["id"] = 1,
+            ["subTypes"] = {
+                ["Bag"] = 0,
+                ["Mining Bag"] = 6,
+                ["Cooking Bag"] = 10,
+                ["Gem Bag"] = 5,
+                ["Herb Bag"] = 2,
+                ["Engineering Bag"] = 4,
+                ["Tackle Box"] = 9,
+                ["Leatherworking Bag"] = 7,
+                ["Inscription Bag"] = 8,
+                ["Enchanting Bag"] = 3,
+            },
         },
-    },
-    ["Tradeskill"] = {
-        ["id"] = 7,
-        ["subTypes"] = {
-            ["Inscription"] = 16,
-            ["Elemental"] = 10,
-            ["Jewelcrafting"] = 4,
-            ["Leather"] = 6,
-            ["Herb"] = 9,
-            ["Other"] = 11,
-            ["Enchanting"] = 12,
-            ["Cloth"] = 5,
-            ["Cooking"] = 8,
-            ["Metal & Stone"] = 7,
-            ["Parts"] = 1,
+        ["Tradeskill"] = {
+            ["id"] = 7,
+            ["subTypes"] = {
+                ["Inscription"] = 16,
+                ["Optional Reagents"] = 18,
+                ["Elemental"] = 10,
+                ["Jewelcrafting"] = 4,
+                ["Leather"] = 6,
+                ["Herb"] = 9,
+                ["Other"] = 11,
+                ["Enchanting"] = 12,
+                ["Cloth"] = 5,
+                ["Cooking"] = 8,
+                ["Metal & Stone"] = 7,
+                ["Parts"] = 1,
+            },
         },
-    },
-    ["Permanent(OBSOLETE)"] = {
-        ["id"] = 14,
-        ["subTypes"] = {
-            ["Permanent"] = 0,
+        ["Permanent(OBSOLETE)"] = {
+            ["id"] = 14,
+            ["subTypes"] = {
+                ["Permanent"] = 0,
+            },
         },
-    },
-    ["Miscellaneous"] = {
-        ["id"] = 15,
-        ["subTypes"] = {
-            ["Other"] = 4,
-            ["Companion Pets"] = 2,
-            ["Holiday"] = 3,
-            ["Junk"] = 0,
-            ["Mount"] = 5,
-            ["Mount Equipment"] = 6,
+        ["Miscellaneous"] = {
+            ["id"] = 15,
+            ["subTypes"] = {
+                ["Other"] = 4,
+                ["Companion Pets"] = 2,
+                ["Holiday"] = 3,
+                ["Junk"] = 0,
+                ["Reagent"] = 1,
+                ["Mount"] = 5,
+                ["Mount Equipment"] = 6,
+            },
         },
-    },
-    ["Battle Pets"] = {
-        ["id"] = 17,
-        ["subTypes"] = {
-            ["Dragonkin"] = 1,
-            ["Humanoid"] = 0,
-            ["Elemental"] = 6,
-            ["Critter"] = 4,
-            ["Magic"] = 5,
-            ["Flying"] = 2,
-            ["Aquatic"] = 8,
-            ["Undead"] = 3,
-            ["Beast"] = 7,
-            ["Mechanical"] = 9,
+        ["Battle Pets"] = {
+            ["id"] = 17,
+            ["subTypes"] = {
+                ["Dragonkin"] = 1,
+                ["Humanoid"] = 0,
+                ["Elemental"] = 6,
+                ["Critter"] = 4,
+                ["Magic"] = 5,
+                ["Flying"] = 2,
+                ["Aquatic"] = 8,
+                ["Undead"] = 3,
+                ["Beast"] = 7,
+                ["Mechanical"] = 9,
+            },
         },
-    },
-    ["Consumable"] = {
-        ["id"] = 0,
-        ["subTypes"] = {
-            ["Other"] = 8,
-            ["Elixir"] = 2,
-            ["Explosives and Devices"] = 0,
-            ["Potion"] = 1,
-            ["Food & Drink"] = 5,
-            ["Flask"] = 3,
-            ["Bandage"] = 7,
-            ["Vantus Runes"] = 9,
+        ["Consumable"] = {
+            ["id"] = 0,
+            ["subTypes"] = {
+                ["Other"] = 8,
+                ["Elixir"] = 2,
+                ["Explosives and Devices"] = 0,
+                ["Potion"] = 1,
+                ["Food & Drink"] = 5,
+                ["Flask"] = 3,
+                ["Bandage"] = 7,
+                ["Vantus Runes"] = 9,
+            },
         },
-    },
-    ["Gem"] = {
-        ["id"] = 3,
-        ["subTypes"] = {
-            ["Intellect"] = 0,
-            ["Artifact Relic"] = 11,
-            ["Haste"] = 7,
-            ["Strength"] = 2,
-            ["Multiple Stats"] = 10,
-            ["Agility"] = 1,
-            ["Other"] = 9,
-            ["Versatility"] = 8,
-            ["Stamina"] = 3,
-            ["Mastery"] = 6,
-            ["Spirit"] = 4,
-            ["Critical Strike"] = 5,
+        ["Gem"] = {
+            ["id"] = 3,
+            ["subTypes"] = {
+                ["Intellect"] = 0,
+                ["Artifact Relic"] = 11,
+                ["Haste"] = 7,
+                ["Strength"] = 2,
+                ["Multiple Stats"] = 10,
+                ["Agility"] = 1,
+                ["Other"] = 9,
+                ["Versatility"] = 8,
+                ["Stamina"] = 3,
+                ["Mastery"] = 6,
+                ["Critical Strike"] = 5,
+            },
         },
-    },
-    ["Money(OBSOLETE)"] = {
-        ["id"] = 10,
-        ["subTypes"] = {
-            ["Money(OBSOLETE)"] = 0,
+        ["Money(OBSOLETE)"] = {
+            ["id"] = 10,
+            ["subTypes"] = {
+                ["Money(OBSOLETE)"] = 0,
+            },
         },
-    },
-    ["Projectile"] = {
-        ["id"] = 6,
-        ["subTypes"] = {
+        ["Projectile"] = {
+            ["id"] = 6,
+            ["subTypes"] = {
+            },
         },
-    },
-    ["Item Enhancement"] = {
-        ["id"] = 8,
-        ["subTypes"] = {
-            ["Waist"] = 7,
-            ["Head"] = 0,
-            ["Neck"] = 1,
-            ["Shield/Off-hand"] = 13,
-            ["Two-Handed Weapon"] = 12,
-            ["Feet"] = 9,
-            ["Chest"] = 4,
-            ["Cloak"] = 3,
-            ["Finger"] = 10,
-            ["Legs"] = 8,
-            ["Hands"] = 6,
-            ["Wrist"] = 5,
-            ["Shoulder"] = 2,
-            ["Weapon"] = 11,
+        ["Item Enhancement"] = {
+            ["id"] = 8,
+            ["subTypes"] = {
+                ["Waist"] = 7,
+                ["Head"] = 0,
+                ["Neck"] = 1,
+                ["Shield/Off-hand"] = 13,
+                ["Misc"] = 14,
+                ["Two-Handed Weapon"] = 12,
+                ["Feet"] = 9,
+                ["Chest"] = 4,
+                ["Cloak"] = 3,
+                ["Finger"] = 10,
+                ["Legs"] = 8,
+                ["Hands"] = 6,
+                ["Wrist"] = 5,
+                ["Shoulder"] = 2,
+                ["Weapon"] = 11,
+            },
         },
-    },
-    ["Glyph"] = {
-        ["id"] = 16,
-        ["subTypes"] = {
-            ["Warrior"] = 1,
-            ["Paladin"] = 2,
-            ["Shaman"] = 7,
-            ["Monk"] = 10,
-            ["Rogue"] = 4,
-            ["Mage"] = 8,
-            ["Demon Hunter"] = 12,
-            ["Warlock"] = 9,
-            ["Priest"] = 5,
-            ["Hunter"] = 3,
-            ["Druid"] = 11,
-            ["Death Knight"] = 6,
+        ["Glyph"] = {
+            ["id"] = 16,
+            ["subTypes"] = {
+                ["Warrior"] = 1,
+                ["Paladin"] = 2,
+                ["Shaman"] = 7,
+                ["Monk"] = 10,
+                ["Rogue"] = 4,
+                ["Mage"] = 8,
+                ["Demon Hunter"] = 12,
+                ["Warlock"] = 9,
+                ["Priest"] = 5,
+                ["Hunter"] = 3,
+                ["Druid"] = 11,
+                ["Death Knight"] = 6,
+            },
         },
-    },
-    ["Weapon"] = {
-        ["id"] = 2,
-        ["subTypes"] = {
-            ["One-Handed Axes"] = 0,
-            ["One-Handed Swords"] = 7,
-            ["Staves"] = 10,
-            ["Crossbows"] = 18,
-            ["Polearms"] = 6,
-            ["One-Handed Maces"] = 4,
-            ["Warglaives"] = 9,
-            ["Bows"] = 2,
-            ["Two-Handed Swords"] = 8,
-            ["Miscellaneous"] = 14,
-            ["Fishing Poles"] = 20,
-            ["Daggers"] = 15,
-            ["Guns"] = 3,
-            ["Fist Weapons"] = 13,
-            ["Two-Handed Maces"] = 5,
-            ["Wands"] = 19,
-            ["Thrown"] = 16,
-            ["Two-Handed Axes"] = 1,
+        ["Weapon"] = {
+            ["id"] = 2,
+            ["subTypes"] = {
+                ["One-Handed Axes"] = 0,
+                ["One-Handed Swords"] = 7,
+                ["Staves"] = 10,
+                ["Crossbows"] = 18,
+                ["Polearms"] = 6,
+                ["One-Handed Maces"] = 4,
+                ["Warglaives"] = 9,
+                ["Bows"] = 2,
+                ["Two-Handed Swords"] = 8,
+                ["Miscellaneous"] = 14,
+                ["Fishing Poles"] = 20,
+                ["Daggers"] = 15,
+                ["Guns"] = 3,
+                ["Fist Weapons"] = 13,
+                ["Two-Handed Maces"] = 5,
+                ["Wands"] = 19,
+                ["Thrown"] = 16,
+                ["Two-Handed Axes"] = 1,
+            },
         },
-    },
-}
+    }
+end
 
---@retail@
-local migrations = {
-    ["0001_ItemTypes_7.0.3"] = function ()
-        Baggins:Print("Migrating Item Type Filters to 7.0.3")
-        itemTypeReverse["Consumable"].subTypes["Scroll"] = -1
-        itemTypeReverse["Consumable"].subTypes["Consumable"] = -2
-        itemTypeReverse["Trade Goods"] = itemTypeReverse["Tradeskill"]
-        itemTypeReverse["Trade Goods"].subTypes["Materials"] = -1
-        for _, category in pairs(Baggins.db.profile.categories) do
-            for _, rule in ipairs(category) do
-                if (rule.type == "ItemType") then
-                    if ((rule.itype == "Trade Goods" and rule.isubtype == "Devices")
-                        or
-                       (rule.itype == "Trade Goods" and rule.isubtype == "Explosives"))
-                        then
-                        rule.itype = 0
-                        rule.subtype = 0
-                    elseif ((rule.itype == "Consumable" and rule.isubtype == "Item Enhancement")
-                                or
-                            (rule.itype == "Trade Goods" and rule.isubtype == "Item Enchantment")
-                            ) then
-                        rule.itype = 8
-                        rule.isubtype = nil
-                    else
-                        if (type(rule.itype) == 'string') then
-                            if (type(rule.isubtype) == 'string') then
-                                rule.isubtype = itemTypeReverse[rule.itype].subTypes[rule.isubtype]
-                            end
-                            rule.itype = itemTypeReverse[rule.itype].id
-                        end
-                    end
-                end
-            end
-        end
-    end
-}
---@end-retail@
+if Baggins:IsClassicWow() then
+    itemTypeReverse = {
+        ["Quiver"] = {
+            ["id"] = 11,
+            ["subTypes"] = {
+                ["Quiver"] = 2,
+                ["Ammo Pouch"] = 3,
+            },
+        },
+        ["WoW Token"] = {
+            ["id"] = 18,
+            ["subTypes"] = {
+                ["WoW Token"] = 0,
+            },
+        },
+        ["Recipe"] = {
+            ["id"] = 9,
+            ["subTypes"] = {
+                ["Tailoring"] = 2,
+                ["Blacksmithing"] = 4,
+                ["Alchemy"] = 6,
+                ["First Aid"] = 7,
+                ["Book"] = 0,
+                ["Cooking"] = 5,
+                ["Fishing"] = 9,
+                ["Engineering"] = 3,
+                ["Leatherworking"] = 1,
+                ["Enchanting"] = 8,
+            },
+        },
+        ["Reagent"] = {
+            ["id"] = 5,
+            ["subTypes"] = {
+                ["Reagent"] = 0,
+            },
+        },
+        ["Key"] = {
+            ["id"] = 13,
+            ["subTypes"] = {
+                ["Key"] = 0,
+                ["Lockpick"] = 1,
+            },
+        },
+        ["Armor"] = {
+            ["id"] = 4,
+            ["subTypes"] = {
+                ["Leather"] = 2,
+                ["Shields"] = 6,
+                ["Librams"] = 7,
+                ["Idols"] = 8,
+                ["Totems"] = 9,
+                ["Mail"] = 3,
+                ["Plate"] = 4,
+                ["Cloth"] = 1,
+                ["Miscellaneous"] = 0,
+            },
+        },
+        ["Quest"] = {
+            ["id"] = 12,
+            ["subTypes"] = {
+                ["Quest"] = 0,
+            },
+        },
+        ["Container"] = {
+            ["id"] = 1,
+            ["subTypes"] = {
+                ["Bag"] = 0,
+                ["Soul Bag"] = 1,
+                ["Herb Bag"] = 2,
+                ["Enchanting Bag"] = 3,
+            },
+        },
+        ["Trade Goods"] = {
+            ["id"] = 7,
+            ["subTypes"] = {
+                ["Trade Goods"] = 0,
+                ["Parts"] = 1,
+                ["Explosives"] = 2,
+                ["Devices"] = 3,
+            },
+        },
+        ["Permanent(OBSOLETE)"] = {
+            ["id"] = 14,
+            ["subTypes"] = {
+                ["Permanent"] = 0,
+            },
+        },
+        ["Miscellaneous"] = {
+            ["id"] = 15,
+            ["subTypes"] = {
+                ["Junk"] = 0,
+            },
+        },
+        ["Consumable"] = {
+            ["id"] = 0,
+            ["subTypes"] = {
+                ["Liquid"] = 2,
+                ["Consumable"] = 0,
+                ["Cheese/Bread"] = 1,
+            },
+        },
+        ["Money(OBSOLETE)"] = {
+            ["id"] = 10,
+            ["subTypes"] = {
+                ["Money(OBSOLETE)"] = 0,
+            },
+        },
+        ["Projectile"] = {
+            ["id"] = 6,
+            ["subTypes"] = {
+                ["Arrow"] = 2,
+                ["Bullet"] = 3,
+            },
+        },
+        ["Generic"] = {
+            ["id"] = 8,
+            ["subTypes"] = {},
+        },
+        ["Weapon"] = {
+            ["id"] = 2,
+            ["subTypes"] = {
+                ["One-Handed Axes"] = 0,
+                ["One-Handed Swords"] = 7,
+                ["Staves"] = 10,
+                ["Crossbows"] = 18,
+                ["Polearms"] = 6,
+                ["One-Handed Maces"] = 4,
+                ["Bows"] = 2,
+                ["Two-Handed Swords"] = 8,
+                ["Miscellaneous"] = 14,
+                ["Fishing Pole"] = 20,
+                ["Daggers"] = 15,
+                ["Guns"] = 3,
+                ["Fist Weapons"] = 13,
+                ["Two-Handed Maces"] = 5,
+                ["Wands"] = 19,
+                ["Thrown"] = 16,
+                ["Two-Handed Axes"] = 1,
+            },
+        },
+    }
+end
+
+if Baggins:IsTBCWow() then
+    itemTypeReverse = {
+        ["Quiver"] = {
+            ["id"] = 11,
+            ["subTypes"] = {
+                ["Quiver"] = 2,
+                ["Ammo Pouch"] = 3,
+            },
+        },
+        ["WoW Token"] = {
+            ["id"] = 18,
+            ["subTypes"] = {
+                ["WoW Token"] = 0,
+            },
+        },
+        ["Recipe"] = {
+            ["id"] = 9,
+            ["subTypes"] = {
+                ["Tailoring"] = 2,
+                ["Blacksmithing"] = 4,
+                ["Alchemy"] = 6,
+                ["First Aid"] = 7,
+                ["Book"] = 0,
+                ["Cooking"] = 5,
+                ["Fishing"] = 9,
+                ["Jewelcrafting"] = 10,
+                ["Engineering"] = 3,
+                ["Leatherworking"] = 1,
+                ["Enchanting"] = 8,
+            },
+        },
+        ["Reagent"] = {
+            ["id"] = 5,
+            ["subTypes"] = {
+                ["Reagent"] = 0,
+            },
+        },
+        ["Key"] = {
+            ["id"] = 13,
+            ["subTypes"] = {
+                ["Key"] = 0,
+                ["Lockpick"] = 1,
+            },
+        },
+        ["Armor"] = {
+            ["id"] = 4,
+            ["subTypes"] = {
+                ["Leather"] = 2,
+                ["Shields"] = 6,
+                ["Mail"] = 3,
+                ["Plate"] = 4,
+                ["Cloth"] = 1,
+                ["Miscellaneous"] = 0,
+                ["Librams"] = 7,
+                ["Idols"] = 8,
+                ["Totems"] = 9,
+            },
+        },
+        ["Quest"] = {
+            ["id"] = 12,
+            ["subTypes"] = {},
+        },
+        ["Container"] = {
+            ["id"] = 1,
+            ["subTypes"] = {
+                ["Bag"] = 0,
+                ["Soul Bag"] = 1,
+                ["Mining Bag"] = 6,
+                ["Gem Bag"] = 5,
+                ["Herb Bag"] = 2,
+                ["Engineering Bag"] = 4,
+                ["Leatherworking Bag"] = 7,
+                ["Enchanting Bag"] = 3,
+            },
+        },
+        ["Trade Goods"] = {
+            ["id"] = 7,
+            ["subTypes"] = {
+                ["Elemental"] = 10,
+                ["Jewelcrafting"] = 4,
+                ["Leather"] = 6,
+                ["Herb"] = 9,
+                ["Other"] = 11,
+                ["Enchanting"] = 12,
+                ["Cloth"] = 5,
+                ["Meat"] = 8,
+                ["Metal & Stone"] = 7,
+                ["Parts"] = 1,
+            },
+        },
+        ["Permanent(OBSOLETE)"] = {
+            ["id"] = 14,
+            ["subTypes"] = {},
+        },
+        ["Miscellaneous"] = {
+            ["id"] = 15,
+            ["subTypes"] = {
+                ["Other"] = 4,
+                ["Holiday"] = 3,
+                ["Junk"] = 0,
+                ["Reagent"] = 1,
+                ["Pet"] = 2,
+                ["Mount"] = 5,
+            },
+        },
+        ["Consumable"] = {
+            ["id"] = 0,
+            ["subTypes"] = {
+                ["Other"] = 8,
+                ["Flask"] = 3,
+                ["Potion"] = 1,
+                ["Elixir"] = 2,
+                ["Food & Drink"] = 5,
+                ["Scroll"] = 4,
+                ["Bandage"] = 7,
+            },
+        },
+        ["Gem"] = {
+            ["id"] = 3,
+            ["subTypes"] = {
+                ["Red"] = 0,
+                ["Blue"] = 1,
+                ["Yellow"] = 2,
+                ["Purple"] = 3,
+                ["Green"] = 4,
+                ["Orange"] = 5,
+                ["Meta"] = 6,
+                ["Simple"] = 7,
+                ["Prismatic"] = 8,
+            },
+        },
+        ["Money(OBSOLETE)"] = {
+            ["id"] = 10,
+            ["subTypes"] = {},
+        },
+        ["Projectile"] = {
+            ["id"] = 6,
+            ["subTypes"] = {
+                ["Arrow"] = 2,
+                ["Bullet"] = 3,
+            },
+        },
+        ["Generic"] = {
+            ["id"] = 8,
+            ["subTypes"] = {},
+        },
+        ["Weapon"] = {
+            ["id"] = 2,
+            ["subTypes"] = {
+                ["One-Handed Axes"] = 0,
+                ["One-Handed Swords"] = 7,
+                ["Staves"] = 10,
+                ["Crossbows"] = 18,
+                ["Polearms"] = 6,
+                ["One-Handed Maces"] = 4,
+                ["Bows"] = 2,
+                ["Two-Handed Swords"] = 8,
+                ["Miscellaneous"] = 14,
+                ["Fishing Poles"] = 20,
+                ["Daggers"] = 15,
+                ["Guns"] = 3,
+                ["Fist Weapons"] = 13,
+                ["Two-Handed Maces"] = 5,
+                ["Wands"] = 19,
+                ["Thrown"] = 16,
+                ["Two-Handed Axes"] = 1,
+            },
+        },
+    }
+end
 
 function Baggins:NewProfile(_, key)
---@retail@
-    for k in pairs(migrations) do
-        key.profile.ranMigrations[k] = true
-    end
---@end-retail@
     self:ChangeProfile();
 end
 
@@ -1341,347 +1612,762 @@ function Baggins:OpenEditConfig() --luacheck: ignore 212
     AceConfigDialog:Open("BagginsEdit")
 end
 
-Baggins.defaultcategories = {
-    [L["Misc Consumables"]] = {
-        name=L["Misc Consumables"],
-        {
-            type="ItemType" ,
-            itype = itemTypeReverse["Consumable"].id,
-            isubtype = itemTypeReverse["Consumable"].subTypes["Other"],
-        }
-    },
-    [L["Consumables"]] = {
-        name=L["Consumables"],
-        {
-            type="ItemType",
-            itype = itemTypeReverse["Consumable"].id
-        }
-    },
-    [L["Armor"]] = {
-        name=L["Armor"],
-        {
-            type="ItemType",
-            itype = itemTypeReverse["Armor"].id
+if Baggins:IsRetailWow() then
+    Baggins.defaultcategories = {
+        [L["Misc Consumables"]] = {
+            name=L["Misc Consumables"],
+            {
+                type="ItemType" ,
+                itype = itemTypeReverse["Consumable"].id,
+                isubtype = itemTypeReverse["Consumable"].subTypes["Other"],
+            }
         },
-        {
-            type="ItemType",
-            itype = itemTypeReverse["Armor"].id,
-            isubtype = itemTypeReverse["Armor"].subTypes["Shields"],
-            operation="NOT"
+        [L["Consumables"]] = {
+            name=L["Consumables"],
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Consumable"].id
+            }
         },
-    },
-    [L["Weapons"]] = {
-        name=L["Weapons"],
-        {
-            type="ItemType",
-            itype = itemTypeReverse["Weapon"].id
+        [L["Armor"]] = {
+            name=L["Armor"],
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Armor"].id
+            },
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Armor"].id,
+                isubtype = itemTypeReverse["Armor"].subTypes["Shields"],
+                operation="NOT"
+            },
         },
-        {
-            type="ItemType",
-            itype = itemTypeReverse["Armor"].id,
-            isubtype = itemTypeReverse["Armor"].subTypes["Shields"]
+        [L["Weapons"]] = {
+            name=L["Weapons"],
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Weapon"].id
+            },
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Armor"].id,
+                isubtype = itemTypeReverse["Armor"].subTypes["Shields"]
+            },
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Weapon"].id,
+                isubtype = itemTypeReverse["Weapon"].subTypes["Miscellaneous"],
+                operation="NOT"
+            },
         },
-        {
-            type="ItemType",
-            itype = itemTypeReverse["Weapon"].id,
-            isubtype = itemTypeReverse["Weapon"].subTypes["Miscellaneous"],
-            operation="NOT"
+        [L["Quest"]] = { name=L["Quest"], { type="ItemType", itype = itemTypeReverse["Quest"].id }, { type="Tooltip", text="ITEM_BIND_QUEST" } },
+        [L["Trash"]] = { name=L["Trash"], { type="Quality", quality = 0, comp = "<=" } },
+        [L["TrashEquip"]] = {
+            name=L["TrashEquip"],
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Armor"].id
+            },
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Weapon"].id,
+                operation="OR"
+            },
+            {
+                type="Quality",
+                quality = 0,
+                comp = "<=",
+                operation="AND"
+            },
+            {
+                type="PTSet",
+                setname="Tradeskill.Tool",
+                operation="NOT"
+            },
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Quest"].id,
+                operation="NOT" },
+            },
+        [L["Other"]] = { name=L["Other"], { type="Other" } },
+        [L["Empty"]] = { name=L["Empty"], { type="Empty" }, },
+        [L["Bags"]] = { name=L["Bags"], { type="Bag", bagid=1 }, { type="Bag", bagid=2, operation="OR" }, { type="Bag", bagid=3, operation="OR" }, { type="Bag", bagid=4, operation="OR" }, { type="Bag", bagid=0, operation="OR" }, },
+        [L["BankBags"]] = { name=L["BankBags"], { type="Bag", bagid=-1 }, { type="Bag", bagid=5, operation="OR" }, { type="Bag", bagid=6, operation="OR" }, { type="Bag", bagid=7, operation="OR" }, { type="Bag", bagid=8, operation="OR" }, { type="Bag", bagid=9, operation="OR" }, { type="Bag", bagid=10, operation="OR" }, { type="Bag", bagid=11, operation="OR" }, },
+        [L["Potions"]] = {
+            name=L["Potions"],
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Consumable"].id,
+                isubtype = itemTypeReverse["Consumable"].subTypes["Potion"],
+            },
         },
-    },
-    [L["Quest"]] = { name=L["Quest"], { type="ItemType", itype = itemTypeReverse["Quest"].id }, { type="Tooltip", text="ITEM_BIND_QUEST" } },
-    [L["Trash"]] = { name=L["Trash"], { type="Quality", quality = 0, comp = "<=" } },
-    [L["TrashEquip"]] = {
-        name=L["TrashEquip"],
-        {
-            type="ItemType",
-            itype = itemTypeReverse["Armor"].id
+        [L["Flasks & Elixirs"]] = {
+            name=L["Flasks & Elixirs"],
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Consumable"].id,
+                isubtype = itemTypeReverse["Consumable"].subTypes["Flask"],
+            },
+            {
+                operation = "OR",
+                type="ItemType",
+                itype = itemTypeReverse["Consumable"].id,
+                isubtype = itemTypeReverse["Consumable"].subTypes["Elixir"],
+            },
         },
-        {
-            type="ItemType",
-            itype = itemTypeReverse["Weapon"].id,
-            operation="OR"
+        [L["Food & Drink"]] = {
+            name=L["Food & Drink"],
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Consumable"].id,
+                isubtype = itemTypeReverse["Consumable"].subTypes["Food & Drink"],
+            },
         },
-        {
-            type="Quality",
-            quality = 1,
-            comp = "<=",
-            operation="AND"
+        [L["FirstAid"]] = {
+            name=L["FirstAid"],
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Consumable"].id,
+                isubtype = itemTypeReverse["Consumable"].subTypes["Bandage"],
+            },
         },
-        {
-            type="PTSet",
-            setname="Tradeskill.Tool",
-            operation="NOT"
+        [L["Item Enhancements"]] = {
+            name=L["Item Enhancements"],
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Item Enhancement"].id
+            },
         },
-        {
-            type="ItemType",
-            itype = itemTypeReverse["Quest"].id,
-            operation="NOT" },
+        [L["Tradeskill Mats"]] = {
+            name=L["Tradeskill Mats"],
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Tradeskill"].id,
+            },
         },
-    [L["Other"]] = { name=L["Other"], { type="Other" } },
-    [L["Empty"]] = { name=L["Empty"], { type="Empty" }, },
-    [L["Bags"]] = { name=L["Bags"], { type="Bag", bagid=1 }, { type="Bag", bagid=2, operation="OR" }, { type="Bag", bagid=3, operation="OR" }, { type="Bag", bagid=4, operation="OR" }, { type="Bag", bagid=0, operation="OR" }, },
-    [L["BankBags"]] = { name=L["BankBags"], { type="Bag", bagid=-1 }, { type="Bag", bagid=5, operation="OR" }, { type="Bag", bagid=6, operation="OR" }, { type="Bag", bagid=7, operation="OR" }, { type="Bag", bagid=8, operation="OR" }, { type="Bag", bagid=9, operation="OR" }, { type="Bag", bagid=10, operation="OR" }, { type="Bag", bagid=11, operation="OR" }, },
-    [L["Potions"]] = {
-        name=L["Potions"],
-        {
-            type="ItemType",
-            itype = itemTypeReverse["Consumable"].id,
-            isubtype = itemTypeReverse["Consumable"].subTypes["Potion"],
+        [L["Elemental"]] = {
+            name=L["Elemental"],
+            {
+                type = "ItemType",
+                itype = itemTypeReverse["Tradeskill"].id,
+                isubtype = itemTypeReverse["Tradeskill"].subTypes["Elemental"],
+            },
         },
-    },
-    [L["Flasks & Elixirs"]] = {
-        name=L["Flasks & Elixirs"],
-        {
-            type="ItemType",
-            itype = itemTypeReverse["Consumable"].id,
-            isubtype = itemTypeReverse["Consumable"].subTypes["Flask"],
+        [L["Cloth"]] = {
+            name=L["Cloth"],
+            {
+                type = "ItemType",
+                itype = itemTypeReverse["Tradeskill"].id,
+                isubtype = itemTypeReverse["Tradeskill"].subTypes["Cloth"],
+            },
         },
-        {
-            operation = "OR",
-            type="ItemType",
-            itype = itemTypeReverse["Consumable"].id,
-            isubtype = itemTypeReverse["Consumable"].subTypes["Elixir"],
+        [L["Leather"]] = {
+            name=L["Leather"],
+            {
+                type = "ItemType",
+                itype = itemTypeReverse["Tradeskill"].id,
+                isubtype = itemTypeReverse["Tradeskill"].subTypes["Leather"],
+            },
         },
-    },
-    [L["Food & Drink"]] = {
-        name=L["Food & Drink"],
-        {
-            type="ItemType",
-            itype = itemTypeReverse["Consumable"].id,
-            isubtype = itemTypeReverse["Consumable"].subTypes["Food & Drink"],
+        [L["Metal & Stone"]] = {
+            name=L["Metal & Stone"],
+            {
+                type = "ItemType",
+                itype = itemTypeReverse["Tradeskill"].id,
+                isubtype = itemTypeReverse["Tradeskill"].subTypes["Metal & Stone"],
+            },
         },
-    },
-    [L["FirstAid"]] = {
-        name=L["FirstAid"],
-        {
-            type="ItemType",
-            itype = itemTypeReverse["Consumable"].id,
-            isubtype = itemTypeReverse["Consumable"].subTypes["Bandage"],
+        [L["Cooking"]] = {
+            name=L["Cooking"],
+            {
+                type = "ItemType",
+                itype = itemTypeReverse["Tradeskill"].id,
+                isubtype = itemTypeReverse["Tradeskill"].subTypes["Cooking"],
+            },
         },
-    },
-    [L["Item Enhancements"]] = {
-        name=L["Item Enhancements"],
-        {
-            type="ItemType",
-            itype = itemTypeReverse["Item Enhancement"].id
+        [L["Herb"]] = {
+            name=L["Herb"],
+            {
+                type = "ItemType",
+                itype = itemTypeReverse["Tradeskill"].id,
+                isubtype = itemTypeReverse["Tradeskill"].subTypes["Herb"],
+            },
         },
-    },
-    [L["Tradeskill Mats"]] = {
-        name=L["Tradeskill Mats"],
-        {
-            type="ItemType",
-            itype = itemTypeReverse["Tradeskill"].id,
+        [L["Enchanting"]] = {
+            name=L["Enchanting"],
+            {
+                type = "ItemType",
+                itype = itemTypeReverse["Tradeskill"].id,
+                isubtype = itemTypeReverse["Tradeskill"].subTypes["Enchanting"],
+            },
         },
-    },
-    [L["Elemental"]] = {
-        name=L["Elemental"],
-        {
-            type = "ItemType",
-            itype = itemTypeReverse["Tradeskill"].id,
-            isubtype = itemTypeReverse["Tradeskill"].subTypes["Elemental"],
+        [L["Jewelcrafting"]] = {
+            name=L["Jewelcrafting"],
+            {
+                type = "ItemType",
+                itype = itemTypeReverse["Tradeskill"].id,
+                isubtype = itemTypeReverse["Tradeskill"].subTypes["Jewelcrafting"],
+            },
         },
-    },
- --@retail@
-    [L["Cloth"]] = {
-        name=L["Cloth"],
-        {
-            type = "ItemType",
-            itype = itemTypeReverse["Tradeskill"].id,
-            isubtype = itemTypeReverse["Tradeskill"].subTypes["Cloth"],
+        [L["Engineering"]] = {
+            name=L["Parts"],
+            {
+                type = "ItemType",
+                itype = itemTypeReverse["Tradeskill"].id,
+                isubtype = itemTypeReverse["Tradeskill"].subTypes["Parts"],
+            },
+            {
+                type = "ItemType",
+                itype = itemTypeReverse["Consumable"].id,
+                isubtype = itemTypeReverse["Consumable"].subTypes["Explosives and Devices"],
+                operation = "OR",
+            }
         },
-    },
---@end-retail@
- --@retail@
-    [L["Leather"]] = {
-        name=L["Leather"],
-        {
-            type = "ItemType",
-            itype = itemTypeReverse["Tradeskill"].id,
-            isubtype = itemTypeReverse["Tradeskill"].subTypes["Leather"],
+        [L["Inscription"]] = {
+            name = L["Inscription"],
+            {
+                type = "ItemType",
+                itype = itemTypeReverse["Tradeskill"].id,
+                isubtype = itemTypeReverse["Tradeskill"].subTypes["Inscription"],
+            }
         },
-    },
---@end-retail@
-    [L["Metal & Stone"]] = {
-        name=L["Metal & Stone"],
-        {
-            type = "ItemType",
-            itype = itemTypeReverse["Tradeskill"].id,
-            isubtype = itemTypeReverse["Tradeskill"].subTypes["Metal & Stone"],
+        [L["Item Enchantment"]] = {
+            name=L["Item Enchantment"],
+            {
+                type = "ItemType",
+                itype = itemTypeReverse["Item Enhancement"].id
+            },
         },
-    },
-    [L["Cooking"]] = {
-        name=L["Cooking"],
-        {
-            type = "ItemType",
-            itype = itemTypeReverse["Tradeskill"].id,
-            isubtype = itemTypeReverse["Tradeskill"].subTypes["Cooking"],
+        [L["Recipes"]] = {
+            name=L["Recipes"],
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Recipe"].id,
+            },
         },
-    },
-    [L["Herb"]] = {
-        name=L["Herb"],
-        {
-            type = "ItemType",
-            itype = itemTypeReverse["Tradeskill"].id,
-            isubtype = itemTypeReverse["Tradeskill"].subTypes["Herb"],
+        [L["Tools"]] = {
+            name=L["Tools"],
+            {
+                setname="Tradeskill.Tool",
+                type="PTSet"
+            },
+            {
+                operation="NOT",
+                type="PTSet",
+                setname="Tradeskill.Tool.Fishing"
+            },
         },
-    },
-    [L["Enchanting"]] = {
-        name=L["Enchanting"],
-        {
-            type = "ItemType",
-            itype = itemTypeReverse["Tradeskill"].id,
-            isubtype = itemTypeReverse["Tradeskill"].subTypes["Enchanting"],
+        [L["Fishing"]] = {
+            name=L["Fishing"],
+            {
+                setname="Tradeskill.Tool.Fishing",
+                type="PTSet"
+            },
         },
-    },
-    [L["Jewelcrafting"]] = {
-        name=L["Jewelcrafting"],
-        {
-            type = "ItemType",
-            itype = itemTypeReverse["Tradeskill"].id,
-            isubtype = itemTypeReverse["Tradeskill"].subTypes["Jewelcrafting"],
+        ["Mounts"] = {
+            name="Mounts",
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Miscellaneous"].id,
+                isubtype = itemTypeReverse["Miscellaneous"].subTypes["Mount"],
+            }
         },
-    },
-    [L["Engineering"]] = {
-        name=L["Parts"],
-        {
-            type = "ItemType",
-            itype = itemTypeReverse["Tradeskill"].id,
-            isubtype = itemTypeReverse["Tradeskill"].subTypes["Parts"],
+        ["Mount Equipment"] = {
+            name="Mount Equipment",
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Miscellaneous"].id,
+                isubtype = itemTypeReverse["Miscellaneous"].subTypes["Mount Equipment"],
+            }
         },
-        {
-            type = "ItemType",
-            itype = itemTypeReverse["Consumable"].id,
-            isubtype = itemTypeReverse["Consumable"].subTypes["Explosives and Devices"],
-            operation = "OR",
-        }
-    },
-    [L["Inscription"]] = {
-        name = L["Inscription"],
-        {
-            type = "ItemType",
-            itype = itemTypeReverse["Tradeskill"].id,
-            isubtype = itemTypeReverse["Tradeskill"].subTypes["Inscription"],
-        }
-    },
-    [L["Misc Trade Goods"]] = {
-        name=L["Other"],
-        {
-            type = "ItemType",
-            itype = itemTypeReverse["Tradeskill"].id,
-            isubtype = itemTypeReverse["Tradeskill"].subTypes["Other"],
-        }
-    },
-    [L["Item Enchantment"]] = {
-        name=L["Item Enchantment"],
-        {
-            type = "ItemType",
-            itype = itemTypeReverse["Item Enhancement"].id
+        [L["Equipment Set"]] = {
+            name=L["Equipment Set"],
+            {
+                anyset=true,
+                type="EquipmentSet"
+            },
         },
-    },
-    [L["Recipes"]] = {
-        name=L["Recipes"],
-        {
-            type="ItemType",
-            itype = itemTypeReverse["Recipe"].id,
+        ["Pets"] = {
+            name="Pets",
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Battle Pets"].id,
+                isubtype = itemTypeReverse["Battle Pets"].subTypes["All"],
+            },
+            {
+                operation="OR",
+                type="ItemType",
+                itype = itemTypeReverse["Miscellaneous"].id,
+                isubtype = itemTypeReverse["Miscellaneous"].subTypes["Companion Pets"],
+            },
         },
-    },
-    [L["Tools"]] = {
-        name=L["Tools"],
-        {
-            setname="Tradeskill.Tool",
-            type="PTSet"
+        ["Teleport Items"] = {
+            name="Teleport Items",
+            {
+                type="Teleport",
+            }
         },
-        {
-            operation="NOT",
-            type="PTSet",
-            setname="Tradeskill.Tool.Fishing"
+        ["Conduit"] = {
+            name="Conduit Items",
+            {
+                type="Conduit",
+            }
         },
-    },
-    [L["Fishing"]] = {
-        name=L["Fishing"],
-        {
-            setname="Tradeskill.Tool.Fishing",
-            type="PTSet"
+        ["Keystone"] = {
+            name="Keystone",
+            {
+                type="Keystone",
+            }
         },
-    },
-    --@retail@
-    ["Mounts"] = {
-        name="Mounts",
-        {
-            type="ItemType",
-            itype = itemTypeReverse["Miscellaneous"].id,
-            isubtype = itemTypeReverse["Miscellaneous"].subTypes["Mount"],
-        }
-    },
-    ["Mount Equipment"] = {
-        name="Mount Equipment",
-        {
-            type="ItemType",
-            itype = itemTypeReverse["Miscellaneous"].id,
-            isubtype = itemTypeReverse["Miscellaneous"].subTypes["Mount Equipment"],
-        }
-    },
-    [L["Equipment Set"]] = {
-        name=L["Equipment Set"],
-        {
-            anyset=true,
-            type="EquipmentSet"
+        ["Lockbox"] = {
+            name="Lockbox",
+            {
+                type="Lockbox",
+            }
         },
-    },
-    ["Pets"] = {
-        name="Pets",
-        {
-            type="ItemType",
-            itype = itemTypeReverse["Battle Pets"].id,
-            isubtype = itemTypeReverse["Battle Pets"].subTypes["All"],
+        ["Toys"] = {
+            name="Toys",
+            {
+                type="Toys",
+            }
         },
-        {
-            operation="OR",
-            type="ItemType",
-            itype = itemTypeReverse["Miscellaneous"].id,
-            isubtype = itemTypeReverse["Miscellaneous"].subTypes["Companion Pets"],
+        ["Gems"] = {
+            name="Gems",
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Gem"].id,
+            }
         },
-    },
-    ["Teleport Items"] = {
-        name="Teleport Items",
-        {
-            type="Teleport",
-        }
-    },
-    ["Conduit"] = {
-        name="Conduit Items",
-        {
-            type="Conduit",
-        }
-    },
-    ["Keystone"] = {
-        name="Keystone",
-        {
-            type="Keystone",
-        }
-    },
-    ["Lockbox"] = {
-        name="Lockbox",
-        {
-            type="Lockbox",
-        }
-    },
-    ["Toys"] = {
-        name="Toys",
-        {
-            type="Toys",
-        }
-    },
-    ["Gems"] = {
-        name="Gems",
-        {
-            type="ItemType",
-            itype = itemTypeReverse["Gem"].id,
-        }
-    },
-    --@end-retail@
-    [L["New"]] = { { ["name"] = L["New"], ["type"] = "NewItems" }, },
-}
+        [L["New"]] = { { ["name"] = L["New"], ["type"] = "NewItems" }, },
+    }
+end
+
+if Baggins:IsClassicWow() then
+    Baggins.defaultcategories = {
+        [L["Misc Consumables"]] = {
+            name=L["Misc Consumables"],
+            {
+                type="ItemType" ,
+                itype = itemTypeReverse["Consumable"].id,
+                isubtype = itemTypeReverse["Consumable"].subTypes["Other"],
+            }
+        },
+        [L["Consumables"]] = {
+            name=L["Consumables"],
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Consumable"].id
+            }
+        },
+        [L["Armor"]] = {
+            name=L["Armor"],
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Armor"].id
+            },
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Armor"].id,
+                isubtype = itemTypeReverse["Armor"].subTypes["Shields"],
+                operation="NOT"
+            },
+        },
+        [L["Weapons"]] = {
+            name=L["Weapons"],
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Weapon"].id
+            },
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Armor"].id,
+                isubtype = itemTypeReverse["Armor"].subTypes["Shields"]
+            },
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Weapon"].id,
+                isubtype = itemTypeReverse["Weapon"].subTypes["Miscellaneous"],
+                operation="NOT"
+            },
+        },
+        [L["Quest"]] = { name=L["Quest"], { type="ItemType", itype = itemTypeReverse["Quest"].id }, { type="Tooltip", text="ITEM_BIND_QUEST" } },
+        [L["Trash"]] = { name=L["Trash"], { type="Quality", quality = 0, comp = "<=" } },
+        [L["TrashEquip"]] = {
+            name=L["TrashEquip"],
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Armor"].id
+            },
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Weapon"].id,
+                operation="OR"
+            },
+            {
+                type="Quality",
+                quality = 0,
+                comp = "<=",
+                operation="AND"
+            },
+            {
+                type="PTSet",
+                setname="Tradeskill.Tool",
+                operation="NOT"
+            },
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Quest"].id,
+                operation="NOT" },
+            },
+        [L["Other"]] = { name=L["Other"], { type="Other" } },
+        [L["Empty"]] = { name=L["Empty"], { type="Empty" }, },
+        [L["Bags"]] = { name=L["Bags"], { type="Bag", bagid=1 }, { type="Bag", bagid=2, operation="OR" }, { type="Bag", bagid=3, operation="OR" }, { type="Bag", bagid=4, operation="OR" }, { type="Bag", bagid=0, operation="OR" }, },
+        [L["BankBags"]] = { name=L["BankBags"], { type="Bag", bagid=-1 }, { type="Bag", bagid=5, operation="OR" }, { type="Bag", bagid=6, operation="OR" }, { type="Bag", bagid=7, operation="OR" }, { type="Bag", bagid=8, operation="OR" }, { type="Bag", bagid=9, operation="OR" }, { type="Bag", bagid=10, operation="OR" }, { type="Bag", bagid=11, operation="OR" }, },
+        [L["Potions"]] = {
+            name=L["Potions"],
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Consumable"].id,
+                isubtype = itemTypeReverse["Consumable"].subTypes["Potion"],
+            },
+        },
+        [L["Flasks & Elixirs"]] = {
+            name=L["Flasks & Elixirs"],
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Consumable"].id,
+                isubtype = itemTypeReverse["Consumable"].subTypes["Flask"],
+            },
+            {
+                operation = "OR",
+                type="ItemType",
+                itype = itemTypeReverse["Consumable"].id,
+                isubtype = itemTypeReverse["Consumable"].subTypes["Elixir"],
+            },
+        },
+        [L["Food & Drink"]] = {
+            name=L["Food & Drink"],
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Consumable"].id,
+                isubtype = itemTypeReverse["Consumable"].subTypes["Food & Drink"],
+            },
+        },
+        [L["FirstAid"]] = {
+            name=L["FirstAid"],
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Consumable"].id,
+                isubtype = itemTypeReverse["Consumable"].subTypes["Bandage"],
+            },
+        },
+        [L["Tradeskill Mats"]] = {
+            name=L["Tradeskill Mats"],
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Trade Goods"].id,
+            },
+        },
+        [L["Elemental"]] = {
+            name=L["Elemental"],
+            {
+                type = "ItemType",
+                itype = itemTypeReverse["Trade Goods"].id,
+                isubtype = itemTypeReverse["Trade Goods"].subTypes["Elemental"],
+            },
+        },
+        [L["Metal & Stone"]] = {
+            name=L["Metal & Stone"],
+            {
+                type = "ItemType",
+                itype = itemTypeReverse["Trade Goods"].id,
+                isubtype = itemTypeReverse["Trade Goods"].subTypes["Metal & Stone"],
+            },
+        },
+        [L["Cooking"]] = {
+            name=L["Cooking"],
+            {
+                type = "ItemType",
+                itype = itemTypeReverse["Trade Goods"].id,
+                isubtype = itemTypeReverse["Trade Goods"].subTypes["Cooking"],
+            },
+        },
+        [L["Herb"]] = {
+            name=L["Herb"],
+            {
+                type = "ItemType",
+                itype = itemTypeReverse["Trade Goods"].id,
+                isubtype = itemTypeReverse["Trade Goods"].subTypes["Herb"],
+            },
+        },
+        [L["Enchanting"]] = {
+            name=L["Enchanting"],
+            {
+                type = "ItemType",
+                itype = itemTypeReverse["Trade Goods"].id,
+                isubtype = itemTypeReverse["Trade Goods"].subTypes["Enchanting"],
+            },
+        },
+        [L["Engineering"]] = {
+            name=L["Parts"],
+            {
+                type = "ItemType",
+                itype = itemTypeReverse["Trade Goods"].id,
+                isubtype = itemTypeReverse["Trade Goods"].subTypes["Parts"],
+            },
+            {
+                type = "ItemType",
+                itype = itemTypeReverse["Consumable"].id,
+                isubtype = itemTypeReverse["Consumable"].subTypes["Explosives and Devices"],
+                operation = "OR",
+            }
+        },
+        [L["Recipes"]] = {
+            name=L["Recipes"],
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Recipe"].id,
+            },
+        },
+        [L["Tools"]] = {
+            name=L["Tools"],
+            {
+                setname="Tradeskill.Tool",
+                type="PTSet"
+            },
+            {
+                operation="NOT",
+                type="PTSet",
+                setname="Tradeskill.Tool.Fishing"
+            },
+        },
+        [L["Fishing"]] = {
+            name=L["Fishing"],
+            {
+                setname="Tradeskill.Tool.Fishing",
+                type="PTSet"
+            },
+        },
+        [L["New"]] = { { ["name"] = L["New"], ["type"] = "NewItems" }, },
+    }
+end
+
+if Baggins:IsTBCWow() then
+    Baggins.defaultcategories = {
+        [L["Misc Consumables"]] = {
+            name=L["Misc Consumables"],
+            {
+                type="ItemType" ,
+                itype = itemTypeReverse["Consumable"].id,
+                isubtype = itemTypeReverse["Consumable"].subTypes["Other"],
+            }
+        },
+        [L["Consumables"]] = {
+            name=L["Consumables"],
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Consumable"].id
+            }
+        },
+        [L["Armor"]] = {
+            name=L["Armor"],
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Armor"].id
+            },
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Armor"].id,
+                isubtype = itemTypeReverse["Armor"].subTypes["Shields"],
+                operation="NOT"
+            },
+        },
+        [L["Weapons"]] = {
+            name=L["Weapons"],
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Weapon"].id
+            },
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Armor"].id,
+                isubtype = itemTypeReverse["Armor"].subTypes["Shields"]
+            },
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Weapon"].id,
+                isubtype = itemTypeReverse["Weapon"].subTypes["Miscellaneous"],
+                operation="NOT"
+            },
+        },
+        [L["Quest"]] = { name=L["Quest"], { type="ItemType", itype = itemTypeReverse["Quest"].id }, { type="Tooltip", text="ITEM_BIND_QUEST" } },
+        [L["Trash"]] = { name=L["Trash"], { type="Quality", quality = 0, comp = "<=" } },
+        [L["TrashEquip"]] = {
+            name=L["TrashEquip"],
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Armor"].id
+            },
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Weapon"].id,
+                operation="OR"
+            },
+            {
+                type="Quality",
+                quality = 0,
+                comp = "<=",
+                operation="AND"
+            },
+            {
+                type="PTSet",
+                setname="Tradeskill.Tool",
+                operation="NOT"
+            },
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Quest"].id,
+                operation="NOT" },
+            },
+        [L["Other"]] = { name=L["Other"], { type="Other" } },
+        [L["Empty"]] = { name=L["Empty"], { type="Empty" }, },
+        [L["Bags"]] = { name=L["Bags"], { type="Bag", bagid=1 }, { type="Bag", bagid=2, operation="OR" }, { type="Bag", bagid=3, operation="OR" }, { type="Bag", bagid=4, operation="OR" }, { type="Bag", bagid=0, operation="OR" }, },
+        [L["BankBags"]] = { name=L["BankBags"], { type="Bag", bagid=-1 }, { type="Bag", bagid=5, operation="OR" }, { type="Bag", bagid=6, operation="OR" }, { type="Bag", bagid=7, operation="OR" }, { type="Bag", bagid=8, operation="OR" }, { type="Bag", bagid=9, operation="OR" }, { type="Bag", bagid=10, operation="OR" }, { type="Bag", bagid=11, operation="OR" }, },
+        [L["Potions"]] = {
+            name=L["Potions"],
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Consumable"].id,
+                isubtype = itemTypeReverse["Consumable"].subTypes["Potion"],
+            },
+        },
+        [L["Flasks & Elixirs"]] = {
+            name=L["Flasks & Elixirs"],
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Consumable"].id,
+                isubtype = itemTypeReverse["Consumable"].subTypes["Flask"],
+            },
+            {
+                operation = "OR",
+                type="ItemType",
+                itype = itemTypeReverse["Consumable"].id,
+                isubtype = itemTypeReverse["Consumable"].subTypes["Elixir"],
+            },
+        },
+        [L["Food & Drink"]] = {
+            name=L["Food & Drink"],
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Consumable"].id,
+                isubtype = itemTypeReverse["Consumable"].subTypes["Food & Drink"],
+            },
+        },
+        [L["FirstAid"]] = {
+            name=L["FirstAid"],
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Consumable"].id,
+                isubtype = itemTypeReverse["Consumable"].subTypes["Bandage"],
+            },
+        },
+        [L["Tradeskill Mats"]] = {
+            name=L["Tradeskill Mats"],
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Trade Goods"].id,
+            },
+        },
+        [L["Elemental"]] = {
+            name=L["Elemental"],
+            {
+                type = "ItemType",
+                itype = itemTypeReverse["Trade Goods"].id,
+                isubtype = itemTypeReverse["Trade Goods"].subTypes["Elemental"],
+            },
+        },
+        [L["Metal & Stone"]] = {
+            name=L["Metal & Stone"],
+            {
+                type = "ItemType",
+                itype = itemTypeReverse["Trade Goods"].id,
+                isubtype = itemTypeReverse["Trade Goods"].subTypes["Metal & Stone"],
+            },
+        },
+        [L["Cooking"]] = {
+            name=L["Cooking"],
+            {
+                type = "ItemType",
+                itype = itemTypeReverse["Trade Goods"].id,
+                isubtype = itemTypeReverse["Trade Goods"].subTypes["Cooking"],
+            },
+        },
+        [L["Herb"]] = {
+            name=L["Herb"],
+            {
+                type = "ItemType",
+                itype = itemTypeReverse["Trade Goods"].id,
+                isubtype = itemTypeReverse["Trade Goods"].subTypes["Herb"],
+            },
+        },
+        [L["Enchanting"]] = {
+            name=L["Enchanting"],
+            {
+                type = "ItemType",
+                itype = itemTypeReverse["Trade Goods"].id,
+                isubtype = itemTypeReverse["Trade Goods"].subTypes["Enchanting"],
+            },
+        },
+        [L["Engineering"]] = {
+            name=L["Parts"],
+            {
+                type = "ItemType",
+                itype = itemTypeReverse["Trade Goods"].id,
+                isubtype = itemTypeReverse["Trade Goods"].subTypes["Parts"],
+            },
+            {
+                type = "ItemType",
+                itype = itemTypeReverse["Consumable"].id,
+                isubtype = itemTypeReverse["Consumable"].subTypes["Explosives and Devices"],
+                operation = "OR",
+            }
+        },
+        [L["Recipes"]] = {
+            name=L["Recipes"],
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Recipe"].id,
+            },
+        },
+        [L["Tools"]] = {
+            name=L["Tools"],
+            {
+                setname="Tradeskill.Tool",
+                type="PTSet"
+            },
+            {
+                operation="NOT",
+                type="PTSet",
+                setname="Tradeskill.Tool.Fishing"
+            },
+        },
+        [L["Fishing"]] = {
+            name=L["Fishing"],
+            {
+                setname="Tradeskill.Tool.Fishing",
+                type="PTSet"
+            },
+        },
+        ["Gems"] = {
+            name="Gems",
+            {
+                type="ItemType",
+                itype = itemTypeReverse["Gem"].id,
+            }
+        },
+        [L["New"]] = { { ["name"] = L["New"], ["type"] = "NewItems" }, },
+    }
+end
 
 
 
@@ -1781,15 +2467,6 @@ function Baggins:OnProfileEnable()
     local p = self.db.profile
     --check if this profile has been setup before, if not add the default bags and categories
     --cant leave these in the defaults since removing a bag would have it come back on reload
---@retail@
-    for k,m in pairs(migrations) do
-        if not self.db.profile.ranMigrations[k] then
-            self:Print("Running Migration " .. k)
-            m()
-            self.db.profile.ranMigrations[k] = true
-        end
-    end
---@end-retail@
     local refresh = false --luacheck: ignore 431
     if not next(p.categories) then
         deepCopy(p.categories, self.defaultcategories)
