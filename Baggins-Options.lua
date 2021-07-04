@@ -1860,7 +1860,7 @@ if Baggins:IsRetailWow() then
         [L["Fishing"]] = {
             name=L["Fishing"],
             {
-                setname="Tradeskill.Gather.Fishing",
+                setname="Tradeskill.Tool.Fishing",
                 type="PeriodicTable Set"
             },
         },
@@ -2022,14 +2022,6 @@ if Baggins:IsClassicWow() then
                 itype = itemTypeReverse["Trade Goods"].id,
             },
         },
-        [L["Elemental"]] = {
-            name=L["Elemental"],
-            {
-                type = "ItemType",
-                itype = itemTypeReverse["Trade Goods"].id,
-                isubtype = itemTypeReverse["Trade Goods"].subTypes["Elemental"],
-            },
-        },
         [L["Engineering"]] = {
             name=L["Parts"],
             {
@@ -2072,7 +2064,7 @@ if Baggins:IsClassicWow() then
         [L["Fishing"]] = {
             name=L["Fishing"],
             {
-                setname="Tradeskill.Gather.Fishing",
+                setname="Tradeskill.Tool.Fishing",
                 type="PeriodicTable Set"
             },
         },
@@ -2276,7 +2268,7 @@ if Baggins:IsTBCWow() then
         [L["Fishing"]] = {
             name=L["Fishing"],
             {
-                setname="Tradeskill.Gather.Fishing",
+                setname="Tradeskill.Tool.Fishing",
                 type="PeriodicTable Set"
             },
         },
