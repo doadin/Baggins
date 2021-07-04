@@ -2286,6 +2286,14 @@ if Baggins:IsTBCWow() then
                 itype = itemTypeReverse["Gem"].id,
             }
         },
+        [L["Cooking"]] = {
+            name=L["Cooking"],
+            {
+                type = "ItemType",
+                itype = itemTypeReverse["Trade Goods"].id,
+                isubtype = itemTypeReverse["Trade Goods"].subTypes["Meat"],
+            },
+        },
         [L["New"]] = { { ["name"] = L["New"], ["type"] = "NewItems" }, },
     }
 end
