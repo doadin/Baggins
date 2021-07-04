@@ -2214,14 +2214,6 @@ if Baggins:IsTBCWow() then
                 isubtype = itemTypeReverse["Trade Goods"].subTypes["Metal & Stone"],
             },
         },
-        [L["Cooking"]] = {
-            name=L["Cooking"],
-            {
-                type = "ItemType",
-                itype = itemTypeReverse["Trade Goods"].id,
-                isubtype = itemTypeReverse["Trade Goods"].subTypes["Cooking"],
-            },
-        },
         [L["Herb"]] = {
             name=L["Herb"],
             {
@@ -2244,6 +2236,18 @@ if Baggins:IsTBCWow() then
                 type = "ItemType",
                 itype = itemTypeReverse["Trade Goods"].id,
                 isubtype = itemTypeReverse["Trade Goods"].subTypes["Parts"],
+            },
+            {
+                type = "ItemType",
+                itype = itemTypeReverse["Trade Goods"].id,
+                isubtype = itemTypeReverse["Trade Goods"].subTypes["Explosives"],
+                operation="OR"
+            },
+            {
+                type = "ItemType",
+                itype = itemTypeReverse["Trade Goods"].id,
+                isubtype = itemTypeReverse["Trade Goods"].subTypes["Devices"],
+                operation="OR"
             }
         },
         [L["Recipes"]] = {
