@@ -41,6 +41,11 @@ local IsContainerItemAnUpgrade = _G.IsContainerItemAnUpgrade
 local C_Item, ItemLocation, InCombatLockdown, IsModifiedClick, GetDetailedItemLevelInfo, GetContainerItemID, InRepairMode, KeyRingButtonIDToInvSlotID, C_PetJournal, C_NewItems, PlaySound =
       _G.C_Item, _G.ItemLocation, _G.InCombatLockdown, _G.IsModifiedClick, _G.GetDetailedItemLevelInfo, _G.GetContainerItemID, _G.InRepairMode, _G.KeyRingButtonIDToInvSlotID, _G.C_PetJournal, _G.C_NewItems, _G.PlaySound
 
+local WOW_PROJECT_ID = _G.WOW_PROJECT_ID
+local WOW_PROJECT_CLASSIC = _G.WOW_PROJECT_CLASSIC
+local WOW_PROJECT_BURNING_CRUSADE_CLASSIC = _G.WOW_PROJECT_BURNING_CRUSADE_CLASSIC
+local WOW_PROJECT_MAINLINE = _G.WOW_PROJECT_MAINLINE
+
 -- GLOBALS: UIParent, GameTooltip, BankFrame, CloseBankFrame, TEXTURE_ITEM_QUEST_BANG, TEXTURE_ITEM_QUEST_BORDER, REAGENTBANK_CONTAINER, REPAIR_COST, SOUNDKIT
 -- GLOBALS: CoinPickupFrame, ShowInspectCursor, this, CooldownFrame_Set, MerchantFrame, SetTooltipMoney, BagginsCategoryAddDropdown, error, CooldownFrame_SetTimer, StaticPopup_Show
 -- GLOBALS: BagginsCopperIcon, BagginsCopperText, BagginsSilverIcon, BagginsSilverText, BagginsGoldIcon, BagginsGoldText, BagginsMoneyFrame, GetMoney, IsEquippedItem
@@ -113,6 +118,18 @@ function Baggins:Debug(str, ...) --luacheck: ignore 212
 
     local name = "Baggins"
     DEFAULT_CHAT_FRAME:AddMessage(format("|cffff9933%s:|r %s", name, str))
+end
+
+function Baggins:IsClassicWow() --luacheck: ignore 212
+	return WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
+end
+
+function Baggins:IsTBCWow() --luacheck: ignore 212
+	return WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC
+end
+
+function Baggins:IsRetailWow() --luacheck: ignore 212
+	return WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
 end
 
 local timers = {}
@@ -377,286 +394,10 @@ local function deepCopy(to, from)
     end
 end
 
-local itemTypeReverse
-
-itemTypeReverse = {
-    ["Quiver"] = {
-        ["id"] = 11,
-        ["subTypes"] = {
-        },
-    },
-    ["WoW Token"] = {
-        ["id"] = 18,
-        ["subTypes"] = {
-            ["WoW Token"] = 0,
-        },
-    },
-    ["Recipe"] = {
-        ["id"] = 9,
-        ["subTypes"] = {
-            ["Tailoring"] = 2,
-            ["Blacksmithing"] = 4,
-            ["Alchemy"] = 6,
-            ["First Aid"] = 7,
-            ["Book"] = 0,
-            ["Cooking"] = 5,
-            ["Fishing"] = 9,
-            ["Jewelcrafting"] = 10,
-            ["Engineering"] = 3,
-            ["Leatherworking"] = 1,
-            ["Inscription"] = 11,
-            ["Enchanting"] = 8,
-        },
-    },
-    --[===[@non-retail@
-    ["Reagent"] = {
-        ["id"] = 5,
-        ["subTypes"] = {
-            ["Reagent"] = 0,
-            ["Keystone"] = 1,
-        },
-    },
-    --@end-non-retail@]===]
-    ["Key"] = {
-        ["id"] = 13,
-        ["subTypes"] = {
-            ["Key"] = 0,
-            ["Lockpick"] = 1,
-        },
-    },
-    ["Armor"] = {
-        ["id"] = 4,
-        ["subTypes"] = {
-            ["Leather"] = 2,
-            ["Cosmetic"] = 5,
-            ["Shields"] = 6,
-            ["Mail"] = 3,
-            ["Plate"] = 4,
-            ["Cloth"] = 1,
-            ["Miscellaneous"] = 0,
-        },
-    },
-    ["Quest"] = {
-        ["id"] = 12,
-        ["subTypes"] = {
-            ["Quest"] = 0,
-        },
-    },
-    ["Container"] = {
-        ["id"] = 1,
-        ["subTypes"] = {
-            ["Bag"] = 0,
-            ["Mining Bag"] = 6,
-            ["Cooking Bag"] = 10,
-            ["Gem Bag"] = 5,
-            ["Herb Bag"] = 2,
-            ["Engineering Bag"] = 4,
-            ["Tackle Box"] = 9,
-            ["Leatherworking Bag"] = 7,
-            ["Inscription Bag"] = 8,
-            ["Enchanting Bag"] = 3,
-        },
-    },
-    ["Tradeskill"] = {
-        ["id"] = 7,
-        ["subTypes"] = {
-            ["Inscription"] = 16,
-            ["Elemental"] = 10,
-            ["Jewelcrafting"] = 4,
-            ["Leather"] = 6,
-            ["Herb"] = 9,
-            ["Other"] = 11,
-            ["Enchanting"] = 12,
-            ["Cloth"] = 5,
-            ["Cooking"] = 8,
-            ["Metal & Stone"] = 7,
-            ["Parts"] = 1,
-        },
-    },
-    ["Permanent(OBSOLETE)"] = {
-        ["id"] = 14,
-        ["subTypes"] = {
-            ["Permanent"] = 0,
-        },
-    },
-    ["Miscellaneous"] = {
-        ["id"] = 15,
-        ["subTypes"] = {
-            ["Other"] = 4,
-            ["Companion Pets"] = 2,
-            ["Holiday"] = 3,
-            ["Junk"] = 0,
-            ["Mount"] = 5,
-        },
-    },
-    ["Battle Pets"] = {
-        ["id"] = 17,
-        ["subTypes"] = {
-            ["Dragonkin"] = 1,
-            ["Humanoid"] = 0,
-            ["Elemental"] = 6,
-            ["Critter"] = 4,
-            ["Magic"] = 5,
-            ["Flying"] = 2,
-            ["Aquatic"] = 8,
-            ["Undead"] = 3,
-            ["Beast"] = 7,
-            ["Mechanical"] = 9,
-        },
-    },
-    ["Consumable"] = {
-        ["id"] = 0,
-        ["subTypes"] = {
-            ["Other"] = 8,
-            ["Elixir"] = 2,
-            ["Explosives and Devices"] = 0,
-            ["Potion"] = 1,
-            ["Food & Drink"] = 5,
-            ["Flask"] = 3,
-            ["Bandage"] = 7,
-            ["Vantus Runes"] = 9,
-        },
-    },
-    ["Gem"] = {
-        ["id"] = 3,
-        ["subTypes"] = {
-            ["Intellect"] = 0,
-            ["Artifact Relic"] = 11,
-            ["Haste"] = 7,
-            ["Strength"] = 2,
-            ["Multiple Stats"] = 10,
-            ["Agility"] = 1,
-            ["Other"] = 9,
-            ["Versatility"] = 8,
-            ["Stamina"] = 3,
-            ["Mastery"] = 6,
-            ["Spirit"] = 4,
-            ["Critical Strike"] = 5,
-        },
-    },
-    ["Money(OBSOLETE)"] = {
-        ["id"] = 10,
-        ["subTypes"] = {
-            ["Money(OBSOLETE)"] = 0,
-        },
-    },
-    ["Projectile"] = {
-        ["id"] = 6,
-        ["subTypes"] = {
-        },
-    },
-    ["Item Enhancement"] = {
-        ["id"] = 8,
-        ["subTypes"] = {
-            ["Waist"] = 7,
-            ["Head"] = 0,
-            ["Neck"] = 1,
-            ["Shield/Off-hand"] = 13,
-            ["Two-Handed Weapon"] = 12,
-            ["Feet"] = 9,
-            ["Chest"] = 4,
-            ["Cloak"] = 3,
-            ["Finger"] = 10,
-            ["Legs"] = 8,
-            ["Hands"] = 6,
-            ["Wrist"] = 5,
-            ["Shoulder"] = 2,
-            ["Weapon"] = 11,
-        },
-    },
-    ["Glyph"] = {
-        ["id"] = 16,
-        ["subTypes"] = {
-            ["Warrior"] = 1,
-            ["Paladin"] = 2,
-            ["Shaman"] = 7,
-            ["Monk"] = 10,
-            ["Rogue"] = 4,
-            ["Mage"] = 8,
-            ["Demon Hunter"] = 12,
-            ["Warlock"] = 9,
-            ["Priest"] = 5,
-            ["Hunter"] = 3,
-            ["Druid"] = 11,
-            ["Death Knight"] = 6,
-        },
-    },
-    ["Weapon"] = {
-        ["id"] = 2,
-        ["subTypes"] = {
-            ["One-Handed Axes"] = 0,
-            ["One-Handed Swords"] = 7,
-            ["Staves"] = 10,
-            ["Crossbows"] = 18,
-            ["Polearms"] = 6,
-            ["One-Handed Maces"] = 4,
-            ["Warglaives"] = 9,
-            ["Bows"] = 2,
-            ["Two-Handed Swords"] = 8,
-            ["Miscellaneous"] = 14,
-            ["Fishing Poles"] = 20,
-            ["Daggers"] = 15,
-            ["Guns"] = 3,
-            ["Fist Weapons"] = 13,
-            ["Two-Handed Maces"] = 5,
-            ["Wands"] = 19,
-            ["Thrown"] = 16,
-            ["Two-Handed Axes"] = 1,
-        },
-    },
-}
-
---@retail@
-local migrations = {
-    ["0001_ItemTypes_7.0.3"] = function ()
-        Baggins:Print("Migrating Item Type Filters to 7.0.3")
-        itemTypeReverse["Consumable"].subTypes["Scroll"] = -1
-        itemTypeReverse["Consumable"].subTypes["Consumable"] = -2
-        itemTypeReverse["Trade Goods"] = itemTypeReverse["Tradeskill"]
-        itemTypeReverse["Trade Goods"].subTypes["Materials"] = -1
-        for _, category in pairs(Baggins.db.profile.categories) do
-            for _, rule in ipairs(category) do
-                if (rule.type == "ItemType") then
-                    if ((rule.itype == "Trade Goods" and rule.isubtype == "Devices")
-                        or
-                       (rule.itype == "Trade Goods" and rule.isubtype == "Explosives"))
-                        then
-                        rule.itype = 0
-                        rule.subtype = 0
-                    elseif ((rule.itype == "Consumable" and rule.isubtype == "Item Enhancement")
-                                or
-                            (rule.itype == "Trade Goods" and rule.isubtype == "Item Enchantment")
-                            ) then
-                        rule.itype = 8
-                        rule.isubtype = nil
-                    else
-                        if (type(rule.itype) == 'string') then
-                            if (type(rule.isubtype) == 'string') then
-                                rule.isubtype = itemTypeReverse[rule.itype].subTypes[rule.isubtype]
-                            end
-                            rule.itype = itemTypeReverse[rule.itype].id
-                        end
-                    end
-                end
-            end
-        end
-    end
-}
- --@end-retail@
-
 function Baggins:OnProfileEnable()
     local p = self.db.profile
     --check if this profile has been setup before, if not add the default bags and categories
     --cant leave these in the defaults since removing a bag would have it come back on reload
---@retail@
-    for k,m in pairs(migrations) do
-        if not self.db.profile.ranMigrations[k] then
-            self:Print("Running Migration " .. k)
-            m()
-            self.db.profile.ranMigrations[k] = true
-        end
-    end
- --@end-retail@
     local refresh = false
     if not next(p.categories) then
         deepCopy(p.categories, self.defaultcategories)
@@ -3388,7 +3129,7 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
     if p.EnableItemLevelText then
         if link then
             --itemName, itemLink, itemQuality, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount,itemEquipLoc, itemTexture, sellPrice, classID, subclassID, bindType, expacID, setID, isCraftingReagent
-            local _, _, _, itemLevel, _, itemType = GetItemInfo(link)
+            local _, _, _, _, _, itemType = GetItemInfo(link)
             local item = Item:CreateFromBagAndSlot(bag, slot)
             local level = item and item:GetCurrentItemLevel() or 0
             if level and itemType == "Armor" or itemType == "Weapon" then

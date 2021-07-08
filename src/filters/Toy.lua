@@ -13,8 +13,6 @@ local AddOn = _G[AddOnName]
 local LibStub = _G.LibStub
 local LG = LibStub("LibGratuity-3.0")
 
-local GetContainerItemID = _G.GetContainerItemID
-
 local function Matches(bag, slot, _)
     --local itemId = GetContainerItemID(bag, slot)
     --local itemLink = C_ToyBox.GetToyLink(itemId)

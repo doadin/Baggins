@@ -196,7 +196,9 @@ function BagginsSearch:BagginsSearch_CreateEditBox()
 end
 
 Baggins:RegisterSignal("Baggins_UpdateBagScale",function() --luacheck: ignore 212
-    _G.BagginsSearch_EditBox:SetScale(Baggins.db.profile.scale)
+    if _G.BagginsSearch_EditBox then
+        _G.BagginsSearch_EditBox:SetScale(Baggins.db.profile.scale)
+    end
 end, Baggins)
 
 

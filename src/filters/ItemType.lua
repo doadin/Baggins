@@ -23,6 +23,7 @@ local GetItemInfoInstant = _G.GetItemInfoInstant
 --[===[@non-retail@
 local GetAuctionItemSubClasses = _G.GetAuctionItemSubClasses
 --@end-non-retail@]===]
+
 --@retail@
 local GetAuctionItemSubClasses = _G.C_AuctionHouse.GetAuctionItemSubClasses
 --@end-retail@
@@ -31,52 +32,76 @@ local GetAuctionItemSubClasses = _G.C_AuctionHouse.GetAuctionItemSubClasses
 local LibStub = _G.LibStub
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
 
---@retail@
--- Baggins: AH category scanned 2020-05-20 3:40:00 - patch 8.3.0
-local ItemTypes = {
-    [0]="Consumable",
-    [1]="Container",
-    [2]="Weapon",
-    [3]="Gem",
-    [4]="Armor",
-    [5]="Reagent",--won't use in classic --
-    [6]="Projectile",
-    [7]="Tradeskill",
-    [8]="Item Enhancement",
-    [9]="Recipe",
-    [10]="Money(OBSOLETE)",
-    [11]="Quiver",
-    [12]="Quest",
-    [13]="Key",
-    [14]="Permanent(OBSOLETE)",
-    [15]="Miscellaneous",
-    [16]="Glyph",--won't use in classic --
-    [17]="Battle Pets",--won't use in classic --
-    [18]="WoW Token"--won't use in classic --
-}
---@end-retail@
---[===[@non-retail@
--- scanned Wed May 20 05:04:36 2020 - patch 1.13.4
-local ItemTypes = {
-    [0]="Consumable",
-    [1]="Container",
-    [2]="Weapon",
-    [3]="Jewelry(OBSOLETE)",
-    [4]="Armor",
-    [5]="Reagent",
-    [6]="Projectile",
-    [7]="Trade Goods",
-    [8]="Generic(OBSOLETE)",
-    [9]="Recipe",
-    [10]="Money(OBSOLETE)",
-    [11]="Quiver",
-    [12]="Quest",
-    [13]="Key",
-    [14]="Permanent(OBSOLETE)",
-    [15]="Miscellaneous",
-    [18]="WoW Token"
-}
---@end-non-retail@]===]
+local ItemTypes
+if AddOn:IsRetailWow() then
+    -- scanned Thu Jul 1 21:30:01 2021 - patch 9.1.0
+    ItemTypes = {
+        [0]="Consumable",
+        [1]="Container",
+        [2]="Weapon",
+        [3]="Gem",
+        [4]="Armor",
+        [5]="Reagent",
+        [6]="Projectile",
+        [7]="Tradeskill",
+        [8]="Item Enhancement",
+        [9]="Recipe",
+        [10]="Money(OBSOLETE)",
+        [11]="Quiver",
+        [12]="Quest",
+        [13]="Key",
+        [14]="Permanent(OBSOLETE)",
+        [15]="Miscellaneous",
+        [16]="Glyph",
+        [17]="Battle Pets",
+        [18]="WoW Token"
+    }
+end
+if AddOn:IsClassicWow() then
+    -- scanned Thu Jul 1 15:27:04 2021 - patch 1.13.7
+    ItemTypes = {
+        [0]="Consumable",
+        [1]="Container",
+        [2]="Weapon",
+        [3]="Jewelry(OBSOLETE)",
+        [4]="Armor",
+        [5]="Reagent",
+        [6]="Projectile",
+        [7]="Trade Goods",
+        [8]="Generic(OBSOLETE)",
+        [9]="Recipe",
+        [10]="Money(OBSOLETE)",
+        [11]="Quiver",
+        [12]="Quest",
+        [13]="Key",
+        [14]="Permanent(OBSOLETE)",
+        [15]="Miscellaneous",
+        [18]="WoW Token"
+    }
+end
+
+if AddOn:IsTBCWow() then
+    -- scanned Thu Jul 1 16:14:05 2021 - patch 2.5.1
+    ItemTypes = {
+        [0]="Consumable",
+        [1]="Container",
+        [2]="Weapon",
+        [3]="Gem",
+        [4]="Armor",
+        [5]="Reagent",
+        [6]="Projectile",
+        [7]="Trade Goods",
+        [8]="Generic(OBSOLETE)",
+        [9]="Recipe",
+        [10]="Money(OBSOLETE)",
+        [11]="Quiver",
+        [12]="Quest",
+        [13]="Key",
+        [14]="Permanent(OBSOLETE)",
+        [15]="Miscellaneous",
+        [18]="WoW Token"
+    }
+end
 
   --[[
   local ItemTypes = {
@@ -171,13 +196,15 @@ AddOn:AddCustomRule("ItemType",
                         local tmp = {}
                         tmp.ALL = _G.ALL
                         if rule.itype and ItemTypes[rule.itype] then
-                            --[===[@non-retail@
-                            for _,k in pairs({GetAuctionItemSubClasses(rule.itype)}) do
-                            --@end-non-retail@]===]
-                            --@retail@
-                            for _,k in pairs(GetAuctionItemSubClasses(rule.itype)) do
-                            --@end-retail@
-                                tmp[tostring(k)] = GetItemSubClassInfo(rule.itype, k) or "UNKNOWN"
+                            if AddOn:IsClassicWow() or AddOn:IsTBCWow() then
+                                for _,k in pairs({GetAuctionItemSubClasses(rule.itype)}) do
+                                    tmp[tostring(k)] = GetItemSubClassInfo(rule.itype, k) or "UNKNOWN"
+                                end
+                            end
+                            if AddOn:IsRetailWow() then
+                                for _,k in pairs(GetAuctionItemSubClasses(rule.itype)) do
+                                    tmp[tostring(k)] = GetItemSubClassInfo(rule.itype, k) or "UNKNOWN"
+                                end
                             end
                         end
                         return tmp
