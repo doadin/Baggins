@@ -252,6 +252,8 @@ local dbDefaults = {
         compressstackable = true,
         sortnewfirst = true,
         compressall = false,
+        CompressShards = false,
+        CompressAmmo = false,
         shrinkwidth = true,
         shrinkbagtitle = false,
         showspecialcount = true,
@@ -383,6 +385,34 @@ function Baggins:RebuildOptions()
                                 self:RebuildSectionLayouts()
                                 self:UpdateBags()
                             end,
+                        },
+                        CompressShards = {
+                            name = L["Compress Stackable Items"],
+                            type = "toggle",
+                            desc = L["Show stackable items as a single button with a count on it"],
+                            order = 20,
+                            disabled = getCompressAll,
+                            get = function() return p.CompressShards or p.compressall end,
+                            set = function(info, value) --luacheck: ignore 212
+                                p.CompressShards = value
+                                self:RebuildSectionLayouts()
+                                self:UpdateBags()
+                            end,
+                            hidden = Baggins:IsRetailWow(),
+                        },
+                        CompressAmmo = {
+                            name = L["Compress Stackable Items"],
+                            type = "toggle",
+                            desc = L["Show stackable items as a single button with a count on it"],
+                            order = 20,
+                            disabled = getCompressAll,
+                            get = function() return p.CompressAmmo or p.compressall end,
+                            set = function(info, value) --luacheck: ignore 212
+                                p.CompressAmmo = value
+                                self:RebuildSectionLayouts()
+                                self:UpdateBags()
+                            end,
+                            hidden = Baggins:IsRetailWow(),
                         },
                         CompressEmptySlots = {
                             name = L["Compress Empty Slots"],

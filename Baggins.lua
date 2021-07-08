@@ -642,26 +642,50 @@ function Baggins:IsCompressed(itemID)
         local itemFamily = GetItemFamily(itemID)
         local _, _, _, _, _, _, _, itemStackCount, itemEquipLoc = GetItemInfo(itemID)
         if itemFamily then	-- likes to be nil during login
-            --@retail@
-            if p.compressshards and band(itemFamily,4)~=0 and itemEquipLoc~="INVTYPE_BAG" then
-                return true
+            if Baggins:IsRetailWow() then
+                if p.CompressShards and band(itemFamily,4)~=0 and itemEquipLoc~="INVTYPE_BAG" then
+                    return true
+                end
+                if p.compressammo and band(itemFamily,3)~=0 and itemEquipLoc~="INVTYPE_BAG" then
+                    return true
+                end
             end
-            if p.compressammo and band(itemFamily,3)~=0 and itemEquipLoc~="INVTYPE_BAG" then
-                return true
-            end
-            --@end-retail@
 
-            --[===[@non-retail@
-            if p.compressshards and itemFamily ~=3 and itemEquipLoc~="INVTYPE_BAG" then
-                return true
+            if Baggins:IsClassicWow() or Baggins:IsTBCWow() then
+                if p.CompressShards and itemFamily ~=3 and itemEquipLoc~="INVTYPE_BAG" then
+                    return true
+                end
+                if p.compressammo and itemFamily ~=2 and itemEquipLoc~="INVTYPE_BAG" then
+                    return true
+                end
             end
-            if p.compressammo and itemFamily ~=2 and itemEquipLoc~="INVTYPE_BAG" then
-                return true
-            end
-            --@end-non-retail@]===]
 
         end
         if p.compressstackable and itemStackCount and itemStackCount>1 then
+            --local charBags = {}
+            --for i=0, NUM_BAG_SLOTS do
+            --    tinsert(charBags, i);
+            --end
+            --if Baggins:IsClassicWow() or Baggins:IsTBCWow() then
+            --    tinsert(charBags, KEYRING_CONTAINER)
+            --end
+            ----local bankBags = { BANK_CONTAINER }
+            ----for i=NUM_BAG_SLOTS+1, NUM_BAG_SLOTS+NUM_BANKBAGSLOTS do
+            ----    tinsert(bankBags, i);
+            ----end
+            ----local bags = bank and bankBags or charBags
+            --local bags = charBags
+            --for _,bag in ipairs(bags) do
+            --    for slot=1,(GetContainerNumSlots(bag) or 0) do
+            --        local _, itemCount, locked, _, _ = GetContainerItemInfo(bag, slot)
+            --        local link = GetContainerItemLink(bag, slot)
+            --        if link then
+            --            local _, _, _, _, _, _, _, iMaxStack = GetItemInfo(link)
+            --            if iMaxStack and itemCount < iMaxStack then
+            --            end
+            --        end
+            --    end
+            --end
             return true
         end
     end
