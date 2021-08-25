@@ -387,9 +387,9 @@ function Baggins:RebuildOptions()
                             end,
                         },
                         CompressShards = {
-                            name = "Compress Shards Items",
+                            name = L["Compress Soul Shards"],
                             type = "toggle",
-                            desc = "Show Shards as a single button with a count on it",
+                            desc = L["Show all soul shards as a single button with a count on it"],
                             order = 20,
                             disabled = getCompressAll,
                             get = function() return p.CompressShards or p.compressall end,
@@ -401,9 +401,9 @@ function Baggins:RebuildOptions()
                             hidden = Baggins:IsRetailWow(),
                         },
                         CompressAmmo = {
-                            name = "Compress Ammo Items",
+                            name = L["Compress Ammo"],
                             type = "toggle",
-                            desc = "Show Ammo as a single button with a count on it",
+                            desc = L["Show all ammo as a single button with a count on it"],
                             order = 20,
                             disabled = getCompressAll,
                             get = function() return p.CompressAmmo or p.compressall end,
