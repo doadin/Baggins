@@ -428,6 +428,7 @@ function Baggins:OnEnable()
     --self:SetBagUpdateSpeed();
     self:RegisterEvent("BAG_CLOSED", "ForceFullRefresh")
     self:RegisterEvent("BAG_UPDATE")
+    self:RegisterEvent("PLAYER_REGEN_DISABLED","SaveItemCounts")
     self:RegisterEvent("BAG_UPDATE_COOLDOWN", "UpdateItemButtonCooldowns")
     self:RegisterEvent("ITEM_LOCK_CHANGED", "UpdateItemButtonLocks")
     self:RegisterEvent("QUEST_ACCEPTED", "UpdateItemButtons")
@@ -459,7 +460,6 @@ function Baggins:OnEnable()
     self:RegisterSignal('SlotMoved', self.SlotMoved, self)
 
     self:ScheduleRepeatingTimer("RunBagUpdates", 20)
-    self:ScheduleRepeatingTimer("RunItemCountUpdates", 60)
 
     self:UpdateBagHooks()
     self:UpdateBackpackHook()
@@ -574,6 +574,7 @@ local INVSLOT_LAST_EQUIPPED, CONTAINER_BAG_OFFSET, NUM_BAG_SLOTS =
       INVSLOT_LAST_EQUIPPED, CONTAINER_BAG_OFFSET, NUM_BAG_SLOTS
 
 function Baggins:SaveItemCounts()
+    if InCombatLockdown() then return end
     local itemcounts = self.itemcounts
     wipe(itemcounts)
     for _,_,link in LBU:Iterate("BAGS") do	-- includes keyring
@@ -612,12 +613,6 @@ function Baggins:SaveItemCounts()
                 itemcounts[id] = { count = GetItemCount(id), ts = time() }
             end
         end
-    end
-end
-
-function Baggins:RunItemCountUpdates()
-    if self.db.profile.newitemduration > 0 then
-        Baggins:ForceFullUpdate()
     end
 end
 
@@ -710,11 +705,11 @@ function Baggins:OnBankOpened()
 end
 
 function Baggins:OnBankChanged()
-    self:OnBagUpdate(-1)
+    self:BAG_UPDATE(nil,-1)
 end
 
 function Baggins:OnReagentBankChanged()
-    self:OnBagUpdate(REAGENTBANK_CONTAINER)
+    self:BAG_UPDATE(nil,REAGENTBANK_CONTAINER)
 end
 
 function Baggins:OnReagentBankPurchased()
@@ -1136,12 +1131,9 @@ local firstbagupdate = true
 local bagupdatebucket = {}
 local lastbag,lastbagfree=-1,-1
 
-function Baggins:BAG_UPDATE(_, ...)
-    self:OnBagUpdate(...)
-end
-
-function Baggins:OnBagUpdate(bagid)
+function Baggins:BAG_UPDATE(_, bagid)
     --ignore bags -4 ( currency ); -3 is reagent bank
+    if not bagid then return end
     if bagid <= -4 then return end
     bagupdatebucket[bagid] = true
     if self:IsAnyBagOpen() then
@@ -1159,12 +1151,14 @@ function Baggins:OnBagUpdate(bagid)
             self:UpdateText()
         end
     end
+    self:SaveItemCounts()
+    self:RunBagUpdates()
+    self:UpdateItemButtons()
 end
 
 function Baggins:RunBagUpdates()
     if firstbagupdate then
         firstbagupdate = false
-        self:SaveItemCounts()
         self:ForceFullUpdate()
     end
     if not next(bagupdatebucket) then
@@ -3441,7 +3435,6 @@ end
 
 function Baggins:OnClick()
     if IsShiftKeyDown() then
-        self:SaveItemCounts()
         self:ForceFullUpdate()
     elseif IsControlKeyDown() and self.db.profile.layout == 'manual' then
         self.db.profile.lock = not self.db.profile.lock
