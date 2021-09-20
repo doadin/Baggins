@@ -1144,7 +1144,7 @@ function Baggins:OnBagUpdate(bagid)
     --ignore bags -4 ( currency ); -3 is reagent bank
     if bagid <= -4 then return end
     bagupdatebucket[bagid] = true
-    if self:IsWhateverOpen() then
+    if self:IsAnyBagOpen() then
         self:ScheduleTimer("RunBagUpdates",0.1)
         lastbagfree=-1
     else
@@ -1184,7 +1184,7 @@ function Baggins:RunBagUpdates()
         self:UpdateItemButtons()
     end
 
-    if(self:IsWhateverOpen()) then
+    if(self:IsAnyBagOpen()) then
         Baggins:FireSignal("Baggins_BagsUpdatedWhileOpen");
     end
 end
@@ -3876,7 +3876,7 @@ function Baggins:CloseBag(bagid)
     end
     self:UpdateTooltip()
 
-    if(not Baggins:IsWhateverOpen()) then
+    if(not Baggins:IsAnyBagOpen()) then
         --self:SetBagUpdateSpeed(false);	-- indicate bags closed
         self:FireSignal("Baggins_AllBagsClosed");
         -- reset temp no item compression
@@ -4030,7 +4030,7 @@ function Baggins:IsAnyOpen()
     end
 end
 
-function Baggins:IsWhateverOpen()
+function Baggins:IsAnyBagOpen()
     for bagid, _ in ipairs(self.db.profile.bags) do
         if self.bagframes[bagid] and self.bagframes[bagid]:IsVisible() then
             return true
