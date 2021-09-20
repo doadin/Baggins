@@ -459,8 +459,6 @@ function Baggins:OnEnable()
     self:RegisterSignal('CategoryMatchRemoved', self.CategoryMatchRemoved, self)
     self:RegisterSignal('SlotMoved', self.SlotMoved, self)
 
-    self:ScheduleRepeatingTimer("RunBagUpdates", 20)
-
     self:UpdateBagHooks()
     self:UpdateBackpackHook()
     self:RawHook("CloseSpecialWindows", true)
@@ -1137,7 +1135,6 @@ function Baggins:BAG_UPDATE(_, bagid)
     if bagid <= -4 then return end
     bagupdatebucket[bagid] = true
     if self:IsAnyBagOpen() then
-        self:ScheduleTimer("RunBagUpdates",0.1)
         lastbagfree=-1
     else
         -- Update panel text.
