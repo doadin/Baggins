@@ -501,7 +501,7 @@ function Baggins:FixInit()
     self:UpdateBags()
 end
 
-function Baggins:Baggins_CategoriesChanged()
+function Baggins:CategoriesChanged()
     self:UpdateBags()
     self.doInitialBankUpdate = true
 end

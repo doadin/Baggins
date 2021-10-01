@@ -434,10 +434,6 @@ function Baggins:ForceFullUpdate()
     self:CategoriesChanged()
 end
 
-function Baggins:CategoriesChanged()
-    self:Baggins_CategoriesChanged()
-end
-
 function Baggins:ForceFullBankUpdate()
     for bagid in LBU:IterateBags("BANK") do
         self:CheckSlotsChanged(bagid, true)
