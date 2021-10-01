@@ -3151,6 +3151,7 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
     end
 
     if p.EnableItemLevelText then
+        local ilvltext = button:CreateFontString("Bagginsilvltext", "OVERLAY", "GameFontNormal")
         if link then
             --itemName, itemLink, itemQuality, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount,itemEquipLoc, itemTexture, sellPrice, classID, subclassID, bindType, expacID, setID, isCraftingReagent
             local _, _, _, _, _, itemType = GetItemInfo(link)
@@ -3159,7 +3160,6 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
             if level and itemType == "Armor" or itemType == "Weapon" then
                 --text:SetText(itemLevel)
                 --text:Show()
-                local ilvltext = button:CreateFontString("Bagginsilvltext", "OVERLAY", "GameFontNormal")
                 --ilvltext:SetFont(p.Font, 10)
                 ilvltext:SetPoint(p.ItemLevelAncor,button,p.ItemLevelAncor,0,0)
                 if p.ItemLevelQualityColor then
@@ -3174,7 +3174,11 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
                 ilvltext:Show()
                 --print(type(tostring(level)))
                 --self:SetItemButtonCount(button, level)
+            else
+                ilvltext:Hide()
             end
+        else
+            ilvltext:Hide()
         end
     end
 
