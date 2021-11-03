@@ -1,7 +1,7 @@
-## Interface: 90100
-## Interface-Retail: 90100
-## Interface-Classic: 11307
-## Interface-BCC: 20501
+## Interface: 90105
+## Interface-Retail: 90105
+## Interface-Classic: 11400
+## Interface-BCC: 20502
 ## Version: @project-version@
 
 ## Notes: Inventory Management with virtual bags divided into sections.
