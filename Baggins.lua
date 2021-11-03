@@ -427,7 +427,7 @@ end
 function Baggins:OnEnable()
     --self:SetBagUpdateSpeed();
     self:RegisterEvent("BAG_CLOSED", "ForceFullRefresh")
-    self:RegisterEvent("BAG_UPDATE")
+    self:RegisterEvent("BAG_UPDATE","OnBagUpdate")
     self:RegisterEvent("BAG_UPDATE_COOLDOWN", "UpdateItemButtonCooldowns")
     self:RegisterEvent("ITEM_LOCK_CHANGED", "UpdateItemButtonLocks")
     self:RegisterEvent("QUEST_ACCEPTED", "UpdateItemButtons")
@@ -501,7 +501,7 @@ function Baggins:FixInit()
     self:UpdateBags()
 end
 
-function Baggins:CategoriesChanged()
+function Baggins:Baggins_CategoriesChanged()
     self:UpdateBags()
     self.doInitialBankUpdate = true
 end
@@ -710,11 +710,11 @@ function Baggins:OnBankOpened()
 end
 
 function Baggins:OnBankChanged()
-    self:OnBagUpdate(-1)
+    self:OnBagUpdate(nil,-1)
 end
 
 function Baggins:OnReagentBankChanged()
-    self:OnBagUpdate(REAGENTBANK_CONTAINER)
+    self:OnBagUpdate(nil,REAGENTBANK_CONTAINER)
 end
 
 function Baggins:OnReagentBankPurchased()
@@ -1136,11 +1136,7 @@ local firstbagupdate = true
 local bagupdatebucket = {}
 local lastbag,lastbagfree=-1,-1
 
-function Baggins:BAG_UPDATE(_, ...)
-    self:OnBagUpdate(...)
-end
-
-function Baggins:OnBagUpdate(bagid)
+function Baggins:OnBagUpdate(_,bagid)
     --ignore bags -4 ( currency ); -3 is reagent bank
     if bagid <= -4 then return end
     bagupdatebucket[bagid] = true
