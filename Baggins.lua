@@ -2734,20 +2734,32 @@ function Baggins:CreateMoneyFrame() --luacheck: ignore 212
     local goldIcon = frame:CreateTexture("BagginsGoldIcon", "ARTWORK")
     goldIcon:SetWidth(16)
     goldIcon:SetHeight(16)
-    goldIcon:SetTexture("Interface\\MoneyFrame\\UI-MoneyIcons")
-    goldIcon:SetTexCoord(0, 0.25, 0, 1)
+    if Baggins:IsRetailWow() then
+        goldIcon:SetAtlas("coin-gold")
+    else
+        goldIcon:SetTexture("Interface\\MoneyFrame\\UI-MoneyIcons")
+        goldIcon:SetTexCoord(0, 0.25, 0, 1)
+    end
 
     local silverIcon = frame:CreateTexture("BagginsSilverIcon", "ARTWORK")
     silverIcon:SetWidth(16)
     silverIcon:SetHeight(16)
-    silverIcon:SetTexture("Interface\\MoneyFrame\\UI-MoneyIcons")
-    silverIcon:SetTexCoord(0.25, 0.5, 0, 1)
+    if Baggins:IsRetailWow() then
+        silverIcon:SetAtlas("coin-silver")
+    else
+        silverIcon:SetTexture("Interface\\MoneyFrame\\UI-MoneyIcons")
+        silverIcon:SetTexCoord(0.25, 0.5, 0, 1)
+    end
 
     local copperIcon = frame:CreateTexture("BagginsCopperIcon", "ARTWORK")
     copperIcon:SetWidth(16)
     copperIcon:SetHeight(16)
-    copperIcon:SetTexture("Interface\\MoneyFrame\\UI-MoneyIcons")
-    copperIcon:SetTexCoord(0.5, 0.75, 0, 1)
+    if Baggins:IsRetailWow() then
+        copperIcon:SetAtlas("coin-copper")
+    else
+        copperIcon:SetTexture("Interface\\MoneyFrame\\UI-MoneyIcons")
+        copperIcon:SetTexCoord(0.5, 0.75, 0, 1)
+    end
 
     local goldText = frame:CreateFontString("BagginsGoldText", "OVERLAY")
     goldText:SetJustifyH("RIGHT")
