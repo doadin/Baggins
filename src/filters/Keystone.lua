@@ -16,7 +16,7 @@ local GetContainerItemID = _G.GetContainerItemID
 
 local function Matches(bag, slot, _)
     local ID = GetContainerItemID(bag, slot)
-    if (ID and ID == 180653) then
+    if (ID and ID == 180653) or (ID and ID == 187786) then
         return true
     end
 end
