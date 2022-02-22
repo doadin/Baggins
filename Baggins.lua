@@ -458,7 +458,6 @@ function Baggins:OnEnable()
     self:RegisterSignal('CategoryMatchRemoved', self.CategoryMatchRemoved, self)
     self:RegisterSignal('SlotMoved', self.SlotMoved, self)
 
-    self:ScheduleRepeatingTimer("RunBagUpdates", 20)
     self:ScheduleRepeatingTimer("RunItemCountUpdates", 60)
 
     self:UpdateBagHooks()
@@ -1140,21 +1139,18 @@ function Baggins:OnBagUpdate(_,bagid)
     --ignore bags -4 ( currency ); -3 is reagent bank
     if bagid <= -4 then return end
     bagupdatebucket[bagid] = true
-    if self:IsAnyBagOpen() then
-        self:ScheduleTimer("RunBagUpdates",0.1)
-        lastbagfree=-1
+
+    -- Update panel text.
+    -- Optimization mostly for hunters - their bags change for every damn arrow they fire:
+    local free=GetContainerNumFreeSlots(bagid)
+    if lastbag==bagid and lastbagfree==free then --luacheck: ignore 542
+        --Baggins:Debug("OnBagUpdate LastBag and LastBagFree")
     else
-        -- Update panel text.
-        -- Optimization mostly for hunters - their bags change for every damn arrow they fire:
-        local free=GetContainerNumFreeSlots(bagid)
-        if lastbag==bagid and lastbagfree==free then --luacheck: ignore 542
-            --Baggins:Debug("OnBagUpdate LastBag and LastBagFree")
-        else
-            lastbag=bagid
-            lastbagfree=free
-            self:UpdateText()
-        end
+        lastbag=bagid
+        lastbagfree=free
+        self:UpdateText()
     end
+    self:RunBagUpdates()
 end
 
 function Baggins:RunBagUpdates()
@@ -1163,6 +1159,7 @@ function Baggins:RunBagUpdates()
         self:SaveItemCounts()
         self:ForceFullUpdate()
     end
+
     if not next(bagupdatebucket) then
         return
     end
@@ -1183,6 +1180,7 @@ function Baggins:RunBagUpdates()
     if(self:IsAnyBagOpen()) then
         Baggins:FireSignal("Baggins_BagsUpdatedWhileOpen");
     end
+    self:ReallyUpdateBags()
 end
 
 -----------------------------
@@ -3942,11 +3940,11 @@ function Baggins:OpenBag(bagid,noupdate)
         self:CreateBagFrame(bagid)
     end
     self.bagframes[bagid]:Show()
-    if not noupdate then
+    --if not noupdate then
 
-        self:RunBagUpdates()
-        self:UpdateBags()
-    end
+    self:RunBagUpdates()
+    self:UpdateBags()
+    --end
     self:UpdateLayout()
     self:UpdateTooltip()
 
