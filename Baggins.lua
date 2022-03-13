@@ -3922,7 +3922,7 @@ end
 function Baggins:OpenBag(bagid,noupdate)
 
     if self.db.profile.newitemduration > 0 then
-        Baggins:ForceFullUpdate()
+        --Baggins:SaveItemCounts()
     end
     --self:SetBagUpdateSpeed(true);	-- indicate bags open
     local p = self.db.profile
