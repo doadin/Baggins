@@ -452,6 +452,7 @@ function Baggins:OnEnable()
     -- Patch 9.0.5 Added
     --self:RegisterEvent('ITEM_UPGRADE_MASTER_OPENED', "OpenAllBags")
     --self:RegisterEvent('ITEM_UPGRADE_MASTER_CLOSED', "CloseAllBags")
+    self:RegisterEvent('SOCKET_INFO_UPDATE', "OpenAllBags")
     --@end-retail@
 
     self:RegisterSignal('CategoryMatchAdded', self.CategoryMatchAdded, self)
@@ -3955,7 +3956,7 @@ function Baggins:OpenBag(bagid,noupdate)
     if self.doInitialUpdate then
     -- this time we set to nil so this only runs the first time
     self.doInitialUpdate = nil
-        -- rebuild layouts to fix duplicate stacks
+    -- rebuild layouts to fix duplicate stacks
     self:ScheduleForNextFrame('FixInit')
     end
     PlaySound(862)
