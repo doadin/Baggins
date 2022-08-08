@@ -107,7 +107,11 @@ function BagginsSearch:Search(search) --luacheck: ignore 212
                     local link = GetContainerItemLink(button:GetParent():GetID(), button:GetID())
                     if link then
                         --itemName, itemLink, itemQuality, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount,itemEquipLoc, itemTexture, sellPrice, classID, subclassID, bindType, expacID, setID, isCraftingReagent
-                        itemName, _, _, _, _, itemType, itemSubType, _,itemEquipLoc, _, _, _, _, bindType, expacID, setID = GetItemInfo(link)
+                        if Baggins:IsRetailWow() then
+                            itemName, _, _, _, _, itemType, itemSubType, _,itemEquipLoc, _, _, _, _, bindType, expacID, setID = GetItemInfo(link)
+                        else
+                            itemName, _, _, _, _, itemType, itemSubType, _,itemEquipLoc, _, _, _, _, bindType, expacID = GetItemInfo(link)
+                        end
                         if not itemName then
                             -- hack hack hack
                             itemName = string.match(link, "|h%[(.*)%]") or ""
