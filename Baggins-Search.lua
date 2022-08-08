@@ -58,8 +58,48 @@ local IsControlKeyDown = _G.IsControlKeyDown
 
 local BagginsSearch = {}
 
+local itemBindTypes = {
+    [0] = "None",
+    [1] = "Bind on Pickup",
+    [2] = "Bind on Equip",
+    [3] = "Bind on Use",
+    [4] = "Quest"
+}
+
+local itemBindTypesAB = {
+    [0] = "None",
+    [1] = "BoP",
+    [2] = "BoE",
+    [3] = "BoU",
+    [4] = "Quest"
+}
+
+local itemExpansion = {
+    [0] = "Classic",
+    [1] = "The Burning Crusade",
+    [2] = "Wrath of the Lich King",
+    [3] = "Cataclysm",
+    [4] = "Mists of Pandaria",
+    [5] = "Warlords of Draenor",
+    [6] = "Legion",
+    [7] = "Battle for Azeroth",
+    [8] = "Shadowlands",
+}
+
+local itemExpansionAB = {
+    [0] = "Classic",
+    [1] = "BC",
+    [2] = "Wrath",
+    [3] = "Cata",
+    [4] = "MoP",
+    [5] = "WoD",
+    [6] = "Legion",
+    [7] = "BFA",
+    [8] = "Shadowlands",
+}
+
 function BagginsSearch:Search(search) --luacheck: ignore 212
-    local itemName, itemType, itemSubType, itemEquipLoc
+    local itemName, itemType, itemSubType, itemEquipLoc, bindType, expacID, setID
     for _, bag in ipairs(Baggins.bagframes) do --bagid,bag
         for _, section in ipairs(bag.sections) do --sectionid, section
             for _, button in ipairs(section.items) do --buttonid, button
@@ -67,19 +107,35 @@ function BagginsSearch:Search(search) --luacheck: ignore 212
                     local link = GetContainerItemLink(button:GetParent():GetID(), button:GetID())
                     if link then
                         --itemName, itemLink, itemQuality, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount,itemEquipLoc, itemTexture, sellPrice, classID, subclassID, bindType, expacID, setID, isCraftingReagent
-                        itemName, _, _, _, _, itemType, itemSubType, _,itemEquipLoc = GetItemInfo(link)
+                        itemName, _, _, _, _, itemType, itemSubType, _,itemEquipLoc, _, _, _, _, bindType, expacID, setID = GetItemInfo(link)
                         if not itemName then
                             -- hack hack hack
                             itemName = string.match(link, "|h%[(.*)%]") or ""
                             -- TODO: should figure out what type of thing this is so we can populate these:
-                            itemType = ""
-                            itemSubType = ""
-                            itemEquipLoc = ""
+                            --itemType = ""
+                            --itemSubType = ""
+                            --itemEquipLoc = ""
                         end
+                        --if bindType == nil then
+                        --    bindType = ""
+                        --end
+                        --if expacID == nil then
+                        --    expacID = ""
+                        --end
+                        --if setID == nil then
+                        --    setID = ""
+                        --end
                         if strlen(search) == 0 then
                             button:UnlockHighlight()
                             button:SetAlpha(1)
-                        elseif strfind(itemName:lower(), search:lower(),1,1) or strfind(itemType:lower(), search:lower(),1,1) or strfind(itemSubType:lower(), search:lower(),1,1) or strfind(itemEquipLoc:lower(), search:lower(),1,1) then
+                        elseif itemName and strfind(itemName:lower(), search:lower()) or
+                        itemType and strfind(itemType:lower(), search:lower()) or
+                        itemSubType and strfind(itemSubType:lower(), search:lower()) or
+                        itemEquipLoc and strfind(itemEquipLoc:lower(), search:lower()) or
+                        bindType and strfind(itemBindTypes[bindType]:lower(), search:lower()) or
+                        bindType and strfind(itemBindTypesAB[bindType]:lower(), search:lower()) or
+                        expacID and strfind(itemExpansion[expacID]:lower(), search:lower()) or
+                        expacID and strfind(itemExpansionAB[expacID]:lower(), search:lower()) then
                             button:LockHighlight()
                             button:SetAlpha(1)
                         else
