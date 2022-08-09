@@ -98,8 +98,20 @@ local itemExpansionAB = {
     [8] = "Shadowlands",
 }
 
+local itemQualityT = {
+    [0]	= "Poor",
+    [1]	= "Common",
+    [2]	= "Uncommon",
+    [3]	= "Rare",
+    [4]	= "Epic",
+    [5]	= "Legendary",
+    [6]	= "Artifact",
+    [7]	= "Heirloom",
+    [8]	= "WoWToken",
+}
+
 function BagginsSearch:Search(search) --luacheck: ignore 212
-    local itemName, itemType, itemSubType, itemEquipLoc, bindType, expacID, setID
+    local itemName, itemQuality, itemType, itemSubType, itemEquipLoc, bindType, expacID, setID
     for _, bag in ipairs(Baggins.bagframes) do --bagid,bag
         for _, section in ipairs(bag.sections) do --sectionid, section
             for _, button in ipairs(section.items) do --buttonid, button
@@ -108,9 +120,9 @@ function BagginsSearch:Search(search) --luacheck: ignore 212
                     if link then
                         --itemName, itemLink, itemQuality, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount,itemEquipLoc, itemTexture, sellPrice, classID, subclassID, bindType, expacID, setID, isCraftingReagent
                         if Baggins:IsRetailWow() then
-                            itemName, _, _, _, _, itemType, itemSubType, _,itemEquipLoc, _, _, _, _, bindType, expacID, setID = GetItemInfo(link)
+                            itemName, _, itemQuality, _, _, itemType, itemSubType, _,itemEquipLoc, _, _, _, _, bindType, expacID, setID = GetItemInfo(link)
                         else
-                            itemName, _, _, _, _, itemType, itemSubType, _,itemEquipLoc, _, _, _, _, bindType, expacID = GetItemInfo(link)
+                            itemName, _, itemQuality, _, _, itemType, itemSubType, _,itemEquipLoc, _, _, _, _, bindType, expacID = GetItemInfo(link)
                         end
                         if not itemName then
                             -- hack hack hack
@@ -139,7 +151,8 @@ function BagginsSearch:Search(search) --luacheck: ignore 212
                         bindType and strfind(itemBindTypes[bindType]:lower(), search:lower()) or
                         bindType and strfind(itemBindTypesAB[bindType]:lower(), search:lower()) or
                         expacID and strfind(itemExpansion[expacID]:lower(), search:lower()) or
-                        expacID and strfind(itemExpansionAB[expacID]:lower(), search:lower()) then
+                        expacID and strfind(itemExpansionAB[expacID]:lower(), search:lower()) or
+                        itemQuality and strfind(itemQualityT[itemQuality]:lower(), search:lower()) then
                             button:LockHighlight()
                             button:SetAlpha(1)
                         else
