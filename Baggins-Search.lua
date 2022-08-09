@@ -141,23 +141,42 @@ function BagginsSearch:Search(search) --luacheck: ignore 212
                         --if setID == nil then
                         --    setID = ""
                         --end
-                        if strlen(search) == 0 then
-                            button:UnlockHighlight()
-                            button:SetAlpha(1)
-                        elseif itemName and strfind(itemName:lower(), search:lower()) or
-                        itemType and strfind(itemType:lower(), search:lower()) or
-                        itemSubType and strfind(itemSubType:lower(), search:lower()) or
-                        itemEquipLoc and strfind(itemEquipLoc:lower(), search:lower()) or
-                        bindType and strfind(itemBindTypes[bindType]:lower(), search:lower()) or
-                        bindType and strfind(itemBindTypesAB[bindType]:lower(), search:lower()) or
-                        expacID and strfind(itemExpansion[expacID]:lower(), search:lower()) or
-                        expacID and strfind(itemExpansionAB[expacID]:lower(), search:lower()) or
-                        itemQuality and strfind(itemQualityT[itemQuality]:lower(), search:lower()) then
-                            button:LockHighlight()
-                            button:SetAlpha(1)
+                        if Baggins:IsRetailWow() then
+                            if strlen(search) == 0 then
+                                button:UnlockHighlight()
+                                button:SetAlpha(1)
+                            elseif itemName and strfind(itemName:lower(), search:lower()) or
+                            itemType and strfind(itemType:lower(), search:lower()) or
+                            itemSubType and strfind(itemSubType:lower(), search:lower()) or
+                            itemEquipLoc and strfind(itemEquipLoc:lower(), search:lower()) or
+                            bindType and strfind(itemBindTypes[bindType]:lower(), search:lower()) or
+                            bindType and strfind(itemBindTypesAB[bindType]:lower(), search:lower()) or
+                            expacID and strfind(itemExpansion[expacID]:lower(), search:lower()) or
+                            expacID and strfind(itemExpansionAB[expacID]:lower(), search:lower()) or
+                            itemQuality and strfind(itemQualityT[itemQuality]:lower(), search:lower()) then
+                                button:LockHighlight()
+                                button:SetAlpha(1)
+                            else
+                                button:UnlockHighlight()
+                                button:SetAlpha(tonumber(Baggins.db.profile.unmatchedAlpha) or 0.2)
+                            end
                         else
-                            button:UnlockHighlight()
-                            button:SetAlpha(tonumber(Baggins.db.profile.unmatchedAlpha) or 0.2)
+                            if strlen(search) == 0 then
+                                button:UnlockHighlight()
+                                button:SetAlpha(1)
+                            elseif itemName and strfind(itemName:lower(), search:lower()) or
+                            itemType and strfind(itemType:lower(), search:lower()) or
+                            itemSubType and strfind(itemSubType:lower(), search:lower()) or
+                            itemEquipLoc and strfind(itemEquipLoc:lower(), search:lower()) or
+                            bindType and strfind(itemBindTypes[bindType]:lower(), search:lower()) or
+                            bindType and strfind(itemBindTypesAB[bindType]:lower(), search:lower()) or
+                            itemQuality and strfind(itemQualityT[itemQuality]:lower(), search:lower()) then
+                                button:LockHighlight()
+                                button:SetAlpha(1)
+                            else
+                                button:UnlockHighlight()
+                                button:SetAlpha(tonumber(Baggins.db.profile.unmatchedAlpha) or 0.2)
+                            end
                         end
                     end
                 end
