@@ -4096,6 +4096,22 @@ function Baggins:BankFrameItemButton_Update(button)
     end
 end
 
+local S_UPGRADE_LEVEL   = "^" .. gsub(ITEM_UPGRADE_TOOLTIP_FORMAT, "%%d", "(%%d+)")
+local scantip = CreateFrame("GameTooltip", "BagginsUpgradeScanningTooltip", nil, "GameTooltipTemplate")
+local function GetItemUpgradeLevel(itemLink)
+    scantip:SetOwner(UIParent, "ANCHOR_NONE")
+    scantip:SetHyperlink(itemLink)
+    for i = 2, scantip:NumLines() do -- Line 1 is always the name so you can skip it.
+        local text = _G["BagginsUpgradeScanningTooltipTextLeft"..i]:GetText()
+        if text and text ~= "" then
+            local currentUpgradeLevel, maxUpgradeLevel = strmatch(text, S_UPGRADE_LEVEL)
+            if currentUpgradeLevel then
+                return currentUpgradeLevel, maxUpgradeLevel
+            end
+        end
+    end
+ end
+
 function Baggins:ItemUpgrade()
     for _, bag in ipairs(Baggins.bagframes) do --bagid,bag
         for _, section in ipairs(bag.sections) do --sectionid, section
@@ -4105,6 +4121,12 @@ function Baggins:ItemUpgrade()
                     if link then
                         BagID = button:GetParent():GetID()
                         SlotID = button:GetID()
+                        if C_ItemUpgrade.CanUpgradeItem(ItemLocation:CreateFromBagAndSlot(BagID, SlotID)) then
+                            local currentUpgradeLevel, maxUpgradeLevel = GetItemUpgradeLevel(link)
+                            if (currentUpgradeLevel and maxUpgradeLevel) == nil then
+                                button:SetAlpha(tonumber(Baggins.db.profile.unmatchedAlpha) or 0.2)
+                            end
+                        end
                         if not C_ItemUpgrade.CanUpgradeItem(ItemLocation:CreateFromBagAndSlot(BagID, SlotID)) then
                             button:SetAlpha(tonumber(Baggins.db.profile.unmatchedAlpha) or 0.2)
                         end
