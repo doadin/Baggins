@@ -2235,11 +2235,11 @@ do
         tinsert(menu, excludeFromCatMenu)
         excludeCategoryIndex = #menu
 
-    local itemID
-        local _, _, _, itemQuality, _, _, itemLink = GetContainerItemInfo(bag, slot)
-    if itemLink then
-      itemID = C_Item.GetItemID(ItemLocation:CreateFromBagAndSlot(bag, slot))
-    end
+        local itemID
+            local _, _, _, itemQuality, _, _, itemLink = GetContainerItemInfo(bag, slot)
+        if itemLink then
+          itemID = C_Item.GetItemID(ItemLocation:CreateFromBagAndSlot(bag, slot))
+        end
         local itemName, _, _, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc = GetItemInfo(itemLink)
         if not itemName then
             _, _, _, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc = GetItemInfo(itemID)
