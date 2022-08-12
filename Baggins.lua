@@ -450,8 +450,8 @@ function Baggins:OnEnable()
     self:RegisterEvent('SCRAPPING_MACHINE_SHOW', "OpenAllBags")
     self:RegisterEvent('SCRAPPING_MACHINE_CLOSE', "CloseAllBags")
     -- Patch 9.0.5 Added
-    --self:RegisterEvent('ITEM_UPGRADE_MASTER_OPENED', "OpenAllBags")
-    --self:RegisterEvent('ITEM_UPGRADE_MASTER_CLOSED', "CloseAllBags")
+    self:RegisterEvent('ITEM_UPGRADE_MASTER_OPENED', "ItemUpgrade")
+    self:RegisterEvent('ITEM_UPGRADE_MASTER_CLOSED', "ItemUpgrade")
     self:RegisterEvent('SOCKET_INFO_UPDATE', "OpenAllBags")
     --@end-retail@
 
@@ -4093,5 +4093,24 @@ end
 function Baggins:BankFrameItemButton_Update(button)
     if button ~= nil then
         return self.hooks.BankFrameItemButton_Update(button)
+    end
+end
+
+function Baggins:ItemUpgrade()
+    for _, bag in ipairs(Baggins.bagframes) do --bagid,bag
+        for _, section in ipairs(bag.sections) do --sectionid, section
+            for _, button in ipairs(section.items) do --buttonid, button
+                if button:IsVisible() then
+                    local link = GetContainerItemLink(button:GetParent():GetID(), button:GetID())
+                    if link then
+                        BagID = button:GetParent():GetID()
+                        SlotID = button:GetID()
+                        if not C_ItemUpgrade.CanUpgradeItem(ItemLocation:CreateFromBagAndSlot(BagID, SlotID)) then
+                            button:SetAlpha(tonumber(Baggins.db.profile.unmatchedAlpha) or 0.2)
+                        end
+                    end
+                end
+            end
+        end
     end
 end
