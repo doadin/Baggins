@@ -4113,26 +4113,28 @@ local function GetItemUpgradeLevel(itemLink)
  end
 
 function Baggins:ItemUpgrade()
-    for _, bag in ipairs(Baggins.bagframes) do --bagid,bag
-        for _, section in ipairs(bag.sections) do --sectionid, section
-            for _, button in ipairs(section.items) do --buttonid, button
-                if button:IsVisible() then
-                    local link = GetContainerItemLink(button:GetParent():GetID(), button:GetID())
-                    if link then
-                        BagID = button:GetParent():GetID()
-                        SlotID = button:GetID()
-                        if C_ItemUpgrade.CanUpgradeItem(ItemLocation:CreateFromBagAndSlot(BagID, SlotID)) then
-                            local currentUpgradeLevel, maxUpgradeLevel = GetItemUpgradeLevel(link)
-                            if (currentUpgradeLevel and maxUpgradeLevel) == nil then
+    _G.C_Timer.After(1, function()
+        for _, bag in ipairs(Baggins.bagframes) do --bagid,bag
+            for _, section in ipairs(bag.sections) do --sectionid, section
+                for _, button in ipairs(section.items) do --buttonid, button
+                    if button:IsVisible() then
+                        local link = GetContainerItemLink(button:GetParent():GetID(), button:GetID())
+                        if link then
+                            BagID = button:GetParent():GetID()
+                            SlotID = button:GetID()
+                            if C_ItemUpgrade.CanUpgradeItem(ItemLocation:CreateFromBagAndSlot(BagID, SlotID)) then
+                                local currentUpgradeLevel, maxUpgradeLevel = GetItemUpgradeLevel(link)
+                                if (currentUpgradeLevel and maxUpgradeLevel) == nil then
+                                    button:SetAlpha(tonumber(Baggins.db.profile.unmatchedAlpha) or 0.2)
+                                end
+                            end
+                            if not C_ItemUpgrade.CanUpgradeItem(ItemLocation:CreateFromBagAndSlot(BagID, SlotID)) then
                                 button:SetAlpha(tonumber(Baggins.db.profile.unmatchedAlpha) or 0.2)
                             end
-                        end
-                        if not C_ItemUpgrade.CanUpgradeItem(ItemLocation:CreateFromBagAndSlot(BagID, SlotID)) then
-                            button:SetAlpha(tonumber(Baggins.db.profile.unmatchedAlpha) or 0.2)
                         end
                     end
                 end
             end
         end
-    end
+    end)
 end
