@@ -29,8 +29,8 @@ end
 local prof1, prof2, archaeology, fishing, cooking = GetProfessions and GetProfessions()
 --print(prof1, prof2, archaeology, fishing, cooking)
 --local name, icon, skillLevel, maxSkillLevel, numAbilities, spelloffset, skillLine, skillModifier, specializationIndex, specializationOffset = GetProfessionInfo(index)
-local firstprof = GetProfessionInfo and select(7,GetProfessionInfo(prof1))
-local secondprof = GetProfessionInfo and select(7,GetProfessionInfo(prof2))
+local firstprof = prof1 and select(7,GetProfessionInfo(prof1))
+local secondprof = prof2 and select(7,GetProfessionInfo(prof2))
 --print(firstprof)
 --print(secondprof)
 
@@ -74,8 +74,8 @@ local profToIndex = {
     [197] = "Tailoring"
 }
 
-local firstprofName = profToIndex[firstprof]
-local secondprofName = profToIndex[secondprof]
+local firstprofName = firstprof and profToIndex[firstprof]
+local secondprofName = secondprof and profToIndex[secondprof]
 
 --
 local function MatchesArchaeology(bag, slot, _)
