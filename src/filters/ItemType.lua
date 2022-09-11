@@ -103,6 +103,30 @@ if AddOn:IsTBCWow() then
     }
 end
 
+if AddOn:IsWrathWow() then
+    -- scanned Sun Sep 11 04:42:32 2022 - patch 3.4.0
+    ItemTypes = {
+        [0]="Consumable",
+        [1]="Container",
+        [2]="Weapon",
+        [3]="Gem",
+        [4]="Armor",
+        [5]="Reagent",
+        [6]="Projectile",
+        [7]="Trade Goods",
+        [8]="Generic(OBSOLETE)",
+        [9]="Recipe",
+        [10]="Money(OBSOLETE)",
+        [11]="Quiver",
+        [12]="Quest",
+        [13]="Key",
+        [14]="Permanent(OBSOLETE)",
+        [15]="Miscellaneous",
+        [16]="Glyph",
+        [18]="WoW Token"
+    }
+end
+
   --[[
   local ItemTypes = {
    ["Weapon"] = {"One-Handed Axes", "Two-Handed Axes", "Bows", "Guns", "One-Handed Maces", "Two-Handed Maces", "Polearms", "One-Handed Swords", "Two-Handed Swords", "Staves", "Fist Weapons", "Miscellaneous", "Daggers", "Thrown", "Crossbows", "Wands", "Fishing Poles"},
@@ -196,7 +220,7 @@ AddOn:AddCustomRule("ItemType",
                         local tmp = {}
                         tmp.ALL = _G.ALL
                         if rule.itype and ItemTypes[rule.itype] then
-                            if AddOn:IsClassicWow() or AddOn:IsTBCWow() then
+                            if AddOn:IsClassicWow() or AddOn:IsTBCWow() or AddOn:IsWrathWow() then
                                 for _,k in pairs({GetAuctionItemSubClasses(rule.itype)}) do
                                     tmp[tostring(k)] = GetItemSubClassInfo(rule.itype, k) or "UNKNOWN"
                                 end
