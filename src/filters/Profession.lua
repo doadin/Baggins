@@ -25,16 +25,9 @@ local function CleanRule(rule)
 
 end
 
-
-
-
-
---print("test")
-
 local f = CreateFrame('Frame')
 f:RegisterEvent("LOADING_SCREEN_DISABLED")
 f:SetScript("OnEvent", function()
-    --print("test")
 
     local prof1, prof2, archaeology, fishing, cooking = GetProfessions()
     --print(prof1, prof2, archaeology, fishing, cooking)
@@ -43,7 +36,7 @@ f:SetScript("OnEvent", function()
     local secondprof = prof2 and select(7,GetProfessionInfo(prof2))
     --print(firstprof)
     --print(secondprof)
-    
+
     --local profToIndex = {
     --    ["Archaeology"] = 794,
     --    ["Alchemy"] = 171,
