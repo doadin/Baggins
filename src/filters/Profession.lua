@@ -26,58 +26,68 @@ local function CleanRule(rule)
 end
 
 
-local prof1, prof2, archaeology, fishing, cooking = GetProfessions()
---print(prof1, prof2, archaeology, fishing, cooking)
---local name, icon, skillLevel, maxSkillLevel, numAbilities, spelloffset, skillLine, skillModifier, specializationIndex, specializationOffset = GetProfessionInfo(index)
-local firstprof = prof1 and select(7,GetProfessionInfo(prof1))
-local secondprof = prof2 and select(7,GetProfessionInfo(prof2))
---print(firstprof)
---print(secondprof)
 
---local profToIndex = {
---    ["Archaeology"] = 794,
---    ["Alchemy"] = 171,
---    ["Blacksmith"] = 164,
---    ["Cooking"] = 184,
---    ["Enchanting"] = 333,
---    ["Engineer"] = 202,
---    ["First Aid"] = 129,
---    ["Fishing"] = 356,
---    ["Herbalism"] = 182,
---    ["Inscription"] = 773,
---    ["Jewelcrafting"] = 755,
---    ["Leatherworking"] = 165,
---    ["Mining"] = 186,
---    ["Skinning"] = 393,
---    ["Tailoring"] = 197
---}
---
---for profName,Index in pairs(profToIndex) do
---    
---end
 
-local profToIndex = {
-    [794] = "Archaeology",
-    [171] = "Alchemy",
-    [164] = "Blacksmith",
-    [184] = "Cooking",
-    [333] = "Enchanting",
-    [202] = "Engineer",
-    [129] = "First Aid",
-    [356] = "Fishing",
-    [182] = "Herbalism",
-    [773] = "Inscription",
-    [755] = "Jewelcrafting",
-    [165] = "Leatherworking",
-    [186] = "Mining",
-    [393] = "Skinning",
-    [197] = "Tailoring"
-}
 
-local firstprofName = firstprof and profToIndex[firstprof] or ""
-local secondprofName = secondprof and profToIndex[secondprof] or ""
---print(firstprofName)
---print(secondprofName)
+--print("test")
+
+local f = CreateFrame('Frame')
+f:RegisterEvent("LOADING_SCREEN_DISABLED")
+f:SetScript("OnEvent", function()
+    --print("test")
+
+    local prof1, prof2, archaeology, fishing, cooking = GetProfessions()
+    --print(prof1, prof2, archaeology, fishing, cooking)
+    --local name, icon, skillLevel, maxSkillLevel, numAbilities, spelloffset, skillLine, skillModifier, specializationIndex, specializationOffset = GetProfessionInfo(index)
+    local firstprof = prof1 and select(7,GetProfessionInfo(prof1))
+    local secondprof = prof2 and select(7,GetProfessionInfo(prof2))
+    --print(firstprof)
+    --print(secondprof)
+    
+    --local profToIndex = {
+    --    ["Archaeology"] = 794,
+    --    ["Alchemy"] = 171,
+    --    ["Blacksmith"] = 164,
+    --    ["Cooking"] = 184,
+    --    ["Enchanting"] = 333,
+    --    ["Engineer"] = 202,
+    --    ["First Aid"] = 129,
+    --    ["Fishing"] = 356,
+    --    ["Herbalism"] = 182,
+    --    ["Inscription"] = 773,
+    --    ["Jewelcrafting"] = 755,
+    --    ["Leatherworking"] = 165,
+    --    ["Mining"] = 186,
+    --    ["Skinning"] = 393,
+    --    ["Tailoring"] = 197
+    --}
+    --
+    --for profName,Index in pairs(profToIndex) do
+    --    
+    --end
+    
+    local profToIndex = {
+        [794] = "Archaeology",
+        [171] = "Alchemy",
+        [164] = "Blacksmith",
+        [184] = "Cooking",
+        [333] = "Enchanting",
+        [202] = "Engineer",
+        [129] = "First Aid",
+        [356] = "Fishing",
+        [182] = "Herbalism",
+        [773] = "Inscription",
+        [755] = "Jewelcrafting",
+        [165] = "Leatherworking",
+        [186] = "Mining",
+        [393] = "Skinning",
+        [197] = "Tailoring"
+    }
+    
+    local firstprofName = firstprof and profToIndex[firstprof] or ""
+    local secondprofName = secondprof and profToIndex[secondprof] or ""
+    --print(firstprofName)
+    --print(secondprofName)
 
 --
 local function MatchesArchaeology(bag, slot, _)
@@ -288,3 +298,5 @@ AddOn:AddCustomRule("Tailoring", {
     Matches = MatchesTailoring,
     CleanRule = CleanRule
 })
+
+end)
