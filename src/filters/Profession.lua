@@ -26,11 +26,11 @@ local function CleanRule(rule)
 end
 
 
-local prof1, prof2, archaeology, fishing, cooking = GetProfessions()
+local prof1, prof2, archaeology, fishing, cooking = GetProfessions and GetProfessions()
 --print(prof1, prof2, archaeology, fishing, cooking)
 --local name, icon, skillLevel, maxSkillLevel, numAbilities, spelloffset, skillLine, skillModifier, specializationIndex, specializationOffset = GetProfessionInfo(index)
-local firstprof = select(7,GetProfessionInfo(prof1))
-local secondprof = select(7,GetProfessionInfo(prof2))
+local firstprof = GetProfessionInfo and select(7,GetProfessionInfo(prof1))
+local secondprof = GetProfessionInfo and select(7,GetProfessionInfo(prof2))
 --print(firstprof)
 --print(secondprof)
 
