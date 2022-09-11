@@ -26,7 +26,7 @@ local function CleanRule(rule)
 end
 
 
-local prof1, prof2, archaeology, fishing, cooking = GetProfessions and GetProfessions()
+local prof1, prof2, archaeology, fishing, cooking = GetProfessions()
 --print(prof1, prof2, archaeology, fishing, cooking)
 --local name, icon, skillLevel, maxSkillLevel, numAbilities, spelloffset, skillLine, skillModifier, specializationIndex, specializationOffset = GetProfessionInfo(index)
 local firstprof = prof1 and select(7,GetProfessionInfo(prof1))
@@ -74,12 +74,14 @@ local profToIndex = {
     [197] = "Tailoring"
 }
 
-local firstprofName = firstprof and profToIndex[firstprof]
-local secondprofName = secondprof and profToIndex[secondprof]
+local firstprofName = firstprof and profToIndex[firstprof] or ""
+local secondprofName = secondprof and profToIndex[secondprof] or ""
+--print(firstprofName)
+--print(secondprofName)
 
 --
 local function MatchesArchaeology(bag, slot, _)
-    if firstprofName or secondprofName == "Archaeology" then
+    if firstprofName == "Archaeology" or secondprofName == "Archaeology" then
         return true
     end
 end
@@ -93,7 +95,7 @@ AddOn:AddCustomRule("Archaeology", {
 
 --
 local function MatchesAlchemy(bag, slot, _)
-    if firstprofName or secondprofName == "Alchemy" then
+    if firstprofName == "Alchemy" or secondprofName == "Alchemy" then
         return true
     end
 end
@@ -107,7 +109,7 @@ AddOn:AddCustomRule("Alchemy", {
 
 --
 local function MatchesBlacksmith(bag, slot, _)
-    if firstprofName or secondprofName == "Blacksmith" then
+    if firstprofName == "Blacksmith" or secondprofName == "Blacksmith" then
         return true
     end
 end
@@ -121,7 +123,7 @@ AddOn:AddCustomRule("Blacksmith", {
 
 --
 local function MatchesCooking(bag, slot, _)
-    if firstprofName or secondprofName == "Cooking" then
+    if firstprofName == "Cooking" or secondprofName == "Cooking" then
         return true
     end
 end
@@ -135,7 +137,7 @@ AddOn:AddCustomRule("Cooking", {
 
 --
 local function MatchesEnchanting(bag, slot, _)
-    if firstprofName or secondprofName == "Enchanting" then
+    if firstprofName == "Enchanting" or secondprofName == "Enchanting" then
         return true
     end
 end
@@ -149,7 +151,7 @@ AddOn:AddCustomRule("Enchanting", {
 
 --
 local function MatchesEngineer(bag, slot, _)
-    if firstprofName or secondprofName == "Engineer" then
+    if firstprofName == "Engineer" or secondprofName == "Engineer" then
         return true
     end
 end
@@ -163,7 +165,7 @@ AddOn:AddCustomRule("Engineer", {
 
 --
 local function MatchesFirstAid(bag, slot, _)
-    if firstprofName or secondprofName == "Engineer" then
+    if firstprofName == "First Aid" or secondprofName == "First Aid" then
         return true
     end
 end
@@ -177,7 +179,7 @@ AddOn:AddCustomRule("First Aid", {
 
 --
 local function MatchesFishing(bag, slot, _)
-    if firstprofName or secondprofName == "Fishing" then
+    if firstprofName == "Fishing" or secondprofName == "Fishing" then
         return true
     end
 end
@@ -191,7 +193,7 @@ AddOn:AddCustomRule("Fishing", {
 
 --
 local function MatchesHerbalism(bag, slot, _)
-    if firstprofName or secondprofName == "Herbalism" then
+    if firstprofName == "Herbalism" or secondprofName == "Herbalism" then
         return true
     end
 end
@@ -205,7 +207,7 @@ AddOn:AddCustomRule("Herbalism", {
 
 --
 local function MatchesInscription(bag, slot, _)
-    if firstprofName or secondprofName == "Inscription" then
+    if firstprofName == "Inscription" or secondprofName == "Inscription" then
         return true
     end
 end
@@ -219,7 +221,7 @@ AddOn:AddCustomRule("Inscription", {
 
 --
 local function MatchesJewelcrafting(bag, slot, _)
-    if firstprofName or secondprofName == "Jewelcrafting" then
+    if firstprofName == "Jewelcrafting" or secondprofName == "Jewelcrafting" then
         return true
     end
 end
@@ -233,7 +235,7 @@ AddOn:AddCustomRule("Jewelcrafting", {
 
 --
 local function MatchesLeatherworking(bag, slot, _)
-    if firstprofName or secondprofName == "Leatherworking" then
+    if firstprofName == "Leatherworking" or secondprofName == "Leatherworking" then
         return true
     end
 end
@@ -247,7 +249,7 @@ AddOn:AddCustomRule("Leatherworking", {
 
 --
 local function MatchesMining(bag, slot, _)
-    if firstprofName or secondprofName == "Mining" then
+    if firstprofName == "Mining" or secondprofName == "Mining" then
         return true
     end
 end
@@ -261,7 +263,7 @@ AddOn:AddCustomRule("Mining", {
 
 --
 local function MatchesSkinning(bag, slot, _)
-    if firstprofName or secondprofName == "Skinning" then
+    if firstprofName == "Skinning" or secondprofName == "Skinning" then
         return true
     end
 end
@@ -275,7 +277,7 @@ AddOn:AddCustomRule("Skinning", {
 
 --
 local function MatchesTailoring(bag, slot, _)
-    if firstprofName or secondprofName == "Tailoring" then
+    if firstprofName == "Tailoring" or secondprofName == "Tailoring" then
         return true
     end
 end
