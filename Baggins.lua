@@ -36,6 +36,7 @@ local IsBagOpen = _G.IsBagOpen
 local ReagentBankButtonIDToInvSlotID, GetContainerItemQuestInfo, DepositReagentBank, IsReagentBankUnlocked =
       _G.ReagentBankButtonIDToInvSlotID, _G.GetContainerItemQuestInfo, _G.DepositReagentBank, _G.IsReagentBankUnlocked
 local IsContainerItemAnUpgrade = _G.IsContainerItemAnUpgrade
+local C_ItemUpgrade = _G.C_ItemUpgrade
 --@end-retail@
 
 local C_Item, ItemLocation, InCombatLockdown, IsModifiedClick, GetDetailedItemLevelInfo, GetContainerItemID, InRepairMode, KeyRingButtonIDToInvSlotID, C_PetJournal, C_NewItems, PlaySound =
@@ -44,7 +45,11 @@ local C_Item, ItemLocation, InCombatLockdown, IsModifiedClick, GetDetailedItemLe
 local WOW_PROJECT_ID = _G.WOW_PROJECT_ID
 local WOW_PROJECT_CLASSIC = _G.WOW_PROJECT_CLASSIC
 local WOW_PROJECT_BURNING_CRUSADE_CLASSIC = _G.WOW_PROJECT_BURNING_CRUSADE_CLASSIC
+local WOW_PROJECT_WRATH_CLASSIC = _G.WOW_PROJECT_WRATH_CLASSIC
 local WOW_PROJECT_MAINLINE = _G.WOW_PROJECT_MAINLINE
+local LE_EXPANSION_LEVEL_CURRENT = _G.LE_EXPANSION_LEVEL_CURRENT
+local LE_EXPANSION_BURNING_CRUSADE = _G.LE_EXPANSION_BURNING_CRUSADE
+local LE_EXPANSION_WRATH_OF_THE_LICH_KING = _G.LE_EXPANSION_WRATH_OF_THE_LICH_KING
 
 -- GLOBALS: UIParent, GameTooltip, BankFrame, CloseBankFrame, TEXTURE_ITEM_QUEST_BANG, TEXTURE_ITEM_QUEST_BORDER, REAGENTBANK_CONTAINER, REPAIR_COST, SOUNDKIT
 -- GLOBALS: CoinPickupFrame, ShowInspectCursor, this, CooldownFrame_Set, MerchantFrame, SetTooltipMoney, BagginsCategoryAddDropdown, error, CooldownFrame_SetTimer, StaticPopup_Show
@@ -3156,7 +3161,7 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
 
     if p.EnableItemUpgradeArrow then
         local data = _G.PawnGetItemData and _G.PawnGetItemData(link)
-        local itemIsUpgrade = _G.PawnIsContainerItemAnUpgrade and _G.PawnIsContainerItemAnUpgrade(bag, slot) or _G.IsContainerItemAnUpgrade and _G.IsContainerItemAnUpgrade(bag, slot) or data and _G.PawnIsItemAnUpgrade(data)
+        local itemIsUpgrade = _G.PawnIsContainerItemAnUpgrade and _G.PawnIsContainerItemAnUpgrade(bag, slot) or IsContainerItemAnUpgrade and IsContainerItemAnUpgrade(bag, slot) or data and _G.PawnIsItemAnUpgrade(data)
         button.UpgradeIcon:SetShown(itemIsUpgrade or false)
     end
 
@@ -3165,7 +3170,7 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
         if link then
             --itemName, itemLink, itemQuality, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount,itemEquipLoc, itemTexture, sellPrice, classID, subclassID, bindType, expacID, setID, isCraftingReagent
             local _, _, _, _, _, itemType = GetItemInfo(link)
-            local item = Item:CreateFromBagAndSlot(bag, slot)
+            local item = Item:CreateFromBagAndSlot(bag, slot) --luacheck: ignore 113
             local level = item and item:GetCurrentItemLevel() or 0
             if level and itemType == "Armor" or itemType == "Weapon" then
                 --text:SetText(itemLevel)
@@ -3925,11 +3930,11 @@ function Baggins:ToggleBag(bagid)
     end
 end
 
-function Baggins:OpenBag(bagid,noupdate)
+function Baggins:OpenBag(bagid,_) --bagid,noupdate
 
-    if self.db.profile.newitemduration > 0 then
+    --if self.db.profile.newitemduration > 0 then
         --Baggins:SaveItemCounts()
-    end
+    --end
     --self:SetBagUpdateSpeed(true);	-- indicate bags open
     local p = self.db.profile
     if not self:IsActive() then
@@ -4116,7 +4121,7 @@ local function GetItemUpgradeLevel(itemLink)
     end
  end
 
-function Baggins:ItemUpgrade()
+function Baggins:ItemUpgrade() --luacheck: ignore 212
     _G.C_Timer.After(1, function()
         for _, bag in ipairs(Baggins.bagframes) do --bagid,bag
             for _, section in ipairs(bag.sections) do --sectionid, section
@@ -4124,8 +4129,8 @@ function Baggins:ItemUpgrade()
                     if button:IsVisible() then
                         local link = GetContainerItemLink(button:GetParent():GetID(), button:GetID())
                         if link then
-                            BagID = button:GetParent():GetID()
-                            SlotID = button:GetID()
+                            local BagID = button:GetParent():GetID()
+                            local SlotID = button:GetID()
                             if C_ItemUpgrade.CanUpgradeItem(ItemLocation:CreateFromBagAndSlot(BagID, SlotID)) then
                                 local currentUpgradeLevel, maxUpgradeLevel = GetItemUpgradeLevel(link)
                                 if (currentUpgradeLevel and maxUpgradeLevel) == nil then
