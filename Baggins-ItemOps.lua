@@ -133,7 +133,7 @@ function Baggins:MoveToSpecialtyBags(bank,testonly)
                     if link and (testonly or not locked) then
                         local itemFamily = GetItemFamily(link)
                         if itemFamily and itemFamily~=0 then	-- itemFamily can apparently be null? (before item is cached?)
-                            if select(9, GetItemInfo(link))=="INVTYPE_BAG" then
+                            if select(9, GetItemInfo(link)) == "INVTYPE_BAG" then --luacheck: ignore 542
                                 --Baggins:Debug('specialtyTargetBags Item Info', select(9, GetItemInfo(link))=="INVTYPE_BAG")
                             else
                                 for bagFamilySpecial,dest in pairs(specialtyTargetBags) do
