@@ -1,4 +1,4 @@
---luacheck: no max line length
+﻿--luacheck: no max line length
 
 local NumberofAddons = _G.GetNumAddOns()
 local DisableAddOn = _G.DisableAddOn
@@ -185,46 +185,8 @@ function BagginsSearch:Search(search) --luacheck: ignore 212
         end
     end
 end
-function BagginsSearch:UpdateEditBoxPosition() --luacheck: ignore 212
-    if Baggins.db.profile.enableSearch then
-        if not _G.BagginsSearch_EditBox then
-            BagginsSearch:BagginsSearch_CreateEditBox()
-        end
-    end
-    if not Baggins.db.profile.enableSearch then
-        if _G.BagginsSearch_EditBox then
-            _G.BagginsSearch_EditBox:Hide()
-            return
-        end
-    end
-    local initialcorner = Baggins.db.profile.layoutanchor
-    local lastBag
-    if (initialcorner == "BOTTOMRIGHT" or initialcorner == "BOTTOMLEFT") then
-      if type(Baggins.bagframes) == "table" then
-        for bagid, _ in ipairs(Baggins.bagframes) do --bagid, bag
-          if Baggins.bagframes[bagid]:IsVisible() then
-            lastBag = bagid
-          end
-        end
-      end
-    elseif (initialcorner == "TOPRIGHT" or initialcorner == "TOPLEFT") then
-     if Baggins.bagframes[1]:IsVisible() then
-        lastBag = 1
-      end
-    end
-    if _G.BagginsSearch_EditBox and lastBag then
-        _G.BagginsSearch_EditBox:ClearAllPoints()
-        _G.BagginsSearch_EditBox:SetPoint("BOTTOMRIGHT", "BagginsBag"..lastBag, "TOPRIGHT", 0, 0)
-        _G.BagginsSearch_EditBox:SetWidth(getglobal("BagginsBag"..lastBag):GetWidth())
-        _G.BagginsSearch_EditBox:Show()
-    else
-        if _G.BagginsSearch_EditBox then
-            _G.BagginsSearch_EditBox:Hide()
-        end
-    end
-end
 
-function BagginsSearch:BagginsSearch_CreateEditBox()
+local function BagginsSearch_CreateEditBox()
     -- Create Baggins Search EditBox
     local LSM = LibStub:GetLibrary("LibSharedMedia-3.0", true) --luacheck:ignore 113
     local editBox = CreateFrame('EditBox', 'BagginsSearch_EditBox', UIParent, BackdropTemplateMixin and "BackdropTemplate") --luacheck: ignore 113
@@ -288,6 +250,45 @@ function BagginsSearch:BagginsSearch_CreateEditBox()
 
 end
 
+function BagginsSearch:UpdateEditBoxPosition() --luacheck: ignore 212
+    if Baggins.db.profile.enableSearch then
+        if not _G.BagginsSearch_EditBox then
+            BagginsSearch_CreateEditBox()
+        end
+    end
+    if not Baggins.db.profile.enableSearch then
+        if _G.BagginsSearch_EditBox then
+            _G.BagginsSearch_EditBox:Hide()
+            return
+        end
+    end
+    local initialcorner = Baggins.db.profile.layoutanchor
+    local lastBag
+    if (initialcorner == "BOTTOMRIGHT" or initialcorner == "BOTTOMLEFT") then
+      if type(Baggins.bagframes) == "table" then
+        for bagid, _ in ipairs(Baggins.bagframes) do --bagid, bag
+          if Baggins.bagframes[bagid]:IsVisible() then
+            lastBag = bagid
+          end
+        end
+      end
+    elseif (initialcorner == "TOPRIGHT" or initialcorner == "TOPLEFT") then
+     if Baggins.bagframes[1]:IsVisible() then
+        lastBag = 1
+      end
+    end
+    if _G.BagginsSearch_EditBox and lastBag then
+        _G.BagginsSearch_EditBox:ClearAllPoints()
+        _G.BagginsSearch_EditBox:SetPoint("BOTTOMRIGHT", "BagginsBag"..lastBag, "TOPRIGHT", 0, 0)
+        _G.BagginsSearch_EditBox:SetWidth(getglobal("BagginsBag"..lastBag):GetWidth())
+        _G.BagginsSearch_EditBox:Show()
+    else
+        if _G.BagginsSearch_EditBox then
+            _G.BagginsSearch_EditBox:Hide()
+        end
+    end
+end
+
 Baggins:RegisterSignal("Baggins_UpdateBagScale",function() --luacheck: ignore 212
     if _G.BagginsSearch_EditBox then
         _G.BagginsSearch_EditBox:SetScale(Baggins.db.profile.scale)
@@ -334,7 +335,7 @@ local f = CreateFrame('Frame')
 f:RegisterEvent("PLAYER_ENTERING_WORLD")
 f:SetScript("OnEvent", function()
     if Baggins.db.profile.enableSearch then
-        BagginsSearch:BagginsSearch_CreateEditBox()
+        BagginsSearch_CreateEditBox()
         BagginsSearch:UpdateEditBoxPosition()
         _G.BagginsSearch_EditBox:SetScale(Baggins.db.profile.scale)
     end
