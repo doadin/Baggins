@@ -1,4 +1,4 @@
-﻿--luacheck: no max line length
+--luacheck: no max line length
 
 local NumberofAddons = _G.GetNumAddOns()
 local DisableAddOn = _G.DisableAddOn
@@ -153,7 +153,8 @@ function BagginsSearch:Search(search) --luacheck: ignore 212
                             bindType and strfind(itemBindTypesAB[bindType]:lower(), search:lower()) or
                             expacID and strfind(itemExpansion[expacID]:lower(), search:lower()) or
                             expacID and strfind(itemExpansionAB[expacID]:lower(), search:lower()) or
-                            itemQuality and strfind(itemQualityT[itemQuality]:lower(), search:lower()) then
+                            itemQuality and strfind(itemQualityT[itemQuality]:lower(), search:lower()) or
+                            setID and strfind(setID:lower(), search:lower()) then
                                 button:LockHighlight()
                                 button:SetAlpha(1)
                             else
