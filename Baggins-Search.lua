@@ -154,7 +154,7 @@ function BagginsSearch:Search(search) --luacheck: ignore 212
                             expacID and strfind(itemExpansion[expacID]:lower(), search:lower()) or
                             expacID and strfind(itemExpansionAB[expacID]:lower(), search:lower()) or
                             itemQuality and strfind(itemQualityT[itemQuality]:lower(), search:lower()) or
-                            setID and strfind(setID:lower(), search:lower()) then
+                            setID and strfind(setID, search) then
                                 button:LockHighlight()
                                 button:SetAlpha(1)
                             else
