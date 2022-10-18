@@ -38,9 +38,9 @@ for i=0, NUM_BAG_SLOTS do
     tinsert(charBags, i);
 end
 
---[===[@non-retail@
-tinsert(charBags, KEYRING_CONTAINER)
---@end-non-retail@]===]
+if Baggins:IsClassicWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() then
+    tinsert(charBags, KEYRING_CONTAINER)
+end
 
 
 ------------------------------------------------------
@@ -141,20 +141,28 @@ function Baggins:MoveToSpecialtyBags(bank,testonly)
                                 --Baggins:Debug('specialtyTargetBags Item Info', select(9, GetItemInfo(link))=="INVTYPE_BAG")
                             else
                                 for bagFamilySpecial,dest in pairs(specialtyTargetBags) do
-                                    --@retail@
-                                    if band(itemFamily,bagFamilySpecial) ~= 0 then
-                                    --@end-retail@
-                                    --[===[@non-retail@
-                                    if itemFamily == bagFamilySpecial then
-                                    --@end-non-retail@]===]
-                                        if testonly then return true end
-                                        compressLoopProtect = compressLoopProtect - 1
-                                        if compressLoopProtect < 0 then return end
+                                    if Baggins:IsRetailWow() then
+                                        if band(itemFamily,bagFamilySpecial) ~= 0 then
+                                            if testonly then return true end
+                                            compressLoopProtect = compressLoopProtect - 1
+                                            if compressLoopProtect < 0 then return end
+                                            PickupContainerItem(bag,slot)
+                                            PickupContainerItem(floor(dest/1000),dest%1000)
+                                            self:ScheduleTimer("MoveToSpecialtyBags", 0.1, bank)
+                                            return
+                                        end
+                                    end
 
-                                        PickupContainerItem(bag,slot)
-                                        PickupContainerItem(floor(dest/1000),dest%1000)
-                                        self:ScheduleTimer("MoveToSpecialtyBags", 0.1, bank)
-                                        return
+                                    if Baggins:IsClassicWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() then
+                                        if itemFamily == bagFamilySpecial then
+                                            if testonly then return true end
+                                            compressLoopProtect = compressLoopProtect - 1
+                                            if compressLoopProtect < 0 then return end
+                                            PickupContainerItem(bag,slot)
+                                            PickupContainerItem(floor(dest/1000),dest%1000)
+                                            self:ScheduleTimer("MoveToSpecialtyBags", 0.1, bank)
+                                            return
+                                        end
                                     end
                                 end
                             end
