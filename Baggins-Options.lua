@@ -536,7 +536,7 @@ function Baggins:RebuildOptions()
                     desc = L["Resets the new items highlights."],
                     order = 35,
                     func = function()
-                        self:SaveItemCounts("reset")
+                        self:SaveItemCounts()
                         self:ForceFullUpdate()
                     end,
                     disabled = function() return not p.highlightnew end,
@@ -2853,7 +2853,7 @@ end
 local bagDropdownMenuFrame = CreateFrame("Frame", "Baggins_BagMenuFrame", UIParent, "UIDropDownMenuTemplate")
 local menu = {}
 local function resetNewItems()
-    Baggins:SaveItemCounts("reset")
+    Baggins:SaveItemCounts()
     Baggins:ForceFullUpdate()
 end
 

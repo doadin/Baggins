@@ -23,7 +23,7 @@ local GetItemSubClassInfo = _G.GetItemSubClassInfo
 local ContainerIDToInventoryID = _G.ContainerIDToInventoryID
 local GetInventoryItemLink = _G.GetInventoryItemLink
 local GetItemInfoInstant = _G.GetItemInfoInstant
-local LE_ITEM_CLASS_CONTAINER = _G.LE_ITEM_CLASS_CONTAINER or Enum.ItemClass.Container
+local LE_ITEM_CLASS_CONTAINER = _G.LE_ITEM_CLASS_CONTAINER
 local NUM_BAG_SLOTS = _G.NUM_BAG_SLOTS
 local NUM_BANKBAGSLOTS = _G.NUM_BANKBAGSLOTS
 

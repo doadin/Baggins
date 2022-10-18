@@ -27,14 +27,14 @@ local band =
 local GetItemCount, GetItemInfo, GetInventoryItemLink, GetItemQualityColor, GetItemFamily, BankButtonIDToInvSlotID, GetNumBankSlots =
       _G.GetItemCount, _G.GetItemInfo, _G.GetInventoryItemLink, _G.GetItemQualityColor, _G.GetItemFamily, _G.BankButtonIDToInvSlotID, _G.GetNumBankSlots
 local GetContainerItemInfo, GetContainerItemLink, GetContainerNumFreeSlots, GetContainerItemCooldown =
-      _G.C_Container.GetContainerItemInfo or _G.GetContainerItemInfo, _G.C_Container.GetContainerItemLink or _G.GetContainerItemLink, _G.C_Container.GetContainerNumFreeSlots or _G.GetContainerNumFreeSlots, _G.C_Container.GetContainerItemCooldown or _G.GetContainerItemCooldown
+      _G.GetContainerItemInfo, _G.GetContainerItemLink, _G.GetContainerNumFreeSlots, _G.GetContainerItemCooldown
 local BANK_PANELS = _G.BANK_PANELS
 local ItemButtonUtil = _G.ItemButtonUtil
 local IsBagOpen = _G.IsBagOpen
 
 --@retail@
 local ReagentBankButtonIDToInvSlotID, GetContainerItemQuestInfo, DepositReagentBank, IsReagentBankUnlocked =
-      _G.ReagentBankButtonIDToInvSlotID, _G.C_Container.GetContainerItemQuestInfo or _G.GetContainerItemQuestInfo, _G.DepositReagentBank, _G.IsReagentBankUnlocked
+      _G.ReagentBankButtonIDToInvSlotID, _G.GetContainerItemQuestInfo, _G.DepositReagentBank, _G.IsReagentBankUnlocked
 local IsContainerItemAnUpgrade = _G.IsContainerItemAnUpgrade
 local C_ItemUpgrade = _G.C_ItemUpgrade
 --@end-retail@
@@ -456,12 +456,10 @@ function Baggins:OnEnable()
 
     --@retail@
     -- Patch 8.0.1 Added
-    -- Removed 10.0
-    --self:RegisterEvent('SCRAPPING_MACHINE_SHOW', "OpenAllBags")
-    --self:RegisterEvent('SCRAPPING_MACHINE_CLOSE', "CloseAllBags")
+    self:RegisterEvent('SCRAPPING_MACHINE_SHOW', "OpenAllBags")
+    self:RegisterEvent('SCRAPPING_MACHINE_CLOSE', "CloseAllBags")
     -- Patch 9.0.5 Added
-    -- Removed 10.0
-    --self:RegisterEvent('ITEM_UPGRADE_MASTER_OPENED', "ItemUpgrade")
+    self:RegisterEvent('ITEM_UPGRADE_MASTER_OPENED', "ItemUpgrade")
     --self:RegisterEvent('ITEM_UPGRADE_MASTER_CLOSED', "ItemUpgrade")
     self:RegisterEvent('SOCKET_INFO_UPDATE', "OpenAllBags")
     --@end-retail@
@@ -582,14 +580,9 @@ end
 local INVSLOT_LAST_EQUIPPED, CONTAINER_BAG_OFFSET, NUM_BAG_SLOTS =
       INVSLOT_LAST_EQUIPPED, CONTAINER_BAG_OFFSET, NUM_BAG_SLOTS
 
-function Baggins:SaveItemCounts(reset)
+function Baggins:SaveItemCounts()
     local itemcounts = self.itemcounts
-    if type(itemcounts) == "table" and reset == "reset" then
-        wipe(itemcounts)
-    end
-    if type(itemcounts) ~= "table" then
-        itemcounts = {}
-    end
+    wipe(itemcounts)
     for _,_,link in LBU:Iterate("BAGS") do	-- includes keyring
         if link then
             local id = tonumber(link:match("item:(%d+)"))
@@ -665,7 +658,7 @@ function Baggins:IsCompressed(itemID)
                 end
             end
 
-            if Baggins:IsClassicWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() then
+            if Baggins:IsClassicWow() or Baggins:IsTBCWow() then
                 if p.CompressShards and itemFamily ~=3 and itemEquipLoc~="INVTYPE_BAG" then
                     return true
                 end
@@ -1168,17 +1161,12 @@ function Baggins:OnBagUpdate(_,bagid)
     self:RunBagUpdates()
 end
 
-local LastRunBagUpdates
 function Baggins:RunBagUpdates()
-    LastRunBagUpdates = time()
-    if firstbagupdate and LastRunBagUpdates and time() - LastRunBagUpdates < 1 then
-        return
-    end
     if firstbagupdate then
         firstbagupdate = false
+        self:SaveItemCounts()
         self:ForceFullUpdate()
     end
-    self:SaveItemCounts()
 
     if not next(bagupdatebucket) then
         return
@@ -3468,7 +3456,7 @@ end
 
 function Baggins:OnClick()
     if IsShiftKeyDown() then
-        self:SaveItemCounts("reset")
+        self:SaveItemCounts()
         self:ForceFullUpdate()
     elseif IsControlKeyDown() and self.db.profile.layout == 'manual' then
         self.db.profile.lock = not self.db.profile.lock

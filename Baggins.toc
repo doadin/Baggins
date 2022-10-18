@@ -111,7 +111,7 @@ src\filters\Profession.lua
 #@end-retail@
 src\filters\Quality.lua
 src\filters\Teleport.lua
-#src\filters\Tooltip.lua
+src\filters\Tooltip.lua
 #@retail@
 src\filters\Toy.lua
 #@end-retail@
