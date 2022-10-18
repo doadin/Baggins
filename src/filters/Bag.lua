@@ -47,14 +47,15 @@ local function BuildBagNames()
     end
 
     -- Classic specific bag
-    --[===[@non-retail@
-    BagNames[KEYRING_CONTAINER] = L["KeyRing"]
-    --@end-non-retail@]===]
+    if Baggins:IsClassicWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() then
+        BagNames[KEYRING_CONTAINER] = L["KeyRing"]
+    end
+
 
     -- Retail specific bag
-    --@retail@
-    BagNames[REAGENTBANK_CONTAINER] = L["Reagent Bank"]
-    --@end-retail@
+    if Baggins:IsRetailWow() then
+        BagNames[REAGENTBANK_CONTAINER] = L["Reagent Bank"]
+    end
 
 end
 
