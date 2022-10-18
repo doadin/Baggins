@@ -51,7 +51,6 @@ local function BuildBagNames()
         BagNames[KEYRING_CONTAINER] = L["KeyRing"]
     end
 
-
     -- Retail specific bag
     if Baggins:IsRetailWow() then
         BagNames[REAGENTBANK_CONTAINER] = L["Reagent Bank"]
