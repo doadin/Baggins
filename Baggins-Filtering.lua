@@ -25,8 +25,7 @@ local REAGENTBANK_CONTAINER = _G.REAGENTBANK_CONTAINER
 local NUM_BAG_SLOTS = _G.NUM_BAG_SLOTS
 local NUM_BANKBAGSLOTS = _G.NUM_BANKBAGSLOTS
 
-local GetContainerItemInfo, GetContainerNumFreeSlots, GetContainerNumSlots =
-      _G.GetContainerItemInfo, _G.GetContainerNumFreeSlots, _G.GetContainerNumSlots
+local GetContainerItemInfo, GetContainerNumFreeSlots, GetContainerNumSlots = _G.C_Container.GetContainerItemInfo or _G.GetContainerItemInfo, _G.C_Container.GetContainerNumFreeSlots or _G.GetContainerNumFreeSlots, _G.C_Container.GetContainerNumSlots or _G.GetContainerNumSlots
 local C_Item, ItemLocation = _G.C_Item, _G.ItemLocation
 
 -- Libs

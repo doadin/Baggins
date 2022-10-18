@@ -11,7 +11,7 @@ local pairs, ipairs, next, select, format, wipe =
       _G.pairs, _G.ipairs, _G.next, _G.select,  _G.format, _G.wipe
 local floor = _G.floor
 local GetItemInfo, GetContainerItemLink, GetContainerItemInfo, GetContainerNumFreeSlots, GetContainerNumSlots, GetItemFamily =
-      _G.GetItemInfo, _G.GetContainerItemLink, _G.GetContainerItemInfo, _G.GetContainerNumFreeSlots, _G.GetContainerNumSlots, _G.GetItemFamily
+      _G.GetItemInfo, _G.C_Container.GetContainerItemLink or _G.GetContainerItemLink, _G.C_Container.GetContainerItemInfo or _G.GetContainerItemInfo, _G.C_Container.GetContainerNumFreeSlots or _G.GetContainerNumFreeSlots, _G.C_Container.GetContainerNumSlots or _G.GetContainerNumSlots, _G.GetItemFamily
 local PickupContainerItem, SplitContainerItem, IsShiftKeyDown =
       _G.PickupContainerItem, _G.SplitContainerItem, _G.IsShiftKeyDown
 local band =
@@ -70,7 +70,7 @@ function Baggins:DoCompressBags(bank,testonly)
             lockedSlots = lockedSlots or locked
             if link and (testonly or not locked) then
                 local _, _, _, _, _, _, _, iMaxStack = GetItemInfo(link)
-                if iMaxStack and itemCount < iMaxStack then
+                if iMaxStack and itemCount and itemCount < iMaxStack then
                     local itemid = link:match("item:(-?[%d]+):")
                     if(incompleteSlots[itemid]) then	-- see if we have an incomplete stack of this sitting around
                         if testonly then return true end	-- Yup, we've got something that needs compressing!
