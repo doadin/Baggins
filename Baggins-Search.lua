@@ -207,7 +207,12 @@ local function BagginsSearch_CreateEditBox()
     background:SetTexture("Interface/ChatFrame/ChatFrameBackground")
     background:SetPoint("TOPLEFT", 4, -4)
     background:SetPoint("BOTTOMRIGHT", -4, 4)
-    --background:SetGradient("VERTICAL", 0.2, 0.9)
+    local version, build, date, tocversion = GetBuildInfo()
+    if tocversion >= 100000 then
+        background:SetGradient("VERTICAL", CreateColor(11/255, 53/255, 43/255, 1), CreateColor(21/255, 89/255, 72/255, 1))
+    else
+        background:SetGradientAlpha("VERTICAL", 0, 0, 0, 0.9, 0.2, 0.2, 0.2, 0.9)
+    end
 
     editBox:SetScript("OnHide", function(self)
             self:SetText("")
