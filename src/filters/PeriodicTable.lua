@@ -14,7 +14,7 @@ local AddOn = _G[AddOnName]
 -- WoW API
 local pairs, type, tonumber, wipe, ceil =
       _G.pairs, _G.type, _G.tonumber, _G.wipe, _G.ceil
-local GetContainerItemLink = _G.GetContainerItemLink
+local GetContainerItemLink = _G.C_Container and _G.C_Container.GetContainerItemLink or _G.GetContainerItemLink
 local EasyMenu = _G.EasyMenu
 local tinsert, tsort =
       _G.tinsert, _G.table.sort

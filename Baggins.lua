@@ -27,14 +27,14 @@ local band =
 local GetItemCount, GetItemInfo, GetInventoryItemLink, GetItemQualityColor, GetItemFamily, BankButtonIDToInvSlotID, GetNumBankSlots =
       _G.GetItemCount, _G.GetItemInfo, _G.GetInventoryItemLink, _G.GetItemQualityColor, _G.GetItemFamily, _G.BankButtonIDToInvSlotID, _G.GetNumBankSlots
 local GetContainerItemInfo, GetContainerItemLink, GetContainerNumFreeSlots, GetContainerItemCooldown =
-      _G.GetContainerItemInfo, _G.GetContainerItemLink, _G.GetContainerNumFreeSlots, _G.GetContainerItemCooldown
+    _G.C_Container and _G.C_Container.GetContainerItemInfo or _G.GetContainerItemInfo, _G.C_Container and _G.C_Container.GetContainerItemLink or _G.GetContainerItemLink, _G.C_Container and _G.C_Container.GetContainerNumFreeSlots or _G.GetContainerNumFreeSlots, _G.C_Container and _G.C_Container.GetContainerItemCooldown or _G.GetContainerItemCooldown
 local BANK_PANELS = _G.BANK_PANELS
 local ItemButtonUtil = _G.ItemButtonUtil
 local IsBagOpen = _G.IsBagOpen
 
 --@retail@
 local ReagentBankButtonIDToInvSlotID, GetContainerItemQuestInfo, DepositReagentBank, IsReagentBankUnlocked =
-      _G.ReagentBankButtonIDToInvSlotID, _G.GetContainerItemQuestInfo, _G.DepositReagentBank, _G.IsReagentBankUnlocked
+      _G.ReagentBankButtonIDToInvSlotID, _G.C_Container and _G.C_Container.GetContainerItemQuestInfo or _G.GetContainerItemQuestInfo, _G.DepositReagentBank, _G.IsReagentBankUnlocked
 local IsContainerItemAnUpgrade = _G.IsContainerItemAnUpgrade
 local C_ItemUpgrade = _G.C_ItemUpgrade
 --@end-retail@
@@ -456,9 +456,11 @@ function Baggins:OnEnable()
 
     --@retail@
     -- Patch 8.0.1 Added
+    -- Removed 10.0 TODO
     self:RegisterEvent('SCRAPPING_MACHINE_SHOW', "OpenAllBags")
     self:RegisterEvent('SCRAPPING_MACHINE_CLOSE', "CloseAllBags")
     -- Patch 9.0.5 Added
+    -- Removed 10.0
     self:RegisterEvent('ITEM_UPGRADE_MASTER_OPENED', "ItemUpgrade")
     --self:RegisterEvent('ITEM_UPGRADE_MASTER_CLOSED', "ItemUpgrade")
     self:RegisterEvent('SOCKET_INFO_UPDATE', "OpenAllBags")
@@ -658,7 +660,7 @@ function Baggins:IsCompressed(itemID)
                 end
             end
 
-            if Baggins:IsClassicWow() or Baggins:IsTBCWow() then
+            if Baggins:IsClassicWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() then
                 if p.CompressShards and itemFamily ~=3 and itemEquipLoc~="INVTYPE_BAG" then
                     return true
                 end

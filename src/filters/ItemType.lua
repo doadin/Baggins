@@ -17,7 +17,7 @@ local tonumber = _G.tonumber
 -- WoW API
 local GetItemClassInfo = _G.GetItemClassInfo
 local GetItemSubClassInfo = _G.GetItemSubClassInfo
-local GetContainerItemID = _G.GetContainerItemID
+local GetContainerItemID = _G.C_Container and _G.C_Container.GetContainerItemID or _G.GetContainerItemID
 local GetItemInfoInstant = _G.GetItemInfoInstant
 
 --[===[@non-retail@

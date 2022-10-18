@@ -46,7 +46,7 @@ local Baggins = _G.Baggins
 local GetItemInfo = _G.GetItemInfo
 local strlen = _G.strlen
 local strfind = _G.strfind
-local GetContainerItemLink = _G.GetContainerItemLink
+local GetContainerItemLink = _G.C_Container and _G.C_Container.GetContainerItemLink or _G.GetContainerItemLink
 local CreateFrame = _G.CreateFrame
 local ChatFontNormal = _G.ChatFontNormal
 local GameTooltip = _G.GameTooltip
@@ -196,7 +196,7 @@ local function BagginsSearch_CreateEditBox()
     editBox:SetFrameStrata("HIGH")
 
     editBox:SetFontObject(ChatFontNormal)
-    editBox:SetFont(LSM and LSM:Fetch("font", Baggins.db.profile.Font) or _G.STANDARD_TEXT_FONT,Baggins.db.profile.FontSize or 10)
+    editBox:SetFont(LSM and LSM:Fetch("font", Baggins.db.profile.Font) or _G.STANDARD_TEXT_FONT,Baggins.db.profile.FontSize or 10, "")
     editBox:SetTextInsets(8, 8, 0, 0)
     editBox:SetAutoFocus(false)
 
@@ -207,7 +207,7 @@ local function BagginsSearch_CreateEditBox()
     background:SetTexture("Interface/ChatFrame/ChatFrameBackground")
     background:SetPoint("TOPLEFT", 4, -4)
     background:SetPoint("BOTTOMRIGHT", -4, 4)
-    background:SetGradientAlpha("VERTICAL", 0, 0, 0, 0.9, 0.2, 0.2, 0.2, 0.9)
+    --background:SetGradient("VERTICAL", 0.2, 0.9)
 
     editBox:SetScript("OnHide", function(self)
             self:SetText("")
@@ -242,7 +242,7 @@ local function BagginsSearch_CreateEditBox()
 
     local label = editBox:CreateFontString("BagginsSearch_Label", "OVERLAY", "GameFontHighlight")
     label:SetAlpha(0.2)
-    label:SetFont(LSM and LSM:Fetch("font", Baggins.db.profile.Font) or _G.STANDARD_TEXT_FONT,Baggins.db.profile.FontSize or 10)
+    label:SetFont(LSM and LSM:Fetch("font", Baggins.db.profile.Font) or _G.STANDARD_TEXT_FONT,Baggins.db.profile.FontSize or 10, "")
     label:SetText("Search")
     label:SetPoint("TOPLEFT", 8, 0)
     label:SetPoint("BOTTOMLEFT", -8, 0)
