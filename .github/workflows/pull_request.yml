@@ -30,5 +30,10 @@ jobs:
       - name: Package BC Classic
         uses: BigWigsMods/packager@master
         with:
-          args: -g bcc -m .pkgmeta-bc -d
+          args: -g bcc -d
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Baggins
+          path: /*.zip
 
