@@ -457,11 +457,11 @@ function Baggins:OnEnable()
     --@retail@
     -- Patch 8.0.1 Added
     -- Removed 10.0 TODO
-    self:RegisterEvent('SCRAPPING_MACHINE_SHOW', "OpenAllBags")
-    self:RegisterEvent('SCRAPPING_MACHINE_CLOSE', "CloseAllBags")
+    --self:RegisterEvent('SCRAPPING_MACHINE_SHOW', "OpenAllBags")
+    --self:RegisterEvent('SCRAPPING_MACHINE_CLOSE', "CloseAllBags")
     -- Patch 9.0.5 Added
     -- Removed 10.0
-    self:RegisterEvent('ITEM_UPGRADE_MASTER_OPENED', "ItemUpgrade")
+    --self:RegisterEvent('ITEM_UPGRADE_MASTER_OPENED', "ItemUpgrade")
     --self:RegisterEvent('ITEM_UPGRADE_MASTER_CLOSED', "ItemUpgrade")
     self:RegisterEvent('SOCKET_INFO_UPDATE', "OpenAllBags")
     --@end-retail@
