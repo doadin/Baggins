@@ -209,7 +209,7 @@ local function BagginsSearch_CreateEditBox()
     background:SetPoint("BOTTOMRIGHT", -4, 4)
     local version, build, date, tocversion = GetBuildInfo()
     if tocversion >= 100000 then
-        background:SetGradient("VERTICAL", CreateColor(11/255, 53/255, 43/255, 1), CreateColor(21/255, 89/255, 72/255, 1))
+        background:SetGradient("VERTICAL", CreateColor(0, 0, 0, 0.9), CreateColor(0.2, 0.2, 0.2, 0.9))
     else
         background:SetGradientAlpha("VERTICAL", 0, 0, 0, 0.9, 0.2, 0.2, 0.2, 0.9)
     end
