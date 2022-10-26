@@ -243,7 +243,7 @@ function oSkin:SkinBag(frame)
         frame.tfade:SetPoint('TOPLEFT', frame, 'TOPLEFT',1,-1)
         frame.tfade:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT',-1,1)
         frame.tfade:SetBlendMode('ADD')
-        frame.tfade:SetGradientAlpha('VERTICAL', .1, .1, .1, 0, .2, .2, .2, 0.6)
+        --frame.tfade:SetGradient('VERTICAL', .1, .1, .1, 0, .2, .2, .2, 0.6)
         frame.tfade:SetPoint('TOPLEFT', frame, 'TOPLEFT', 6, -6)
         frame.tfade:SetPoint('BOTTOMRIGHT', frame, 'TOPRIGHT', -6, -30)
     end
@@ -305,7 +305,7 @@ if LSM then
                     frame.tfade:SetPoint('TOPLEFT', frame, 'TOPLEFT',1,-1)
                     frame.tfade:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT',-1,1)
                     frame.tfade:SetBlendMode('ADD')
-                    frame.tfade:SetGradientAlpha('VERTICAL', .1, .1, .1, 0, .2, .2, .2, 0.6)
+                    --frame.tfade:SetGradient('VERTICAL', .1, .1, .1, 0, .2, .2, .2, 0.6)
                     frame.tfade:SetPoint('TOPLEFT', frame, 'TOPLEFT', 6, -6)
                     frame.tfade:SetPoint('BOTTOMRIGHT', frame, 'TOPRIGHT', -6, -30)
                 end
