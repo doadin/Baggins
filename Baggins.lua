@@ -455,14 +455,9 @@ function Baggins:OnEnable()
     self:RegisterEvent('AUCTION_HOUSE_CLOSED', "CloseAllBags")
 
     --@retail@
-    -- Patch 8.0.1 Added
-    -- Removed 10.0 TODO
-    --self:RegisterEvent('SCRAPPING_MACHINE_SHOW', "OpenAllBags")
-    --self:RegisterEvent('SCRAPPING_MACHINE_CLOSE', "CloseAllBags")
-    -- Patch 9.0.5 Added
-    -- Removed 10.0
-    --self:RegisterEvent('ITEM_UPGRADE_MASTER_OPENED', "ItemUpgrade")
-    --self:RegisterEvent('ITEM_UPGRADE_MASTER_CLOSED', "ItemUpgrade")
+    -- Patch 10.0 Added
+    self:RegisterEvent('PLAYER_INTERACTION_MANAGER_FRAME_SHOW', "PlayerInteractionManager")
+    self:RegisterEvent('PLAYER_INTERACTION_MANAGER_FRAME_HIDE', "PlayerInteractionManager")
     self:RegisterEvent('SOCKET_INFO_UPDATE', "OpenAllBags")
     --@end-retail@
 
@@ -4123,29 +4118,36 @@ local function GetItemUpgradeLevel(itemLink)
     end
  end
 
-function Baggins:ItemUpgrade() --luacheck: ignore 212
-    _G.C_Timer.After(1, function()
-        for _, bag in ipairs(Baggins.bagframes) do --bagid,bag
-            for _, section in ipairs(bag.sections) do --sectionid, section
-                for _, button in ipairs(section.items) do --buttonid, button
-                    if button:IsVisible() then
-                        local link = GetContainerItemLink(button:GetParent():GetID(), button:GetID())
-                        if link then
-                            local BagID = button:GetParent():GetID()
-                            local SlotID = button:GetID()
-                            if C_ItemUpgrade.CanUpgradeItem(ItemLocation:CreateFromBagAndSlot(BagID, SlotID)) then
-                                local currentUpgradeLevel, maxUpgradeLevel = GetItemUpgradeLevel(link)
-                                if (currentUpgradeLevel and maxUpgradeLevel) == nil then
+ function Baggins:PlayerInteractionManager(event,typenumber) --luacheck: ignore 212
+    if type(typenumber) ~= "number" then return end
+    if event == "PLAYER_INTERACTION_MANAGER_FRAME_SHOW" and typenumber == 53 then
+        _G.C_Timer.After(1, function()
+            for _, bag in ipairs(Baggins.bagframes) do --bagid,bag
+                for _, section in ipairs(bag.sections) do --sectionid, section
+                    for _, button in ipairs(section.items) do --buttonid, button
+                        if button:IsVisible() then
+                            local link = GetContainerItemLink(button:GetParent():GetID(), button:GetID())
+                            if link then
+                                local BagID = button:GetParent():GetID()
+                                local SlotID = button:GetID()
+                                if C_ItemUpgrade.CanUpgradeItem(ItemLocation:CreateFromBagAndSlot(BagID, SlotID)) then
+                                    local currentUpgradeLevel, maxUpgradeLevel = GetItemUpgradeLevel(link)
+                                    if (currentUpgradeLevel and maxUpgradeLevel) == nil then
+                                        button:SetAlpha(tonumber(Baggins.db.profile.unmatchedAlpha) or 0.2)
+                                    end
+                                end
+                                if not C_ItemUpgrade.CanUpgradeItem(ItemLocation:CreateFromBagAndSlot(BagID, SlotID)) then
                                     button:SetAlpha(tonumber(Baggins.db.profile.unmatchedAlpha) or 0.2)
                                 end
-                            end
-                            if not C_ItemUpgrade.CanUpgradeItem(ItemLocation:CreateFromBagAndSlot(BagID, SlotID)) then
-                                button:SetAlpha(tonumber(Baggins.db.profile.unmatchedAlpha) or 0.2)
                             end
                         end
                     end
                 end
             end
-        end
-    end)
+        end)
+    end
+    --26 VoidStorageBanker,39 ObliterumForge,40 ScrappingMachine,44 ItemInteraction,48 LegendaryCrafting,56 AzeriteForge
+    if event == "PLAYER_INTERACTION_MANAGER_FRAME_SHOW" and type == 26 or type == 39 or type == 40 or type == 44 or type == 48 or type == 56 then
+        self:OpenAllBags()
+    end
 end
