@@ -20,13 +20,15 @@ local GetItemSubClassInfo = _G.GetItemSubClassInfo
 local GetContainerItemID = _G.C_Container and _G.C_Container.GetContainerItemID or _G.GetContainerItemID
 local GetItemInfoInstant = _G.GetItemInfoInstant
 
---[===[@non-retail@
-local GetAuctionItemSubClasses = _G.GetAuctionItemSubClasses
---@end-non-retail@]===]
+local GetAuctionItemSubClasses
+if AddOn:IsClassicWow() or AddOn:IsTBCWow() or AddOn:IsWrathWow() then
+    GetAuctionItemSubClasses = _G.GetAuctionItemSubClasses
+end
 
---@retail@
-local GetAuctionItemSubClasses = _G.C_AuctionHouse.GetAuctionItemSubClasses
---@end-retail@
+local GetAuctionItemSubClasses
+if AddOn:IsRetailWow() then
+    GetAuctionItemSubClasses = _G.C_AuctionHouse.GetAuctionItemSubClasses
+end
 
 -- Libs
 local LibStub = _G.LibStub
