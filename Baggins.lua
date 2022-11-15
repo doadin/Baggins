@@ -10,7 +10,6 @@ local LBU = LibStub("LibBagUtils-1.0")
 local qt = LibStub('LibQTip-1.0')
 local dbIcon = LibStub("LibDBIcon-1.0")
 local console = LibStub("AceConsole-3.0")
-local gratuity = LibStub("LibGratuity-3.0")
 local iui = LibStub("LibItemUpgradeInfo-1.0")
 
 local next, unpack, pairs, ipairs, tonumber, select, strmatch, wipe, type, time, print =
@@ -2377,28 +2376,18 @@ do
     local itemDropdownFrame = CreateFrame("Frame", "Baggins_ItemMenuFrame", UIParent, "UIDropDownMenuTemplate")
 
     local function BagginsItemButton_GetTargetBankTab(bag, slot)
-        -- There's likely a better way then looking at the tooltip
-        -- It seems all crafting reagents now have a line in the tooltip called "Crafting Reagent" in enUS.
-
-        -- setup gratuity based on bag and slot
+        local itemLink = GetContainerItemLink(bag, slot)
+        local itemName, itemLink, itemQuality, itemLevel, itemMinLevel, itemType, itemSubType,
+        itemStackCount, itemEquipLoc, itemTexture, sellPrice, classID, subclassID, bindType,
+        expacID, setID, isCraftingReagent = GetItemInfo(itemLink)
         if LBU:IsBank(bag) then
-            gratuity:SetInventoryItem("player", BankButtonIDToInvSlotID(slot))
-        --@retail@
-        elseif LBU:IsReagentBank(bag) then
-            gratuity:SetInventoryItem("player", ReagentBankButtonIDToInvSlotID(slot))
-        --@end-retail@
-        else
-            gratuity:SetBagItem(bag, slot)
+            if Baggins:IsRetailWow() then
+                local count = LBU:CountSlots("REAGENTBANK")
+                if isCraftingReagent and count ~= nil and count > 0 then
+                    return REAGENT_BANK_TAB
+                end
+            end
         end
-
-        -- count remaining slots and switch the tab based on the item type
-        --@retail@
-        local count = LBU:CountSlots("REAGENTBANK")
-        if gratuity:Find(L["Crafting Reagent"]) and count ~= nil and count > 0 then
-            return REAGENT_BANK_TAB
-        end
-        --@end-retail@
-
         return BANK_TAB
     end
 
