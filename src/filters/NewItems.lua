@@ -41,15 +41,13 @@ local function BuildBagTypes()
 
     end
 
-    -- Classic specific bag
-    --[===[@non-retail@
-    BagTypes[KEYRING_CONTAINER] = 3
-    --@end-non-retail@]===]
+    if Baggins:IsClassicWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() then
+        BagTypes[KEYRING_CONTAINER] = 3
+    end
 
-    -- Retail specific bag
-    --@retail@
-    BagTypes[REAGENTBANK_CONTAINER] = 4
-    --@end-retail@
+    if Baggins:IsRetailWow() then
+        BagTypes[REAGENTBANK_CONTAINER] = 4
+    end
 
 end
 
