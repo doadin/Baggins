@@ -9,6 +9,8 @@ local _G = _G
 local AddOnName, _ = ...
 local AddOn = _G[AddOnName]
 
+if Baggins:IsRetailWow() then return end
+
 -- LUA Functions
 
 -- WoW API
