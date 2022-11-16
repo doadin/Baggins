@@ -12,7 +12,7 @@ local AddOn = _G[AddOnName]
 -- Libs
 --local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
 
-local GetContainerItemID = _G.GetContainerItemID
+local GetContainerItemID = _G.C_Container and _G.C_Container.GetContainerItemID or _G.GetContainerItemID
 
 local function Matches(bag, slot, _)
     local ID = GetContainerItemID(bag, slot)
