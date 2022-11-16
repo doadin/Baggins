@@ -16,7 +16,7 @@ local ipairs = _G.ipairs
 -- WoW API
 local GetEquipmentSetIDs = _G.C_EquipmentSet.GetEquipmentSetIDs
 local GetEquipmentSetInfo = _G.C_EquipmentSet.GetEquipmentSetInfo
-local GetContainerItemEquipmentSetInfo = _G.GetContainerItemEquipmentSetInfo
+local GetContainerItemEquipmentSetInfo = _G.C_Container and _G.C_Container.GetContainerItemEquipmentSetInfo or _G.GetContainerItemEquipmentSetInfo
 
 -- Libs
 local LibStub = _G.LibStub

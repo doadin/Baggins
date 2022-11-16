@@ -17,7 +17,7 @@ local wipe = _G.wipe
 
 -- WoW API
 local GetItemInfo = _G.GetItemInfo
-local GetContainerItemID = _G.GetContainerItemID
+local GetContainerItemID = _G.C_Container and _G.C_Container.GetContainerItemID or _G.GetContainerItemID
 
 -- Libs
 local LibStub = _G.LibStub

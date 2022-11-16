@@ -12,7 +12,7 @@ local AddOn = _G[AddOnName]
 -- LUA Functions
 
 --- WoW API
-local GetContainerItemLink = _G.GetContainerItemLink
+local GetContainerItemLink = _G.C_Container and _G.C_Container.GetContainerItemLink or _G.GetContainerItemLink
 local GetItemInfo = _G.GetItemInfo
 
 -- Libs

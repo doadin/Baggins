@@ -15,7 +15,7 @@ local AddOn = _G[AddOnName]
 
 local C_Item = _G.C_Item
 local IsAnimaItemByID = C_Item.IsAnimaItemByID
-local GetContainerItemLink = _G.GetContainerItemLink
+local GetContainerItemLink = _G.C_Container and _G.C_Container.GetContainerItemLink or _G.GetContainerItemLink
 
 local function Matches(bag, slot, _)
     local link = GetContainerItemLink(bag, slot)
