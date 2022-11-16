@@ -15,20 +15,17 @@ local BankButtonIDToInvSlotID = _G.BankButtonIDToInvSlotID
 -- Libs
 local LibStub = _G.LibStub
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
-local LG = LibStub("LibGratuity-3.0") --luacheck: ignore 211
 
 local function Matches(bag, slot, rule)
     local status = rule.status
-    if not status then return	end
-    if bag == -1 then
-        LG:SetInventoryItem("player", BankButtonIDToInvSlotID(slot))
-    else
-        LG:SetBagItem(bag,slot)
+    if not status then return end
+    local itemLink = GetContainerItemLink(bag, slot)
+    local bindType = select(14,GetItemInfo(itemLink))
+    local isBound = select(11,GetContainerItemInfo(bagID, slot))
+    if (status == 'unset' or status == 'unbound') and not isBound then
+        return true
     end
-    if status == 'unset' or status == 'unbound' then
-        return not (LG:Find(_G.ITEM_SOULBOUND, 2, 6, false, true))
-    end
-    return (LG:Find(status, 2, 6, false, true))
+    return status == bindType
 end
 
 AddOn:AddCustomRule("Bind", {
