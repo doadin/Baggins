@@ -11,7 +11,6 @@ local AddOn = _G[AddOnName]
 
 -- Libs
 local LibStub = _G.LibStub
-local LG = LibStub("LibGratuity-3.0")
 
 local BankButtonIDToInvSlotID = _G.BankButtonIDToInvSlotID
 
@@ -22,16 +21,19 @@ local function Matches(bag, slot, _)
     --    return true
     --end
 
-    -- Is item in bags or in bank bags?
-    if bag == -1 then
-        LG:SetInventoryItem("player", BankButtonIDToInvSlotID(slot))
-    else
-        LG:SetBagItem(bag,slot)
-    end
-
-    -- Text found in tooltip?
-    if LG:Find("Toy",3,3) then
-        return true
+    -- Local tooltip for getting tooltip contents
+    local ScanTip = CreateFrame("GameTooltip", "BagginsScanTipToy", UIParent, "GameTooltipTemplate")
+    ScanTip:SetOwner(UIParent, "ANCHOR_NONE")
+    ScanTip:ClearLines()
+    ScanTip:SetBagItem(bag, slot)
+    for i = 1, select("#", ScanTip:GetRegions()) do
+        local region = select(i, ScanTip:GetRegions())
+        if region and region:GetObjectType() == "FontString" then
+            local text = region:GetText() -- string or nil
+            if text and text:find("Toy") then
+                return true
+            end
+        end
     end
 
     return false
