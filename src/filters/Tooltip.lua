@@ -9,8 +9,6 @@ local _G = _G
 local AddOnName, _ = ...
 local AddOn = _G[AddOnName]
 
-if Baggins:IsRetailWow() then return end
-
 -- LUA Functions
 
 -- WoW API
@@ -19,7 +17,6 @@ local BankButtonIDToInvSlotID = _G.BankButtonIDToInvSlotID
 -- Libs
 local LibStub = _G.LibStub
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
-local LG = LibStub("LibGratuity-3.0")
 
 -- Test for match
 local function Matches(bag, slot, rule)
@@ -38,16 +35,19 @@ local function Matches(bag, slot, rule)
         end
     end
 
-    -- Is item in bags or in bank bags?
-    if bag == -1 then
-        LG:SetInventoryItem("player", BankButtonIDToInvSlotID(slot))
-    else
-        LG:SetBagItem(bag,slot)
-    end
-
-    -- Text found in tooltip?
-    if LG:Find(text) then
-        return true
+    -- Local tooltip for getting tooltip contents
+    local ScanTip = CreateFrame("GameTooltip", "BagginsScanTipToolTip", UIParent, "GameTooltipTemplate")
+    ScanTip:SetOwner(UIParent, "ANCHOR_NONE")
+    ScanTip:ClearLines()
+    ScanTip:SetBagItem(bag, slot)
+    for i = 1, select("#", ScanTip:GetRegions()) do
+        local region = select(i, ScanTip:GetRegions())
+        if region and region:GetObjectType() == "FontString" then
+            local tooltiptext = region:GetText() -- string or nil
+            if tooltiptext and tooltiptext:find(text) then
+                return true
+            end
+        end
     end
 
     return false
