@@ -22,8 +22,14 @@ local function Matches(bag, slot, rule)
     local status = rule.status
     if not status then return end
     local itemLink = GetContainerItemLink(bag, slot)
-    local bindType = select(14,GetItemInfo(itemLink))
-    local isBound = select(11,GetContainerItemInfo(bagID, slot))
+    local bindType = itemLink and select(14,GetItemInfo(itemLink))
+    local isBound,info
+    if AddOn:IsRetailWow() then
+        info = GetContainerItemInfo(bag, slot)
+        isBound = info and info.isBound
+    else
+        isBound = select(11,GetContainerItemInfo(bag, slot))
+    end
     if (status == 'unset' or status == 'unbound') and not isBound then
         return true
     end
