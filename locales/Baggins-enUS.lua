@@ -85,6 +85,7 @@ L["Bag 1"] = true
 L["Bag 2"] = true
 L["Bag 3"] = true
 L["Bag 4"] = true
+L["Bag 5"] = true
 L["Bank Frame"] = true
 L["Bank Bag 1"] = true
 L["Bank Bag 2"] = true

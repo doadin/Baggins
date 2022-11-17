@@ -22,7 +22,7 @@ local tinsert, tsort =
 local BANK_CONTAINER = _G.BANK_CONTAINER
 local BACKPACK_CONTAINER = _G.BACKPACK_CONTAINER
 local REAGENTBANK_CONTAINER = _G.REAGENTBANK_CONTAINER
-local NUM_BAG_SLOTS = _G.NUM_BAG_SLOTS
+local NUM_BAG_SLOTS = _G.NUM_TOTAL_EQUIPPED_BAG_SLOTS or _G.NUM_BAG_SLOTS
 local NUM_BANKBAGSLOTS = _G.NUM_BANKBAGSLOTS
 
 local GetContainerItemInfo = _G.C_Container and _G.C_Container.GetContainerItemInfo or _G.GetContainerItemInfo

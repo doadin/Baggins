@@ -21,7 +21,7 @@ local PickupContainerItem, SplitContainerItem, IsShiftKeyDown =
 local band =
       _G.bit.band
 local BANK_CONTAINER = _G.BANK_CONTAINER
-local NUM_BAG_SLOTS = _G.NUM_BAG_SLOTS
+local NUM_BAG_SLOTS = _G.NUM_TOTAL_EQUIPPED_BAG_SLOTS or _G.NUM_BAG_SLOTS
 local NUM_BANKBAGSLOTS = _G.NUM_BANKBAGSLOTS
 
 local LibStub = _G.LibStub

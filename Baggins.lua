@@ -574,7 +574,7 @@ function Baggins:OnDisable()
 end
 
 local INVSLOT_LAST_EQUIPPED, CONTAINER_BAG_OFFSET, NUM_BAG_SLOTS =
-      INVSLOT_LAST_EQUIPPED, CONTAINER_BAG_OFFSET, NUM_BAG_SLOTS
+      INVSLOT_LAST_EQUIPPED, CONTAINER_BAG_OFFSET, _G.NUM_TOTAL_EQUIPPED_BAG_SLOTS or NUM_BAG_SLOTS
 
 function Baggins:SaveItemCounts()
     local itemcounts = self.itemcounts
