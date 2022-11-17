@@ -17,7 +17,7 @@ local GetContainerNumFreeSlots = _G.C_Container and _G.C_Container.GetContainerN
 local GetContainerNumSlots = _G.C_Container and _G.C_Container.GetContainerNumSlots or _G.GetContainerNumSlots
 local GetItemFamily = _G.GetItemFamily
 local PickupContainerItem, SplitContainerItem, IsShiftKeyDown =
-      _G.PickupContainerItem, _G.SplitContainerItem, _G.IsShiftKeyDown
+_G.C_Container and _G.C_Container.PickupContainerItem or _G.PickupContainerItem, _G.SplitContainerItem, _G.IsShiftKeyDown
 local band =
       _G.bit.band
 local BANK_CONTAINER = _G.BANK_CONTAINER
