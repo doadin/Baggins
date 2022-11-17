@@ -30,6 +30,8 @@ local GetContainerItemInfo, GetContainerItemLink, GetContainerNumFreeSlots, GetC
 local BANK_PANELS = _G.BANK_PANELS
 local ItemButtonUtil = _G.ItemButtonUtil
 local IsBagOpen = _G.IsBagOpen
+local ShowInspectCursor = _G.ShowInspectCursor
+local ShowContainerSellCursor = _G.C_Container and _G.C_Container.ShowContainerSellCursor or _G.ShowContainerSellCursor
 
 --@retail@
 local ReagentBankButtonIDToInvSlotID, GetContainerItemQuestInfo, DepositReagentBank, IsReagentBankUnlocked =
