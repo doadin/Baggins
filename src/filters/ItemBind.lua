@@ -12,6 +12,7 @@ local AddOn = _G[AddOnName]
 -- WoW API
 local BankButtonIDToInvSlotID = _G.BankButtonIDToInvSlotID
 local GetContainerItemLink = _G.C_Container and _G.C_Container.GetContainerItemLink or _G.GetContainerItemLink
+local GetContainerItemInfo = _G.C_Container and _G.C_Container.GetContainerItemInfo or _G.GetContainerItemInfo
 
 -- Libs
 local LibStub = _G.LibStub
