@@ -3109,10 +3109,16 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
     end
     button:SetID(slot)
     -- quest item glow introduced in 3.3 (with silly logic)
-    local isQuestItem, questId, isActive
-    --@retail@
-    isQuestItem, questId, isActive = GetContainerItemQuestInfo(bag, slot)
-    --@end-retail@
+    local isQuestItem, questId, isActive, ContainerItemQuestInfo
+    if Baggins:IsRetailWow() then
+        ContainerItemQuestInfo = GetContainerItemQuestInfo(bag, slot)
+        isQuestItem = ContainerItemQuestInfo and ContainerItemQuestInfo.isQuestItem
+        questId = ContainerItemQuestInfo and ContainerItemQuestInfo.questID
+        isActive = ContainerItemQuestInfo and ContainerItemQuestInfo.isActive
+    end
+    if Baggins:IsWrathWow() then
+        isQuestItem, questId, isActive = GetContainerItemQuestInfo(bag, slot)
+    end
     local questTexture = (questId and not isActive) and TEXTURE_ITEM_QUEST_BANG or (questId or isQuestItem) and TEXTURE_ITEM_QUEST_BORDER
     if p.highlightquestitems and texture and questTexture then
         button.glow:SetTexture(questTexture)
