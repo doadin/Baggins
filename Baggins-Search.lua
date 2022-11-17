@@ -84,6 +84,7 @@ local itemExpansion = {
     [6] = "Legion",
     [7] = "Battle for Azeroth",
     [8] = "Shadowlands",
+    [9] = "Dragonflight",
 }
 
 local itemExpansionAB = {
@@ -96,6 +97,7 @@ local itemExpansionAB = {
     [6] = "Legion",
     [7] = "BFA",
     [8] = "Shadowlands",
+    [9] = "DF",
 }
 
 local itemQualityT = {
@@ -151,8 +153,8 @@ function BagginsSearch:Search(search) --luacheck: ignore 212
                             itemEquipLoc and strfind(itemEquipLoc:lower(), search:lower()) or
                             bindType and strfind(itemBindTypes[bindType]:lower(), search:lower()) or
                             bindType and strfind(itemBindTypesAB[bindType]:lower(), search:lower()) or
-                            expacID and strfind(itemExpansion[expacID]:lower(), search:lower()) or
-                            expacID and strfind(itemExpansionAB[expacID]:lower(), search:lower()) or
+                            expacID and itemExpansion[expacID] and strfind(itemExpansion[expacID]:lower(), search:lower()) or
+                            expacID and itemExpansionAB[expacID] and strfind(itemExpansionAB[expacID]:lower(), search:lower()) or
                             itemQuality and strfind(itemQualityT[itemQuality]:lower(), search:lower()) or
                             setID and strfind(setID, search) then
                                 button:LockHighlight()
