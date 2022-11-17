@@ -18,6 +18,15 @@ local GetContainerItemInfo = _G.C_Container and _G.C_Container.GetContainerItemI
 local LibStub = _G.LibStub
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
 
+local bindtoType = { --Account Bound
+    --[0] = "LE_ITEM_BIND_NONE",
+    [1] = "Binds when picked up",
+    [2] = "Binds when equipped",
+    [3] = "Binds when used",
+    --[4] = "LE_ITEM_BIND_QUEST"
+    [8] = "Account Bound",
+}
+
 local function Matches(bag, slot, rule)
     local status = rule.status
     if not status then return end
@@ -33,7 +42,7 @@ local function Matches(bag, slot, rule)
     if (status == 'unset' or status == 'unbound') and not isBound then
         return true
     end
-    return status == bindType
+    return status == bindtoType[bindType]
 end
 
 AddOn:AddCustomRule("Bind", {
