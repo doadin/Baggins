@@ -12,7 +12,8 @@ local AddOn = _G[AddOnName]
 -- LUA Functions
 
 -- WoW API
-local BankButtonIDToInvSlotID = _G.BankButtonIDToInvSlotID
+local C_TooltipInfoGetBagItem = _G.C_TooltipInfo.GetBagItem
+local TooltipUtil = _G.TooltipUtil
 
 -- Libs
 local LibStub = _G.LibStub
@@ -35,18 +36,18 @@ local function Matches(bag, slot, rule)
         end
     end
 
-    -- Local tooltip for getting tooltip contents
-    local ScanTip = CreateFrame("GameTooltip", "BagginsScanTipToolTip", UIParent, "GameTooltipTemplate")
-    ScanTip:SetOwner(UIParent, "ANCHOR_NONE")
-    ScanTip:ClearLines()
-    ScanTip:SetBagItem(bag, slot)
-    for i = 1, select("#", ScanTip:GetRegions()) do
-        local region = select(i, ScanTip:GetRegions())
-        if region and region:GetObjectType() == "FontString" then
-            local tooltiptext = region:GetText() -- string or nil
-            if tooltiptext and tooltiptext:find(text) then
-                return true
-            end
+    local tooltipData = C_TooltipInfoGetBagItem(bag, slot)
+    if not tooltipData then return false end
+    TooltipUtil.SurfaceArgs(tooltipData)
+    for _, line in ipairs(tooltipData.lines) do
+        TooltipUtil.SurfaceArgs(line)
+    end
+
+    -- The above SurfaceArgs calls are required to assign values to the
+    -- 'type', 'guid', and 'leftText' fields seen below.
+    for i=1,#tooltipData.lines do
+        if tooltipData.lines[i].leftText and tooltipData.lines[i].leftText:find(text) then
+            return true
         end
     end
 
