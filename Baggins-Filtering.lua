@@ -268,6 +268,7 @@ function Baggins:CheckSlotsChanged(bag, forceupdate)
         link = itemInfo and itemInfo.hyperlink
     else
         count = select(2, GetContainerItemInfo(bag, slot))
+        link = select(7, GetContainerItemInfo(bag, slot))
     end
     if link then
       itemid = C_Item.GetItemID(ItemLocation:CreateFromBagAndSlot(bag, slot))
