@@ -25,7 +25,6 @@ if AddOn:IsClassicWow() or AddOn:IsTBCWow() or AddOn:IsWrathWow() then
     GetAuctionItemSubClasses = _G.GetAuctionItemSubClasses
 end
 
-local GetAuctionItemSubClasses
 if AddOn:IsRetailWow() then
     GetAuctionItemSubClasses = _G.C_AuctionHouse.GetAuctionItemSubClasses
 end
