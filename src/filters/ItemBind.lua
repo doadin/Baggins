@@ -13,6 +13,10 @@ local AddOn = _G[AddOnName]
 local BankButtonIDToInvSlotID = _G.BankButtonIDToInvSlotID
 local GetContainerItemLink = _G.C_Container and _G.C_Container.GetContainerItemLink or _G.GetContainerItemLink
 local GetContainerItemInfo = _G.C_Container and _G.C_Container.GetContainerItemInfo or _G.GetContainerItemInfo
+local C_TooltipInfoGetBagItem
+if AddOn:IsRetailWow() then
+    C_TooltipInfoGetBagItem = _G.C_TooltipInfo.GetBagItem
+end
 
 -- Libs
 local LibStub = _G.LibStub
