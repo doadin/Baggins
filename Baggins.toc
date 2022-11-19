@@ -110,7 +110,7 @@ src\filters\Profession.lua
 #@end-retail@
 src\filters\Quality.lua
 src\filters\Teleport.lua
-#@retail@
 src\filters\Tooltip.lua
+#@retail@
 src\filters\Toy.lua
 #@end-retail@
