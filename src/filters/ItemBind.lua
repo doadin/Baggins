@@ -42,6 +42,22 @@ local function Matches(bag, slot, rule)
     if (status == 'unset' or status == 'unbound') and not isBound then
         return true
     end
+    if AddOn:IsRetailWow() and status == _G.ITEM_ACCOUNTBOUND then
+        local tooltipData = C_TooltipInfoGetBagItem(bag, slot)
+        if not tooltipData then return false end
+        TooltipUtil.SurfaceArgs(tooltipData)
+        for _, line in ipairs(tooltipData.lines) do
+            TooltipUtil.SurfaceArgs(line)
+        end
+    
+        -- The above SurfaceArgs calls are required to assign values to the
+        -- 'type', 'guid', and 'leftText' fields seen below.
+        for i=1,#tooltipData.lines do
+            if tooltipData.lines[i].leftText and tooltipData.lines[i].leftText:find("Account Bound") then
+                bindType = 8
+            end
+        end
+    end
     return status == bindtoType[bindType]
 end
 
