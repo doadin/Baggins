@@ -69,6 +69,23 @@ local function Matches(bag, slot, rule)
     -- Item belongs to a set?
     local inset, setstring = GetContainerItemEquipmentSetInfo(bag, slot)
     if not inset then
+        for _, id in next, GetEquipmentSetIDs() do
+            local name, iconFileID, setID, isEquipped, numItems, numEquipped, numInInventory, numLost, numIgnored = C_EquipmentSet.GetEquipmentSetInfo(id)
+            local items = C_EquipmentSet.GetItemIDs(id)
+            for i = 1, 19 do
+            	if items[i] then
+                    local setitemid = items[i]
+                    local containerInfo = C_Container.GetContainerItemInfo(bag, slot)
+                    if name and containerInfo and setitemid == containerInfo.itemID then
+                        inset = true
+                        setstring = name
+                    end
+            	end
+            end
+        end
+    end
+
+    if not inset then
         return false
     end
 
