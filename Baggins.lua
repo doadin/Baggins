@@ -3091,7 +3091,7 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
             newItemTexture:Hide()
         end
     end
-    local texture, itemCount, locked, quality, readable
+    local texture, itemCount, locked, quality, readable, itemid, link
     if Baggins:IsRetailWow() then
         local itemInfo = GetContainerItemInfo(bag, slot)
         texture = itemInfo and itemInfo.iconFileID
@@ -3099,15 +3099,10 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
         locked = itemInfo and itemInfo.isLocked
         quality = itemInfo and itemInfo.quality
         readable = itemInfo and itemInfo.isReadable
+        link = itemInfo and itemInfo.hyperlink
+        itemid = itemInfo and itemInfo.itemID
     else
-        texture, itemCount, locked, quality, readable = GetContainerItemInfo(bag, slot)
-    end
-    local link = GetContainerItemLink(bag, slot)
-    local itemid
-    if link then
-        local qual = select(3, GetItemInfo(link))
-        quality = qual or quality
-        itemid = tonumber(link:match("item:(%d+)"))
+        texture, itemCount, locked, quality, readable, _, link, _, _, itemID = GetContainerItemInfo(bag, slot)
     end
     button:SetID(slot)
     -- quest item glow introduced in 3.3 (with silly logic)
@@ -3127,7 +3122,7 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
         button.glow:SetVertexColor(1,1,1)
         button.glow:SetAlpha(1)
         button.glow:Show()
-    elseif p.qualitycolor and texture and quality >= p.qualitycolormin then
+    elseif p.qualitycolor and texture and quality and quality >= p.qualitycolormin then
         local r, g, b = GetItemQualityColor(quality)
         button.glow:SetTexture("Interface\\Addons\\Baggins\\Textures\\Glow")
         button.glow:SetVertexColor(r,g,b)
