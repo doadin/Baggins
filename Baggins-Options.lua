@@ -1897,7 +1897,7 @@ if Baggins:IsRetailWow() then
             },
         [L["Other"]] = { name=L["Other"], { type="Other" } },
         [L["Empty"]] = { name=L["Empty"], { type="Empty" }, },
-        [L["Bags"]] = { name=L["Bags"], { type="Bag", bagid=1 }, { type="Bag", bagid=2, operation="OR" }, { type="Bag", bagid=3, operation="OR" }, { type="Bag", bagid=4, operation="OR" }, { type="Bag", bagid=0, operation="OR" }, },
+        [L["Bags"]] = { name=L["Bags"], { type="Bag", bagid=1 }, { type="Bag", bagid=2, operation="OR" }, { type="Bag", bagid=3, operation="OR" }, { type="Bag", bagid=4, operation="OR" },{ type="Bag", bagid=5, operation="OR" },{ type="Bag", bagid=0, operation="OR" }, },
         [L["BankBags"]] = { name=L["BankBags"], { type="Bag", bagid=-1 }, { type="Bag", bagid=5, operation="OR" }, { type="Bag", bagid=6, operation="OR" }, { type="Bag", bagid=7, operation="OR" }, { type="Bag", bagid=8, operation="OR" }, { type="Bag", bagid=9, operation="OR" }, { type="Bag", bagid=10, operation="OR" }, { type="Bag", bagid=11, operation="OR" }, },
         [L["Potions"]] = {
             name=L["Potions"],
