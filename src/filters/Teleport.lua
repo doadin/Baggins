@@ -26,6 +26,8 @@ local ids = {
     128353, -- Admiral's Compass
     103678, -- Time-Lost Artifact
     65274, -- Cloak of Coordination
+    64457, --the last relic of argus
+    46874, --argent crusaders tabard
 }
 
 local function Matches(bag, slot, _)
