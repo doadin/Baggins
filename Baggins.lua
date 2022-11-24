@@ -3102,7 +3102,7 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
         link = itemInfo and itemInfo.hyperlink
         itemid = itemInfo and itemInfo.itemID
     else
-        texture, itemCount, locked, quality, readable, _, link, _, _, itemID = GetContainerItemInfo(bag, slot)
+        texture, itemCount, locked, quality, readable, _, link, _, _, itemid = GetContainerItemInfo(bag, slot)
     end
     button:SetID(slot)
     -- quest item glow introduced in 3.3 (with silly logic)
