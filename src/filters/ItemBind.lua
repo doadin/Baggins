@@ -41,7 +41,12 @@ local function Matches(bag, slot, rule)
         info = GetContainerItemInfo(bag, slot)
         isBound = info and info.isBound
     else
-        isBound = select(11,GetContainerItemInfo(bag, slot))
+        if C_Item.DoesItemExist(ItemLocation:CreateFromBagAndSlot(bag, slot)) then
+            isBound = C_Item.IsBound(ItemLocation:CreateFromBagAndSlot(bag, slot))
+        end
+    end
+    if status == _G.ITEM_SOULBOUND and isBound then
+        return true
     end
     if (status == 'unset' or status == 'unbound') and not isBound then
         return true
@@ -80,6 +85,7 @@ AddOn:AddCustomRule("Bind", {
                 [_G.ITEM_BIND_ON_EQUIP] = _G.ITEM_BIND_ON_EQUIP,
                 [_G.ITEM_ACCOUNTBOUND] = _G.ITEM_ACCOUNTBOUND,
                 [_G.ITEM_BIND_ON_USE] = _G.ITEM_BIND_ON_USE,
+                [_G.ITEM_BIND_ON_PICKUP] = _G.ITEM_BIND_ON_PICKUP,
             }
         },
     },
