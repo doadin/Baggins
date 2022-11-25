@@ -2379,9 +2379,7 @@ do
 
     local function BagginsItemButton_GetTargetBankTab(bag, slot)
         local itemLink = GetContainerItemLink(bag, slot)
-        local itemName, itemLink, itemQuality, itemLevel, itemMinLevel, itemType, itemSubType,
-        itemStackCount, itemEquipLoc, itemTexture, sellPrice, classID, subclassID, bindType,
-        expacID, setID, isCraftingReagent = GetItemInfo(itemLink)
+        local _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, isCraftingReagent = GetItemInfo(itemLink)
         if LBU:IsBank(bag) then
             if Baggins:IsRetailWow() then
                 local count = LBU:CountSlots("REAGENTBANK")
@@ -3091,7 +3089,7 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
             newItemTexture:Hide()
         end
     end
-    local texture, itemCount, locked, quality, readable, itemid, link
+    local texture, itemCount, locked, quality, readable, itemid, link, _
     if Baggins:IsRetailWow() then
         local itemInfo = GetContainerItemInfo(bag, slot)
         texture = itemInfo and itemInfo.iconFileID

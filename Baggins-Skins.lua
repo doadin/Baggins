@@ -6,6 +6,8 @@ local pairs, ipairs =
 local tinsert =
       _G.tinsert
 
+local CreateColor = _G.CreateColor
+
 ----------------
 -- Skin stuff --
 ----------------
@@ -244,8 +246,7 @@ function oSkin:SkinBag(frame)
         frame.tfade:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT',-1,1)
         frame.tfade:SetBlendMode('ADD')
         --frame.tfade:SetGradient('VERTICAL', .1, .1, .1, 0, .2, .2, .2, 0.6)
-        local version, build, date, tocversion = GetBuildInfo()
-        if tocversion >= 100000 then
+        if Baggins:IsRetailWow() then
             frame.tfade:SetGradient("VERTICAL", CreateColor(0.1, 0.1, 0.1, 0), CreateColor(0.2, 0.2, 0.2, 0.6))
         else
             frame.tfade:SetGradient('VERTICAL', .1, .1, .1, 0, .2, .2, .2, 0.6)
@@ -312,8 +313,7 @@ if LSM then
                     frame.tfade:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT',-1,1)
                     frame.tfade:SetBlendMode('ADD')
                     --frame.tfade:SetGradient('VERTICAL', .1, .1, .1, 0, .2, .2, .2, 0.6)
-                    local version, build, date, tocversion = GetBuildInfo()
-                    if tocversion >= 100000 then
+                    if Baggins:IsRetailWow() then
                         frame.tfade:SetGradient("VERTICAL", CreateColor(0.1, 0.1, 0.1, 0), CreateColor(0.2, 0.2, 0.2, 0.6))
                     else
                         frame.tfade:SetGradient('VERTICAL', .1, .1, .1, 0, .2, .2, .2, 0.6)

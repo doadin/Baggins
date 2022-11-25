@@ -9,9 +9,6 @@ local _G = _G
 local AddOnName, _ = ...
 local AddOn = _G[AddOnName]
 
--- Libs
-local LibStub = _G.LibStub
-
 local C_TooltipInfoGetBagItem = _G.C_TooltipInfo.GetBagItem
 local TooltipUtil = _G.TooltipUtil
 

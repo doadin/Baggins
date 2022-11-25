@@ -10,9 +10,14 @@ local AddOnName, _ = ...
 local AddOn = _G[AddOnName]
 
 -- WoW API
-local BankButtonIDToInvSlotID = _G.BankButtonIDToInvSlotID
+--local BankButtonIDToInvSlotID = _G.BankButtonIDToInvSlotID
 local GetContainerItemLink = _G.C_Container and _G.C_Container.GetContainerItemLink or _G.GetContainerItemLink
 local GetContainerItemInfo = _G.C_Container and _G.C_Container.GetContainerItemInfo or _G.GetContainerItemInfo
+local GetItemInfo = _G.GetItemInfo
+local DoesItemExist = _G.C_Item and _G.C_Item.DoesItemExist
+local C_ItemIsBound = _G.C_Item and _G.C_Item.IsBound
+local ItemLocation = _G.ItemLocation
+local TooltipUtil = _G.TooltipUtil
 local C_TooltipInfoGetBagItem
 if AddOn:IsRetailWow() then
     C_TooltipInfoGetBagItem = _G.C_TooltipInfo.GetBagItem
@@ -41,8 +46,8 @@ local function Matches(bag, slot, rule)
         info = GetContainerItemInfo(bag, slot)
         isBound = info and info.isBound
     else
-        if C_Item.DoesItemExist(ItemLocation:CreateFromBagAndSlot(bag, slot)) then
-            isBound = C_Item.IsBound(ItemLocation:CreateFromBagAndSlot(bag, slot))
+        if DoesItemExist(ItemLocation:CreateFromBagAndSlot(bag, slot)) then
+            isBound = C_ItemIsBound(ItemLocation:CreateFromBagAndSlot(bag, slot))
         end
     end
     if status == _G.ITEM_SOULBOUND and isBound then
@@ -58,7 +63,7 @@ local function Matches(bag, slot, rule)
         for _, line in ipairs(tooltipData.lines) do
             TooltipUtil.SurfaceArgs(line)
         end
-    
+
         -- The above SurfaceArgs calls are required to assign values to the
         -- 'type', 'guid', and 'leftText' fields seen below.
         for i=1,#tooltipData.lines do

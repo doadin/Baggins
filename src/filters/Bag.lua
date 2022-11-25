@@ -47,12 +47,12 @@ local function BuildBagNames()
     end
 
     -- Classic specific bag
-    if Baggins:IsClassicWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() then
+    if AddOn:IsClassicWow() or AddOn:IsTBCWow() or AddOn:IsWrathWow() then
         BagNames[KEYRING_CONTAINER] = L["KeyRing"]
     end
 
     -- Retail specific bag
-    if Baggins:IsRetailWow() then
+    if AddOn:IsRetailWow() then
         BagNames[REAGENTBANK_CONTAINER] = L["Reagent Bank"]
     end
 

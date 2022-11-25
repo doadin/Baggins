@@ -41,11 +41,11 @@ local function BuildBagTypes()
 
     end
 
-    if Baggins:IsClassicWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() then
+    if AddOn:IsClassicWow() or AddOn:IsTBCWow() or AddOn:IsWrathWow() then
         BagTypes[KEYRING_CONTAINER] = 3
     end
 
-    if Baggins:IsRetailWow() then
+    if AddOn:IsRetailWow() then
         BagTypes[REAGENTBANK_CONTAINER] = 4
     end
 

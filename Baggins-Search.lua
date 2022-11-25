@@ -1,4 +1,4 @@
-﻿--luacheck: no max line length
+--luacheck: no max line length
 
 local NumberofAddons = _G.GetNumAddOns()
 local DisableAddOn = _G.DisableAddOn
@@ -53,6 +53,7 @@ local GameTooltip = _G.GameTooltip
 local GameTooltip_SetDefaultAnchor = _G.GameTooltip_SetDefaultAnchor
 local getglobal = _G.getglobal
 local IsControlKeyDown = _G.IsControlKeyDown
+local CreateColor = _G.CreateColor
 
 -- Simple search inspired by vBagnon for Baggins
 
@@ -209,8 +210,7 @@ local function BagginsSearch_CreateEditBox()
     background:SetTexture("Interface/ChatFrame/ChatFrameBackground")
     background:SetPoint("TOPLEFT", 4, -4)
     background:SetPoint("BOTTOMRIGHT", -4, 4)
-    local version, build, date, tocversion = GetBuildInfo()
-    if tocversion >= 100000 then
+    if Baggins:IsRetailWow() then
         background:SetGradient("VERTICAL", CreateColor(0, 0, 0, 0.9), CreateColor(0.2, 0.2, 0.2, 0.9))
     else
         background:SetGradientAlpha("VERTICAL", 0, 0, 0, 0.9, 0.2, 0.2, 0.2, 0.9)

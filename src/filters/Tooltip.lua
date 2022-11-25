@@ -49,7 +49,7 @@ local function Matches(bag, slot, rule)
         for _, line in ipairs(tooltipData.lines) do
             TooltipUtil.SurfaceArgs(line)
         end
-    
+
         -- The above SurfaceArgs calls are required to assign values to the
         -- 'type', 'guid', and 'leftText' fields seen below.
         for i=1,#tooltipData.lines do
@@ -57,7 +57,7 @@ local function Matches(bag, slot, rule)
                 return true
             end
         end
-    
+
         return false
     end
     if not AddOn:IsRetailWow() then
