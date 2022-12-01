@@ -39,6 +39,7 @@ local ids = {
     180532, -- Laestrite Lockbox
     180533, -- Solenium Lockbox
     186161, -- Stygian Lockbox
+    190954, -- Serevite Lockbox
 }
 
 local function Matches(bag, slot, _)
