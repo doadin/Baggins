@@ -2136,7 +2136,9 @@ do
         useButton:SetAttribute("item", nil)
         useButton:UnregisterAllEvents()
         useButton:Hide()
-        Baggins:Unhook(_G["DropDownList1Button" .. useButton.owner], "OnHide")
+        if useButton.owner then
+            Baggins:Unhook(_G["DropDownList1Button" .. useButton.owner], "OnHide")
+        end
         useButton.owner = nil
     end
 
