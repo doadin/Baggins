@@ -3269,17 +3269,13 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
         end
     end
 
-    if Baggins:IsRetailWow() and link and p.EnableItemReagentQuality then
-        local itemQuality = C_TradeSkillUI.GetItemReagentQualityByItemInfo(link) or  C_TradeSkillUI.GetItemCraftedQualityByItemInfo(link)
-        button.ProfessionQualityOverlay = button:CreateTexture(nil, "OVERLAY")
-        button.ProfessionQualityOverlay:SetPoint("TOPLEFT", -3, 2)
-        button.ProfessionQualityOverlay:SetDrawLayer("OVERLAY", 7)
-        local atlas = ("Professions-Icon-Quality-Tier%d-Inv"):format(itemQuality)
-        button.ProfessionQualityOverlay:SetAtlas(atlas, TextureKitConstants.UseAtlasSize)
-        ItemButtonMixin.UpdateCraftedProfessionsQualityShown(button)
-        button.ProfessionQualityOverlay:SetShown(true)
+    if Baggins:IsRetailWow() and not p.EnableItemReagentQuality then
+        ClearItemCraftingQualityOverlay(button)
     end
 
+    if Baggins:IsRetailWow() and link and p.EnableItemReagentQuality then
+        SetItemCraftingQualityOverlay(button, link)
+    end
 
     --local normalTexture = getglobal(name.."Item"..j.."NormalTexture")
     --if ( quality and quality ~= -1) then
