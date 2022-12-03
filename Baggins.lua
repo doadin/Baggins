@@ -3277,6 +3277,27 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
         SetItemCraftingQualityOverlay(button, link)
     end
 
+    if Baggins:IsRetailWow() and link and p.EnablePetLevel then
+        local petLeveltext = button:CreateFontString("BagginspetLeveltext", "OVERLAY", "GameFontNormal")
+        local ExtractLink = _G.LinkUtil.ExtractLink
+        local linkType, linkOptions = ExtractLink(link)
+        if linkType == "battlepet" then
+            local _, _, petLevel, breedQuality = strsplit(":", link)
+            petLeveltext:SetPoint(p.ItemLevelAncor,button,p.ItemLevelAncor,0,0)
+            if p.ItemLevelQualityColor then
+                local r, g, b = GetItemQualityColor(breedQuality)
+                petLeveltext:SetTextColor(r, g, b)
+            else
+                petLeveltext:SetTextColor(1, 1, 1)
+            end
+            petLeveltext:SetText(petLevel)
+            button:SetFontString(petLeveltext)
+            petLeveltext:Show()
+        elseif petLeveltext then
+            petLeveltext:Hide()
+        end
+    end
+
     --local normalTexture = getglobal(name.."Item"..j.."NormalTexture")
     --if ( quality and quality ~= -1) then
     --	local color = getglobal("ITEM_QUALITY".. quality .."_COLOR")
