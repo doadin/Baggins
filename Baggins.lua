@@ -3165,7 +3165,18 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
             local bagtype, itemFamily = Baggins:IsSpecialBag(bag)
             bagtype = bagtype or ""
             --@retail@
-            count = bagtype..LBU:CountSlots(LBU:IsBank(bag) and "BANK" or LBU:IsReagentBank(bag) and "REAGENTBANK" or "BAGS", itemFamily)
+            --count = bagtype..LBU:CountSlots(LBU:IsBank(bag) and "BANK" or LBU:IsReagentBank(bag) and "REAGENTBANK" or "BAGS", itemFamily)
+            count = 0
+            if bag <=4 and bag >=0 then
+                for Bag = 0, 4 do
+                    count = count + GetContainerNumFreeSlots(Bag)
+                end
+            elseif bag == 5 then
+                count = count + GetContainerNumFreeSlots(bag)
+            else
+                count = LBU:CountSlots(LBU:IsBank(bag) and "BANK" or LBU:IsReagentBank(bag) and "REAGENTBANK" or "BAGS", itemFamily)
+            end
+            count = bagtype..count
             --@end-retail@
 
             --[===[@non-retail@

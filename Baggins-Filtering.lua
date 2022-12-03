@@ -178,6 +178,9 @@ function Baggins:IsSpecialBag(bag) --luacheck: ignore 212
     if BagTypes[bag] == 4 then
         return "r"
     end
+    if bag == 5 then
+        return "re"
+    end
     if bag>=1 and bag<= 11 then
         local _,fam = GetContainerNumFreeSlots(bag)
 

@@ -121,6 +121,9 @@ function Baggins:MoveToSpecialtyBags(bank,testonly)
 
     for _,bag in ipairs(bank and bankBags or charBags) do
         local free,bagFamily = LBU:GetContainerNumFreeSlots(bag)
+        if bag == 5 then
+            bagFamily = 2048
+        end
         if free>0 and bagFamily~=0 then
             for slot=1, (GetContainerNumSlots(bag) or 0) do
                 if not GetContainerItemLink(bag, slot) then
@@ -137,6 +140,9 @@ function Baggins:MoveToSpecialtyBags(bank,testonly)
     if next(specialtyTargetBags) then
         for _,bag in ipairs(bank and bankBags or charBags) do
             local bagFamily = LBU:GetContainerFamily(bag)
+            if bag == 5 then
+                bagFamily = 2048
+            end
             if bagFamily==0 then	-- only examine stuff in normal bags
                 for slot=1, (GetContainerNumSlots(bag) or 0) do
                     local _, _, locked, _, _ = GetContainerItemInfo(bag, slot)
@@ -270,6 +276,9 @@ local function BagginsItemButton_Split(bag,slot,amount)
     if itemFamily~=0 then
         for _,destbag in ipairs(charBags) do
             local free,bagFamily = LBU:GetContainerNumFreeSlots(destbag)
+            if bag == 5 then
+                bagFamily = 2048
+            end
             if free>0 and band(bagFamily,itemFamily)~=0 then
                 for destslot=1, GetContainerNumSlots(destbag) do
                     if not GetContainerItemLink(destbag, destslot) then
@@ -284,6 +293,9 @@ local function BagginsItemButton_Split(bag,slot,amount)
     -- Mkay, shove it in any bag with free slots
     for _,destbag in ipairs(charBags) do
         local free,bagFamily = GetContainerNumFreeSlots(destbag)
+        if bag == 5 then
+            bagFamily = 2048
+        end
         if free>0 and bagFamily==0 then
             for destslot=1, GetContainerNumSlots(destbag) do
                 if not GetContainerItemLink(destbag, destslot) then
