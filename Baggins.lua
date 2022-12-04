@@ -3274,6 +3274,11 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
     end
 
     if Baggins:IsRetailWow() and link and p.EnableItemReagentQuality then
+        if p.alwaysShowItemReagentQuality then
+            button.alwaysShowProfessionsQuality = true
+        else
+            button.alwaysShowProfessionsQuality = false
+        end
         SetItemCraftingQualityOverlay(button, link)
     end
 

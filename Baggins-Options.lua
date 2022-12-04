@@ -304,6 +304,7 @@ local dbDefaults = {
 if Baggins:IsRetailWow() then
     dbDefaults.profile.EnableItemReagentQuality = true
     dbDefaults.profile.EnablePetLevel = true
+    dbDefaults.profile.alwaysShowItemReagentQuality = true
 end
 
 local function dbl(tab)
@@ -655,7 +656,7 @@ function Baggins:RebuildOptions()
                     name = "Item Level text Quality Color",
                     type = "toggle",
                     desc = "Set item level text color based on quality of item.",
-                    order = 347,
+                    order = 348,
                     get = function() return p.ItemLevelQualityColor end,
                     set = function(info, value) p.ItemLevelQualityColor = value;self:UpdateItemButtons() end, --luacheck: ignore 212
                 },
@@ -663,7 +664,7 @@ function Baggins:RebuildOptions()
                     name = "Item Level text ancor",
                     type = "select",
                     desc = "Set item level text location.",
-                    order = 348,
+                    order = 349,
                     get = function() return p.ItemLevelAncor end,
                     set = function(info, value) p.ItemLevelAncor = value;self:UpdateItemButtons() end, --luacheck: ignore 212
                     values = {
@@ -1001,11 +1002,19 @@ function Baggins:RebuildOptions()
             get = function() return p.EnableItemReagentQuality end,
             set = function(info, value) p.EnableItemReagentQuality = value;self:UpdateItemButtons() end, --luacheck: ignore 212
         }
+        self.opts.args.General.args.alwaysShowItemReagentQuality = {
+            name = "Enable Always Showing Item Reagent Quality",
+            type = "toggle",
+            desc = "Enable Always Showing Item Reagent Quality.",
+            order = 346,
+            get = function() return p.EnablePetLevel end,
+            set = function(info, value) p.EnablePetLevel = value;self:UpdateItemButtons() end, --luacheck: ignore 212
+        }
         self.opts.args.General.args.EnablePetLevel = {
             name = "Enable Showing Battle Pet Level",
             type = "toggle",
             desc = "Enable Showing Battle Pet Level.",
-            order = 346,
+            order = 347,
             get = function() return p.EnablePetLevel end,
             set = function(info, value) p.EnablePetLevel = value;self:UpdateItemButtons() end, --luacheck: ignore 212
         }
