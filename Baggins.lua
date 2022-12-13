@@ -3251,7 +3251,7 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
                 --text:Show()
                 --ilvltext:SetFont(p.Font, 10)
                 ilvltext:SetPoint(p.ItemLevelAncor,button,p.ItemLevelAncor,0,0)
-                if p.ItemLevelQualityColor then
+                if p.ItemLevelQualityColor and quality then
                     local r, g, b = GetItemQualityColor(quality)
                     --print(r, g, b)
                     ilvltext:SetTextColor(r, g, b)
