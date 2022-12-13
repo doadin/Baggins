@@ -3243,10 +3243,11 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
         local ilvltext = button:CreateFontString("Bagginsilvltext", "OVERLAY", "GameFontNormal")
         if link then
             --itemName, itemLink, itemQuality, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount,itemEquipLoc, itemTexture, sellPrice, classID, subclassID, bindType, expacID, setID, isCraftingReagent
-            local _, _, _, _, _, itemType = GetItemInfo(link)
+            local _, _, _, _, _, _, _, _, _, _, _, classID = GetItemInfo(link)
             local item = Item:CreateFromBagAndSlot(bag, slot) --luacheck: ignore 113
             local level = item and item:GetCurrentItemLevel() or 0
-            if level and itemType == "Armor" or itemType == "Weapon" then
+            --if level and itemType == "Armor" or itemType == "Weapon" then
+            if level and classID == Enum.ItemClass.Armor or classID == Enum.ItemClass.Weapon then
                 --text:SetText(itemLevel)
                 --text:Show()
                 --ilvltext:SetFont(p.Font, 10)
