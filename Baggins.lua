@@ -32,6 +32,7 @@ local ItemButtonUtil = _G.ItemButtonUtil
 local IsBagOpen = _G.IsBagOpen
 local ShowInspectCursor = _G.ShowInspectCursor
 local ShowContainerSellCursor = _G.C_Container and _G.C_Container.ShowContainerSellCursor or _G.ShowContainerSellCursor
+local Enum = _G.Enum and _G.Enum
 
 --@retail@
 local ReagentBankButtonIDToInvSlotID, GetContainerItemQuestInfo, DepositReagentBank, IsReagentBankUnlocked =
