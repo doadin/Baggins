@@ -246,7 +246,7 @@ function oSkin:SkinBag(frame)
         frame.tfade:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT',-1,1)
         frame.tfade:SetBlendMode('ADD')
         --frame.tfade:SetGradient('VERTICAL', .1, .1, .1, 0, .2, .2, .2, 0.6)
-        if Baggins:IsRetailWow() then
+        if Baggins:IsRetailWow() or Baggins:IsWrathWow() then
             frame.tfade:SetGradient("VERTICAL", CreateColor(0.1, 0.1, 0.1, 0), CreateColor(0.2, 0.2, 0.2, 0.6))
         else
             frame.tfade:SetGradient('VERTICAL', .1, .1, .1, 0, .2, .2, .2, 0.6)
@@ -313,7 +313,7 @@ if LSM then
                     frame.tfade:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT',-1,1)
                     frame.tfade:SetBlendMode('ADD')
                     --frame.tfade:SetGradient('VERTICAL', .1, .1, .1, 0, .2, .2, .2, 0.6)
-                    if Baggins:IsRetailWow() then
+                    if Baggins:IsRetailWow() or Baggins:IsWrathWow()then
                         frame.tfade:SetGradient("VERTICAL", CreateColor(0.1, 0.1, 0.1, 0), CreateColor(0.2, 0.2, 0.2, 0.6))
                     else
                         frame.tfade:SetGradient('VERTICAL', .1, .1, .1, 0, .2, .2, .2, 0.6)

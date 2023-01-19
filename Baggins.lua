@@ -34,12 +34,12 @@ local ShowInspectCursor = _G.ShowInspectCursor
 local ShowContainerSellCursor = _G.C_Container and _G.C_Container.ShowContainerSellCursor or _G.ShowContainerSellCursor
 local Enum = _G.Enum and _G.Enum
 
---@retail@
+
 local ReagentBankButtonIDToInvSlotID, GetContainerItemQuestInfo, DepositReagentBank, IsReagentBankUnlocked =
-      _G.ReagentBankButtonIDToInvSlotID, _G.C_Container and _G.C_Container.GetContainerItemQuestInfo or _G.GetContainerItemQuestInfo, _G.DepositReagentBank, _G.IsReagentBankUnlocked
-local IsContainerItemAnUpgrade = _G.IsContainerItemAnUpgrade
-local C_ItemUpgrade = _G.C_ItemUpgrade
---@end-retail@
+      _G.ReagentBankButtonIDToInvSlotID, _G.C_Container and _G.C_Container.GetContainerItemQuestInfo or _G.GetContainerItemQuestInfo, _G.DepositReagentBank and _G.DepositReagentBank, _G.IsReagentBankUnlocked and _G.IsReagentBankUnlocked
+local IsContainerItemAnUpgrade = _G.IsContainerItemAnUpgrade and _G.IsContainerItemAnUpgrade
+local C_ItemUpgrade = _G.C_ItemUpgrade and _G.C_ItemUpgrade
+
 
 local C_Item, ItemLocation, InCombatLockdown, IsModifiedClick, GetDetailedItemLevelInfo, GetContainerItemID, InRepairMode, KeyRingButtonIDToInvSlotID, C_PetJournal, C_NewItems, PlaySound =
       _G.C_Item, _G.ItemLocation, _G.InCombatLockdown, _G.IsModifiedClick, _G.GetDetailedItemLevelInfo, _G.C_Container and _G.C_Container.GetContainerItemID or _G.GetContainerItemID, _G.InRepairMode, _G.KeyRingButtonIDToInvSlotID, _G.C_PetJournal, _G.C_NewItems, _G.PlaySound
@@ -3095,7 +3095,7 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
         end
     end
     local texture, itemCount, locked, quality, readable, itemid, link, _
-    if Baggins:IsRetailWow() then
+    if Baggins:IsRetailWow() or Baggins:IsWrathWow() then
         local itemInfo = GetContainerItemInfo(bag, slot)
         texture = itemInfo and itemInfo.iconFileID
         itemCount = itemInfo and itemInfo.stackCount
@@ -3110,13 +3110,12 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
     button:SetID(slot)
     -- quest item glow introduced in 3.3 (with silly logic)
     local isQuestItem, questId, isActive, ContainerItemQuestInfo
-    if Baggins:IsRetailWow() then
+    if Baggins:IsRetailWow() or Baggins:IsWrathWow() then
         ContainerItemQuestInfo = GetContainerItemQuestInfo(bag, slot)
         isQuestItem = ContainerItemQuestInfo and ContainerItemQuestInfo.isQuestItem
         questId = ContainerItemQuestInfo and ContainerItemQuestInfo.questID
         isActive = ContainerItemQuestInfo and ContainerItemQuestInfo.isActive
-    end
-    if Baggins:IsWrathWow() then
+    else
         isQuestItem, questId, isActive = GetContainerItemQuestInfo(bag, slot)
     end
     local questTexture = (questId and not isActive) and TEXTURE_ITEM_QUEST_BANG or (questId or isQuestItem) and TEXTURE_ITEM_QUEST_BORDER
