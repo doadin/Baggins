@@ -210,7 +210,7 @@ local function BagginsSearch_CreateEditBox()
     background:SetTexture("Interface/ChatFrame/ChatFrameBackground")
     background:SetPoint("TOPLEFT", 4, -4)
     background:SetPoint("BOTTOMRIGHT", -4, 4)
-    if Baggins:IsRetailWow() then
+    if Baggins:IsRetailWow() or Baggins:IsWrathWow() then
         background:SetGradient("VERTICAL", CreateColor(0, 0, 0, 0.9), CreateColor(0.2, 0.2, 0.2, 0.9))
     else
         background:SetGradientAlpha("VERTICAL", 0, 0, 0, 0.9, 0.2, 0.2, 0.2, 0.9)
