@@ -265,7 +265,7 @@ function Baggins:CheckSlotsChanged(bag, forceupdate)
     local itemid
 
     local count,link
-    if Baggins:IsRetailWow() then
+    if Baggins:IsRetailWow() or Baggins:IsWrathWow() then
         local itemInfo = GetContainerItemInfo(bag, slot)
         count = itemInfo and itemInfo.stackCount
         link = itemInfo and itemInfo.hyperlink
