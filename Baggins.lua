@@ -3265,10 +3265,12 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
                 --print(type(tostring(level)))
                 --self:SetItemButtonCount(button, level)
             else
-                ilvltext:Hide()
+                ilvltext:SetText("")
+                button:SetFontString(ilvltext)
             end
         else
-            ilvltext:Hide()
+            ilvltext:SetText("")
+            button:SetFontString(ilvltext)
         end
     end
 
