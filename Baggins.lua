@@ -3569,7 +3569,7 @@ end
 
 function BagginsOnAddonCompartmentClick(_,button)
     if button == "RightButton" then
-        tooltip:Hide()
+        --tooltip:Hide()
         updateMenu()
         EasyMenu(ldbDropDownMenu, ldbDropDownFrame, "cursor", 0, 0, "MENU")
         -- Baggins:OpenConfig()
