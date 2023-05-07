@@ -3568,13 +3568,13 @@ function Baggins:SetText(text) --luacheck: ignore 212
 end
 
 function BagginsOnAddonCompartmentClick(_,button)
-    if IsShiftKeyDown() then
-        self:SaveItemCounts()
-        self:ForceFullUpdate()
-    elseif IsControlKeyDown() and self.db.profile.layout == 'manual' then
-        self.db.profile.lock = not self.db.profile.lock
+    if button == "RightButton" then
+        tooltip:Hide()
+        updateMenu()
+        EasyMenu(ldbDropDownMenu, ldbDropDownFrame, "cursor", 0, 0, "MENU")
+        -- Baggins:OpenConfig()
     else
-        self:ToggleAllBags()
+        Baggins:OnClick()
     end
 end
 
