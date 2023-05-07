@@ -382,7 +382,9 @@ function Baggins:OnInitialize()
     self:RegisterChatCommand("baggins", "OpenConfig")
     self.OnMenuRequest = self.opts
 
-    dbIcon:Register("Baggins", ldbdata, self.db.profile.minimap)
+    if Baggins:IsClassicWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() then
+        dbIcon:Register("Baggins", ldbdata, self.db.profile.minimap)
+    end
     -- self:RegisterChatCommand({ "/baggins" }, self.opts, "BAGGINS")
 
 end
@@ -3563,6 +3565,17 @@ end
 
 function Baggins:SetText(text) --luacheck: ignore 212
     ldbdata.text = text
+end
+
+function BagginsOnAddonCompartmentClick(_,button)
+    if IsShiftKeyDown() then
+        self:SaveItemCounts()
+        self:ForceFullUpdate()
+    elseif IsControlKeyDown() and self.db.profile.layout == 'manual' then
+        self.db.profile.lock = not self.db.profile.lock
+    else
+        self:ToggleAllBags()
+    end
 end
 
 function Baggins:OnClick()

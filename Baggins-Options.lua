@@ -566,13 +566,14 @@ function Baggins:RebuildOptions()
                     desc = L["Show an icon at the minimap if no Broker-Display is present."],
                     get = function() return not Baggins.db.profile.minimap.hide end,
                     set = function(info, value) --luacheck: ignore 212
-                            Baggins.db.profile.minimap.hide = not value
-                            if value then
-                                dbIcon:Show("Baggins")
-                            else
-                                dbIcon:Hide("Baggins")
-                            end
+                        Baggins.db.profile.minimap.hide = not value
+                        if value then
+                            dbIcon:Show("Baggins")
+                        else
+                            dbIcon:Hide("Baggins")
                         end
+                    end,
+                    hidden = Baggins:IsRetailWow(),
                 },
                 Skin = {
                     name = L["Bag Skin"],

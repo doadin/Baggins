@@ -29,6 +29,7 @@
 ## OptionalDeps: Ace3, LibQTip-1.0, LibBagUtils-1.0, LibPeriodicTable-3.1, LibDBIcon-1.0, LibItemUpgradeInfo-1.0, LibSharedMedia-3.0
 ## X-Embeds: Ace3, LibQTip-1.0, LibBagUtils-1.0, LibPeriodicTable-3.1, LibDBIcon-1.0, LibDataBroker-1.0, LibSharedMedia-3.0
 
+## AddonCompartmentFunc: BagginsOnAddonCompartmentClick
 ## IconTexture: Interface\Icons\INV_Jewelry_Ring_03
 
 Libs\LibStub\LibStub.lua
