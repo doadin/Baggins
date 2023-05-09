@@ -3117,8 +3117,6 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
         isQuestItem = ContainerItemQuestInfo and ContainerItemQuestInfo.isQuestItem
         questId = ContainerItemQuestInfo and ContainerItemQuestInfo.questID
         isActive = ContainerItemQuestInfo and ContainerItemQuestInfo.isActive
-    else
-        isQuestItem, questId, isActive = GetContainerItemQuestInfo(bag, slot)
     end
     local questTexture = (questId and not isActive) and TEXTURE_ITEM_QUEST_BANG or (questId or isQuestItem) and TEXTURE_ITEM_QUEST_BORDER
     if p.highlightquestitems and texture and questTexture then
