@@ -7,6 +7,7 @@ local Baggins = _G.Baggins
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Baggins")
 local LBU = LibStub("LibBagUtils-1.0")
+local LSM = LibStub:GetLibrary("LibSharedMedia-3.0", true)
 local qt = LibStub('LibQTip-1.0')
 local dbIcon = LibStub("LibDBIcon-1.0")
 local console = LibStub("AceConsole-3.0")
@@ -1950,7 +1951,6 @@ function Baggins:ReallyLayoutSection(sectionframe, cols)
         else
             title = ("- %s"):format(title)
         end
-        local LSM = LibStub:GetLibrary("LibSharedMedia-3.0", true) --luacheck:ignore 113
         sectionframe.title:SetFont(LSM and LSM:Fetch("font", p.Font) or _G.STANDARD_TEXT_FONT,p.FontSize or 10)
         sectionframe.title:SetText(title)
         totalwidth = max(totalwidth,sectionframe.title:GetWidth())
@@ -2519,6 +2519,7 @@ do
         frame.glow:SetAllPoints(frame)
 
         frame.newtext = frame.newtext or frame:CreateFontString(frame:GetName().."NewText","OVERLAY","GameFontNormal")
+        frame.newtext:SetFont(LSM and LSM:Fetch("font", Baggins.db.profile.Font) or _G.STANDARD_TEXT_FONT,Baggins.db.profile.FontSize or 10)
         frame.newtext:SetPoint("TOP",frame,"TOP",0,0)
         frame.newtext:SetHeight(13)
         frame.newtext:SetTextColor(0,1,0,1)
@@ -2953,7 +2954,6 @@ function Baggins:UpdateBankControlFrame() --luacheck: ignore 212
 end
 
 function Baggins:SetBagTitle(bagid,title)
-    local LSM = LibStub:GetLibrary("LibSharedMedia-3.0", true) --luacheck:ignore 113
     if self.bagframes[bagid] then
         self.bagframes[bagid].title:SetFont(LSM and LSM:Fetch("font", Baggins.db.profile.Font) or _G.STANDARD_TEXT_FONT,Baggins.db.profile.FontSize or 10)
         self.bagframes[bagid].title:SetText(title)
