@@ -4227,7 +4227,7 @@ function Baggins:BankFrameItemButton_Update(button)
     end
 end
 
-local S_UPGRADE_LEVEL   = "^" .. gsub(ITEM_UPGRADE_TOOLTIP_FORMAT, "%%d", "(%%d+)")
+--local S_UPGRADE_LEVEL   = "^" .. gsub(ITEM_UPGRADE_TOOLTIP_FORMAT, "%%d", "(%%d+)")
 local scantip = CreateFrame("GameTooltip", "BagginsUpgradeScanningTooltip", nil, "GameTooltipTemplate")
 local function GetItemUpgradeLevel(itemLink)
     scantip:SetOwner(UIParent, "ANCHOR_NONE")
@@ -4235,7 +4235,8 @@ local function GetItemUpgradeLevel(itemLink)
     for i = 2, scantip:NumLines() do -- Line 1 is always the name so you can skip it.
         local text = _G["BagginsUpgradeScanningTooltipTextLeft"..i]:GetText()
         if text and text ~= "" then
-            local currentUpgradeLevel, maxUpgradeLevel = strmatch(text, S_UPGRADE_LEVEL)
+            local currentUpgradeLevel, maxUpgradeLevel = strmatch(text, "(%d+)/(%d+)")
+            --local currentUpgradeLevel, maxUpgradeLevel = strmatch(text, S_UPGRADE_LEVEL)
             if currentUpgradeLevel then
                 return currentUpgradeLevel, maxUpgradeLevel
             end
