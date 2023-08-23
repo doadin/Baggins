@@ -1314,17 +1314,11 @@ local function NameComp(a, b)
         return (namea  or "?") < (nameb or "?")
     end
 
-    local counta
-    local countb
-    if Baggins:IsRetailWow() or Baggins:IsWrathWow() then
-        local itemInfoCounta = GetContainerItemInfo(baga, slota)
-        local itemInfoCountb = GetContainerItemInfo(bagb, slotb)
-        counta = itemInfoCounta and itemInfoCounta.stackCount
-        countb = itemInfoCountb and itemInfoCountb.stackCount
-    else
-        counta = select(2, GetContainerItemInfo(baga, slota))
-        countb = select(2, GetContainerItemInfo(bagb, slotb))
-    end
+    local itemInfoCounta = GetContainerItemInfo(baga, slota)
+    local itemInfoCountb = GetContainerItemInfo(bagb, slotb)
+    local counta = itemInfoCounta and itemInfoCounta.stackCount
+    local countb = itemInfoCountb and itemInfoCountb.stackCount
+
     return (counta  or 0) > (countb or 0)
 end
 local function QualityComp(a, b)
@@ -1342,17 +1336,11 @@ local function QualityComp(a, b)
         return (namea  or "?") < (nameb or "?")
     end
 
-    local counta
-    local countb
-    if Baggins:IsRetailWow() or Baggins:IsWrathWow() then
-        local itemInfoCounta = GetContainerItemInfo(baga, slota)
-        local itemInfoCountb = GetContainerItemInfo(bagb, slotb)
-        counta = itemInfoCounta and itemInfoCounta.stackCount
-        countb = itemInfoCountb and itemInfoCountb.stackCount
-    else
-        counta = select(2, GetContainerItemInfo(baga, slota))
-        countb = select(2, GetContainerItemInfo(bagb, slotb))
-    end
+    local itemInfoCounta = GetContainerItemInfo(baga, slota)
+    local itemInfoCountb = GetContainerItemInfo(bagb, slotb)
+    local counta = itemInfoCounta and itemInfoCounta.stackCount
+    local countb = itemInfoCountb and itemInfoCountb.stackCount
+
     return (counta  or 0) > (countb  or 0)
 end
 local function TypeComp(a, b)
@@ -1380,17 +1368,11 @@ local function TypeComp(a, b)
         return (namea or "?")  < (nameb or "?")
     end
 
-    local counta
-    local countb
-    if Baggins:IsRetailWow() or Baggins:IsWrathWow() then
-        local itemInfoCounta = GetContainerItemInfo(baga, slota)
-        local itemInfoCountb = GetContainerItemInfo(bagb, slotb)
-        counta = itemInfoCounta and itemInfoCounta.stackCount
-        countb = itemInfoCountb and itemInfoCountb.stackCount
-    else
-        counta = select(2, GetContainerItemInfo(baga, slota))
-        countb = select(2, GetContainerItemInfo(bagb, slotb))
-    end
+    local itemInfoCounta = GetContainerItemInfo(baga, slota)
+    local itemInfoCountb = GetContainerItemInfo(bagb, slotb)
+    local counta = itemInfoCounta and itemInfoCounta.stackCount
+    local countb = itemInfoCountb and itemInfoCountb.stackCount
+
     return (counta or 0)  > (countb or 0)
 end
 local function SlotComp(a, b)
@@ -1427,17 +1409,11 @@ local function IlvlComp(a, b)
         return (namea or "?")  < (nameb or "?")
     end
 
-    local counta
-    local countb
-    if Baggins:IsRetailWow() or Baggins:IsWrathWow() then
-        local itemInfoCounta = GetContainerItemInfo(baga, slota)
-        local itemInfoCountb = GetContainerItemInfo(bagb, slotb)
-        counta = itemInfoCounta and itemInfoCounta.stackCount
-        countb = itemInfoCountb and itemInfoCountb.stackCount
-    else
-        counta = select(2, GetContainerItemInfo(baga, slota))
-        countb = select(2, GetContainerItemInfo(bagb, slotb))
-    end
+    local itemInfoCounta = GetContainerItemInfo(baga, slota)
+    local itemInfoCountb = GetContainerItemInfo(bagb, slotb)
+    local counta = itemInfoCounta and itemInfoCounta.stackCount
+    local countb = itemInfoCountb and itemInfoCountb.stackCount
+
     return (counta  or 0) > (countb or 0)
 end
 
@@ -2286,14 +2262,9 @@ do
         excludeCategoryIndex = #menu
 
         local itemID
-        local itemQuality,itemLink,_
-        if Baggins:IsRetailWow() or Baggins:IsWrathWow() then
-            local itemInfo = GetContainerItemInfo(bag, slot)
-            itemQuality = itemInfo and itemInfo.quality
-            itemLink = GetContainerItemLink(bag, slot)
-        else
-            _, _, _, itemQuality, _, _, itemLink = GetContainerItemInfo(bag, slot)
-        end
+        local itemInfo = GetContainerItemInfo(bag, slot)
+        local itemQuality = itemInfo and itemInfo.quality
+        local itemLink = GetContainerItemLink(bag, slot)
 
         if itemLink then
           itemID = C_Item.GetItemID(ItemLocation:CreateFromBagAndSlot(bag, slot))
@@ -2432,13 +2403,9 @@ do
         end
         for _, v in ipairs(button.slots) do
             local bag, slot = GetSlotInfo(v)
-            local locked
-            if Baggins:IsRetailWow() or Baggins:IsWrathWow() then
-                local itemInfo = GetContainerItemInfo(bag, slot)
-                locked = itemInfo and itemInfo.isLocked
-            else
-                locked = select(3, GetContainerItemInfo(bag, slot))
-            end
+            local itemInfo = GetContainerItemInfo(bag, slot)
+            local locked = itemInfo and itemInfo.isLocked
+
             if not locked then
                 button:SetID(slot)
                 local bagframe = button:GetParent():GetParent()
@@ -2993,13 +2960,8 @@ function Baggins:UpdateItemButtonLocks()
         for _, section in ipairs(bag.sections) do
             for _, button in ipairs(section.items) do
                 if button:IsVisible() then
-                    local locked
-                    if Baggins:IsRetailWow() or Baggins:IsWrathWow() then
-                        local itemInfo = GetContainerItemInfo(button:GetParent():GetID(), button:GetID())
-                        locked = itemInfo and itemInfo.isLocked
-                    else
-                        locked = select(3, GetContainerItemInfo(button:GetParent():GetID(), button:GetID()))
-                    end
+                    local itemInfo = GetContainerItemInfo(button:GetParent():GetID(), button:GetID())
+                    local locked = itemInfo and itemInfo.isLocked
                     SetItemButtonDesaturated(button, locked, 0.5, 0.5, 0.5)
                 end
             end
@@ -3014,13 +2976,8 @@ function Baggins:UpdateItemButtonCooldowns()
                 if button:IsVisible() then
                     local container = button:GetParent():GetID()
                     local slot = button:GetID()
-                    local texture
-                    if Baggins:IsRetailWow() or Baggins:IsWrathWow() then
-                        local itemInfo = GetContainerItemInfo(container, slot)
-                        texture = itemInfo and itemInfo.iconFileID
-                    else
-                        texture = GetContainerItemInfo(container, slot)
-                    end
+                    local itemInfo = GetContainerItemInfo(container, slot)
+                    local texture = itemInfo and itemInfo.iconFileID
                     if ( texture ) then
                         self:UpdateItemButtonCooldown(container, button)
                         button.hasItem = 1
@@ -3096,19 +3053,15 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
             newItemTexture:Hide()
         end
     end
-    local texture, itemCount, locked, quality, readable, itemid, link, _
-    if Baggins:IsRetailWow() or Baggins:IsWrathWow() then
-        local itemInfo = GetContainerItemInfo(bag, slot)
-        texture = itemInfo and itemInfo.iconFileID
-        itemCount = itemInfo and itemInfo.stackCount
-        locked = itemInfo and itemInfo.isLocked
-        quality = itemInfo and itemInfo.quality
-        readable = itemInfo and itemInfo.isReadable
-        link = itemInfo and itemInfo.hyperlink
-        itemid = itemInfo and itemInfo.itemID
-    else
-        texture, itemCount, locked, quality, readable, _, link, _, _, itemid = GetContainerItemInfo(bag, slot)
-    end
+
+    local itemInfo = GetContainerItemInfo(bag, slot)
+    local texture = itemInfo and itemInfo.iconFileID
+    local itemCount = itemInfo and itemInfo.stackCount
+    local locked = itemInfo and itemInfo.isLocked
+    local quality = itemInfo and itemInfo.quality
+    local readable = itemInfo and itemInfo.isReadable
+    local link = itemInfo and itemInfo.hyperlink
+    local itemid = itemInfo and itemInfo.itemID
     button:SetID(slot)
     -- quest item glow introduced in 3.3 (with silly logic)
     local isQuestItem, questId, isActive, ContainerItemQuestInfo

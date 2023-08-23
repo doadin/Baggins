@@ -69,15 +69,9 @@ function Baggins:DoCompressBags(bank,testonly)
 
     for _,bag in ipairs(bags) do
         for slot=1,(GetContainerNumSlots(bag) or 0) do
-            local itemCount,locked
-            if Baggins:IsRetailWow() or Baggins:IsWrathWow() then
-                local itemInfo = GetContainerItemInfo(bag, slot)
-                itemCount = itemInfo and itemInfo.stackCount
-                locked = itemInfo and itemInfo.isLocked
-            else
-                itemCount = select(2, GetContainerItemInfo(bag, slot))
-                locked = select(3, GetContainerItemInfo(bag, slot))
-            end
+            local itemInfo = GetContainerItemInfo(bag, slot)
+            local itemCount = itemInfo and itemInfo.stackCount
+            local locked = itemInfo and itemInfo.isLocked
             local link = GetContainerItemLink(bag, slot)
             lockedSlots = lockedSlots or locked
             if link and (testonly or not locked) then
