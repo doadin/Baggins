@@ -57,7 +57,7 @@ BuildBagTypes()
 
 local function Matches(bag,slot,_)
     if not (bag and slot) then return end
-    if BagTypes[bag] == 3 then return end
+    --if BagTypes[bag] == 3 then return end
     local link = GetContainerItemLink(bag, slot)
     if not link then
         return true
