@@ -28,6 +28,10 @@ local ids = {
     65274, -- Cloak of Coordination
     64457, --the last relic of argus
     46874, --argent crusaders tabard
+    180817, --Cypher of Relocation
+    167075, --Ultrasafe Transporter: Mechagon
+    140493, --Adept's Guide to Dimensional Rifting
+    118663, --Relic of Karabor
 }
 
 local function Matches(bag, slot, _)
