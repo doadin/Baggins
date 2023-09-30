@@ -26,7 +26,7 @@ if NumberofAddons >= 1 then
     for i=1,NumberofAddons do
         local _, title, _, _, reason, _, _ = GetAddOnInfo(i)
         if title == "Baggins Search" or title == "Baggins_Search" then
-            if not reason or not reason == "DISABLED" then
+            if reason == nil or reason ~= "DISABLED" then
                 StaticPopup_Show("BAGGINS_SEARCH")
                 return
             end
