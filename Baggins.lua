@@ -2262,8 +2262,8 @@ do
         excludeCategoryIndex = #menu
 
         local itemID
-        local itemInfo = GetContainerItemInfo(bag, slot)
-        local itemQuality = itemInfo and itemInfo.quality
+        local CitemInfo = GetContainerItemInfo(bag, slot)
+        local itemQuality = CitemInfo and CitemInfo.quality
         local itemLink = GetContainerItemLink(bag, slot)
 
         if itemLink then
