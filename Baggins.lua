@@ -461,12 +461,10 @@ function Baggins:OnEnable()
     self:RegisterEvent('AUCTION_HOUSE_SHOW', "AuctionHouse")
     self:RegisterEvent('AUCTION_HOUSE_CLOSED', "CloseAllBags")
 
-    --@retail@
-    -- Patch 10.0 Added
+    -- Patch 10.0 Added Later Added To Classic
     self:RegisterEvent('PLAYER_INTERACTION_MANAGER_FRAME_SHOW', "PlayerInteractionManager")
     self:RegisterEvent('PLAYER_INTERACTION_MANAGER_FRAME_HIDE', "PlayerInteractionManager")
     self:RegisterEvent('SOCKET_INFO_UPDATE', "OpenAllBags")
-    --@end-retail@
 
     self:RegisterSignal('CategoryMatchAdded', self.CategoryMatchAdded, self)
     self:RegisterSignal('CategoryMatchRemoved', self.CategoryMatchRemoved, self)
@@ -475,7 +473,7 @@ function Baggins:OnEnable()
     self:UpdateBagHooks()
     self:UpdateBackpackHook()
     self:RawHook("CloseSpecialWindows", true)
-    self:RawHookScript(BankFrame,"OnEvent","BankFrame_OnEvent")
+    --self:RawHookScript(BankFrame,"OnEvent","BankFrame_OnEvent")
 
     -- hook blizzard PLAYERBANKSLOTS_CHANGED function to filter inactive table
     -- this is required to prevent a nil error when working with a tab that the
@@ -4229,4 +4227,20 @@ local function GetItemUpgradeLevel(itemLink)
     if event == "PLAYER_INTERACTION_MANAGER_FRAME_SHOW" and type == 26 or type == 39 or type == 40 or type == 44 or type == 48 or type == 56 then
         self:OpenAllBags()
     end
+
+    if event == "PLAYER_INTERACTION_MANAGER_FRAME_SHOW" and typenumber == 8 and self.db.profile.hidedefaultbank then
+        local function NeutralizeFrame(frame)
+	    	if not frame then return end
+	    	frame:UnregisterAllEvents()
+	    	frame:SetScript("OnEvent", nil)
+	    	frame:SetScript("OnShow", nil)
+	    	frame:SetScript("OnHide", nil)
+	    	HideUIPanel(frame)
+	    	frame:ClearAllPoints()
+	    	frame:Hide()
+	    end
+        NeutralizeFrame(BankFrame)
+        NeutralizeFrame(ReagentBankFrame)
+    end
+
 end
