@@ -114,7 +114,8 @@ local itemQualityT = {
 }
 
 function BagginsSearch:Search(search) --luacheck: ignore 212
-    local itemName, itemQuality, itemType, itemSubType, itemEquipLoc, bindType, expacID, setID
+    local itemName, itemQuality, itemLevel, itemType, itemSubType, itemEquipLoc, bindType, expacID, setID
+    local effectiveILvl, isPreview, baseILvl, GearILevel
     for _, bag in ipairs(Baggins.bagframes) do --bagid,bag
         for _, section in ipairs(bag.sections) do --sectionid, section
             for _, button in ipairs(section.items) do --buttonid, button
@@ -123,9 +124,11 @@ function BagginsSearch:Search(search) --luacheck: ignore 212
                     if link then
                         --itemName, itemLink, itemQuality, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount,itemEquipLoc, itemTexture, sellPrice, classID, subclassID, bindType, expacID, setID, isCraftingReagent
                         if Baggins:IsRetailWow() then
-                            itemName, _, itemQuality, _, _, itemType, itemSubType, _,itemEquipLoc, _, _, _, _, bindType, expacID, setID = GetItemInfo(link)
+                            itemName, _, itemQuality, itemLevel, _, itemType, itemSubType, _,itemEquipLoc, _, _, _, _, bindType, expacID, setID = GetItemInfo(link)
+                            effectiveILvl, isPreview, baseILvl = GetDetailedItemLevelInfo(link)
+                            GearILevel = effectiveILvl or baseILvl or itemLevel or 0
                         else
-                            itemName, _, itemQuality, _, _, itemType, itemSubType, _,itemEquipLoc, _, _, _, _, bindType, expacID = GetItemInfo(link)
+                            itemName, _, itemQuality, itemLevel, _, itemType, itemSubType, _,itemEquipLoc, _, _, _, _, bindType, expacID = GetItemInfo(link)
                         end
                         if not itemName then
                             -- hack hack hack
@@ -157,6 +160,7 @@ function BagginsSearch:Search(search) --luacheck: ignore 212
                             expacID and itemExpansion[expacID] and strfind(itemExpansion[expacID]:lower(), search:lower()) or
                             expacID and itemExpansionAB[expacID] and strfind(itemExpansionAB[expacID]:lower(), search:lower()) or
                             itemQuality and strfind(itemQualityT[itemQuality]:lower(), search:lower()) or
+                            GearILevel and strfind(GearILevel, search) or
                             setID and strfind(setID, search) then
                                 button:LockHighlight()
                                 button:SetAlpha(1)
@@ -174,7 +178,8 @@ function BagginsSearch:Search(search) --luacheck: ignore 212
                             itemEquipLoc and strfind(itemEquipLoc:lower(), search:lower()) or
                             bindType and strfind(itemBindTypes[bindType]:lower(), search:lower()) or
                             bindType and strfind(itemBindTypesAB[bindType]:lower(), search:lower()) or
-                            itemQuality and strfind(itemQualityT[itemQuality]:lower(), search:lower()) then
+                            itemQuality and strfind(itemQualityT[itemQuality]:lower(), search:lower()) or
+                            itemLevel and strfind(itemLevel, search) then
                                 button:LockHighlight()
                                 button:SetAlpha(1)
                             else
