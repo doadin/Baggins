@@ -3259,6 +3259,22 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
         end
     end
 
+    if _G.Scrap and link then --  and p.EnablePetLevel
+        --local scraptext = button:CreateFontString("Bagginsilvltext", "OVERLAY", "GameFontNormal")
+        --scraptext:SetText("scrap")
+        --button:SetFontString(scraptext)
+        local item = Item:CreateFromBagAndSlot(bag, slot)
+        local id = GetContainerItemID(bag, slot)
+        local icon = button:CreateTexture(nil, 'OVERLAY')
+        if _G.Scrap:IsJunk(id, bag, slot) then
+            icon:SetTexture('Interface/Buttons/UI-GroupLoot-Coin-Up')
+            icon:SetPoint('TOPLEFT', 2, -2)
+            icon:SetSize(15, 15)
+        else
+            icon:SetTexture('')
+        end
+    end
+
     --local normalTexture = getglobal(name.."Item"..j.."NormalTexture")
     --if ( quality and quality ~= -1) then
     --	local color = getglobal("ITEM_QUALITY".. quality .."_COLOR")
