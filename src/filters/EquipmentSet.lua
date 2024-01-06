@@ -16,9 +16,8 @@ local ipairs = _G.ipairs
 -- WoW API
 local GetEquipmentSetIDs = _G.C_EquipmentSet.GetEquipmentSetIDs
 local GetEquipmentSetInfo = _G.C_EquipmentSet.GetEquipmentSetInfo
-local GetContainerItemEquipmentSetInfo = _G.C_Container and _G.C_Container.GetContainerItemEquipmentSetInfo or _G.GetContainerItemEquipmentSetInfo
-local GetContainerItemInfo = _G.C_Container and _G.C_Container.GetContainerItemInfo
-local C_EquipmentSetGetItemIDs = _G.C_EquipmentSet and _G.C_EquipmentSet.GetItemIDs
+local GetContainerItemEquipmentSetInfo = _G.C_Container and _G.C_Container.GetContainerItemEquipmentSetInfo
+local C_EquipmentSetGetItemLocations = _G.C_EquipmentSet and _G.C_EquipmentSet.GetItemLocations
 
 -- Libs
 local LibStub = _G.LibStub
@@ -26,6 +25,31 @@ local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
 
 -- Local storage
 local EquipmentSets = {}
+local itemstable = {}
+
+local function UpdateCache()
+    itemstable = {}
+
+    for _, id in next, GetEquipmentSetIDs() do
+        local name = GetEquipmentSetInfo(id)
+        local itemLocations = C_EquipmentSetGetItemLocations(id)
+        for _, location in pairs(itemLocations) do
+            local player, bank, bags, voidStorage, slot, bag = EquipmentManager_UnpackLocation(location) --location
+            if slot and bag then
+                if not itemstable[bag] then
+                    itemstable[bag] = {}
+                end
+                if itemstable[bag] and itemstable[bag][slot] then
+                    local otherSet = itemstable[bag][slot]
+                    local newSet = otherSet .. "," .. name
+                    itemstable[bag][slot] = newSet
+                else
+                    itemstable[bag][slot] = name
+                end
+            end
+        end
+    end
+end
 
 -- Update list of equipment sets
 local function UpdateEquipmentSets()
@@ -36,6 +60,8 @@ local function UpdateEquipmentSets()
         local name = GetEquipmentSetInfo(id)
         EquipmentSets[name] = name
     end
+
+    UpdateCache()
 
 end
 
@@ -67,23 +93,16 @@ end
 
 -- Test for match
 local function Matches(bag, slot, rule)
+    --UpdateEquipmentSets()
 
     -- Item belongs to a set?
     local inset, setstring = GetContainerItemEquipmentSetInfo(bag, slot)
     if not inset then
-        for _, id in next, GetEquipmentSetIDs() do
-            local name, _, _, _, _, _, _, _, _ = GetEquipmentSetInfo(id)
-            local items = C_EquipmentSetGetItemIDs(id)
-            for i = 1, 19 do
-                if items[i] then
-                    local setitemid = items[i]
-                    local containerInfo = GetContainerItemInfo(bag, slot)
-                    if name and containerInfo and setitemid == containerInfo.itemID then
-                        inset = true
-                        setstring = name
-                    end
-                end
-            end
+        if itemstable and itemstable[bag] and itemstable[bag][slot] then
+            setstring = itemstable[bag][slot]
+            inset = true
+        else
+            inset = false
         end
     end
 
@@ -142,8 +161,12 @@ AddOn:AddCustomRule(
 )
 
 -- Initialize filter
-AddOn:RegisterEvent("EQUIPMENT_SETS_CHANGED", UpdateEquipmentSets)
-AddOn:RegisterEvent("PLAYER_LOGIN", UpdateEquipmentSets)
+local eventFrame = CreateFrame("Frame")
+eventFrame:SetScript("OnEvent", UpdateEquipmentSets)
+eventFrame:RegisterEvent("EQUIPMENT_SETS_CHANGED")
+eventFrame:RegisterEvent("LOADING_SCREEN_DISABLED")
+eventFrame:RegisterEvent("PLAYER_LOGIN")
+eventFrame:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
 UpdateEquipmentSets()
 
 --@end-retail@
