@@ -3185,9 +3185,25 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
     button.readable = readable
 
     if p.EnableItemUpgradeArrow then
-        local data = _G.PawnGetItemData and _G.PawnGetItemData(link)
-        local itemIsUpgrade = _G.PawnIsContainerItemAnUpgrade and _G.PawnIsContainerItemAnUpgrade(bag, slot) or IsContainerItemAnUpgrade and IsContainerItemAnUpgrade(bag, slot) or data and _G.PawnIsItemAnUpgrade(data)
-        button.UpgradeIcon:SetShown(itemIsUpgrade or false)
+        local itemClassID = itemid and select(12,GetItemInfo(itemid))
+        if itemClassID and (itemClassID == 2 or itemClassID == 4) then
+            local pawnLoaded = C_AddOns.IsAddOnLoaded("Pawn")
+            local pawnData
+            local itemIsUpgrade
+            local pawnContainerItem
+            local pawnItem
+            if pawnLoaded then
+                pawnContainerItem = _G.PawnIsContainerItemAnUpgrade and _G.PawnIsContainerItemAnUpgrade(bag, slot)
+                if pawnContainerItem == nil then
+                    pawnData = _G.PawnGetItemData and _G.PawnGetItemData(link)
+                    pawnItem = pawnData and _G.PawnIsItemAnUpgrade(pawnData, true)
+                end
+                itemIsUpgrade = pawnContainerItem and pawnContainerItem or pawnItem and pawnItem
+            else
+                itemIsUpgrade = IsContainerItemAnUpgrade and IsContainerItemAnUpgrade(bag, slot)
+            end
+            button.UpgradeIcon:SetShown(itemIsUpgrade and itemIsUpgrade or false)
+        end
     end
 
     if p.EnableItemLevelText then
