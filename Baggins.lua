@@ -24,6 +24,7 @@ local format =
 local band =
       _G.bit.band
 
+local IsAddOnLoaded = C_AddOns.IsAddOnLoaded and C_AddOns.IsAddOnLoaded or IsAddOnLoaded
 local GetItemCount, GetItemInfo, GetInventoryItemLink, GetItemQualityColor, GetItemFamily, BankButtonIDToInvSlotID, GetNumBankSlots =
       _G.GetItemCount, _G.GetItemInfo, _G.GetInventoryItemLink, _G.GetItemQualityColor, _G.GetItemFamily, _G.BankButtonIDToInvSlotID, _G.GetNumBankSlots
 local GetContainerItemInfo, GetContainerItemLink, GetContainerNumFreeSlots, GetContainerItemCooldown =
@@ -3187,7 +3188,7 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
     if p.EnableItemUpgradeArrow then
         local itemClassID = itemid and select(12,GetItemInfo(itemid))
         if itemClassID and (itemClassID == 2 or itemClassID == 4) then
-            local pawnLoaded = C_AddOns.IsAddOnLoaded("Pawn")
+            local pawnLoaded = IsAddOnLoaded("Pawn")
             local pawnData
             local itemIsUpgrade
             local pawnContainerItem
