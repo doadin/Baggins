@@ -1,14 +1,15 @@
 --luacheck: no max line length
 
-local NumberofAddons = C_AddOns.GetNumAddOns()
-local DisableAddOn = C_AddOns.DisableAddOn
+local NumberofAddons = _G.C_AddOns and _G.C_AddOns.GetNumAddOns and _G.C_AddOns.GetNumAddOns() or _G.GetNumAddOns()
+local DisableAddOn = _G.C_AddOns and _G.C_AddOns.DisableAddOn and _G.C_AddOns.DisableAddOn or _G.DisableAddOn
+local GetAddOnInfo = _G.C_AddOns and _G.C_AddOns.GetAddOnInfo and _G.C_AddOns.GetAddOnInfo or _G.GetAddOnInfo
 StaticPopupDialogs["BAGGINS_SEARCH"] = { --luacheck: ignore 112
     text = "Addon Baggins Search was found, however Baggins has search built-in, Would you like to disable Baggins Search?(requires reloadui, may need to disable manually)",
     button1 = "Yes",
     button2 = "No",
     OnAccept = function()
         for i=1,NumberofAddons do
-            local _, title, _, _, _, _, _ = C_AddOns.GetAddOnInfo(i)
+            local _, title, _, _, _, _, _ = GetAddOnInfo(i)
             if title == "Baggins Search" or title == "Baggins_Search" then
                 DisableAddOn(i)
                 DisableAddOn(i)
@@ -24,7 +25,7 @@ StaticPopupDialogs["BAGGINS_SEARCH"] = { --luacheck: ignore 112
 
 if NumberofAddons >= 1 then
     for i=1,NumberofAddons do
-        local _, title, _, _, reason, _, _ = C_AddOns.GetAddOnInfo(i)
+        local _, title, _, _, reason, _, _ = GetAddOnInfo(i)
         if title == "Baggins Search" or title == "Baggins_Search" then
             if reason == nil or reason ~= "DISABLED" then
                 StaticPopup_Show("BAGGINS_SEARCH")
