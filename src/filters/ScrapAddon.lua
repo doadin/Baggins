@@ -10,8 +10,8 @@ local AddOnName, _ = ...
 local AddOn = _G[AddOnName]
 
 -- WoW API
-local IsAddOnLoadable = _G.C_AddOns and _G.C_AddOns.IsAddOnLoadable or _G.IsAddOnLoadable
-local IsAddOnLoaded = _G.C_AddOns and _G.C_AddOns.IsAddOnLoaded or _G.IsAddOnLoaded
+local IsAddOnLoadable = _G.C_AddOns and _G.C_AddOns.IsAddOnLoadable and _G.C_AddOns.IsAddOnLoadable
+local IsAddOnLoaded = _G.C_AddOns and _G.C_AddOns.IsAddOnLoaded and _G.C_AddOns.IsAddOnLoaded or _G.IsAddOnLoaded
 local GetContainerItemLink = _G.C_Container and _G.C_Container.GetContainerItemLink or _G.GetContainerItemLink
 local GetContainerItemID = _G.C_Container and _G.C_Container.GetContainerItemID or _G.GetContainerItemID
 local BACKPACK_CONTAINER = _G.BACKPACK_CONTAINER
@@ -24,7 +24,7 @@ local REAGENTBANK_CONTAINER = _G.REAGENTBANK_CONTAINER
 local LibStub = _G.LibStub
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
 
-if not (IsAddOnLoaded("Scrap") or IsAddOnLoadable("Scrap")) then
+if not (IsAddOnLoaded("Scrap") or ( IsAddOnLoadable and IsAddOnLoadable("Scrap")) or ( GetAddOnInfo and select(4,GetAddOnInfo("Scrap"))) ) then
     return
 end
 
