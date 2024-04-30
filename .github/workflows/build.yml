@@ -41,3 +41,8 @@ jobs:
         uses: BigWigsMods/packager@master
         with:
           args: -g wrath
+
+      - name: Package Cata Classic
+        uses: BigWigsMods/packager@master
+        with:
+          args: -g cata
