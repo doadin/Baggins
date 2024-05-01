@@ -143,6 +143,10 @@ function Baggins:IsWrathWow() --luacheck: ignore 212
 	return WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC and LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_WRATH_OF_THE_LICH_KING
 end
 
+function Baggins:IsCataWow() --luacheck: ignore 212
+    return WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC and LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_CATACLYSM
+end
+
 function Baggins:IsRetailWow() --luacheck: ignore 212
 	return WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
 end
@@ -384,7 +388,7 @@ function Baggins:OnInitialize()
     self:RegisterChatCommand("baggins", "OpenConfig")
     self.OnMenuRequest = self.opts
 
-    if Baggins:IsClassicWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() then
+    if Baggins:IsClassicWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() or Baggins:IsCataWow() then
         dbIcon:Register("Baggins", ldbdata, self.db.profile.minimap)
     end
     -- self:RegisterChatCommand({ "/baggins" }, self.opts, "BAGGINS")
@@ -661,7 +665,7 @@ function Baggins:IsCompressed(itemID)
                 end
             end
 
-            if Baggins:IsClassicWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() then
+            if Baggins:IsClassicWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() or Baggins:IsCataWow() then
                 if p.CompressShards and itemFamily ~=3 and itemEquipLoc~="INVTYPE_BAG" then
                     return true
                 end

@@ -10,12 +10,12 @@ local Baggins = _G.Baggins
 local pairs, ipairs, next, select, format, wipe =
       _G.pairs, _G.ipairs, _G.next, _G.select,  _G.format, _G.wipe
 local floor = _G.floor
-local GetItemInfo = _G.GetItemInfo
+local GetItemInfo = _G.C_Item.GetItemInfo
 local GetContainerItemLink = _G.C_Container and _G.C_Container.GetContainerItemLink or _G.GetContainerItemLink
 local GetContainerItemInfo = _G.C_Container and _G.C_Container.GetContainerItemInfo or _G.GetContainerItemInfo
 local GetContainerNumFreeSlots = _G.C_Container and _G.C_Container.GetContainerNumFreeSlots or _G.GetContainerNumFreeSlots
 local GetContainerNumSlots = _G.C_Container and _G.C_Container.GetContainerNumSlots or _G.GetContainerNumSlots
-local GetItemFamily = _G.GetItemFamily
+local GetItemFamily = _G.C_Item.GetItemFamily
 local PickupContainerItem, SplitContainerItem, IsShiftKeyDown =
 _G.C_Container and _G.C_Container.PickupContainerItem or _G.PickupContainerItem, _G.SplitContainerItem, _G.IsShiftKeyDown
 local band =
@@ -38,7 +38,7 @@ for i=0, NUM_BAG_SLOTS do
     tinsert(charBags, i);
 end
 
-if Baggins:IsClassicWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() then
+if Baggins:IsClassicWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() or Baggins:IsCataWow() then
     tinsert(charBags, KEYRING_CONTAINER)
 end
 
@@ -161,7 +161,7 @@ function Baggins:MoveToSpecialtyBags(bank,testonly)
                                         end
                                     end
 
-                                    if Baggins:IsClassicWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() then
+                                    if Baggins:IsClassicWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() or Baggins:IsCataWow() then
                                         if itemFamily == bagFamilySpecial then
                                             if testonly then return true end
                                             compressLoopProtect = compressLoopProtect - 1

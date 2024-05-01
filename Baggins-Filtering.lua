@@ -56,7 +56,7 @@ local function BuildBagTypes()
     end
 
     -- Classic specific bag
-    if Baggins:IsClassicWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() then
+    if Baggins:IsClassicWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() or Baggins:IsCataWow() then
         BagTypes[KEYRING_CONTAINER] = 3
     end
 
@@ -184,7 +184,7 @@ function Baggins:IsSpecialBag(bag) --luacheck: ignore 212
     if bag>=1 and bag<= 11 then
         local _,fam = GetContainerNumFreeSlots(bag)
 
-        if Baggins:IsClassicWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() then
+        if Baggins:IsClassicWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() or Baggins:IsCataWow() then
             if type(fam)~="number" then
                 -- assume normal bag
             elseif fam==0 then

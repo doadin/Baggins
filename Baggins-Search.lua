@@ -44,7 +44,8 @@ local AddOn = _G[AddOnName] --luacheck: ignore 211
 --local L = addonTable.L
 
 local Baggins = _G.Baggins
-local GetItemInfo = _G.GetItemInfo
+local GetItemInfo = _G.C_Item.GetItemInfo
+local GetDetailedItemLevelInfo = _G.C_Item.GetDetailedItemLevelInfo
 local strlen = _G.strlen
 local strfind = _G.strfind
 local GetContainerItemLink = _G.C_Container and _G.C_Container.GetContainerItemLink or _G.GetContainerItemLink
