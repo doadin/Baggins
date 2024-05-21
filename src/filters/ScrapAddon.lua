@@ -24,7 +24,7 @@ local REAGENTBANK_CONTAINER = _G.REAGENTBANK_CONTAINER
 local LibStub = _G.LibStub
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
 
-if not (IsAddOnLoaded("Scrap") or ( IsAddOnLoadable and IsAddOnLoadable("Scrap")) or ( GetAddOnInfo and select(4,GetAddOnInfo("Scrap"))) ) then
+if not (IsAddOnLoaded("Scrap") or ( IsAddOnLoadable and IsAddOnLoadable("Scrap")) or ( C_AddOns.GetAddOnInfo and select(4,C_AddOns.GetAddOnInfo("Scrap"))) ) then
     return
 end
 

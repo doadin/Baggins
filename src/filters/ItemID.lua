@@ -16,7 +16,7 @@ local tonumber = _G.tonumber
 local wipe = _G.wipe
 
 -- WoW API
-local GetItemInfo = _G.GetItemInfo
+local GetItemInfo = _G.C_Item.GetItemInfo
 local GetContainerItemID = _G.C_Container and _G.C_Container.GetContainerItemID or _G.GetContainerItemID
 
 -- Libs

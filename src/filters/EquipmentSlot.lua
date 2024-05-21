@@ -13,7 +13,7 @@ local AddOn = _G[AddOnName]
 
 -- WoW API
 local GetContainerItemID = _G.C_Container and _G.C_Container.GetContainerItemID or _G.GetContainerItemID
-local GetItemInfoInstant = _G.GetItemInfoInstant
+local GetItemInfoInstant = _G.C_Item.GetItemInfoInstant
 
 -- Libs
 local LibStub = _G.LibStub
