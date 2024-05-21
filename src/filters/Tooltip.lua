@@ -63,7 +63,12 @@ local function Matches(bag, slot, rule)
     if not AddOn:IsRetailWow() then
         local tip = BagginsTooltipFilterFrame or CreateFrame("GAMETOOLTIP", "BagginsTooltipFilterFrame", nil, "GameTooltipTemplate")
         tip:SetOwner(WorldFrame, "ANCHOR_NONE")
-        tip:SetBagItem(bag, slot)
+        if bag == -1 then
+            local invId = BankButtonIDToInvSlotID(slot, false)
+            tip:SetInventoryItem("player", invId)
+        else
+            tip:SetBagItem(bag, slot)
+        end
         for i = 1, BagginsTooltipFilterFrame:NumLines() do
             local left = _G["BagginsTooltipFilterFrameTextLeft"..i]
             local tooltiptext = left:GetText()
