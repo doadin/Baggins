@@ -371,6 +371,9 @@ function Baggins:OnSlotChanged(bag, slot)
         used[key] = false
     end
     local anymatch
+    if type(categories) ~= "table" then
+        self:SetCategoryTable(self.db.profile.categories)
+    end
     for catid, category in pairs(categories) do
         if self:CategoryInUse(catid, isbank) then
         --if true then
