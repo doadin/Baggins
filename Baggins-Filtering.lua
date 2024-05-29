@@ -22,6 +22,8 @@ local tinsert, tsort =
 local BANK_CONTAINER = _G.BANK_CONTAINER
 local BACKPACK_CONTAINER = _G.BACKPACK_CONTAINER
 local REAGENTBANK_CONTAINER = _G.REAGENTBANK_CONTAINER
+local KEYRING_CONTAINER = Enum.BagIndex.Keyring
+local REAGENT_CONTAINER = Baggins:IsRetailWow() and Enum.BagIndex.ReagentBag or math.huge
 local NUM_BAG_SLOTS = _G.NUM_TOTAL_EQUIPPED_BAG_SLOTS or _G.NUM_BAG_SLOTS
 local NUM_BANKBAGSLOTS = _G.NUM_BANKBAGSLOTS
 
@@ -56,7 +58,7 @@ local function BuildBagTypes()
     end
 
     -- Classic specific bag
-    if Baggins:IsClassicWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() or Baggins:IsCataWow() then
+    if Baggins:IsClassicWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() then
         BagTypes[KEYRING_CONTAINER] = 3
     end
 
@@ -64,6 +66,7 @@ local function BuildBagTypes()
     -- Retail specific bag
     if Baggins:IsRetailWow() then
         BagTypes[REAGENTBANK_CONTAINER] = 4
+        BagTypes[REAGENT_CONTAINER] = 5
     end
 
 end
@@ -178,7 +181,7 @@ function Baggins:IsSpecialBag(bag) --luacheck: ignore 212
     if BagTypes[bag] == 4 then
         return "r"
     end
-    if bag == 5 then
+    if BagTypes[bag] == 5 then
         return "re"
     end
     if bag>=1 and bag<= 11 then

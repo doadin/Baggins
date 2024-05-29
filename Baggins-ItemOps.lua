@@ -38,7 +38,7 @@ for i=0, NUM_BAG_SLOTS do
     tinsert(charBags, i);
 end
 
-if Baggins:IsClassicWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() or Baggins:IsCataWow() then
+if Baggins:IsClassicWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() then
     tinsert(charBags, KEYRING_CONTAINER)
 end
 

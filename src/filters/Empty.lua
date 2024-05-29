@@ -22,7 +22,7 @@ local LibStub = _G.LibStub
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
 
 -- Local storage
-local BagTypes = {}
+local BagTypes
 
 -- Build list of bag types
 local function BuildBagTypes()
@@ -41,15 +41,13 @@ local function BuildBagTypes()
 
     end
 
-    -- Classic specific bag
-    --[===[@non-retail@
-    BagTypes[KEYRING_CONTAINER] = 3
-    --@end-non-retail@]===]
+    if AddOn:IsClassicWow() or AddOn:IsTBCWow() or AddOn:IsWrathWow() then
+        BagTypes[KEYRING_CONTAINER] = 3
+    end
 
-    -- Retail specific bag
-    --@retail@
-    BagTypes[REAGENTBANK_CONTAINER] = 4
-    --@end-retail@
+    if AddOn:IsRetailWow() then
+        BagTypes[REAGENTBANK_CONTAINER] = 4
+    end
 
 end
 
