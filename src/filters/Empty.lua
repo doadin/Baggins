@@ -11,51 +11,13 @@ local AddOn = _G[AddOnName]
 
 -- WoW API
 local GetContainerItemLink = _G.C_Container and _G.C_Container.GetContainerItemLink or _G.GetContainerItemLink
-local BACKPACK_CONTAINER = _G.BACKPACK_CONTAINER
-local BANK_CONTAINER = _G.BANK_CONTAINER
-local NUM_BAG_SLOTS = _G.NUM_TOTAL_EQUIPPED_BAG_SLOTS or _G.NUM_BAG_SLOTS
-local NUM_BANKBAGSLOTS = _G.NUM_BANKBAGSLOTS
-local REAGENTBANK_CONTAINER = _G.REAGENTBANK_CONTAINER
 
 -- Libs
 local LibStub = _G.LibStub
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
 
--- Local storage
-local BagTypes
-
--- Build list of bag types
-local function BuildBagTypes()
-
-    -- Common bags
-    BagTypes[BACKPACK_CONTAINER] = 1
-    BagTypes[BANK_CONTAINER] = 2
-
-    for i = 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS do
-
-        if i <= NUM_BAG_SLOTS then
-            BagTypes[i] = 1 -- Bags
-        else
-            BagTypes[i] = 2 -- Bank bags
-        end
-
-    end
-
-    if AddOn:IsClassicWow() or AddOn:IsTBCWow() or AddOn:IsWrathWow() then
-        BagTypes[KEYRING_CONTAINER] = 3
-    end
-
-    if AddOn:IsRetailWow() then
-        BagTypes[REAGENTBANK_CONTAINER] = 4
-    end
-
-end
-
-BuildBagTypes()
-
 local function Matches(bag,slot,_)
     if not (bag and slot) then return end
-    --if BagTypes[bag] == 3 then return end
     local link = GetContainerItemLink(bag, slot)
     if not link then
         return true
