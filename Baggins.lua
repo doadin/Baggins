@@ -1152,7 +1152,11 @@ local lastbag,lastbagfree=-1,-1
 
 function Baggins:OnBagUpdate(_,bagid)
     --ignore bags -4 ( currency ); -3 is reagent bank
-    if bagid <= -4 then return end
+    if Baggins:IsCataWow() then
+        if bagid < -1 then return end
+    else
+        if bagid <= -4 then return end
+    end
     bagupdatebucket[bagid] = true
 
     -- Update panel text.
