@@ -15,10 +15,10 @@ local tostring = _G.tostring
 local tonumber = _G.tonumber
 
 -- WoW API
-local GetItemClassInfo = _G.C_Item.GetItemClassInfo
+local GetItemClassInfo = _G.C_Item.GetItemClassInfo or _G.GetItemClassInfo
 local GetItemSubClassInfo = _G.C_Item.GetItemSubClassInfo
 local GetContainerItemID = _G.C_Container and _G.C_Container.GetContainerItemID or _G.GetContainerItemID
-local GetItemInfoInstant = _G.C_Item.GetItemInfoInstant
+local GetItemInfoInstant = _G.C_Item.GetItemInfoInstant or _G.GetItemInfoInstant
 
 local GetAuctionItemSubClasses
 if AddOn:IsClassicWow() or AddOn:IsTBCWow() or AddOn:IsWrathWow() or AddOn:IsCataWow() then
