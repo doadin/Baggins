@@ -1,4 +1,3 @@
-local _G = _G
 local Baggins = _G.Baggins
 
 local pairs, ipairs, tonumber, tostring, next, select, type, wipe, CopyTable =
@@ -10,8 +9,10 @@ local tinsert, tremove =
 local ITEM_QUALITY0_DESC, ITEM_QUALITY1_DESC, ITEM_QUALITY2_DESC, ITEM_QUALITY3_DESC, ITEM_QUALITY4_DESC, ITEM_QUALITY5_DESC, ITEM_QUALITY6_DESC =
 _G.ITEM_QUALITY0_DESC, _G.ITEM_QUALITY1_DESC, _G.ITEM_QUALITY2_DESC, _G.ITEM_QUALITY3_DESC, _G.ITEM_QUALITY4_DESC, _G.ITEM_QUALITY5_DESC, _G.ITEM_QUALITY6_DESC
 
--- GLOBALS: LibStub, GetItemQualityColor, EasyMenu
+-- GLOBALS: LibStub, EasyMenu
 -- GLOBALS: ITEM_QUALITY0_DESC, ITEM_QUALITY1_DESC, ITEM_QUALITY2_DESC, ITEM_QUALITY3_DESC, ITEM_QUALITY4_DESC, ITEM_QUALITY5_DESC, ITEM_QUALITY6_DESC
+
+local GetItemQualityColor = _G.C_Item and _G.C_Item.GetItemQualityColor or _G.GetItemQualityColor
 
 local LibStub = _G.LibStub
 local L = LibStub("AceLocale-3.0"):GetLocale("Baggins")
@@ -329,6 +330,7 @@ end
 
 function Baggins:RebuildOptions()
     local p = self.db.profile
+    if not p then return end
     if not self.opts then
         self.opts = {
             icon = "Interface\\Icons\\INV_Jewelry_Ring_03",
@@ -1062,6 +1064,7 @@ end
 
 function Baggins:UpdateDB()
     local p = self.db.profile
+    if not p then return end
     for _, rules in pairs(p.categories) do
         local i = 1
         while(i < #rules + 1) do
@@ -3218,6 +3221,7 @@ end
 
 function Baggins:ApplyProfile(profile)
     local p = self.db.profile
+    if not p then return end
     self:CloseAllBags()
     for k, v in pairs(profile) do
         if type(v) == "table" then
@@ -3246,6 +3250,7 @@ end
 
 function Baggins:OnProfileEnable()
     local p = self.db.profile
+    if not p then return end
     --check if this profile has been setup before, if not add the default bags and categories
     --cant leave these in the defaults since removing a bag would have it come back on reload
     local refresh = false --luacheck: ignore 431
@@ -3299,6 +3304,7 @@ end
 
 function Baggins:DoBagMenu()
     local p = self.db.profile
+    if not p then return end
     wipe(menu)
 
     if not p.disablebagmenu then
@@ -4005,7 +4011,7 @@ function Baggins:InitBagCategoryOptions()
         },
     }
     self.editOpts = opts
-    self:RebuildBagOptions(opts)
+    self:RebuildBagOptions()
     self:BuildMoneyBagOptions()
     self:BuildBankControlsBagOptions()
 

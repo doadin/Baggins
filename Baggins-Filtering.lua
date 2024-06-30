@@ -4,10 +4,6 @@ Baggins-Filtering.lua
 
 ========================================================================== ]]--
 
-local _G = _G
-
-local AddOnName, _ = ...
-local AddOn = _G[AddOnName] --luacheck: ignore 211
 local Baggins = _G.Baggins
 
 -- TODO: Clean up this section

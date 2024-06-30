@@ -4,8 +4,6 @@ ItemLevel.lua
 
 ========================================================================== ]]--
 
-local _G = _G
-
 local AddOnName, _ = ...
 local AddOn = _G[AddOnName]
 
@@ -17,16 +15,16 @@ local UnitLevel = _G.UnitLevel
 -- Libs
 local LibStub = _G.LibStub
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
-local LIUI = LibStub("LibItemUpgradeInfo-1.0") --luacheck: ignore 211
+local LIUI = LibStub("LibItemUpgradeInfo-1.0", true) --luacheck: ignore 211
 
 local function Matches(bag,slot,rule)
     local link = GetContainerItemLink(bag, slot)
     if not link then return false end
 
     local _,_,_, itemLevel, itemMinLevel = GetItemInfo(link) --luacheck: ignore 211
-    local itemLevel = LIUI:GetUpgradedItemLevel(link) --luacheck: ignore 411
+    local LIUIitemLevel = LIUI and LIUI.GetUpgradedItemLevel and LIUI:GetUpgradedItemLevel(link) --luacheck: ignore 411
     -- local itemLevel = GetDetailedItemLevelInfo(link)
-    local lvl = rule.useminlvl and itemMinLevel or itemLevel
+    local lvl = rule.useminlvl and itemMinLevel or LIUIitemLevel and LIUIitemLevel or itemLevel and itemLevel
 
     if not lvl then	-- can happen if itemcache hasn't been updated yet
         return false

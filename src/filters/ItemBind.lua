@@ -4,8 +4,6 @@ ItemBind.lua
 
 ========================================================================== ]]--
 
-local _G = _G
-
 local AddOnName, _ = ...
 local AddOn = _G[AddOnName]
 

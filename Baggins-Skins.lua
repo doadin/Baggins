@@ -1,4 +1,3 @@
-local _G = _G
 local Baggins = _G.Baggins
 
 local pairs, ipairs =

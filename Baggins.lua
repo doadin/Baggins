@@ -1,5 +1,3 @@
-local _G = _G
-
 local LibStub = _G.LibStub
 _G.Baggins = LibStub("AceAddon-3.0"):NewAddon("Baggins", "AceEvent-3.0", "AceHook-3.0", "AceBucket-3.0", "AceTimer-3.0", "AceConsole-3.0")
 
