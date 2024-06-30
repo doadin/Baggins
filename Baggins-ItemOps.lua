@@ -10,12 +10,12 @@ local Baggins = _G.Baggins
 local pairs, ipairs, next, select, format, wipe =
       _G.pairs, _G.ipairs, _G.next, _G.select,  _G.format, _G.wipe
 local floor = _G.floor
-local GetItemInfo = _G.C_Item.GetItemInfo
+local GetItemInfo = _G.C_Item and _G.C_Item.GetItemInfo or _G.GetItemInfo
 local GetContainerItemLink = _G.C_Container and _G.C_Container.GetContainerItemLink or _G.GetContainerItemLink
 local GetContainerItemInfo = _G.C_Container and _G.C_Container.GetContainerItemInfo or _G.GetContainerItemInfo
 local GetContainerNumFreeSlots = _G.C_Container and _G.C_Container.GetContainerNumFreeSlots or _G.GetContainerNumFreeSlots
 local GetContainerNumSlots = _G.C_Container and _G.C_Container.GetContainerNumSlots or _G.GetContainerNumSlots
-local GetItemFamily = _G.C_Item.GetItemFamily
+local GetItemFamily = _G.C_Item and _G.C_Item.GetItemFamily or _G.GetItemFamily
 local PickupContainerItem, SplitContainerItem, IsShiftKeyDown =
 _G.C_Container and _G.C_Container.PickupContainerItem or _G.PickupContainerItem, _G.SplitContainerItem, _G.IsShiftKeyDown
 local band =

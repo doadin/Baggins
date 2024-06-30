@@ -19,10 +19,10 @@ local GetAuctionItemSubClasses = _G.C_AuctionHouse.GetAuctionItemSubClasses
 --[===[@non-retail@
 local GetAuctionItemSubClasses = _G.GetAuctionItemSubClasses
 --@end-non-retail@]===]
-local GetItemSubClassInfo = _G.GetItemSubClassInfo
+local GetItemSubClassInfo = _G.C_Item and _G.C_Item.GetItemSubClassInfo or _G.GetItemSubClassInfo
 local ContainerIDToInventoryID = _G.C_Container and _G.C_Container.ContainerIDToInventoryID or _G.ContainerIDToInventoryID
 local GetInventoryItemLink = _G.GetInventoryItemLink
-local GetItemInfoInstant = _G.GetItemInfoInstant
+local GetItemInfoInstant = _G.C_Item and _G.C_Item.GetItemInfoInstant or _G.GetItemInfoInstant
 local LE_ITEM_CLASS_CONTAINER = _G.LE_ITEM_CLASS_CONTAINER or _G.Enum.ItemClass.Container
 local NUM_BAG_SLOTS = _G.NUM_TOTAL_EQUIPPED_BAG_SLOTS or _G.NUM_BAG_SLOTS
 local NUM_BANKBAGSLOTS = _G.NUM_BANKBAGSLOTS
