@@ -116,7 +116,7 @@ function BagginsSearch:Search(search) --luacheck: ignore 212
                 if button:IsVisible() then
                     if strlen(search) == 0 or search == "" then
                         button:UnlockHighlight()
-                        button:SetAlpha(tonumber(Baggins.db.profile.unmatchedAlpha) or 0.2)
+                        button:SetAlpha(1)
                     else
                         local link = GetContainerItemLink(button:GetParent():GetID(), button:GetID())
                         if link then

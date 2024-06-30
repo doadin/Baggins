@@ -30,7 +30,7 @@ local ContainerTypes = {}
 -- Initialize filter
 local function BuildContainerTypes()
     -- Build array of containers
-    if AddOn:IsRetailWow() then
+    if not AddOn:IsRetailWow() then
         for _, subClassID in pairs({GetAuctionItemSubClasses(LE_ITEM_CLASS_CONTAINER)}) do
             --print(subClassID, (GetItemSubClassInfo(LE_ITEM_CLASS_CONTAINER, subClassID)))
             ContainerTypes[subClassID] = GetItemSubClassInfo(LE_ITEM_CLASS_CONTAINER, subClassID)
