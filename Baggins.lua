@@ -446,7 +446,7 @@ end
 function Baggins:OnEnable()
     --self:SetBagUpdateSpeed();
     self:RegisterEvent("BAG_CLOSED", "ForceFullRefresh")
-    self:RegisterEvent("BAG_UPDATE","OnBagUpdate")
+    self:RegisterEvent("BAG_UPDATE","RunBagUpdates")
     self:RegisterEvent("BAG_UPDATE_COOLDOWN", "UpdateItemButtonCooldowns")
     self:RegisterEvent("ITEM_LOCK_CHANGED", "UpdateItemButtonLocks")
     self:RegisterEvent("QUEST_ACCEPTED", "UpdateItemButtons")
@@ -504,7 +504,7 @@ function Baggins:OnEnable()
     end
     self:EnableSkin(self.db.profile.skin)
     self:OnProfileEnable()
-    self:RunBagUpdates()
+    self:RunBagUpdates("OnEnable")
 end
 
 function Baggins:Baggins_CategoriesChanged()
@@ -697,7 +697,6 @@ function Baggins:IsCompressed(itemID)
     end
 end
 
-
 function Baggins:OnBankClosed()
     -- don't remove the test, it prevents infinite recursion loop on CloseBankFrame()
     if self.bankIsOpen then
@@ -707,31 +706,53 @@ function Baggins:OnBankClosed()
 end
 
 function Baggins:OnBankOpened()
+    local p = self.db.profile
     if self.doInitialBankUpdate then
         self.doInitialBankUpdate = false
-        Baggins:ForceFullBankUpdate()
+        for bagid in LBU:IterateBags("BANK") do
+            self:CheckSlotsChanged(bagid, true)
+        end
+        if Baggins:IsRetailWow() then
+            for bagid in LBU:IterateBags("REAGENTBANK") do
+                self:CheckSlotsChanged(bagid, true)
+            end
+        end
     end
     self.bankIsOpen = true
     self:OpenAllBags()
 end
 
 function Baggins:OnBankChanged()
-    self:OnBagUpdate(nil,-1)
+    self:RunBagUpdates("BAG_UPDATE",-1)
 end
 
 function Baggins:OnReagentBankChanged()
-    self:OnBagUpdate(nil,REAGENTBANK_CONTAINER)
+    self:RunBagUpdates("BAG_UPDATE",REAGENTBANK_CONTAINER)
 end
 
 function Baggins:OnReagentBankPurchased()
     self:UpdateBankControlFrame()
-    self:ForceFullBankUpdate()
+    for bagid in LBU:IterateBags("BANK") do
+        self:CheckSlotsChanged(bagid, true)
+    end
+    if Baggins:IsRetailWow() then
+        for bagid in LBU:IterateBags("REAGENTBANK") do
+            self:CheckSlotsChanged(bagid, true)
+        end
+    end
     self:UpdateBags()
 end
 
 function Baggins:OnBankSlotPurchased()
     self:UpdateBankControlFrame()
-    self:ForceFullBankUpdate()
+    for bagid in LBU:IterateBags("BANK") do
+        self:CheckSlotsChanged(bagid, true)
+    end
+    if Baggins:IsRetailWow() then
+        for bagid in LBU:IterateBags("REAGENTBANK") do
+            self:CheckSlotsChanged(bagid, true)
+        end
+    end
     self:UpdateBags()
 end
 
@@ -747,10 +768,6 @@ function Baggins:ScheduleRefresh()
 end
 
 function Baggins:Baggins_RefreshBags()
-    if self.dirtyBags then
-        --Baggins:Debug('Updating bags')
-        self:ReallyUpdateBags()
-    end
     for bagid,bagframe in pairs(self.bagframes) do
         for _,sectionframe in pairs(bagframe.sections) do
             if sectionframe.used and sectionframe.dirty then
@@ -767,12 +784,11 @@ function Baggins:Baggins_RefreshBags()
         self:ReallyLayoutBagFrames()
     end
 
-    scheduled_refresh = nil
+    scheduled_refresh = false
     self:FireSignal("Baggins_RefreshBags")
 end
 
 function Baggins:UpdateBags()
-    self.dirtyBags = true
     self:ScheduleRefresh()
 end
 
@@ -1113,7 +1129,6 @@ function Baggins:ReallyUpdateBags()
     end
 
     self:UpdateLayout()
-    self.dirtyBags = nil
 end
 
 function Baggins:UpdateSection(bagid, secid,title) --, contents)
@@ -1142,56 +1157,50 @@ local firstbagupdate = true
 local bagupdatebucket = {}
 local lastbag,lastbagfree=-1,-1
 
-function Baggins:OnBagUpdate(_,bagid)
-    --ignore bags -4 ( currency ); -3 is reagent bank
-    if Baggins:IsCataWow() then
-        if bagid < -1 then return end
-    else
-        if bagid <= -4 then return end
+function Baggins:RunBagUpdates(event,bagid)
+    if bagid then
+        --ignore bags -4 ( currency ); -3 is reagent bank
+        if Baggins:IsCataWow() then
+            if bagid < -1 then return end
+        else
+            if bagid <= -4 then return end
+        end
+        bagupdatebucket[bagid] = true
+        -- Update panel text.
+        -- Optimization mostly for hunters - their bags change for every damn arrow they fire:
+        local free=GetContainerNumFreeSlots(bagid)
+        if lastbag~=bagid and lastbagfree~=free then --luacheck: ignore 542
+            lastbag=bagid
+            lastbagfree=free
+            self:UpdateText()
+        end
     end
-    bagupdatebucket[bagid] = true
 
-    -- Update panel text.
-    -- Optimization mostly for hunters - their bags change for every damn arrow they fire:
-    local free=GetContainerNumFreeSlots(bagid)
-    if lastbag==bagid and lastbagfree==free then --luacheck: ignore 542
-        --Baggins:Debug("OnBagUpdate LastBag and LastBagFree")
-    else
-        lastbag=bagid
-        lastbagfree=free
+    if event == "BAG_UPDATE" or firstbagupdate then
+        if firstbagupdate then
+            firstbagupdate = false
+            self:SaveItemCounts()
+            self:ForceFullUpdate()
+        end
+        if not next(bagupdatebucket) then
+            return
+        end
         self:UpdateText()
+        local itemschanged
+        for bag in pairs(bagupdatebucket) do
+            itemschanged = Baggins:CheckSlotsChanged(bag) or itemschanged
+            bagupdatebucket[bag] = nil
+        end
+        if itemschanged then
+            self:UpdateBags()
+        else
+            self:UpdateItemButtons()
+        end
+        if(self:IsAnyBagOpen()) then
+            Baggins:FireSignal("Baggins_BagsUpdatedWhileOpen");
+        end
+        self:ReallyUpdateBags()
     end
-    self:RunBagUpdates()
-end
-
-function Baggins:RunBagUpdates()
-    if firstbagupdate then
-        firstbagupdate = false
-        self:SaveItemCounts()
-        self:ForceFullUpdate()
-    end
-
-    if not next(bagupdatebucket) then
-        return
-    end
-    self:UpdateText()
-
-    local itemschanged
-    for bag in pairs(bagupdatebucket) do
-        itemschanged = Baggins:CheckSlotsChanged(bag) or itemschanged
-        bagupdatebucket[bag] = nil
-    end
-
-    if itemschanged then
-        self:UpdateBags()
-    else
-        self:UpdateItemButtons()
-    end
-
-    if(self:IsAnyBagOpen()) then
-        Baggins:FireSignal("Baggins_BagsUpdatedWhileOpen");
-    end
-    self:ReallyUpdateBags()
 end
 
 -----------------------------
@@ -4046,10 +4055,6 @@ function Baggins:OpenBag(bagid,_) --bagid,noupdate
     if not self:IsActive() then
         return
     end
-    if self.doInitialUpdate then
-        Baggins:ForceFullUpdate()
-        -- note: we use self.doInitialUpdate further down, and nil it there
-    end
 
     if p.bags[bagid].isBank and not self.bankIsOpen then
         return
@@ -4059,22 +4064,17 @@ function Baggins:OpenBag(bagid,_) --bagid,noupdate
         self:CreateBagFrame(bagid)
     end
     self.bagframes[bagid]:Show()
-    --if not noupdate then
 
-    self:RunBagUpdates()
-    self:UpdateBags()
-    --end
     self:UpdateLayout()
     self:UpdateTooltip()
 
     -- reuse self.doInitialUpdate to only run once
     -- this fixes the duplicate stacks bug upon login
     if self.doInitialUpdate then
+        self:RunBagUpdates("BAG_UPDATE",1)
         -- this time we set to nil so this only runs the first time
         self.doInitialUpdate = false
         -- rebuild layouts to fix duplicate stacks
-        --self:ScheduleForNextFrame('FixInit')
-        --same
         self:ForceFullUpdate()
         self:RebuildSectionLayouts()
         self:UpdateBags()
@@ -4092,9 +4092,11 @@ function Baggins:OpenAllBags()
         if bag.openWithAll then
             Baggins:OpenBag(bagid,true)
         end
+        --TODO Can we be more efficient?
+        if self.bankIsOpen then
+            self:RunBagUpdates("BAG_UPDATE", bagid)
+        end
     end
-    self:RunBagUpdates()
-    self:UpdateBags()
     self:UpdateLayout()
     PlaySound(862)
 end
