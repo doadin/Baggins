@@ -446,18 +446,6 @@ function Baggins:ForceFullUpdate()
     self:Baggins_CategoriesChanged()
 end
 
-function Baggins:ForceFullBankUpdate()
-    for bagid in LBU:IterateBags("BANK") do
-        self:CheckSlotsChanged(bagid, true)
-    end
-    if Baggins:IsRetailWow() then
-        for bagid in LBU:IterateBags("REAGENTBANK") do
-            self:CheckSlotsChanged(bagid, true)
-        end
-    end
-
-end
-
 function Baggins:GetIncludeRule(category,create) --luacheck: ignore 212
     local numrules = #category
     for i = numrules,1,-1 do
