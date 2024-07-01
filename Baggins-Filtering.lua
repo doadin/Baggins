@@ -443,10 +443,6 @@ function Baggins:ForceFullUpdate()
         self:CheckSlotsChanged(-2,true)
     end
     self:CheckSlotsChanged(-1,true)
-    self:CategoriesChanged()
-end
-
-function Baggins:CategoriesChanged()
     self:Baggins_CategoriesChanged()
 end
 
