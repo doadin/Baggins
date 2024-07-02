@@ -17,6 +17,7 @@ local NUM_BAG_SLOTS = _G.NUM_TOTAL_EQUIPPED_BAG_SLOTS or _G.NUM_BAG_SLOTS
 local NUM_BANKBAGSLOTS = _G.NUM_BANKBAGSLOTS
 local KEYRING_CONTAINER = _G.KEYRING_CONTAINER
 local REAGENTBANK_CONTAINER = _G.REAGENTBANK_CONTAINER
+local REAGENT_CONTAINER = Baggins:IsRetailWow() and Enum.BagIndex.ReagentBag or math.huge
 
 -- Libs
 local LibStub = _G.LibStub
@@ -53,6 +54,7 @@ local function BuildBagNames()
     -- Retail specific bag
     if AddOn:IsRetailWow() then
         BagNames[REAGENTBANK_CONTAINER] = L["Reagent Bank"]
+        BagNames[REAGENT_CONTAINER] = L["Reagent Bag"]
     end
 
 end
