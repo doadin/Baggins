@@ -81,6 +81,7 @@ Baggins.minSpareItemButtons = 10
 _G.BINDING_HEADER_BAGGINS = L["Baggins"]
 _G.BINDING_NAME_BAGGINS_TOGGLEALL = L["Toggle All Bags"]
 _G.BINDING_NAME_BAGGINS_ITEMBUTTONMENU = "Item Menu"
+_G.BINDING_NAME_BAGGINS_TOGGLECOMPRESSALL= "Toggle " .. L["Compress All"]
 
 local equiplocs = {
     INVTYPE_AMMO = 0,

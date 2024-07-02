@@ -1,8 +1,20 @@
 <Bindings>
-	<Binding name="BAGGINS_TOGGLEALL" header="BAGGINS" category="ADDONS">
+	<Binding name="BAGGINS_TOGGLEALL" category="Baggins">
 		Baggins:ToggleAllBags()
 	</Binding>
-	<Binding name="BAGGINS_ITEMBUTTONMENU" category="ADDONS">
+	<Binding name="BAGGINS_ITEMBUTTONMENU" category="Baggins">
 		Baggins:SpawnMenuFromKeybind()
+	</Binding>
+	<Binding name="BAGGINS_TOGGLECOMPRESSALL" category="Baggins">
+		if Baggins:getCompressAll() then
+		    Baggins.db.profile.compressall = false
+			self:RebuildSectionLayouts()
+			self:UpdateBags()
+		end
+		if not Baggins:getCompressAll() then
+		    Baggins.db.profile.compressall = true
+			self:RebuildSectionLayouts()
+			self:UpdateBags()
+		end
 	</Binding>
 </Bindings>
