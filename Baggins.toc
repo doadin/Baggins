@@ -114,6 +114,9 @@ src\filters\PeriodicTable.lua
 src\filters\Profession.lua
 #@end-retail@
 src\filters\Quality.lua
+#@retail@
+src\filters\Scrap.lua
+#@end-retail@
 src\filters\ScrapAddon.lua
 src\filters\Teleport.lua
 src\filters\Tooltip.lua
