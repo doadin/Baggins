@@ -54,7 +54,7 @@ local function BuildBagNames()
     -- Retail specific bag
     if AddOn:IsRetailWow() then
         BagNames[REAGENTBANK_CONTAINER] = L["Reagent Bank"]
-        BagNames[REAGENT_CONTAINER] = L["Reagent Bag"]
+        BagNames[REAGENT_CONTAINER] = "Reagent Bag"
     end
 
 end
