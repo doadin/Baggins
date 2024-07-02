@@ -97,6 +97,7 @@ src\filters\Empty.lua
 src\filters\EquipLocation.lua
 src\filters\EquipmentSet.lua
 src\filters\EquipmentSlot.lua
+src\filters\Expansion.lua
 src\filters\ItemBind.lua
 src\filters\ItemID.lua
 src\filters\ItemLevel.lua
