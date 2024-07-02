@@ -158,6 +158,15 @@ function Baggins:MoveToSpecialtyBags(bank,testonly)
                                             self:ScheduleTimer("MoveToSpecialtyBags", 0.1, bank)
                                             return
                                         end
+                                        if bag ~= 5 and C_Container.GetContainerNumFreeSlots(5) > 0 and select(17, GetItemInfo(link)) then
+                                            if testonly then return true end
+                                            compressLoopProtect = compressLoopProtect - 1
+                                            if compressLoopProtect < 0 then return end
+                                            PickupContainerItem(bag,slot)
+                                            PickupContainerItem(floor(dest/1000),dest%1000)
+                                            self:ScheduleTimer("MoveToSpecialtyBags", 0.1, bank)
+                                            return
+                                        end
                                     end
 
                                     if Baggins:IsClassicWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() or Baggins:IsCataWow() then
