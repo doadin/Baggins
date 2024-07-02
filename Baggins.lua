@@ -215,6 +215,15 @@ local spacer = { text = "", disabled = true, notCheckable = true, notClickable =
 local function initDropdownMenu()
     ldbDropDownMenu = {
         {
+            text = "Run Blizzard Bag Sort",
+            tooltipText = "Runs Blizzard bag Sort",
+            func = function()
+                    Baggins:CloseAllBags()
+                    C_Container.SortBags()
+                end,
+            notCheckable = true,
+        },
+        {
             text = L["Force Full Refresh"],
             tooltipText = L["Forces a Full Refresh of item sorting"],
             func = function()
