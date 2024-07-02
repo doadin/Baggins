@@ -150,43 +150,6 @@ function Baggins:IsRetailWow() --luacheck: ignore 212
 	return WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
 end
 
-local timers = {}
-function Baggins:ScheduleNamedTimer(name, callback, delay, arg)
-    local alreadyScheduled = timers[name]
-    if alreadyScheduled and self:TimeLeft(alreadyScheduled) then
-        self:CancelTimer(alreadyScheduled, true)
-    end
-
-    timers[name] = self:ScheduleTimer(callback, delay, arg)
-end
-function Baggins:CancelNamedTimer(name)
-    local timer = timers[name]
-    if timer then
-        timers[name] = nil
-        self:CancelTimer(timer, true)
-    end
-end
-local nextFrameTimers = {}
-local timerFrame = CreateFrame('Frame')
-timerFrame:SetScript("OnUpdate", function(self)
-    while next(nextFrameTimers) do
-        local func = next(nextFrameTimers)
-        local args = nextFrameTimers[func]
-        if type(args) == 'table' then
-            Baggins[func](Baggins, unpack(args))
-            wipe(args)
-        else
-            Baggins[func](Baggins)
-        end
-        nextFrameTimers[func] = nil
-    end
-    self:Hide()
-end)
-function Baggins:ScheduleForNextFrame(callback, arg, ...) --luacheck: ignore 212
-    nextFrameTimers[callback] = arg and { arg, ... } or true
-    timerFrame:Show()
-end
-
 -- internal signalling minilibrary
 
 local signals = {}
@@ -769,12 +732,8 @@ end
 -------------------------
 -- Update Bag Contents --
 -------------------------
-local scheduled_refresh = false
-
-function Baggins:ScheduleRefresh()
-    if not scheduled_refresh then
-        scheduled_refresh = self:ScheduleForNextFrame('Baggins_RefreshBags')
-    end
+function Baggins:UpdateBags()
+    Baggins:Baggins_RefreshBags()
 end
 
 function Baggins:Baggins_RefreshBags()
@@ -793,13 +752,7 @@ function Baggins:Baggins_RefreshBags()
     if self.dirtyBagLayout then
         self:ReallyLayoutBagFrames()
     end
-
-    scheduled_refresh = false
     self:FireSignal("Baggins_RefreshBags")
-end
-
-function Baggins:UpdateBags()
-    self:ScheduleRefresh()
 end
 
 local function CheckSection(bagframe, secid)
@@ -1666,7 +1619,7 @@ function Baggins:UpdateBagFrameSize(bagid)
     local bagframe = self.bagframes[bagid]
     if not bagframe then return end
     bagframe.dirty = true
-    self:ScheduleRefresh()
+    self:UpdateBags()
 end
 
 function Baggins:ReallyUpdateBagFrameSize(bagid)
@@ -1855,7 +1808,7 @@ function Baggins:LayoutSection(sectionframe, title, cols)
     sectionframe.dirty = true
     sectionframe.set_title = title
     sectionframe.set_columns = cols
-    self:ScheduleRefresh()
+    self:UpdateBags()
 end
 
 function Baggins:ReallyLayoutSection(sectionframe, cols)
@@ -3433,7 +3386,7 @@ end
 
 function Baggins:LayoutBagFrames()
     self.dirtyBagLayout = true
-    self:ScheduleRefresh()
+    self:UpdateBags()
 end
 
 local CONTAINER_SPACING = 0
@@ -4084,10 +4037,6 @@ function Baggins:OpenBag(bagid,_) --bagid,noupdate
         self:RunBagUpdates("BAG_UPDATE",1)
         -- this time we set to nil so this only runs the first time
         self.doInitialUpdate = false
-        -- rebuild layouts to fix duplicate stacks
-        self:ForceFullUpdate()
-        self:RebuildSectionLayouts()
-        self:UpdateBags()
     end
     PlaySound(862)
 end
