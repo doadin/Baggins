@@ -4057,6 +4057,7 @@ function Baggins:OpenAllBags()
         end
     end
     self:UpdateLayout()
+    self:FireSignal("Baggins_RefreshBags")
     PlaySound(862)
 end
 
