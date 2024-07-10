@@ -215,57 +215,102 @@ local ldbDropDownFrame = CreateFrame("Frame", "Baggins_DropDownFrame", UIParent,
 local ldbDropDownMenu
 local spacer = { text = "", disabled = true, notCheckable = true, notClickable = true}
 local function initDropdownMenu()
-    ldbDropDownMenu = {
-        {
-            text = "Run Blizzard Bag Sort",
-            tooltipText = "Runs Blizzard bag Sort",
-            func = function()
-                    Baggins:CloseAllBags()
-                    BlizzSortBags()
-                end,
-            notCheckable = true,
-        },
-        {
-            text = L["Force Full Refresh"],
-            tooltipText = L["Forces a Full Refresh of item sorting"],
-            func = function()
-                    Baggins:ForceFullRefresh()
-                    Baggins:UpdateBags()
-                end,
-            notCheckable = true,
-        },
-        spacer,
-        {
-            text = L["Hide Default Bank"],
-            tooltipText = L["Hide the default bank window."],
-            checked = Baggins.db.profile.hidedefaultbank,
-            keepShownOnClick = true,
-            func = function()
-                    Baggins.db.profile.hidedefaultbank = not Baggins.db.profile.hidedefaultbank
-                end,
-        },
-        {
-            text = L["Override Default Bags"],
-            tooltipText = L["Baggins will open instead of the default bags"],
-            checked = Baggins.db.profile.overridedefaultbags,
-            keepShownOnClick = true,
-            func = function()
-                    Baggins.db.profile.overridedefaultbags = not Baggins.db.profile.overridedefaultbags
-                    Baggins:UpdateBagHooks()
-                end,
-        },
-        spacer,
-        {
-            text = L["Config Window"],
-            func = function() Baggins:OpenConfig() end,
-            notCheckable = true,
-        },
-        {
-            text = L["Bag/Category Config"],
-            func = function() Baggins:OpenEditConfig() end,
-            notCheckable = true,
-        },
-    }
+    if Baggins:IsRetailWow() then
+        ldbDropDownMenu = {
+            {
+                text = "Run Blizzard Bag Sort",
+                tooltipText = "Runs Blizzard bag Sort",
+                func = function()
+                        Baggins:CloseAllBags()
+                        BlizzSortBags()
+                    end,
+                notCheckable = true,
+            },
+            {
+                text = L["Force Full Refresh"],
+                tooltipText = L["Forces a Full Refresh of item sorting"],
+                func = function()
+                        Baggins:ForceFullRefresh()
+                        Baggins:UpdateBags()
+                    end,
+                notCheckable = true,
+            },
+            spacer,
+            {
+                text = L["Hide Default Bank"],
+                tooltipText = L["Hide the default bank window."],
+                checked = Baggins.db.profile.hidedefaultbank,
+                keepShownOnClick = true,
+                func = function()
+                        Baggins.db.profile.hidedefaultbank = not Baggins.db.profile.hidedefaultbank
+                    end,
+            },
+            {
+                text = L["Override Default Bags"],
+                tooltipText = L["Baggins will open instead of the default bags"],
+                checked = Baggins.db.profile.overridedefaultbags,
+                keepShownOnClick = true,
+                func = function()
+                        Baggins.db.profile.overridedefaultbags = not Baggins.db.profile.overridedefaultbags
+                        Baggins:UpdateBagHooks()
+                    end,
+            },
+            spacer,
+            {
+                text = L["Config Window"],
+                func = function() Baggins:OpenConfig() end,
+                notCheckable = true,
+            },
+            {
+                text = L["Bag/Category Config"],
+                func = function() Baggins:OpenEditConfig() end,
+                notCheckable = true,
+            },
+        }
+    else
+        ldbDropDownMenu = {
+            {
+                text = L["Force Full Refresh"],
+                tooltipText = L["Forces a Full Refresh of item sorting"],
+                func = function()
+                        Baggins:ForceFullRefresh()
+                        Baggins:UpdateBags()
+                    end,
+                notCheckable = true,
+            },
+            spacer,
+            {
+                text = L["Hide Default Bank"],
+                tooltipText = L["Hide the default bank window."],
+                checked = Baggins.db.profile.hidedefaultbank,
+                keepShownOnClick = true,
+                func = function()
+                        Baggins.db.profile.hidedefaultbank = not Baggins.db.profile.hidedefaultbank
+                    end,
+            },
+            {
+                text = L["Override Default Bags"],
+                tooltipText = L["Baggins will open instead of the default bags"],
+                checked = Baggins.db.profile.overridedefaultbags,
+                keepShownOnClick = true,
+                func = function()
+                        Baggins.db.profile.overridedefaultbags = not Baggins.db.profile.overridedefaultbags
+                        Baggins:UpdateBagHooks()
+                    end,
+            },
+            spacer,
+            {
+                text = L["Config Window"],
+                func = function() Baggins:OpenConfig() end,
+                notCheckable = true,
+            },
+            {
+                text = L["Bag/Category Config"],
+                func = function() Baggins:OpenEditConfig() end,
+                notCheckable = true,
+            },
+        }
+    end
 end
 
 local function updateMenu()
@@ -273,8 +318,13 @@ local function updateMenu()
         initDropdownMenu()
         return
     end
-    ldbDropDownMenu[3].checked = Baggins.db.profile.hidedefaultbank
-    ldbDropDownMenu[4].checked = Baggins.db.profile.overridedefaultbags
+    if Baggins:IsRetailWow() then
+        ldbDropDownMenu[4].checked = Baggins.db.profile.hidedefaultbank
+        ldbDropDownMenu[5].checked = Baggins.db.profile.overridedefaultbags
+    else
+        ldbDropDownMenu[3].checked = Baggins.db.profile.hidedefaultbank
+        ldbDropDownMenu[4].checked = Baggins.db.profile.overridedefaultbags
+    end
 end
 
 local ldbdata = {
