@@ -731,7 +731,7 @@ end
 
 function Baggins:OnBankOpened()
     if self.doInitialBankUpdate then
-        self.doInitialBankUpdate = false
+        --self.doInitialBankUpdate = false
         for bagid in LBU:IterateBags("BANK") do
             self:CheckSlotsChanged(bagid, true)
         end
@@ -4083,11 +4083,14 @@ function Baggins:OpenBag(bagid,_) --bagid,noupdate
 
     -- reuse self.doInitialUpdate to only run once
     -- this fixes the duplicate stacks bug upon login
-    if self.doInitialUpdate then
-        self:RunBagUpdates("BAG_UPDATE",1)
+    --if self.doInitialUpdate then
+        --self:RunBagUpdates("BAG_UPDATE",1)
+        --self:RunBagUpdates("BAG_UPDATE",2)
+        --self:RunBagUpdates("BAG_UPDATE",3)
+        --self:RunBagUpdates("BAG_UPDATE",4)
         -- this time we set to nil so this only runs the first time
-        self.doInitialUpdate = false
-    end
+        --self.doInitialUpdate = false
+    --end
     PlaySound(862)
 end
 
@@ -4101,10 +4104,21 @@ function Baggins:OpenAllBags()
         if bag.openWithAll then
             Baggins:OpenBag(bagid,true)
         end
-        --TODO Can we be more efficient?
-        if self.bankIsOpen then
-            self:RunBagUpdates("BAG_UPDATE", bagid)
-        end
+    end
+    if self.bankIsOpen and self.doInitialBankUpdate then
+        self:RunBagUpdates("BAG_UPDATE",1)
+        --self:RunBagUpdates("BAG_UPDATE",2)
+        --self:RunBagUpdates("BAG_UPDATE",3)
+        --self:RunBagUpdates("BAG_UPDATE",4)
+        self.doInitialBankUpdate = false
+    end
+
+    if not self.bankIsOpen and self.doInitialUpdate then
+        self:RunBagUpdates("BAG_UPDATE",1)
+        --self:RunBagUpdates("BAG_UPDATE",2)
+        --self:RunBagUpdates("BAG_UPDATE",3)
+        --self:RunBagUpdates("BAG_UPDATE",4)
+        self.doInitialUpdate = false
     end
     self:UpdateLayout()
     self:FireSignal("Baggins_RefreshBags")
