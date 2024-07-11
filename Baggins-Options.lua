@@ -1113,16 +1113,6 @@ function Baggins:RebuildOptions()
                     get = function() return p.overridebackpack end,
                     set = function(info, value) p.overridebackpack = value self:UpdateBackpackHook() end, --luacheck: ignore 212
                 },
-                --@retail@
-                AutomaticReagentHandling = {
-                    name = L["Reagent Deposit"],
-                    type = "toggle",
-                    desc = L["Automatically deposits crafting reagents into the reagent bank if available."],
-                    order = 800,
-                    get = function() return p.autoreagent end,
-                    set = function(info, value) p.autoreagent = value end, --luacheck: ignore 212
-                },
-                --@end-retail@
                 DisableDefaultItemMenu = {
                     name = "Disable Default Item Menu",
                     type = "toggle",
@@ -1430,6 +1420,14 @@ function Baggins:RebuildOptions()
             order = 347,
             get = function() return p.EnablePetLevel end,
             set = function(info, value) p.EnablePetLevel = value;self:UpdateItemButtons() end, --luacheck: ignore 212
+        }
+        self.opts.args.General.args.AutomaticReagentHandling = {
+            name = L["Reagent Deposit"],
+            type = "toggle",
+            desc = L["Automatically deposits crafting reagents into the reagent bank if available."],
+            order = 800,
+            get = function() return p.autoreagent end,
+            set = function(info, value) p.autoreagent = value end, --luacheck: ignore 212
         }
     end
 
