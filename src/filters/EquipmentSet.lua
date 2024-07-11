@@ -93,7 +93,10 @@ local function Matches(bag, slot, rule)
     --UpdateEquipmentSets()
 
     -- Item belongs to a set?
-    local inset, setstring = GetContainerItemEquipmentSetInfo(bag, slot)
+    local inset, setstring
+    if GetContainerItemEquipmentSetInfo then
+        inset, setstring = GetContainerItemEquipmentSetInfo(bag, slot)
+    end
     if not inset then
         if itemstable and itemstable[bag] and itemstable[bag][slot] then
             setstring = itemstable[bag][slot]
