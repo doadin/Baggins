@@ -743,7 +743,10 @@ function Baggins:OnBankOpened()
     end
     self.bankIsOpen = true
     self:OpenAllBags()
-    self:ReallyUpdateBags()
+    if self.doInitialBankUpdate then
+        self:ReallyUpdateBags()
+        self.doInitialBankUpdate = false
+    end
 end
 
 function Baggins:OnBankChanged()
