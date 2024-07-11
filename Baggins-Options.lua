@@ -24,215 +24,625 @@ local dbIcon = LibStub("LibDBIcon-1.0")
 local function noop()
 end
 
-local templates = {
-    allinone = {
-        layout = "manual",
-        columns = 12,
-        sorttype = "quality",
-        showsectiontitle = true,
-        bags = {
-            {
-                name = L["All In One"],
-                openWithAll = true,
-                sections =
+local templates
+
+if Baggins:IsRetailWow() then
+    templates = {
+        allinone = {
+            layout = "manual",
+            columns = 12,
+            sorttype = "quality",
+            showsectiontitle = true,
+            bags = {
                 {
-                    { name=L["Bags"], cats={L["Bags"]} },
-                }
-            },
-            {
-                name = L["Bank All In One"],
-                openWithAll = true,
-                isBank = true,
-                sections =
+                    name = L["All In One"],
+                    openWithAll = true,
+                    sections =
+                    {
+                        { name=L["Bags"], cats={L["Bags"]} },
+                    }
+                },
                 {
-                    { name=L["Bank Bags"], cats={L["BankBags"]} },
+                    name = L["Bank All In One"],
+                    openWithAll = true,
+                    isBank = true,
+                    sections =
+                    {
+                        { name=L["Bank Bags"], cats={L["BankBags"]} },
+                    }
                 }
             }
-        }
-    },
-    allinonesorted = {
-        layout = "manual",
-        columns = 12,
-        sorttype = "quality",
-        showsectiontitle = true,
-        section_layout = 'flow',
-        bags = {
-            {
-                name = L["All In One"],
-                openWithAll = true,
-                sections =
+        },
+        allinonesorted = {
+            layout = "manual",
+            columns = 12,
+            sorttype = "quality",
+            showsectiontitle = true,
+            section_layout = 'flow',
+            bags = {
                 {
-                    { name = L["New"], cats = { L["New"] } , allowdupes=true },
-                    { name = L["Armor"], cats = { L["Armor"] },},
-                    { name = L["Weapons"], cats = { L["Weapons"] } },
-                    { name = L["Consumables"], cats = { L["Consumables"] } },
-                    { name = L["Quest"], cats = { L["Quest"] } },
-                    { name = L["Trade Goods"], cats = { L["Tradeskill Mats"], L["Recipes"] } },
-                    { name = L["Other"], cats = { L["Other"] } },
-                }
-            },
-            {
-                name = L["Bank All In One"],
-                openWithAll = true,
-                isBank = true,
-                sections =
+                    name = L["All In One"],
+                    openWithAll = true,
+                    sections =
+                    {
+                        { name = L["New"], cats = { L["New"] } , allowdupes=true },
+                        { name = L["Armor"], cats = { L["Armor"] },},
+                        { name = L["Weapons"], cats = { L["Weapons"] } },
+                        { name = L["Consumables"], cats = { L["Consumables"] } },
+                        { name = L["Quest"], cats = { L["Quest"] } },
+                        { name = L["Trade Goods"], cats = { L["Tradeskill Mats"], L["Recipes"] } },
+                        { name = L["Other"], cats = { L["Other"] } },
+                    }
+                },
                 {
-                    { name = L["Bank Equipment"], cats = { L["Armor"], L["Weapons"] },},
-                    { name = L["Bank Consumables"], cats = { L["Consumables"] } },
-                    { name = L["Bank Quest"], cats = { L["Quest"] } },
-                    { name = L["Bank Trade Goods"], cats = { L["Tradeskill Mats"], L["Recipes"] } },
-                    { name = L["Bank Other"], cats = { L["Other"] } },
+                    name = L["Bank All In One"],
+                    openWithAll = true,
+                    isBank = true,
+                    sections =
+                    {
+                        { name = L["Bank Equipment"], cats = { L["Armor"], L["Weapons"] },},
+                        { name = L["Bank Consumables"], cats = { L["Consumables"] } },
+                        { name = L["Bank Quest"], cats = { L["Quest"] } },
+                        { name = L["Bank Trade Goods"], cats = { L["Tradeskill Mats"], L["Recipes"] } },
+                        { name = L["Bank Other"], cats = { L["Other"] } },
+                    }
                 }
             }
-        }
-    },
-    default = {
-        showsectiontitle = true,
-        columns = 5,
-        sorttype = "quality",
-        layout = "auto",
-        bags = {
-            {
-                name = L["Other"],
-                openWithAll = true,
-                sections =
+        },
+        default = {
+            showsectiontitle = true,
+            columns = 5,
+            sorttype = "quality",
+            layout = "auto",
+            bags = {
                 {
-                    { name=L["New"], cats = { L["New"] }, allowdupes=true },
-                    { name=L["Other"], cats = { L["Other"] } },
-                    { name=L["Trash"], cats = { L["Trash"], L["TrashEquip"] } },
-                    { name=L["Empty"], cats = { L["Empty"] } }
-                }
-            },
-            {
-                name = L["Equipment"],
-                openWithAll = true,
-                sections =
+                    name = L["Other"],
+                    openWithAll = true,
+                    sections =
+                    {
+                        { name=L["New"], cats = { L["New"] }, allowdupes=true },
+                        { name=L["Other"], cats = { L["Other"] } },
+                        { name=L["Trash"], cats = { L["Trash"], L["TrashEquip"] } },
+                        { name=L["Empty"], cats = { L["Empty"] } }
+                    }
+                },
                 {
-                    { name=L["In Use"], cats={ L["In Use"] } },
-                    { name=L["Armor"], cats={ L["Armor"] } },
-                    { name=L["Weapons"], cats={ L["Weapons"] } }
-                }
-            },
-            {
-                name = L["Quest"],
-                openWithAll = true,
-                sections =
+                    name = L["Equipment"],
+                    openWithAll = true,
+                    sections =
+                    {
+                        { name=L["Equipment Set"], cats={ L["Equipment Set"] } },
+                        { name=L["Armor"], cats={ L["Armor"] } },
+                        { name=L["Weapons"], cats={ L["Weapons"] } }
+                    }
+                },
                 {
-                    { name=L["Quest Items"], cats = { L["Quest"] } }
-                }
-            },
-            {
-                name = L["Consumables"],
-                openWithAll = true,
-                sections =
+                    name = L["Quest"],
+                    openWithAll = true,
+                    sections =
+                    {
+                        { name=L["Quest Items"], cats = { L["Quest"] } }
+                    }
+                },
                 {
-                    { name = L["Food & Drink"], cats = {L["Food & Drink"]}},
-                    { name = L["First Aid"], cats = {L["FirstAid"]}},
-                    { name = L["Potions"], cats = {L["Potions"]}},
-                    { name = L["Flasks & Elixirs"], cats = {L["Flasks & Elixirs"]}},
-                    { name = L["Item Enhancements"], cats = {L["Item Enhancements"]}},
-                    { name = L["Misc"], cats = { L["Misc Consumables"] }},
-                }
-            },
-            {
-                name = L["Trade Goods"],
-                openWithAll = true,
-                sections =
+                    name = L["Consumables"],
+                    openWithAll = true,
+                    sections =
+                    {
+                        { name = L["Food & Drink"], cats = {L["Food & Drink"]}},
+                        { name = L["First Aid"], cats = {L["FirstAid"]}},
+                        { name = L["Potions"], cats = {L["Potions"]}},
+                        { name = L["Flasks & Elixirs"], cats = {L["Flasks & Elixirs"]}},
+                        { name = L["Item Enhancements"], cats = {L["Item Enhancements"]}},
+                        { name = L["Misc"], cats = { L["Misc Consumables"] }},
+                    }
+                },
                 {
-                    { name=L["Elemental"], cats={ L["Elemental"] } },
---@retail@
-                    { name=L["Cloth"], cats={ L["Cloth"] } },
-                    { name=L["Leather"], cats={ L["Leather"] } },
---@end-retail@
-                    { name=L["Metal & Stone"], cats={ L["Metal & Stone"] } },
-                    { name=L["Cooking"], cats={ L["Cooking"] } },
-                    { name=L["Herb"], cats={ L["Herb"] } },
-                    { name=L["Enchanting"], cats={ L["Enchanting"] } },
-                    { name=L["Jewelcrafting"], cats={ L["Jewelcrafting"] } },
-                    { name=L["Engineering"], cats={ L["Engineering"] } },
-                    { name=L["Inscription"], cats={ L["Inscription"] } },
-                    { name=L["Item Enchantment"], cats={ L["Item Enchantment"] } },
-                    { name=L["Recipes"], cats={ L["Recipes"] } },
- --[===[@non-retail@
-                    { name = L["Tradeskill Mats"], cats = { L["Tradeskill Mats"] } },
---@end-non-retail@]===]
-                }
-            },
-            {
-                name = L["Professions"],
-                openWithAll = true,
-                sections = {
-                    { name=L["Fishing"], cats={ L["Fishing"] } },
-                    { name=L["Tools"], cats={ L["Tools"] } },
-                }
-            },
-            {
-                name = L["Bank Equipment"],
-                openWithAll = true,
-                isBank = true,
-                sections =
+                    name = L["Trade Goods"],
+                    openWithAll = true,
+                    sections =
+                    {
+                        { name=L["Elemental"], cats={ L["Elemental"] } },
+                        { name=L["Cloth"], cats={ L["Cloth"] } },
+                        { name=L["Leather"], cats={ L["Leather"] } },
+                        { name=L["Metal & Stone"], cats={ L["Metal & Stone"] } },
+                        { name=L["Cooking"], cats={ L["Cooking"] } },
+                        { name=L["Herb"], cats={ L["Herb"] } },
+                        { name=L["Enchanting"], cats={ L["Enchanting"] } },
+                        { name=L["Jewelcrafting"], cats={ L["Jewelcrafting"] } },
+                        { name=L["Engineering"], cats={ L["Engineering"] } },
+                        { name=L["Inscription"], cats={ L["Inscription"] } },
+                        { name=L["Item Enchantment"], cats={ L["Item Enchantment"] } },
+                        { name=L["Recipes"], cats={ L["Recipes"] } },
+                    }
+                },
                 {
-                    { name=L["Armor"], cats={ L["Armor"] } },
-                    { name=L["Weapons"], cats={ L["Weapons"] } }
-                }
-            },
-            {
-                name = L["Bank Quest"],
-                openWithAll = true,
-                isBank = true,
-                sections =
+                    name = L["Professions"],
+                    openWithAll = true,
+                    sections = {
+                        { name=L["Fishing"], cats={ L["Fishing"] } },
+                        { name=L["Tools"], cats={ L["Tools"] } },
+                    }
+                },
                 {
-                    { name=L["Quest Items"], cats = { L["Quest"] } }
-                }
-            },
-            {
-                name = L["Bank Consumables"],
-                openWithAll = true,
-                isBank = true,
-                sections =
+                    name = L["Bank Equipment"],
+                    openWithAll = true,
+                    isBank = true,
+                    sections =
+                    {
+                        { name=L["Armor"], cats={ L["Armor"] } },
+                        { name=L["Weapons"], cats={ L["Weapons"] } }
+                    }
+                },
                 {
-                    { name = L["Food & Drink"], cats = {L["Food & Drink"]}},
-                    { name = L["First Aid"], cats = {L["FirstAid"]}},
-                    { name = L["Potions"], cats = {L["Potions"]}},
-                    { name = L["Flasks & Elixirs"], cats = {L["Flasks & Elixirs"]}},
-                    { name = L["Item Enhancements"], cats = {L["Item Enhancements"]}},
-                    { name = L["Misc"], cats = { L["Misc Consumables"] }},
-                }
-            },
-            {
-                name = L["Bank Trade Goods"],
-                openWithAll = true,
-                isBank = true,
-                sections =
+                    name = L["Bank Quest"],
+                    openWithAll = true,
+                    isBank = true,
+                    sections =
+                    {
+                        { name=L["Quest Items"], cats = { L["Quest"] } }
+                    }
+                },
                 {
-                    { name=L["Elemental"], cats={ L["Elemental"] } },
-                    { name=L["Cloth"], cats={ L["Cloth"] } },
-                    { name=L["Leather"], cats={ L["Leather"] } },
-                    { name=L["Metal & Stone"], cats={ L["Metal & Stone"] } },
-                    { name=L["Cooking"], cats={ L["Cooking"] } },
-                    { name=L["Herb"], cats={ L["Herb"] } },
-                    { name=L["Enchanting"], cats={ L["Enchanting"] } },
-                    { name=L["Jewelcrafting"], cats={ L["Jewelcrafting"] } },
-                    { name=L["Engineering"], cats={ L["Engineering"] } },
-                    { name=L["Inscription"], cats={ L["Inscription"] } },
-                    { name=L["Item Enchantment"], cats={ L["Item Enchantment"] } },
-                    { name=L["Recipes"], cats={ L["Recipes"] } },
-                }
-            },
-            {
-                name = L["Bank Other"],
-                openWithAll = true,
-                isBank = true,
-                sections =
+                    name = L["Bank Consumables"],
+                    openWithAll = true,
+                    isBank = true,
+                    sections =
+                    {
+                        { name = L["Food & Drink"], cats = {L["Food & Drink"]}},
+                        { name = L["First Aid"], cats = {L["FirstAid"]}},
+                        { name = L["Potions"], cats = {L["Potions"]}},
+                        { name = L["Flasks & Elixirs"], cats = {L["Flasks & Elixirs"]}},
+                        { name = L["Item Enhancements"], cats = {L["Item Enhancements"]}},
+                        { name = L["Misc"], cats = { L["Misc Consumables"] }},
+                    }
+                },
                 {
-                    { name=L["Other"], cats = { L["Other"] } },
-                    { name=L["Trash"], cats = { L["Trash"], L["TrashEquip"] } },
-                    { name=L["Empty"], cats = { L["Empty"] } }
-                }
-            },
+                    name = L["Bank Trade Goods"],
+                    openWithAll = true,
+                    isBank = true,
+                    sections =
+                    {
+                        { name=L["Elemental"], cats={ L["Elemental"] } },
+                        { name=L["Cloth"], cats={ L["Cloth"] } },
+                        { name=L["Leather"], cats={ L["Leather"] } },
+                        { name=L["Metal & Stone"], cats={ L["Metal & Stone"] } },
+                        { name=L["Cooking"], cats={ L["Cooking"] } },
+                        { name=L["Herb"], cats={ L["Herb"] } },
+                        { name=L["Enchanting"], cats={ L["Enchanting"] } },
+                        { name=L["Jewelcrafting"], cats={ L["Jewelcrafting"] } },
+                        { name=L["Engineering"], cats={ L["Engineering"] } },
+                        { name=L["Inscription"], cats={ L["Inscription"] } },
+                        { name=L["Item Enchantment"], cats={ L["Item Enchantment"] } },
+                        { name=L["Recipes"], cats={ L["Recipes"] } },
+                    }
+                },
+                {
+                    name = L["Bank Other"],
+                    openWithAll = true,
+                    isBank = true,
+                    sections =
+                    {
+                        { name=L["Other"], cats = { L["Other"] } },
+                        { name=L["Trash"], cats = { L["Trash"], L["TrashEquip"] } },
+                        { name=L["Empty"], cats = { L["Empty"] } }
+                    }
+                },
+            }
         }
     }
-}
+end
+
+if Baggins:IsCataWow() then
+    templates = {
+        allinone = {
+            layout = "manual",
+            columns = 12,
+            sorttype = "quality",
+            showsectiontitle = true,
+            bags = {
+                {
+                    name = L["All In One"],
+                    openWithAll = true,
+                    sections =
+                    {
+                        { name=L["Bags"], cats={L["Bags"]} },
+                    }
+                },
+                {
+                    name = L["Bank All In One"],
+                    openWithAll = true,
+                    isBank = true,
+                    sections =
+                    {
+                        { name=L["Bank Bags"], cats={L["BankBags"]} },
+                    }
+                }
+            }
+        },
+        allinonesorted = {
+            layout = "manual",
+            columns = 12,
+            sorttype = "quality",
+            showsectiontitle = true,
+            section_layout = 'flow',
+            bags = {
+                {
+                    name = L["All In One"],
+                    openWithAll = true,
+                    sections =
+                    {
+                        { name = L["New"], cats = { L["New"] } , allowdupes=true },
+                        { name = L["Armor"], cats = { L["Armor"] },},
+                        { name = L["Weapons"], cats = { L["Weapons"] } },
+                        { name = L["Consumables"], cats = { L["Consumables"] } },
+                        { name = L["Quest"], cats = { L["Quest"] } },
+                        { name = L["Trade Goods"], cats = { L["Tradeskill Mats"], L["Recipes"] } },
+                        { name = L["Other"], cats = { L["Other"] } },
+                    }
+                },
+                {
+                    name = L["Bank All In One"],
+                    openWithAll = true,
+                    isBank = true,
+                    sections =
+                    {
+                        { name = L["Bank Equipment"], cats = { L["Armor"], L["Weapons"] },},
+                        { name = L["Bank Consumables"], cats = { L["Consumables"] } },
+                        { name = L["Bank Quest"], cats = { L["Quest"] } },
+                        { name = L["Bank Trade Goods"], cats = { L["Tradeskill Mats"], L["Recipes"] } },
+                        { name = L["Bank Other"], cats = { L["Other"] } },
+                    }
+                }
+            }
+        },
+        default = {
+            showsectiontitle = true,
+            columns = 5,
+            sorttype = "quality",
+            layout = "auto",
+            bags = {
+                {
+                    name = L["Other"],
+                    openWithAll = true,
+                    sections =
+                    {
+                        { name=L["New"], cats = { L["New"] }, allowdupes=true },
+                        { name=L["Other"], cats = { L["Other"] } },
+                        { name=L["Trash"], cats = { L["Trash"], L["TrashEquip"] } },
+                        { name=L["Empty"], cats = { L["Empty"] } }
+                    }
+                },
+                {
+                    name = L["Equipment"],
+                    openWithAll = true,
+                    sections =
+                    {
+                        { name=L["Equipment Set"], cats={ L["Equipment Set"] } },
+                        { name=L["Armor"], cats={ L["Armor"] } },
+                        { name=L["Weapons"], cats={ L["Weapons"] } }
+                    }
+                },
+                {
+                    name = L["Quest"],
+                    openWithAll = true,
+                    sections =
+                    {
+                        { name=L["Quest Items"], cats = { L["Quest"] } }
+                    }
+                },
+                {
+                    name = L["Consumables"],
+                    openWithAll = true,
+                    sections =
+                    {
+                        { name = L["Food & Drink"], cats = {L["Food & Drink"]}},
+                        { name = L["First Aid"], cats = {L["FirstAid"]}},
+                        { name = L["Potions"], cats = {L["Potions"]}},
+                        { name = L["Flasks & Elixirs"], cats = {L["Flasks & Elixirs"]}},
+                        { name = L["Item Enhancements"], cats = {L["Item Enhancements"]}},
+                        { name = L["Misc"], cats = { L["Misc Consumables"] }},
+                    }
+                },
+                {
+                    name = L["Trade Goods"],
+                    openWithAll = true,
+                    sections =
+                    {
+                        { name=L["Elemental"], cats={ L["Elemental"] } },
+                        { name=L["Metal & Stone"], cats={ L["Metal & Stone"] } },
+                        { name=L["Cooking"], cats={ L["Cooking"] } },
+                        { name=L["Herb"], cats={ L["Herb"] } },
+                        { name=L["Enchanting"], cats={ L["Enchanting"] } },
+                        { name=L["Jewelcrafting"], cats={ L["Jewelcrafting"] } },
+                        { name=L["Engineering"], cats={ L["Engineering"] } },
+                        { name=L["Inscription"], cats={ L["Inscription"] } },
+                        { name=L["Item Enchantment"], cats={ L["Item Enchantment"] } },
+                        { name=L["Recipes"], cats={ L["Recipes"] } },
+                        { name = L["Tradeskill Mats"], cats = { L["Tradeskill Mats"] } },
+                    }
+                },
+                {
+                    name = L["Professions"],
+                    openWithAll = true,
+                    sections = {
+                        { name=L["Fishing"], cats={ L["Fishing"] } },
+                        { name=L["Tools"], cats={ L["Tools"] } },
+                    }
+                },
+                {
+                    name = L["Bank Equipment"],
+                    openWithAll = true,
+                    isBank = true,
+                    sections =
+                    {
+                        { name=L["Armor"], cats={ L["Armor"] } },
+                        { name=L["Weapons"], cats={ L["Weapons"] } }
+                    }
+                },
+                {
+                    name = L["Bank Quest"],
+                    openWithAll = true,
+                    isBank = true,
+                    sections =
+                    {
+                        { name=L["Quest Items"], cats = { L["Quest"] } }
+                    }
+                },
+                {
+                    name = L["Bank Consumables"],
+                    openWithAll = true,
+                    isBank = true,
+                    sections =
+                    {
+                        { name = L["Food & Drink"], cats = {L["Food & Drink"]}},
+                        { name = L["First Aid"], cats = {L["FirstAid"]}},
+                        { name = L["Potions"], cats = {L["Potions"]}},
+                        { name = L["Flasks & Elixirs"], cats = {L["Flasks & Elixirs"]}},
+                        { name = L["Item Enhancements"], cats = {L["Item Enhancements"]}},
+                        { name = L["Misc"], cats = { L["Misc Consumables"] }},
+                    }
+                },
+                {
+                    name = L["Bank Trade Goods"],
+                    openWithAll = true,
+                    isBank = true,
+                    sections =
+                    {
+                        { name=L["Elemental"], cats={ L["Elemental"] } },
+                        { name=L["Cloth"], cats={ L["Cloth"] } },
+                        { name=L["Leather"], cats={ L["Leather"] } },
+                        { name=L["Metal & Stone"], cats={ L["Metal & Stone"] } },
+                        { name=L["Cooking"], cats={ L["Cooking"] } },
+                        { name=L["Herb"], cats={ L["Herb"] } },
+                        { name=L["Enchanting"], cats={ L["Enchanting"] } },
+                        { name=L["Jewelcrafting"], cats={ L["Jewelcrafting"] } },
+                        { name=L["Engineering"], cats={ L["Engineering"] } },
+                        { name=L["Inscription"], cats={ L["Inscription"] } },
+                        { name=L["Item Enchantment"], cats={ L["Item Enchantment"] } },
+                        { name=L["Recipes"], cats={ L["Recipes"] } },
+                    }
+                },
+                {
+                    name = L["Bank Other"],
+                    openWithAll = true,
+                    isBank = true,
+                    sections =
+                    {
+                        { name=L["Other"], cats = { L["Other"] } },
+                        { name=L["Trash"], cats = { L["Trash"], L["TrashEquip"] } },
+                        { name=L["Empty"], cats = { L["Empty"] } }
+                    }
+                },
+            }
+        }
+    }
+    end
+
+if Baggins:IsClassicWow() or Baggins:IsWrathWow() then
+    templates = {
+        allinone = {
+            layout = "manual",
+            columns = 12,
+            sorttype = "quality",
+            showsectiontitle = true,
+            bags = {
+                {
+                    name = L["All In One"],
+                    openWithAll = true,
+                    sections =
+                    {
+                        { name=L["Bags"], cats={L["Bags"]} },
+                    }
+                },
+                {
+                    name = L["Bank All In One"],
+                    openWithAll = true,
+                    isBank = true,
+                    sections =
+                    {
+                        { name=L["Bank Bags"], cats={L["BankBags"]} },
+                    }
+                }
+            }
+        },
+        allinonesorted = {
+            layout = "manual",
+            columns = 12,
+            sorttype = "quality",
+            showsectiontitle = true,
+            section_layout = 'flow',
+            bags = {
+                {
+                    name = L["All In One"],
+                    openWithAll = true,
+                    sections =
+                    {
+                        { name = L["New"], cats = { L["New"] } , allowdupes=true },
+                        { name = L["Armor"], cats = { L["Armor"] },},
+                        { name = L["Weapons"], cats = { L["Weapons"] } },
+                        { name = L["Consumables"], cats = { L["Consumables"] } },
+                        { name = L["Quest"], cats = { L["Quest"] } },
+                        { name = L["Trade Goods"], cats = { L["Tradeskill Mats"], L["Recipes"] } },
+                        { name = L["Other"], cats = { L["Other"] } },
+                    }
+                },
+                {
+                    name = L["Bank All In One"],
+                    openWithAll = true,
+                    isBank = true,
+                    sections =
+                    {
+                        { name = L["Bank Equipment"], cats = { L["Armor"], L["Weapons"] },},
+                        { name = L["Bank Consumables"], cats = { L["Consumables"] } },
+                        { name = L["Bank Quest"], cats = { L["Quest"] } },
+                        { name = L["Bank Trade Goods"], cats = { L["Tradeskill Mats"], L["Recipes"] } },
+                        { name = L["Bank Other"], cats = { L["Other"] } },
+                    }
+                }
+            }
+        },
+        default = {
+            showsectiontitle = true,
+            columns = 5,
+            sorttype = "quality",
+            layout = "auto",
+            bags = {
+                {
+                    name = L["Other"],
+                    openWithAll = true,
+                    sections =
+                    {
+                        { name=L["New"], cats = { L["New"] }, allowdupes=true },
+                        { name=L["Other"], cats = { L["Other"] } },
+                        { name=L["Trash"], cats = { L["Trash"], L["TrashEquip"] } },
+                        { name=L["Empty"], cats = { L["Empty"] } }
+                    }
+                },
+                {
+                    name = L["Equipment"],
+                    openWithAll = true,
+                    sections =
+                    {
+                        { name=L["Armor"], cats={ L["Armor"] } },
+                        { name=L["Weapons"], cats={ L["Weapons"] } }
+                    }
+                },
+                {
+                    name = L["Quest"],
+                    openWithAll = true,
+                    sections =
+                    {
+                        { name=L["Quest Items"], cats = { L["Quest"] } }
+                    }
+                },
+                {
+                    name = L["Consumables"],
+                    openWithAll = true,
+                    sections =
+                    {
+                        { name = L["Food & Drink"], cats = {L["Food & Drink"]}},
+                        { name = L["First Aid"], cats = {L["FirstAid"]}},
+                        { name = L["Potions"], cats = {L["Potions"]}},
+                        { name = L["Flasks & Elixirs"], cats = {L["Flasks & Elixirs"]}},
+                        { name = L["Item Enhancements"], cats = {L["Item Enhancements"]}},
+                        { name = L["Misc"], cats = { L["Misc Consumables"] }},
+                    }
+                },
+                {
+                    name = L["Trade Goods"],
+                    openWithAll = true,
+                    sections =
+                    {
+                        { name=L["Elemental"], cats={ L["Elemental"] } },
+                        { name=L["Metal & Stone"], cats={ L["Metal & Stone"] } },
+                        { name=L["Cooking"], cats={ L["Cooking"] } },
+                        { name=L["Herb"], cats={ L["Herb"] } },
+                        { name=L["Enchanting"], cats={ L["Enchanting"] } },
+                        { name=L["Jewelcrafting"], cats={ L["Jewelcrafting"] } },
+                        { name=L["Engineering"], cats={ L["Engineering"] } },
+                        { name=L["Inscription"], cats={ L["Inscription"] } },
+                        { name=L["Item Enchantment"], cats={ L["Item Enchantment"] } },
+                        { name=L["Recipes"], cats={ L["Recipes"] } },
+                        { name = L["Tradeskill Mats"], cats = { L["Tradeskill Mats"] } },
+                    }
+                },
+                {
+                    name = L["Professions"],
+                    openWithAll = true,
+                    sections = {
+                        { name=L["Fishing"], cats={ L["Fishing"] } },
+                        { name=L["Tools"], cats={ L["Tools"] } },
+                    }
+                },
+                {
+                    name = L["Bank Equipment"],
+                    openWithAll = true,
+                    isBank = true,
+                    sections =
+                    {
+                        { name=L["Armor"], cats={ L["Armor"] } },
+                        { name=L["Weapons"], cats={ L["Weapons"] } }
+                    }
+                },
+                {
+                    name = L["Bank Quest"],
+                    openWithAll = true,
+                    isBank = true,
+                    sections =
+                    {
+                        { name=L["Quest Items"], cats = { L["Quest"] } }
+                    }
+                },
+                {
+                    name = L["Bank Consumables"],
+                    openWithAll = true,
+                    isBank = true,
+                    sections =
+                    {
+                        { name = L["Food & Drink"], cats = {L["Food & Drink"]}},
+                        { name = L["First Aid"], cats = {L["FirstAid"]}},
+                        { name = L["Potions"], cats = {L["Potions"]}},
+                        { name = L["Flasks & Elixirs"], cats = {L["Flasks & Elixirs"]}},
+                        { name = L["Item Enhancements"], cats = {L["Item Enhancements"]}},
+                        { name = L["Misc"], cats = { L["Misc Consumables"] }},
+                    }
+                },
+                {
+                    name = L["Bank Trade Goods"],
+                    openWithAll = true,
+                    isBank = true,
+                    sections =
+                    {
+                        { name=L["Elemental"], cats={ L["Elemental"] } },
+                        { name=L["Cloth"], cats={ L["Cloth"] } },
+                        { name=L["Leather"], cats={ L["Leather"] } },
+                        { name=L["Metal & Stone"], cats={ L["Metal & Stone"] } },
+                        { name=L["Cooking"], cats={ L["Cooking"] } },
+                        { name=L["Herb"], cats={ L["Herb"] } },
+                        { name=L["Enchanting"], cats={ L["Enchanting"] } },
+                        { name=L["Jewelcrafting"], cats={ L["Jewelcrafting"] } },
+                        { name=L["Engineering"], cats={ L["Engineering"] } },
+                        { name=L["Inscription"], cats={ L["Inscription"] } },
+                        { name=L["Item Enchantment"], cats={ L["Item Enchantment"] } },
+                        { name=L["Recipes"], cats={ L["Recipes"] } },
+                    }
+                },
+                {
+                    name = L["Bank Other"],
+                    openWithAll = true,
+                    isBank = true,
+                    sections =
+                    {
+                        { name=L["Other"], cats = { L["Other"] } },
+                        { name=L["Trash"], cats = { L["Trash"], L["TrashEquip"] } },
+                        { name=L["Empty"], cats = { L["Empty"] } }
+                    }
+                },
+            }
+        }
+    }
+end
 
 local templateChoices = {}
 for k in pairs(templates) do
