@@ -95,7 +95,12 @@ src\filters\Conduit.lua
 src\filters\ContainerType.lua
 src\filters\Empty.lua
 src\filters\EquipLocation.lua
+#@retail@
 src\filters\EquipmentSet.lua
+#@end-retail@
+#@version-cata@
+src\filters\EquipmentSet.lua
+#@end-version-cata@
 src\filters\EquipmentSlot.lua
 src\filters\Expansion.lua
 src\filters\ItemBind.lua
