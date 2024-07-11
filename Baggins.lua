@@ -4081,16 +4081,6 @@ function Baggins:OpenBag(bagid,_) --bagid,noupdate
     self:UpdateLayout()
     self:UpdateTooltip()
 
-    -- reuse self.doInitialUpdate to only run once
-    -- this fixes the duplicate stacks bug upon login
-    --if self.doInitialUpdate then
-        --self:RunBagUpdates("BAG_UPDATE",1)
-        --self:RunBagUpdates("BAG_UPDATE",2)
-        --self:RunBagUpdates("BAG_UPDATE",3)
-        --self:RunBagUpdates("BAG_UPDATE",4)
-        -- this time we set to nil so this only runs the first time
-        --self.doInitialUpdate = false
-    --end
     PlaySound(862)
 end
 
@@ -4105,21 +4095,9 @@ function Baggins:OpenAllBags()
             Baggins:OpenBag(bagid,true)
         end
     end
-    if self.bankIsOpen and self.doInitialBankUpdate then
-        self:RunBagUpdates("BAG_UPDATE",1)
-        --self:RunBagUpdates("BAG_UPDATE",2)
-        --self:RunBagUpdates("BAG_UPDATE",3)
-        --self:RunBagUpdates("BAG_UPDATE",4)
-        self.doInitialBankUpdate = false
-    end
 
-    if not self.bankIsOpen and self.doInitialUpdate then
-        self:RunBagUpdates("BAG_UPDATE",1)
-        --self:RunBagUpdates("BAG_UPDATE",2)
-        --self:RunBagUpdates("BAG_UPDATE",3)
-        --self:RunBagUpdates("BAG_UPDATE",4)
-        self.doInitialUpdate = false
-    end
+    self:RunBagUpdates("BAG_UPDATE",1)
+
     self:UpdateLayout()
     self:FireSignal("Baggins_RefreshBags")
     PlaySound(862)
