@@ -743,6 +743,7 @@ function Baggins:OnBankOpened()
     end
     self.bankIsOpen = true
     self:OpenAllBags()
+    self:ReallyUpdateBags()
 end
 
 function Baggins:OnBankChanged()
@@ -1108,15 +1109,9 @@ end
 
 function Baggins:ReallyUpdateBags()
     local p = self.db.profile
-    local isVisible = false
     BagginsMoneyFrame:Hide()
     BagginsBankControlFrame:Hide()
-    for bagid, _ in pairs(p.bags) do
-        if self.bagframes[bagid] and self.bagframes[bagid]:IsVisible() then
-            isVisible = true
-        end
-    end
-    if not isVisible then return end
+    --if not isVisible then return end
     for bagid, bag in pairs(p.bags) do
         if ( not bag.isBank ) or self.bankIsOpen then
             if self.bagframes[bagid] then
@@ -1132,9 +1127,9 @@ function Baggins:ReallyUpdateBags()
                     end
                 end
                 for sectionid, section in pairs(bag.sections) do
-                    if (self.bagframes[bagid]:IsVisible() or p.hideemptybags) then
+                    --if (self.bagframes[bagid]:IsVisible() or p.hideemptybags) then
                         self:UpdateSection(bagid,sectionid,section.name) --,Baggins:FinishSection())
-                    end
+                    --end
                 end
                 self:UpdateBagFrameSize(bagid)
             end
@@ -1194,6 +1189,7 @@ function Baggins:RunBagUpdates(event,bagid)
             firstbagupdate = false
             self:SaveItemCounts()
             self:ForceFullUpdate()
+            self:ReallyUpdateBags()
         end
         if not next(bagupdatebucket) then
             return
@@ -1206,13 +1202,14 @@ function Baggins:RunBagUpdates(event,bagid)
         end
         if itemschanged then
             self:UpdateBags()
+            self:ReallyUpdateBags()
         else
             self:UpdateItemButtons()
         end
         if(self:IsAnyBagOpen()) then
             Baggins:FireSignal("Baggins_BagsUpdatedWhileOpen");
         end
-        self:ReallyUpdateBags()
+        --self:ReallyUpdateBags()
     end
 end
 
@@ -4090,13 +4087,14 @@ function Baggins:OpenAllBags()
     if not self:IsActive() then
         return
     end
+
     for bagid, bag in ipairs(p.bags) do
         if bag.openWithAll then
             Baggins:OpenBag(bagid,true)
         end
     end
 
-    self:RunBagUpdates("BAG_UPDATE",1)
+    --self:RunBagUpdates("BAG_UPDATE",1)
 
     self:UpdateLayout()
     self:FireSignal("Baggins_RefreshBags")
