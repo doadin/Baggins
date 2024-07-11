@@ -4,7 +4,6 @@ EquipmentSet.lua
 
 ========================================================================== ]]--
 
---@retail@
 local AddOnName, _ = ...
 local AddOn = _G[AddOnName]
 
@@ -166,5 +165,3 @@ eventFrame:RegisterEvent("LOADING_SCREEN_DISABLED")
 eventFrame:RegisterEvent("PLAYER_LOGIN")
 eventFrame:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
 UpdateEquipmentSets()
-
---@end-retail@

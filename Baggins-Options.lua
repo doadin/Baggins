@@ -3560,6 +3560,13 @@ if Baggins:IsCataWow() then
             },
         },
         [L["New"]] = { { ["name"] = L["New"], ["type"] = "NewItems" }, },
+        [L["Equipment Set"]] = {
+            name=L["Equipment Set"],
+            {
+                anyset=true,
+                type="EquipmentSet"
+            },
+        },
     }
 end
 
