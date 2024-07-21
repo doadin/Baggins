@@ -731,7 +731,7 @@ end
 
 local function refresh()
     Baggins:ForceFullRefresh()
-    Baggins:UpdateBags()
+    self:Baggins_RefreshBags()
 end
 
 local function getCompressAll()
@@ -787,7 +787,7 @@ function Baggins:RebuildOptions()
                             set = function(info, value) --luacheck: ignore 212
                                 p.compressall = value
                                 self:RebuildSectionLayouts()
-                                self:UpdateBags()
+                                self:Baggins_RefreshBags()
                             end,
                         },
                         CompressStackable = {
@@ -800,7 +800,7 @@ function Baggins:RebuildOptions()
                             set = function(info, value) --luacheck: ignore 212
                                 p.compressstackable = value
                                 self:RebuildSectionLayouts()
-                                self:UpdateBags()
+                                self:Baggins_RefreshBags()
                             end,
                         },
                         CompressShards = {
@@ -813,7 +813,7 @@ function Baggins:RebuildOptions()
                             set = function(info, value) --luacheck: ignore 212
                                 p.CompressShards = value
                                 self:RebuildSectionLayouts()
-                                self:UpdateBags()
+                                self:Baggins_RefreshBags()
                             end,
                             hidden = Baggins:IsRetailWow(),
                         },
@@ -827,7 +827,7 @@ function Baggins:RebuildOptions()
                             set = function(info, value) --luacheck: ignore 212
                                 p.CompressAmmo = value
                                 self:RebuildSectionLayouts()
-                                self:UpdateBags()
+                                self:Baggins_RefreshBags()
                             end,
                             hidden = Baggins:IsRetailWow(),
                         },
@@ -841,7 +841,7 @@ function Baggins:RebuildOptions()
                             set = function(info, value) --luacheck: ignore 212
                                 p.compressempty = value
                                 self:RebuildSectionLayouts()
-                                self:UpdateBags()
+                                self:Baggins_RefreshBags()
                             end,
                         },
                     }
@@ -922,7 +922,7 @@ function Baggins:RebuildOptions()
                     set = function(info, value) --luacheck: ignore 212
                         p.hideduplicates = value
                         self:ResortSections()
-                        self:UpdateBags()
+                        self:Baggins_RefreshBags()
                     end,
                     values = dbl({ 'global', 'bag', 'disabled' }),
                 },
@@ -1189,7 +1189,7 @@ function Baggins:RebuildOptions()
                     get = function() return p.shrinkwidth end,
                     set = function(info, value) --luacheck: ignore 212
                         p.shrinkwidth = value
-                        self:UpdateBags()
+                        self:Baggins_RefreshBags()
                     end,
                 },
                 ShrinkTitle = {
@@ -1200,7 +1200,7 @@ function Baggins:RebuildOptions()
                     get = function() return p.shrinkbagtitle end,
                     set = function(info, value) --luacheck: ignore 212
                         p.shrinkbagtitle = value
-                        self:UpdateBags()
+                        self:Baggins_RefreshBags()
                     end,
                 },
                 Scale = {
@@ -1225,7 +1225,7 @@ function Baggins:RebuildOptions()
                     order = 63,
                     arg = true,
                     get = function() return p.moneybag < 0 and "None" or tostring(p.moneybag) end,
-                    set = function(info, value) p.moneybag = tonumber(value) or -1 self:UpdateBags() end, --luacheck: ignore 212
+                    set = function(info, value) p.moneybag = tonumber(value) or -1 self:Baggins_RefreshBags() end, --luacheck: ignore 212
                     values = "GetMoneyBagChoices",
                 },
                 ShowBankControls = {
@@ -1235,7 +1235,7 @@ function Baggins:RebuildOptions()
                     order = 64,
                     arg = true,
                     get = function() return p.bankcontrolbag < 0 and "None" or tostring(p.bankcontrolbag) end,
-                    set = function(info, value) p.bankcontrolbag = tonumber(value) or -1 self:UpdateBags() end, --luacheck: ignore 212
+                    set = function(info, value) p.bankcontrolbag = tonumber(value) or -1 self:Baggins_RefreshBags() end, --luacheck: ignore 212
                     values = "GetBankControlsBagChoices",
                 },
                 DisableBagRightClick = {
@@ -1261,7 +1261,7 @@ function Baggins:RebuildOptions()
                     get = function() return p.section_layout end,
                     set = function(info, value) --luacheck: ignore 212
                         p.section_layout = value
-                        self:UpdateBags()
+                        self:Baggins_RefreshBags()
                     end,
                     values = {
                         default = "Default", -- TODO: Localize
@@ -1277,7 +1277,7 @@ function Baggins:RebuildOptions()
                     get = function() return p.showsectiontitle end,
                     set = function(info, value) --luacheck: ignore 212
                         p.showsectiontitle = value
-                        self:UpdateBags()
+                        self:Baggins_RefreshBags()
                     end
                 },
                 HideEmptySections = {
@@ -1288,7 +1288,7 @@ function Baggins:RebuildOptions()
                     get = function() return p.hideemptysections end,
                     set = function(info, value) --luacheck: ignore 212
                         p.hideemptysections = value
-                        self:UpdateBags()
+                        self:Baggins_RefreshBags()
                     end
                 },
                 HideEmptyBags = {
@@ -1299,7 +1299,7 @@ function Baggins:RebuildOptions()
                     get = function() return p.hideemptybags end,
                     set = function(info, value) --luacheck: ignore 212
                         p.hideemptybags = value
-                        self:UpdateBags()
+                        self:Baggins_RefreshBags()
                     end
                 },
                 Sort = {
@@ -1308,7 +1308,7 @@ function Baggins:RebuildOptions()
                     desc = L["How items are sorted"],
                     order = 100,
                     get = function() return p.sort end,
-                    set = function(info, value) p.sort = value self:UpdateBags() end, --luacheck: ignore 212
+                    set = function(info, value) p.sort = value self:Baggins_RefreshBags() end, --luacheck: ignore 212
                     values = dbl({'quality', 'name', 'type', 'slot', 'ilvl' }),
                 },
                 SortNewFirst = {
@@ -1325,7 +1325,7 @@ function Baggins:RebuildOptions()
                     desc = L["Number of Columns shown in the bag frames"],
                     order = 110,
                     get = function() return p.columns end,
-                    set = function(info, value) p.columns = value self:UpdateBags() end, --luacheck: ignore 212
+                    set = function(info, value) p.columns = value self:Baggins_RefreshBags() end, --luacheck: ignore 212
                     min = 2,
                     max = 20,
                     step = 1,
@@ -3688,7 +3688,7 @@ function Baggins:OnProfileEnable()
     self:SetCategoryTable(self.db.profile.categories)
     self:ResortSections()
     self:ForceFullRefresh()
-    self:UpdateBags()
+    self:Baggins_RefreshBags()
     self:BuildMoneyBagOptions()
     self:BuildBankControlsBagOptions()
 end
@@ -3706,7 +3706,7 @@ end
 local function disableCompressionTemp()
     Baggins.tempcompressnone = not Baggins.tempcompressnone
     Baggins:RebuildSectionLayouts()
-    Baggins:UpdateBags()
+    self:Baggins_RefreshBags()
 end
 
 local function openBagCategoryConfig()
@@ -3846,7 +3846,7 @@ end
 
 local function setBagPriority(info, value)
     Baggins:ResortSections()
-    Baggins:UpdateBags()
+    self:Baggins_RefreshBags()
     info.arg.priority = value
 end
 
@@ -3854,7 +3854,7 @@ local function setAllowdupes(info, value)
     info.arg.allowdupes = value
     Baggins:ResortSections()
     Baggins:ForceFullRefresh()
-    Baggins:UpdateBags()
+    self:Baggins_RefreshBags()
 end
 
 local tmp = {}

@@ -194,7 +194,7 @@ local function initDropdownMenu()
                 tooltipText = L["Forces a Full Refresh of item sorting"],
                 func = function()
                         Baggins:ForceFullRefresh()
-                        Baggins:UpdateBags()
+                        self:Baggins_RefreshBags()
                     end,
                 notCheckable = true,
             },
@@ -237,7 +237,7 @@ local function initDropdownMenu()
                 tooltipText = L["Forces a Full Refresh of item sorting"],
                 func = function()
                         Baggins:ForceFullRefresh()
-                        Baggins:UpdateBags()
+                        self:Baggins_RefreshBags()
                     end,
                 notCheckable = true,
             },
@@ -462,7 +462,7 @@ function Baggins:OnProfileEnable()
     self:SetCategoryTable(self.db.profile.categories)
     self:ResortSections()
     self:ForceFullRefresh()
-    self:UpdateBags()
+    self:Baggins_RefreshBags()
     self:BuildMoneyBagOptions()
     self:BuildBankControlsBagOptions()
 end
@@ -532,7 +532,7 @@ function Baggins:OnEnable()
 end
 
 function Baggins:Baggins_CategoriesChanged()
-    self:UpdateBags()
+    self:Baggins_RefreshBags()
     self.doInitialBankUpdate = true
 end
 
@@ -767,7 +767,7 @@ function Baggins:OnReagentBankPurchased()
             self:CheckSlotsChanged(bagid, true)
         end
     end
-    self:UpdateBags()
+    self:Baggins_RefreshBags()
 end
 
 function Baggins:OnBankSlotPurchased()
@@ -780,16 +780,12 @@ function Baggins:OnBankSlotPurchased()
             self:CheckSlotsChanged(bagid, true)
         end
     end
-    self:UpdateBags()
+    self:Baggins_RefreshBags()
 end
 
 -------------------------
 -- Update Bag Contents --
 -------------------------
-function Baggins:UpdateBags()
-    self:Baggins_RefreshBags()
-end
-
 function Baggins:Baggins_RefreshBags()
     for bagid,bagframe in pairs(self.bagframes) do
         for _,sectionframe in pairs(bagframe.sections) do
@@ -1204,7 +1200,7 @@ function Baggins:RunBagUpdates(event,bagid)
             bagupdatebucket[bag] = nil
         end
         if itemschanged then
-            self:UpdateBags()
+            self:Baggins_RefreshBags()
             self:ReallyUpdateBags()
         else
             self:UpdateItemButtons()
@@ -1669,7 +1665,7 @@ function Baggins:UpdateBagFrameSize(bagid)
     local bagframe = self.bagframes[bagid]
     if not bagframe then return end
     bagframe.dirty = true
-    self:UpdateBags()
+    self:Baggins_RefreshBags()
 end
 
 function Baggins:ReallyUpdateBagFrameSize(bagid)
@@ -1858,7 +1854,7 @@ function Baggins:LayoutSection(sectionframe, title, cols)
     sectionframe.dirty = true
     sectionframe.set_title = title
     sectionframe.set_columns = cols
-    self:UpdateBags()
+    self:Baggins_RefreshBags()
 end
 
 function Baggins:ReallyLayoutSection(sectionframe, cols)
@@ -2547,7 +2543,7 @@ do
 
     local function Click(_, arg1, arg2)
         Baggins:IncludeItemInCategory(arg1, arg2)
-        Baggins:UpdateBags()
+        self:Baggins_RefreshBags()
     end
 
     local dd_categories, dd_id
@@ -3436,7 +3432,7 @@ end
 
 function Baggins:LayoutBagFrames()
     self.dirtyBagLayout = true
-    self:UpdateBags()
+    self:Baggins_RefreshBags()
 end
 
 local CONTAINER_SPACING = 0
@@ -3817,7 +3813,7 @@ function Baggins:NewBag(bagname)
     currentbag = #bags
     self:ResortSections()
     self:ForceFullRefresh()
-    self:UpdateBags()
+    self:Baggins_RefreshBags()
     self:UpdateLayout()
     self:BuildMoneyBagOptions()
     self:BuildBankControlsBagOptions()
@@ -3879,7 +3875,7 @@ function Baggins:RemoveBag(bagid)
     self:ResetCatInUse()
     self:ResortSections()
     self:ForceFullRefresh()
-    self:UpdateBags()
+    self:Baggins_RefreshBags()
     self:UpdateLayout()
     local numbags, numbagframes = #self.db.profile.bags, #self.bagframes
     for i = numbags+1, numbagframes do
@@ -3896,7 +3892,7 @@ function Baggins:NewSection(bagid,sectionname)
     currentsection = #self.db.profile.bags[bagid].sections
     self:ResortSections()
     self:ForceFullRefresh()
-    self:UpdateBags()
+    self:Baggins_RefreshBags()
     self:UpdateLayout()
 end
 
@@ -3914,7 +3910,7 @@ function Baggins:RemoveSection(bagid, sectionid)
     self:ResetCatInUse()
     self:ResortSections()
     self:ForceFullRefresh()
-    self:UpdateBags()
+    self:Baggins_RefreshBags()
     self:UpdateLayout()
 end
 
@@ -3922,7 +3918,7 @@ function Baggins:AddRule()
     --tablet:Refresh("BagginsEditCategories")
     Baggins:OnRuleChanged()
     self:ForceFullRefresh()
-    self:UpdateBags()
+    self:Baggins_RefreshBags()
     self:UpdateLayout()
 end
 
@@ -3931,7 +3927,7 @@ function Baggins:RemoveRule(catid, ruleid)
     --tablet:Refresh("BagginsEditCategories")
     Baggins:OnRuleChanged()
     self:ForceFullRefresh()
-    self:UpdateBags()
+    self:Baggins_RefreshBags()
     self:UpdateLayout()
 end
 
@@ -3939,7 +3935,7 @@ function Baggins:AddCategory(bagid,sectionid,category)
     tinsert(self.db.profile.bags[bagid].sections[sectionid].cats,category)
     self:ResetCatInUse(category)
     self:ForceFullRefresh()
-    self:UpdateBags()
+    self:Baggins_RefreshBags()
     self:UpdateLayout()
 end
 
@@ -3999,7 +3995,7 @@ function Baggins:RemoveCategory(bagid,sectionid,catid)
         tremove(p.bags[bagid].sections[sectionid].cats,catid)
         self:ResetCatInUse()
         self:ForceFullRefresh()
-        self:UpdateBags()
+        self:Baggins_RefreshBags()
         self:UpdateLayout()
     end
 end
