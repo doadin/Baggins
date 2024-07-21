@@ -3706,7 +3706,7 @@ end
 local function disableCompressionTemp()
     Baggins.tempcompressnone = not Baggins.tempcompressnone
     Baggins:RebuildSectionLayouts()
-    self:Baggins_RefreshBags()
+    Baggins:Baggins_RefreshBags()
 end
 
 local function openBagCategoryConfig()
