@@ -24,6 +24,12 @@ end
 local LibStub = _G.LibStub
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
 
+local tip
+if not AddOn:IsRetailWow() then
+    tip = CreateFrame("GAMETOOLTIP", "BagginsTooltipFilterFrame", nil, "GameTooltipTemplate")
+    tip:SetOwner(WorldFrame, "ANCHOR_NONE")
+end
+
 -- Test for match
 local function Matches(bag, slot, rule)
 
@@ -51,7 +57,8 @@ local function Matches(bag, slot, rule)
         -- The above SurfaceArgs calls are required to assign values to the
         -- 'type', 'guid', and 'leftText' fields seen below.
         for i=1,#tooltipData.lines do
-            if tooltipData.lines[i].leftText and tooltipData.lines[i].leftText:find(text) then
+            if (tooltipData.lines[i].leftText and tooltipData.lines[i].leftText:find(text))
+            or (tooltipData.lines[i].rightText and tooltipData.lines[i].rightText:find(text)) then
                 return true
             end
         end
@@ -59,21 +66,20 @@ local function Matches(bag, slot, rule)
         return false
     end
     if not AddOn:IsRetailWow() then
-        local tip = BagginsTooltipFilterFrame or CreateFrame("GAMETOOLTIP", "BagginsTooltipFilterFrame", nil, "GameTooltipTemplate")
-        tip:SetOwner(WorldFrame, "ANCHOR_NONE")
         if bag == -1 then
             local invId = BankButtonIDToInvSlotID(slot, false)
             tip:SetInventoryItem("player", invId)
         else
             tip:SetBagItem(bag, slot)
         end
-        for i = 1, BagginsTooltipFilterFrame:NumLines() do
+        for i = 1, tip:NumLines() do
             local left = _G["BagginsTooltipFilterFrameTextLeft"..i]
-            local tooltiptext = left:GetText()
-            if tooltiptext and tooltiptext ~= "" then
-                if tooltiptext:find(text) then
-                    return true
-                end
+            local right = _G["BagginsTooltipFilterFrameTextRight"..i]
+            local lefttooltiptext = left and left:GetText()
+            local righttooltiptext = right and right:GetText()
+            if (lefttooltiptext and lefttooltiptext ~= "" and lefttooltiptext:find(text))
+            or (righttooltiptext and righttooltiptext ~= "" and righttooltiptext:find(text)) then
+                return true
             end
         end
         return false
