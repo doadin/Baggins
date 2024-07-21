@@ -4,3 +4,5 @@
 # I link AddOn Folders here when testing local builds
 _retail_
 _classic_
+
+.vscode/
