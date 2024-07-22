@@ -58,9 +58,7 @@ local LE_EXPANSION_WRATH_OF_THE_LICH_KING = LE_EXPANSION_WRATH_OF_THE_LICH_KING
 
 -- Bank tab locals, for auto reagent deposit
 local BANK_TAB = BANK_PANELS[1].name
---@retail@
-local REAGENT_BANK_TAB = BANK_PANELS[2].name
---@end-retail@
+local REAGENT_BANK_TAB = BANK_PANELS and BANK_PANELS[2] and BANK_PANELS[2].name
 
 Baggins.hasIcon = "Interface\\Icons\\INV_Jewelry_Ring_03"
 Baggins.cannotDetachTooltip = true
@@ -355,13 +353,12 @@ do
 
     local function createItemButton()
 
-        --[===[@non-retail@
-        local frameType = "Button"
-        --@end-non-retail@]===]
-
-        --@retail@
-        local frameType = "ItemButton"
-        --@end-retail@
+        local frameType
+        if Baggins:IsRetailWow() then
+            frameType = "ItemButton"
+        else
+            frameType = "Button"
+        end
 
         local frame = CreateFrame(frameType,"BagginsPooledItemButton"..buttonCount,nil,"ContainerFrameItemButtonTemplate")
 
@@ -505,10 +502,10 @@ function Baggins:OnEnable()
     self:RegisterEvent("QUEST_ACCEPTED", "UpdateItemButtons")
     self:RegisterEvent("UNIT_QUEST_LOG_CHANGED", "UpdateItemButtons")
     self:RegisterEvent("PLAYERBANKSLOTS_CHANGED", "OnBankChanged")
-    --@retail@
-    self:RegisterEvent("PLAYERREAGENTBANKSLOTS_CHANGED", "OnReagentBankChanged")
-    self:RegisterEvent("REAGENTBANK_PURCHASED", "OnReagentBankChanged")
-    --@end-retail@
+    if Baggins:IsRetailWow() then
+        self:RegisterEvent("PLAYERREAGENTBANKSLOTS_CHANGED", "OnReagentBankChanged")
+        self:RegisterEvent("REAGENTBANK_PURCHASED", "OnReagentBankChanged")
+    end
 
     self:RegisterEvent("PLAYERBANKBAGSLOTS_CHANGED", "OnBankSlotPurchased")
     self:RegisterEvent("BANKFRAME_CLOSED", "OnBankClosed")
@@ -578,10 +575,10 @@ function Baggins:UpdateBagHooks()
         self:RawHook("ToggleAllBags", true)
         self:RawHook('ToggleBackpack', 'ToggleAllBags', true)
         self:RawHook("CloseAllBags", true)
-        --@retail@
-        self:RawHook("OpenAllBagsMatchingContext", "ToggleAllBags", true)
-        --self:RawHook("OpenAndFilterBags", "ToggleAllBags", true)
-        --@end-retail@
+        if Baggins:IsRetailWow() then
+            self:RawHook("OpenAllBagsMatchingContext", "ToggleAllBags", true)
+            --self:RawHook("OpenAndFilterBags", "ToggleAllBags", true)
+        end
 
         --self:RawHook('ToggleBag', 'ToggleBags', true)
         --self:RawHook('OpenBackpack', 'OpenBags', true)
@@ -604,11 +601,11 @@ function Baggins:UnhookBagHooks()
     if self:IsHooked("CloseAllBags") then
         self:Unhook("CloseAllBags")
     end
-    --@retail@
-    if self:IsHooked("OpenAllBagsMatchingContext") then
-        self:Unhook("OpenAllBagsMatchingContext")
+    if Baggins:IsRetailWow() then
+        if self:IsHooked("OpenAllBagsMatchingContext") then
+            self:Unhook("OpenAllBagsMatchingContext")
+        end
     end
-    --@end-retail@
 end
 
 function Baggins:UpdateBackpackHook()
@@ -643,16 +640,16 @@ function Baggins:SaveItemCounts()
             end
         end
     end
-    --@retail@
-    for _,_,link in LBU:Iterate("REAGENTBANK") do
-        if link then
-            local id = tonumber(link:match("item:(%d+)"))
-            if id and not itemcounts[id] then
-                itemcounts[id] = { count = GetItemCount(id), ts = time() }
+    if Baggins:IsRetailWow() then
+        for _,_,link in LBU:Iterate("REAGENTBANK") do
+            if link then
+                local id = tonumber(link:match("item:(%d+)"))
+                if id and not itemcounts[id] then
+                    itemcounts[id] = { count = GetItemCount(id), ts = time() }
+                end
             end
         end
     end
-    --@end-retail@
 
     for slot = 0, INVSLOT_LAST_EQUIPPED do	-- 0--19
         local link = GetInventoryItemLink("player",slot)
@@ -2909,28 +2906,28 @@ function Baggins:CreateBankControlFrame() --luacheck: ignore 212
     frame.slotbuy:Hide()
 
     -- A button to buy the reagent bank
-    --@retail@
-    frame.rabuy = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-    frame.rabuy:SetScript("OnClick", function()
-        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
-        StaticPopup_Show("CONFIRM_BUY_REAGENTBANK_TAB")
-    end)
-    frame.rabuy:SetWidth(160)
-    frame.rabuy:SetHeight(18)
-    frame.rabuy:SetText(L["Buy Reagent Bank"])
-    frame.rabuy:Hide()
+    if Baggins:IsRetailWow() then
+        frame.rabuy = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+        frame.rabuy:SetScript("OnClick", function()
+            PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
+            StaticPopup_Show("CONFIRM_BUY_REAGENTBANK_TAB")
+        end)
+        frame.rabuy:SetWidth(160)
+        frame.rabuy:SetHeight(18)
+        frame.rabuy:SetText(L["Buy Reagent Bank"])
+        frame.rabuy:Hide()
 
-    -- Finally, a button to allow blizzards "Deposit All Reagents" feature to work.
-    -- this takes all your reagents and moves them into the reagent bank
-    frame.radeposit = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-    frame.radeposit:SetScript("OnClick", function()
-        DepositReagentBank()
-    end)
-    frame.radeposit:SetWidth(160)
-    frame.radeposit:SetHeight(18)
-    frame.radeposit:SetText(L["Deposit All Reagents"])
-    frame.radeposit:Hide()
-    --@end-retail@
+        -- Finally, a button to allow blizzards "Deposit All Reagents" feature to work.
+        -- this takes all your reagents and moves them into the reagent bank
+        frame.radeposit = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+        frame.radeposit:SetScript("OnClick", function()
+            DepositReagentBank()
+        end)
+        frame.radeposit:SetWidth(160)
+        frame.radeposit:SetHeight(18)
+        frame.radeposit:SetText(L["Deposit All Reagents"])
+        frame.radeposit:Hide()
+    end
 
     frame:Hide()
 end
@@ -2955,19 +2952,19 @@ function Baggins:UpdateBankControlFrame() --luacheck: ignore 212
         anchoryoffset = -2
     end
 
-    --@retail@
-    if IsReagentBankUnlocked() then
-        frame.radeposit:SetPoint("TOPLEFT", anchorframe, anchorpoint, 0, anchoryoffset)
-        frame.radeposit:Show()
-        frame.rabuy:Hide()
-        numbuttons = numbuttons + 1
-    else
-        frame.rabuy:SetPoint("TOPLEFT", anchorframe, anchorpoint, 0, anchoryoffset)
-        frame.rabuy:Show()
-        frame.radeposit:Hide()
-        numbuttons = numbuttons + 1
+    if Baggins:IsRetailWow() then
+        if IsReagentBankUnlocked() then
+            frame.radeposit:SetPoint("TOPLEFT", anchorframe, anchorpoint, 0, anchoryoffset)
+            frame.radeposit:Show()
+            frame.rabuy:Hide()
+            numbuttons = numbuttons + 1
+        else
+            frame.rabuy:SetPoint("TOPLEFT", anchorframe, anchorpoint, 0, anchoryoffset)
+            frame.rabuy:Show()
+            frame.radeposit:Hide()
+            numbuttons = numbuttons + 1
+        end
     end
-    --@end-retail@
 
     frame:SetHeight((18 + 2) * numbuttons)
 end
@@ -3171,43 +3168,44 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
         if not itemid then
             local bagtype, itemFamily = Baggins:IsSpecialBag(bag)
             bagtype = bagtype or ""
-            --@retail@
-            --count = bagtype..LBU:CountSlots(LBU:IsBank(bag) and "BANK" or LBU:IsReagentBank(bag) and "REAGENTBANK" or "BAGS", itemFamily)
-            count = 0
-            if bag <=4 and bag >=0 then
-                for Bag = 0, 4 do
-                    count = count + GetContainerNumFreeSlots(Bag)
-                end
-            elseif bag == 5 then
-                count = count + GetContainerNumFreeSlots(bag)
-            else
-                count = LBU:CountSlots(LBU:IsBank(bag) and "BANK" or LBU:IsReagentBank(bag) and "REAGENTBANK" or "BAGS", itemFamily)
-            end
-            count = bagtype..count
-            --@end-retail@
-
-            --[===[@non-retail@
-            if itemFamily == 0 then
-                -- lbu is screwing this up because it doesn't support classic keyring
-                -- So we do it manually
-                freeslots = 0
-                local startslot, endslot = 0, NUM_BAG_SLOTS
-                if LBU:IsBank(bag) then
-                    startslot, endslot = NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS
-                else
-                    startslot, endslot = 0, NUM_BAG_SLOTS
-                end
-                for i=startslot, endslot do
-                    local freeCount, bagType = GetContainerNumFreeSlots( i )
-                    if bagType == 0 then
-                        freeslots = freeslots + freeCount
+            if Baggins:IsRetailWow() then
+                --count = bagtype..LBU:CountSlots(LBU:IsBank(bag) and "BANK" or LBU:IsReagentBank(bag) and "REAGENTBANK" or "BAGS", itemFamily)
+                count = 0
+                if bag <=4 and bag >=0 then
+                    for Bag = 0, 4 do
+                        count = count + GetContainerNumFreeSlots(Bag)
                     end
+                elseif bag == 5 then
+                    count = count + GetContainerNumFreeSlots(bag)
+                else
+                    count = LBU:CountSlots(LBU:IsBank(bag) and "BANK" or LBU:IsReagentBank(bag) and "REAGENTBANK" or "BAGS", itemFamily)
                 end
-                count = bagtype..freeslots
-            else
-                count = bagtype..LBU:CountSlots(LBU:IsBank(bag) and "BANK" or "BAGS", itemFamily)
+                count = bagtype..count
             end
-            --@end-non-retail@]===]
+
+            if not Baggins:IsRetailWow() then
+                local freeslots
+                if itemFamily == 0 then
+                    -- lbu is screwing this up because it doesn't support classic keyring
+                    -- So we do it manually
+                    freeslots = 0
+                    local startslot, endslot
+                    if LBU:IsBank(bag) then
+                        startslot, endslot = NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS
+                    else
+                        startslot, endslot = 0, NUM_BAG_SLOTS
+                    end
+                    for i=startslot, endslot do
+                        local freeCount, bagType = GetContainerNumFreeSlots( i )
+                        if bagType == 0 then
+                            freeslots = freeslots + freeCount
+                        end
+                    end
+                    count = bagtype..freeslots
+                else
+                    count = bagtype..LBU:CountSlots(LBU:IsBank(bag) and "BANK" or "BAGS", itemFamily)
+                end
+            end
         else
             count = GetItemCount(itemid)
             if LBU:IsBank(bag, true) then
@@ -3773,15 +3771,15 @@ function Baggins:CountNormalSlots(which) --luacheck: ignore 212
 end
 
 function Baggins:CountAmmoSlots(which) --luacheck: ignore 212
-    --[===[@non-retail@
-    -- This version of LBU doesn't index special bags properly. but we can work around it by looking up each type individually.
-       local qiverempty, quivertotal = LBU:CountSlots(which, 1)
-       local ammoempty, ammototal = LBU:CountSlots(which, 2)
-       return qiverempty+ammoempty, quivertotal+ammototal
-    --@end-non-retail@]===]
-    --@retail@
+    if not Baggins:IsRetailWow() then
+        -- This version of LBU doesn't index special bags properly. but we can work around it by looking up each type individually.
+           local qiverempty, quivertotal = LBU:CountSlots(which, 1)
+           local ammoempty, ammototal = LBU:CountSlots(which, 2)
+           return qiverempty+ammoempty, quivertotal+ammototal
+    end
+    if Baggins:IsRetailWow() then
         return LBU:CountSlots(which, 1+2)
-    --@end-retail@
+    end
 end
 
 function Baggins:CountSoulSlots(which) --luacheck: ignore 212
@@ -3789,7 +3787,7 @@ function Baggins:CountSoulSlots(which) --luacheck: ignore 212
 end
 
 function Baggins:CountSpecialSlots(which) --luacheck: ignore 212
-    --[===[@non-retail@
+    if not Baggins:IsRetailWow() then
         local empty, total = 0,0
         -- This version of LBU doesn't index special bags properly. but we can work around it by looking up each type individually.
         local e, t = LBU:CountSlots(which, 4) -- leather?
@@ -3821,19 +3819,19 @@ function Baggins:CountSpecialSlots(which) --luacheck: ignore 212
         total = total + t
 
         return empty, total
-    --@end-non-retail@]===]
-    --@retail@
+    end
+    if Baggins:IsRetailWow() then
         return LBU:CountSlots(which, 2047-256-4-2-1)
-    --@end-retail@
+    end
 end
 
 function Baggins:CountKeySlots(which) --luacheck: ignore 212
-    --[===[@non-retail@
+    if not Baggins:IsRetailWow() then
         return LBU:CountSlots(which, 9)
-    --@end-non-retail@]===]
-    --@retail@
+    end
+    if Baggins:IsRetailWow() then
         return LBU:CountSlots(which,256)
-    --@end-retail@
+    end
 end
 
 ---------------------
@@ -4176,19 +4174,18 @@ function Baggins:ToggleAllBags(forceopen)
             self:OpenAllBags()
         end
     end
-    --@retail@
-    local count = 0;
-    for i = 0, NUM_BAG_FRAMES do
-        if ItemButtonUtil.GetItemContextMatchResultForContainer(i) == ItemButtonUtil.ItemContextMatchResult.Match then
-            if not IsBagOpen(i) then
-                --OpenBag(i);
-                count = count + 1;
+    if Baggins:IsRetailWow() then
+        local count = 0;
+        for i = 0, NUM_BAG_FRAMES do
+            if ItemButtonUtil.GetItemContextMatchResultForContainer(i) == ItemButtonUtil.ItemContextMatchResult.Match then
+                if not IsBagOpen(i) then
+                    --OpenBag(i);
+                    count = count + 1;
+                end
             end
         end
+        return count
     end
-
-    return count
-    --@end-retail@
 end
 
 function Baggins:IsAllOpen()
