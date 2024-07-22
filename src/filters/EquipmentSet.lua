@@ -7,166 +7,166 @@ EquipmentSet.lua
 local AddOnName, _ = ...
 local AddOn = _G[AddOnName]
 
--- LUA Functions
-local ipairs = ipairs
-
 -- WoW API
 local GetEquipmentSetIDs = C_EquipmentSet.GetEquipmentSetIDs
 local GetEquipmentSetInfo = C_EquipmentSet.GetEquipmentSetInfo
-local GetContainerItemEquipmentSetInfo = C_Container and C_Container.GetContainerItemEquipmentSetInfo
-local C_EquipmentSetGetItemLocations = C_EquipmentSet and C_EquipmentSet.GetItemLocations
-local EquipmentManager_UnpackLocation = EquipmentManager_UnpackLocation
+local GetItemLocations = C_EquipmentSet.GetItemLocations
+local UnpackItemLocation = EquipmentManager_UnpackLocation
+local BankButtonIDToInvSlotID = BankButtonIDToInvSlotID
+local BANK_CONTAINER = BANK_CONTAINER
 
--- Libs
-local LibStub = LibStub
+local BANK_INVENTORY_OFFSET = BankButtonIDToInvSlotID(1, false) - 1
+
+-- i18n
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
 
--- Local storage
-local EquipmentSets = {}
-local itemstable = {}
+-- mutable state
+local equipmentSets = {}
+local itemCache = {}
 
-local function UpdateCache()
-    itemstable = {}
+--
 
-    for _, id in next, GetEquipmentSetIDs() do
-        local name = GetEquipmentSetInfo(id)
-        local itemLocations = C_EquipmentSetGetItemLocations(id)
-        for _, location in pairs(itemLocations) do
-            --location player, bank, bags, voidStorage, slot, bag
-            local slot, bag = select(5,EquipmentManager_UnpackLocation(location)), select(6,EquipmentManager_UnpackLocation(location))
-            if slot and bag then
-                if not itemstable[bag] then
-                    itemstable[bag] = {}
+local function UpdateItemsCache()
+    wipe(itemCache)
+    for _, setId in ipairs(GetEquipmentSetIDs()) do
+        for slot, packedLoc in pairs(GetItemLocations(setId)) do
+            local player, bank, bags, slot, bag = UnpackItemLocation(packedLoc)
+            -- NOTE: unlike documented, this method in Cataclysm Classic
+            -- no longer returns the voidstorage field between bags and slot.
+            -- TODO: requires additional testing on retail!
+
+            if bank then
+                bag = BANK_CONTAINER
+                slot = slot - BANK_INVENTORY_OFFSET
+            end
+
+            if bag ~= nil and slot ~= nil then
+                if not itemCache[bag] then
+                    itemCache[bag] = {}
                 end
-                if itemstable[bag] and itemstable[bag][slot] then
-                    local otherSet = itemstable[bag][slot]
-                    local newSet = otherSet .. "," .. name
-                    itemstable[bag][slot] = newSet
-                else
-                    itemstable[bag][slot] = name
+                if not itemCache[bag][slot] then
+                    itemCache[bag][slot] = { sets = {} }
                 end
+                local cachedItem = itemCache[bag][slot]
+                local cachedSets = cachedItem.sets
+                cachedSets[#cachedSets + 1] = setId
             end
         end
     end
 end
 
--- Update list of equipment sets
+
 local function UpdateEquipmentSets()
-
-    wipe(EquipmentSets)
-
-    for _, id in next, GetEquipmentSetIDs() do
-        local name = GetEquipmentSetInfo(id)
-        EquipmentSets[name] = name
+    wipe(equipmentSets)
+    for _, setId in ipairs(GetEquipmentSetIDs()) do
+        local name = GetEquipmentSetInfo(setId)
+        equipmentSets[setId] = name
     end
-
-    UpdateCache()
-
 end
 
--- Get argument 'sets'
-local function GetOptionSets(info, key)
 
-    return info.arg.sets and info.arg.sets[key]
+local function debounce(fn)
+    local armed = true
+    local target = fn
 
-end
+    local rearm = function() armed = true end
 
--- Set argument 'sets'
-local function SetOptionSets(info, key, value)
-
-    if not info.arg.sets then
-        info.arg.sets = {}
-    end
-
-    info.arg.sets[key] = value
-    AddOn:OnRuleChanged()
-
-end
-
--- Test for 'Any' set
-local function isAnySet(info)
-
-    return info.arg.anyset
-
-end
-
--- Test for match
-local function Matches(bag, slot, rule)
-    --UpdateEquipmentSets()
-
-    -- Item belongs to a set?
-    local inset, setstring
-    if GetContainerItemEquipmentSetInfo then
-        inset, setstring = GetContainerItemEquipmentSetInfo(bag, slot)
-    end
-    if not inset then
-        if itemstable and itemstable[bag] and itemstable[bag][slot] then
-            setstring = itemstable[bag][slot]
-            inset = true
-        else
-            inset = false
+    return function(...)
+        if armed then
+            armed = false
+            target(unpack({...}))
+            RunNextFrame(rearm)
         end
     end
+end
 
-    if not inset then
+
+local UpdateItemsCacheOnce = debounce(UpdateItemsCache)
+
+
+local function Matches(bag, slot, rule)
+    UpdateItemsCacheOnce()
+    
+    local cachedInfo
+    if itemCache[bag] and itemCache[bag][slot] then
+        cachedInfo = itemCache[bag][slot]
+    else
         return false
     end
 
-    -- Match all sets?
     if rule.anyset then
+        -- we have a cached item, so it must belong to some set.
         return true
     end
 
-    -- Empty rule?
     if not rule.sets then
+        -- no sets have been selected, nothing to match.
         return false
     end
 
-    -- Item belongs to a set in rule.sets[]?
-    local sets = { (","):split(setstring) }
-    for _, v in ipairs(sets) do
-    local set = v:gsub("^ ", "")
-        if rule.sets[set] then
+    for _,setId in ipairs(cachedInfo.sets) do
+        if rule.sets[setId] then
             return true
         end
     end
 
     return false
-
 end
 
--- Register filter
-AddOn:AddCustomRule(
-    "EquipmentSet",
-    {
-        DisplayName = L["Equipment Set"],
-        Description = L["Filter by Equipment Set"],
-        Matches = Matches,
-        Ace3Options =
-        {
-            anyset =
-            {
-                name = L["Any"],
-                type = "toggle",
-            },
-            sets =
-            {
-                name = L["Equipment Sets"],
-                type = "multiselect",
-                values = EquipmentSets,
-                get = GetOptionSets,
-                set = SetOptionSets,
-                disabled = isAnySet,
-            },
-        },
-    }
-)
 
--- Initialize filter
+local function GetSelectedSetsOption(info, key)
+    return info.arg.sets and info.arg.sets[key]
+end
+
+
+local function SetSelectedSetsOption(info, key, value)
+    if not info.arg.sets then
+        info.arg.sets = {}
+    end
+    info.arg.sets[key] = value
+    UpdateItemsCache()
+    AddOn:OnRuleChanged()
+end
+
+
+local function GetAnySetOption(info)
+    return info.arg.anyset
+end
+
+
+local function SetAnySetOption(info, value)
+    info.arg.anyset = value
+    UpdateItemsCache()
+    AddOn:OnRuleChanged()
+end
+
+
+AddOn:AddCustomRule("EquipmentSet", {
+    DisplayName = L["Equipment Set"],
+    Description = L["Filter by Equipment Set"],
+    Matches = Matches,
+    Ace3Options = {
+        anyset = {
+            name = L["Any"],
+            type = "toggle",
+            set = SetAnySetOption
+        },
+        sets = {
+            name = L["Equipment Sets"],
+            type = "multiselect",
+            values = equipmentSets,
+            get = GetSelectedSetsOption,
+            set = SetSelectedSetsOption,
+            disabled = GetAnySetOption,
+        },
+    },
+})
+
+
 local eventFrame = CreateFrame("Frame")
-eventFrame:SetScript("OnEvent", UpdateEquipmentSets)
 eventFrame:RegisterEvent("EQUIPMENT_SETS_CHANGED")
-eventFrame:RegisterEvent("LOADING_SCREEN_DISABLED")
 eventFrame:RegisterEvent("PLAYER_LOGIN")
-eventFrame:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
-UpdateEquipmentSets()
+eventFrame:SetScript("OnEvent", debounce(function() 
+    UpdateEquipmentSets()
+    UpdateItemsCache()
+end))
