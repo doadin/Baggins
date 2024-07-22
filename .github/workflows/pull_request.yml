@@ -9,9 +9,10 @@ jobs:
 
     steps:
       - name: Checkout addon
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
-          fetch-depth: 100
+          fetch-depth: 0
+
       - name: Run luacheck
         uses: BigWigsMods/actions/luacheck@master
         with:
@@ -32,7 +33,17 @@ jobs:
         with:
           args: -g bcc -d
 
-      - uses: actions/upload-artifact@v3
+      - name: Package Wrath Classic
+        uses: BigWigsMods/packager@master
+        with:
+          args: -g wrath -d
+  
+      - name: Package Cata Classic
+        uses: BigWigsMods/packager@master
+        with:
+          args: -g cata -d
+
+      - uses: actions/upload-artifact@v4
         with:
           name: Baggins
           path: /*.zip
