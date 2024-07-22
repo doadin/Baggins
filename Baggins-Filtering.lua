@@ -406,7 +406,7 @@ end
 
 function Baggins:OnRuleChanged()
     self:ForceFullUpdate()
-    self:CategoriesChanged()
+    self:Baggins_CategoriesChanged()
 end
 
 local function ClearCache(cache)
