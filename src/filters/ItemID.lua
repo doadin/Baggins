@@ -8,17 +8,17 @@ local AddOnName, _ = ...
 local AddOn = _G[AddOnName]
 
 -- LUA Functions
-local pairs = _G.pairs
-local ipairs = _G.ipairs
-local tonumber = _G.tonumber
-local wipe = _G.wipe
+local pairs = pairs
+local ipairs = ipairs
+local tonumber = tonumber
+local wipe = wipe
 
 -- WoW API
-local GetItemInfo = _G.C_Item and _G.C_Item.GetItemInfo or _G.GetItemInfo
-local GetContainerItemID = _G.C_Container and _G.C_Container.GetContainerItemID or _G.GetContainerItemID
+local GetItemInfo = C_Item and C_Item.GetItemInfo or GetItemInfo
+local GetContainerItemID = C_Container and C_Container.GetContainerItemID or GetContainerItemID
 
 -- Libs
-local LibStub = _G.LibStub
+local LibStub = LibStub
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
 local function getItemIdSummary(info)
     local ids = info.arg.ids
@@ -26,7 +26,7 @@ local function getItemIdSummary(info)
     local result = ""
     for k in pairs(ids) do
         local _,v = GetItemInfo(k)
-        result = ("%s\n%s (%d)"):format(result, v or _G.UNKNOWN, k)
+        result = ("%s\n%s (%d)"):format(result, v or UNKNOWN, k)
     end
     return result
 end

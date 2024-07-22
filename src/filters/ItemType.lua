@@ -8,27 +8,19 @@ local AddOnName, _ = ...
 local AddOn = _G[AddOnName]
 
 -- LUA Functions
-local pairs = _G.pairs
-local tostring = _G.tostring
-local tonumber = _G.tonumber
+local pairs = pairs
+local tostring = tostring
+local tonumber = tonumber
 
 -- WoW API
-local GetItemClassInfo = _G.C_Item and _G.C_Item.GetItemClassInfo or _G.GetItemClassInfo
-local GetItemSubClassInfo = _G.C_Item.GetItemSubClassInfo
-local GetContainerItemID = _G.C_Container and _G.C_Container.GetContainerItemID or _G.GetContainerItemID
-local GetItemInfoInstant = _G.C_Item and _G.C_Item.GetItemInfoInstant or _G.GetItemInfoInstant
-
-local GetAuctionItemSubClasses
-if AddOn:IsClassicWow() or AddOn:IsTBCWow() or AddOn:IsWrathWow() or AddOn:IsCataWow() then
-    GetAuctionItemSubClasses = _G.GetAuctionItemSubClasses
-end
-
-if AddOn:IsRetailWow() then
-    GetAuctionItemSubClasses = _G.C_AuctionHouse.GetAuctionItemSubClasses
-end
+local GetItemClassInfo = C_Item and C_Item.GetItemClassInfo or GetItemClassInfo
+local GetItemSubClassInfo = C_Item.GetItemSubClassInfo
+local GetContainerItemID = C_Container and C_Container.GetContainerItemID or GetContainerItemID
+local GetItemInfoInstant = C_Item and C_Item.GetItemInfoInstant or GetItemInfoInstant
+local GetAuctionItemSubClasses = C_AuctionHouse and C_AuctionHouse.GetAuctionItemSubClasses or GetAuctionItemSubClasses
 
 -- Libs
-local LibStub = _G.LibStub
+local LibStub = LibStub
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
 
 local ItemTypes
@@ -241,7 +233,7 @@ AddOn:AddCustomRule("ItemType",
                 values = function(info)
                         local rule = info.arg
                         local tmp = {}
-                        tmp.ALL = _G.ALL
+                        tmp.ALL = ALL
                         if rule.itype and ItemTypes[rule.itype] then
                             if AddOn:IsClassicWow() or AddOn:IsTBCWow() or AddOn:IsWrathWow() or AddOn:IsCataWow() then
                                 for _,k in pairs({GetAuctionItemSubClasses(rule.itype)}) do

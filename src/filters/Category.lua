@@ -8,16 +8,16 @@ local AddOnName, _ = ...
 local AddOn = _G[AddOnName]
 
 -- LUA Functions
-local pairs = _G.pairs
+local pairs = pairs
 
 -- Libs
-local LibStub = _G.LibStub
+local LibStub = LibStub
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
 
 -- Local storage
-local BagTypes = _G.Baggins:GetBagTypes()
-local bankcategorycache = _G.Baggins:GetBankCategoryCache()
-local categorycache = _G.Baggins:GetCategoryCache()
+local BagTypes = Baggins:GetBagTypes()
+local bankcategorycache = Baggins:GetBankCategoryCache()
+local categorycache = Baggins:GetCategoryCache()
 
 local function Matches(bag,slot,rule)
     if not (bag and slot and rule.category) then return end

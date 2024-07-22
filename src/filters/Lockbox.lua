@@ -8,10 +8,10 @@ local AddOnName, _ = ...
 local AddOn = _G[AddOnName]
 
 -- Libs
---local LibStub = _G.LibStub
+--local LibStub = LibStub
 --local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
 
-local GetContainerItemID = _G.C_Container and _G.C_Container.GetContainerItemID or _G.GetContainerItemID
+local GetContainerItemID = C_Container and C_Container.GetContainerItemID or GetContainerItemID
 
 local ids = {
     4632, -- Ornate Bronze Lockbox

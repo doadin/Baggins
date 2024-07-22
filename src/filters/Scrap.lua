@@ -8,12 +8,10 @@ local AddOnName, _ = ...
 local AddOn = _G[AddOnName]
 
 -- Libs
---local LibStub = _G.LibStub
+--local LibStub = LibStub
 --local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
 
-local IsItemConduitByItemInfo = _G.C_Soulbinds.IsItemConduitByItemInfo
-local GetContainerItemLink = _G.C_Container and _G.C_Container.GetContainerItemLink or _G.GetContainerItemLink
-local DoesItemExist = _G.C_Item and _G.C_Item.DoesItemExist
+local DoesItemExist = C_Item and C_Item.DoesItemExist
 
 local function Matches(bag, slot, _)
     if DoesItemExist(ItemLocation:CreateFromBagAndSlot(bag, slot)) then

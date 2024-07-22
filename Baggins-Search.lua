@@ -1,8 +1,8 @@
 --luacheck: no max line length
 
-local NumberofAddons = _G.C_AddOns and _G.C_AddOns.GetNumAddOns and _G.C_AddOns.GetNumAddOns() or _G.GetNumAddOns()
-local DisableAddOn = _G.C_AddOns and _G.C_AddOns.DisableAddOn and _G.C_AddOns.DisableAddOn or _G.DisableAddOn
-local GetAddOnInfo = _G.C_AddOns and _G.C_AddOns.GetAddOnInfo and _G.C_AddOns.GetAddOnInfo or _G.GetAddOnInfo
+local NumberofAddons = C_AddOns and C_AddOns.GetNumAddOns and C_AddOns.GetNumAddOns() or GetNumAddOns()
+local DisableAddOn = C_AddOns and C_AddOns.DisableAddOn and C_AddOns.DisableAddOn or DisableAddOn
+local GetAddOnInfo = C_AddOns and C_AddOns.GetAddOnInfo and C_AddOns.GetAddOnInfo or GetAddOnInfo
 StaticPopupDialogs["BAGGINS_SEARCH"] = { --luacheck: ignore 112
     text = "Addon Baggins Search was found, however Baggins has search built-in, Would you like to disable Baggins Search?(requires reloadui, may need to disable manually)",
     button1 = "Yes",
@@ -35,19 +35,19 @@ if NumberofAddons >= 1 then
     end
 end
 
-local Baggins = _G.Baggins
-local GetItemInfo = _G.C_Item and _G.C_Item.GetItemInfo or _G.GetItemInfo
-local GetDetailedItemLevelInfo = _G.C_Item.GetDetailedItemLevelInfo
-local strlen = _G.strlen
-local strfind = _G.strfind
-local GetContainerItemLink = _G.C_Container and _G.C_Container.GetContainerItemLink or _G.GetContainerItemLink
-local CreateFrame = _G.CreateFrame
-local ChatFontNormal = _G.ChatFontNormal
-local GameTooltip = _G.GameTooltip
-local GameTooltip_SetDefaultAnchor = _G.GameTooltip_SetDefaultAnchor
-local getglobal = _G.getglobal
-local IsControlKeyDown = _G.IsControlKeyDown
-local CreateColor = _G.CreateColor
+local Baggins = Baggins
+local GetItemInfo = C_Item and C_Item.GetItemInfo or GetItemInfo
+local GetDetailedItemLevelInfo = C_Item.GetDetailedItemLevelInfo
+local strlen = strlen
+local strfind = strfind
+local GetContainerItemLink = C_Container and C_Container.GetContainerItemLink or GetContainerItemLink
+local CreateFrame = CreateFrame
+local ChatFontNormal = ChatFontNormal
+local GameTooltip = GameTooltip
+local GameTooltip_SetDefaultAnchor = GameTooltip_SetDefaultAnchor
+local getglobal = getglobal
+local IsControlKeyDown = IsControlKeyDown
+local CreateColor = CreateColor
 
 -- Simple search inspired by vBagnon for Baggins
 
@@ -109,7 +109,7 @@ local itemQualityT = {
 
 function BagginsSearch:Search(search) --luacheck: ignore 212
     local itemName, itemQuality, itemLevel, itemType, itemSubType, itemEquipLoc, bindType, expacID, setID
-    local effectiveILvl, isPreview, baseILvl, GearILevel
+    local effectiveILvl, baseILvl, GearILevel -- effectiveILvl, isPreview, baseILvl, GearILevel
     for _, bag in ipairs(Baggins.bagframes) do --bagid,bag
         for _, section in ipairs(bag.sections) do --sectionid, section
             for _, button in ipairs(section.items) do --buttonid, button
@@ -123,7 +123,8 @@ function BagginsSearch:Search(search) --luacheck: ignore 212
                             --itemName, itemLink, itemQuality, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount,itemEquipLoc, itemTexture, sellPrice, classID, subclassID, bindType, expacID, setID, isCraftingReagent
                             if Baggins:IsRetailWow() then
                                 itemName, _, itemQuality, itemLevel, _, itemType, itemSubType, _,itemEquipLoc, _, _, _, _, bindType, expacID, setID = GetItemInfo(link)
-                                effectiveILvl, isPreview, baseILvl = GetDetailedItemLevelInfo(link)
+                                effectiveILvl = select(1,GetDetailedItemLevelInfo(link))
+                                baseILvl = select(3,GetDetailedItemLevelInfo(link))
                                 GearILevel = effectiveILvl or baseILvl or itemLevel or 0
                             else
                                 itemName, _, itemQuality, itemLevel, _, itemType, itemSubType, _,itemEquipLoc, _, _, _, _, bindType, expacID = GetItemInfo(link)
@@ -190,7 +191,7 @@ local function BagginsSearch_CreateEditBox()
     BagginsSearch_EditBox:SetFrameStrata("HIGH")
 
     BagginsSearch_EditBox:SetFontObject(ChatFontNormal)
-    BagginsSearch_EditBox:SetFont(LSM and LSM:Fetch("font", Baggins.db.profile.Font) or _G.STANDARD_TEXT_FONT,Baggins.db.profile.FontSize or 10, "")
+    BagginsSearch_EditBox:SetFont(LSM and LSM:Fetch("font", Baggins.db.profile.Font) or STANDARD_TEXT_FONT,Baggins.db.profile.FontSize or 10, "")
     BagginsSearch_EditBox:SetTextInsets(8, 8, 0, 0)
     BagginsSearch_EditBox:SetAutoFocus(false)
 
@@ -236,7 +237,7 @@ local function BagginsSearch_CreateEditBox()
 
     BagginsSearch_Label = BagginsSearch_EditBox:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     BagginsSearch_Label:SetAlpha(0.2)
-    BagginsSearch_Label:SetFont(LSM and LSM:Fetch("font", Baggins.db.profile.Font) or _G.STANDARD_TEXT_FONT,Baggins.db.profile.FontSize or 10, "")
+    BagginsSearch_Label:SetFont(LSM and LSM:Fetch("font", Baggins.db.profile.Font) or STANDARD_TEXT_FONT,Baggins.db.profile.FontSize or 10, "")
     BagginsSearch_Label:SetText("Search")
     BagginsSearch_Label:SetPoint("TOPLEFT", 8, 0)
     BagginsSearch_Label:SetPoint("BOTTOMLEFT", -8, 0)

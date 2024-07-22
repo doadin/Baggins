@@ -10,18 +10,11 @@ local AddOn = _G[AddOnName]
 -- LUA Functions
 
 -- WoW API
-local C_TooltipInfoGetBagItem
-if AddOn:IsRetailWow() then
-    C_TooltipInfoGetBagItem = _G.C_TooltipInfo.GetBagItem
-end
-
-local TooltipUtil
-if AddOn:IsRetailWow() then
-    TooltipUtil = _G.TooltipUtil
-end
+local C_TooltipInfoGetBagItem = C_TooltipInfo and C_TooltipInfo.GetBagItem
+local TooltipUtil = TooltipUtil and TooltipUtil
 
 -- Libs
-local LibStub = _G.LibStub
+local LibStub = LibStub
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
 
 local tip

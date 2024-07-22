@@ -1,4 +1,4 @@
-local LibStub = _G.LibStub
+local LibStub = LibStub
 local L = LibStub("AceLocale-3.0"):NewLocale("Baggins", "deDE")
 if not L then return end
 

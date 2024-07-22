@@ -8,11 +8,11 @@ local AddOnName, _ = ...
 local AddOn = _G[AddOnName]
 
 -- Libs
---local LibStub = _G.LibStub
+--local LibStub = LibStub
 --local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
 
-local GetProfessions = _G.GetProfessions
-local GetProfessionInfo = _G.GetProfessionInfo
+local GetProfessions = GetProfessions
+local GetProfessionInfo = GetProfessionInfo
 
 
 

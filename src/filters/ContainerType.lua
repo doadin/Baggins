@@ -8,20 +8,20 @@ local AddOnName, _ = ...
 local AddOn = _G[AddOnName]
 
 -- LUA Functions
-local pairs = _G.pairs
+local pairs = pairs
 
 -- WoW API
-local GetAuctionItemSubClasses = _G.C_AuctionHouse and _G.C_AuctionHouse.GetAuctionItemSubClasses or _G.GetAuctionItemSubClasses
-local GetItemSubClassInfo = _G.C_Item and _G.C_Item.GetItemSubClassInfo or _G.GetItemSubClassInfo
-local ContainerIDToInventoryID = _G.C_Container and _G.C_Container.ContainerIDToInventoryID or _G.ContainerIDToInventoryID
-local GetInventoryItemLink = _G.GetInventoryItemLink
-local GetItemInfoInstant = _G.C_Item and _G.C_Item.GetItemInfoInstant or _G.GetItemInfoInstant
-local LE_ITEM_CLASS_CONTAINER = _G.LE_ITEM_CLASS_CONTAINER or _G.Enum.ItemClass.Container
-local NUM_BAG_SLOTS = _G.NUM_TOTAL_EQUIPPED_BAG_SLOTS or _G.NUM_BAG_SLOTS
-local NUM_BANKBAGSLOTS = _G.NUM_BANKBAGSLOTS
+local GetAuctionItemSubClasses = C_AuctionHouse and C_AuctionHouse.GetAuctionItemSubClasses or GetAuctionItemSubClasses
+local GetItemSubClassInfo = C_Item and C_Item.GetItemSubClassInfo or GetItemSubClassInfo
+local ContainerIDToInventoryID = C_Container and C_Container.ContainerIDToInventoryID or ContainerIDToInventoryID
+local GetInventoryItemLink = GetInventoryItemLink
+local GetItemInfoInstant = C_Item and C_Item.GetItemInfoInstant or GetItemInfoInstant
+local LE_ITEM_CLASS_CONTAINER = LE_ITEM_CLASS_CONTAINER or Enum.ItemClass.Container
+local NUM_BAG_SLOTS = NUM_TOTAL_EQUIPPED_BAG_SLOTS or NUM_BAG_SLOTS
+local NUM_BANKBAGSLOTS = NUM_BANKBAGSLOTS
 
 -- Libs
-local LibStub = _G.LibStub
+local LibStub = LibStub
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
 
 -- local storage

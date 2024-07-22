@@ -10,11 +10,11 @@ local AddOn = _G[AddOnName]
 -- LUA Functions
 
 --- WoW API
-local GetContainerItemLink = _G.C_Container and _G.C_Container.GetContainerItemLink or _G.GetContainerItemLink
-local GetItemInfo = _G.C_Item and _G.C_Item.GetItemInfo or _G.GetItemInfo
+local GetContainerItemLink = C_Container and C_Container.GetContainerItemLink or GetContainerItemLink
+local GetItemInfo = C_Item and C_Item.GetItemInfo or GetItemInfo
 
 -- Libs
-local LibStub = _G.LibStub
+local LibStub = LibStub
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
 
 -- Test for match

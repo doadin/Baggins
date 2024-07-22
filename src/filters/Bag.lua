@@ -10,17 +10,17 @@ local AddOn = _G[AddOnName] --luacheck: ignore 211
 -- LUA Functions
 
 -- WoW API
-local GetContainerItemLink = _G.C_Container and _G.C_Container.GetContainerItemLink or _G.GetContainerItemLink
-local BACKPACK_CONTAINER = _G.BACKPACK_CONTAINER
-local BANK_CONTAINER = _G.BANK_CONTAINER
-local NUM_BAG_SLOTS = _G.NUM_TOTAL_EQUIPPED_BAG_SLOTS or _G.NUM_BAG_SLOTS
-local NUM_BANKBAGSLOTS = _G.NUM_BANKBAGSLOTS
-local KEYRING_CONTAINER = _G.KEYRING_CONTAINER
-local REAGENTBANK_CONTAINER = _G.REAGENTBANK_CONTAINER
-local REAGENT_CONTAINER = Baggins:IsRetailWow() and Enum.BagIndex.ReagentBag or math.huge
+local GetContainerItemLink = C_Container and C_Container.GetContainerItemLink or GetContainerItemLink
+local BACKPACK_CONTAINER = BACKPACK_CONTAINER
+local BANK_CONTAINER = BANK_CONTAINER
+local NUM_BAG_SLOTS = NUM_TOTAL_EQUIPPED_BAG_SLOTS or NUM_BAG_SLOTS
+local NUM_BANKBAGSLOTS = NUM_BANKBAGSLOTS
+local KEYRING_CONTAINER = KEYRING_CONTAINER
+local REAGENTBANK_CONTAINER = REAGENTBANK_CONTAINER
+local REAGENT_CONTAINER = AddOn:IsRetailWow() and Enum.BagIndex.ReagentBag or math.huge
 
 -- Libs
-local LibStub = _G.LibStub
+local LibStub = LibStub
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
 
 -- Local storage

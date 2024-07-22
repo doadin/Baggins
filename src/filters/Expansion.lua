@@ -8,11 +8,11 @@ local AddOnName, _ = ...
 local AddOn = _G[AddOnName]
 
 -- Libs
---local LibStub = _G.LibStub
+--local LibStub = LibStub
 --local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
 
-local GetContainerItemLink = _G.C_Container and _G.C_Container.GetContainerItemLink or _G.GetContainerItemLink
-local GetItemInfo = _G.C_Item and _G.C_Item.GetItemInfo or _G.GetItemInfo
+local GetContainerItemLink = C_Container and C_Container.GetContainerItemLink or GetContainerItemLink
+local GetItemInfo = C_Item and C_Item.GetItemInfo or GetItemInfo
 
 local itemExpansion = {
     [0] = "Classic",
@@ -34,13 +34,6 @@ local function Matches(bag, slot, rule)
     local itemLink = GetContainerItemLink(bag, slot)
     local expansionID = itemLink and select(15,GetItemInfo(itemLink))
     return status == itemExpansion[expansionID]
-end
-
--- Clean rule
-local function CleanRule(rule)
-
-    rule.bagid=0
-
 end
 
 AddOn:AddCustomRule("Expansion", {

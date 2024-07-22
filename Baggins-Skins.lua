@@ -1,11 +1,11 @@
-local Baggins = _G.Baggins
+local Baggins = Baggins
 
 local pairs, ipairs =
-      _G.pairs, _G.ipairs
+      pairs, ipairs
 local tinsert =
-      _G.tinsert
+      tinsert
 
-local CreateColor = _G.CreateColor
+local CreateColor = CreateColor
 
 ----------------
 -- Skin stuff --
@@ -266,7 +266,7 @@ Baggins:RegisterSkin('oSkin', oSkin)
 ------------------------
 -- LSM Skins --
 ------------------------
-local LibStub = _G.LibStub
+local LibStub = LibStub
 local LSM = LibStub:GetLibrary("LibSharedMedia-3.0", true) --luacheck:ignore 113
 if LSM then
     local backgrounds = LSM:List("background")

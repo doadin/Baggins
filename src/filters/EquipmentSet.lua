@@ -8,16 +8,17 @@ local AddOnName, _ = ...
 local AddOn = _G[AddOnName]
 
 -- LUA Functions
-local ipairs = _G.ipairs
+local ipairs = ipairs
 
 -- WoW API
-local GetEquipmentSetIDs = _G.C_EquipmentSet.GetEquipmentSetIDs
-local GetEquipmentSetInfo = _G.C_EquipmentSet.GetEquipmentSetInfo
-local GetContainerItemEquipmentSetInfo = _G.C_Container and _G.C_Container.GetContainerItemEquipmentSetInfo
-local C_EquipmentSetGetItemLocations = _G.C_EquipmentSet and _G.C_EquipmentSet.GetItemLocations
+local GetEquipmentSetIDs = C_EquipmentSet.GetEquipmentSetIDs
+local GetEquipmentSetInfo = C_EquipmentSet.GetEquipmentSetInfo
+local GetContainerItemEquipmentSetInfo = C_Container and C_Container.GetContainerItemEquipmentSetInfo
+local C_EquipmentSetGetItemLocations = C_EquipmentSet and C_EquipmentSet.GetItemLocations
+local EquipmentManager_UnpackLocation = EquipmentManager_UnpackLocation
 
 -- Libs
-local LibStub = _G.LibStub
+local LibStub = LibStub
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
 
 -- Local storage
@@ -31,7 +32,8 @@ local function UpdateCache()
         local name = GetEquipmentSetInfo(id)
         local itemLocations = C_EquipmentSetGetItemLocations(id)
         for _, location in pairs(itemLocations) do
-            local player, bank, bags, voidStorage, slot, bag = EquipmentManager_UnpackLocation(location) --location
+            --location player, bank, bags, voidStorage, slot, bag
+            local slot, bag = select(5,EquipmentManager_UnpackLocation(location)), select(6,EquipmentManager_UnpackLocation(location))
             if slot and bag then
                 if not itemstable[bag] then
                     itemstable[bag] = {}

@@ -1,7 +1,7 @@
-local LibStub = _G.LibStub
-_G.Baggins = LibStub("AceAddon-3.0"):NewAddon("Baggins", "AceEvent-3.0", "AceHook-3.0", "AceBucket-3.0", "AceTimer-3.0", "AceConsole-3.0")
+local LibStub = LibStub
+Baggins = LibStub("AceAddon-3.0"):NewAddon("Baggins", "AceEvent-3.0", "AceHook-3.0", "AceBucket-3.0", "AceTimer-3.0", "AceConsole-3.0")
 
-local Baggins = _G.Baggins
+local Baggins = Baggins
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Baggins")
 local LBU = LibStub("LibBagUtils-1.0")
@@ -12,57 +12,49 @@ local console = LibStub("AceConsole-3.0")
 local iui = LibStub("LibItemUpgradeInfo-1.0")
 
 local next, pairs, ipairs, tonumber, select, strmatch, wipe, type, time, print =
-      _G.next, _G.pairs, _G.ipairs, _G.tonumber, _G.select, _G.strmatch, _G.wipe, _G.type, _G.time, _G.print
+      next, pairs, ipairs, tonumber, select, strmatch, wipe, type, time, print
 local min, max, ceil, floor, mod  =
-      _G.min, _G.max, _G.ceil, _G.floor, _G.mod
+      min, max, ceil, floor, mod
 local tinsert, tremove, tsort, tconcat =
-      _G.tinsert, _G.tremove, _G.table.sort, _G.table.concat
+      tinsert, tremove, table.sort, table.concat
 local format =
-      _G.string.format
+      string.format
 local band =
-      _G.bit.band
+      bit.band
 
-local IsAddOnLoaded = _G.C_AddOns and _G.C_AddOns.IsAddOnLoaded and _G.C_AddOns.IsAddOnLoaded or IsAddOnLoaded
-local BlizzSortBags = _G.C_Container and _G.C_Container.SortBags
+local IsAddOnLoaded = C_AddOns and C_AddOns.IsAddOnLoaded and C_AddOns.IsAddOnLoaded or IsAddOnLoaded
+local BlizzSortBags = C_Container and C_Container.SortBags
 local GetItemCount, GetItemInfo, GetInventoryItemLink, GetItemQualityColor, GetItemFamily, BankButtonIDToInvSlotID, GetNumBankSlots =
-      _G.GetItemCount, _G.GetItemInfo, _G.GetInventoryItemLink, _G.GetItemQualityColor, _G.GetItemFamily, _G.BankButtonIDToInvSlotID, _G.GetNumBankSlots
+      GetItemCount, GetItemInfo, GetInventoryItemLink, GetItemQualityColor, GetItemFamily, BankButtonIDToInvSlotID, GetNumBankSlots
 local GetContainerItemInfo, GetContainerItemLink, GetContainerNumFreeSlots, GetContainerItemCooldown =
-    _G.C_Container and _G.C_Container.GetContainerItemInfo or _G.GetContainerItemInfo, _G.C_Container and _G.C_Container.GetContainerItemLink or _G.GetContainerItemLink, _G.C_Container and _G.C_Container.GetContainerNumFreeSlots or _G.GetContainerNumFreeSlots, _G.C_Container and _G.C_Container.GetContainerItemCooldown or _G.GetContainerItemCooldown
-local BANK_PANELS = _G.BANK_PANELS
-local ItemButtonUtil = _G.ItemButtonUtil
-local IsBagOpen = _G.IsBagOpen
-local ShowInspectCursor = _G.ShowInspectCursor
-local ShowContainerSellCursor = _G.C_Container and _G.C_Container.ShowContainerSellCursor or _G.ShowContainerSellCursor
-local Enum = _G.Enum and _G.Enum
+    C_Container and C_Container.GetContainerItemInfo or GetContainerItemInfo, C_Container and C_Container.GetContainerItemLink or GetContainerItemLink, C_Container and C_Container.GetContainerNumFreeSlots or GetContainerNumFreeSlots, C_Container and C_Container.GetContainerItemCooldown or GetContainerItemCooldown
+local BANK_PANELS = BANK_PANELS
+local ItemButtonUtil = ItemButtonUtil
+local IsBagOpen = IsBagOpen
+local ShowInspectCursor = ShowInspectCursor
+local ShowContainerSellCursor = C_Container and C_Container.ShowContainerSellCursor or ShowContainerSellCursor
+local Enum = Enum and Enum
 
 
 local ReagentBankButtonIDToInvSlotID, GetContainerItemQuestInfo, DepositReagentBank, IsReagentBankUnlocked =
-      _G.ReagentBankButtonIDToInvSlotID, _G.C_Container and _G.C_Container.GetContainerItemQuestInfo or _G.GetContainerItemQuestInfo, _G.DepositReagentBank and _G.DepositReagentBank, _G.IsReagentBankUnlocked and _G.IsReagentBankUnlocked
-local IsContainerItemAnUpgrade = _G.IsContainerItemAnUpgrade and _G.IsContainerItemAnUpgrade
-local C_ItemUpgrade = _G.C_ItemUpgrade and _G.C_ItemUpgrade
+      ReagentBankButtonIDToInvSlotID, C_Container and C_Container.GetContainerItemQuestInfo or GetContainerItemQuestInfo, DepositReagentBank and DepositReagentBank, IsReagentBankUnlocked and IsReagentBankUnlocked
+local IsContainerItemAnUpgrade = IsContainerItemAnUpgrade and IsContainerItemAnUpgrade
+local C_ItemUpgrade = C_ItemUpgrade and C_ItemUpgrade
 
 
 local C_Item, ItemLocation, InCombatLockdown, IsModifiedClick, GetDetailedItemLevelInfo, GetContainerItemID, InRepairMode, KeyRingButtonIDToInvSlotID, C_PetJournal, C_NewItems, PlaySound =
-      _G.C_Item, _G.ItemLocation, _G.InCombatLockdown, _G.IsModifiedClick, _G.GetDetailedItemLevelInfo, _G.C_Container and _G.C_Container.GetContainerItemID or _G.GetContainerItemID, _G.InRepairMode, _G.KeyRingButtonIDToInvSlotID, _G.C_PetJournal, _G.C_NewItems, _G.PlaySound
+      C_Item, ItemLocation, InCombatLockdown, IsModifiedClick, GetDetailedItemLevelInfo, C_Container and C_Container.GetContainerItemID or GetContainerItemID, InRepairMode, KeyRingButtonIDToInvSlotID, C_PetJournal, C_NewItems, PlaySound
 
-local UseContainerItem = _G.C_Container and _G.C_Container.UseContainerItem or _G.UseContainerItem
+local UseContainerItem = C_Container and C_Container.UseContainerItem or UseContainerItem
 
-local WOW_PROJECT_ID = _G.WOW_PROJECT_ID
-local WOW_PROJECT_CLASSIC = _G.WOW_PROJECT_CLASSIC
-local WOW_PROJECT_BURNING_CRUSADE_CLASSIC = _G.WOW_PROJECT_BURNING_CRUSADE_CLASSIC
-local WOW_PROJECT_WRATH_CLASSIC = _G.WOW_PROJECT_WRATH_CLASSIC
-local WOW_PROJECT_MAINLINE = _G.WOW_PROJECT_MAINLINE
-local LE_EXPANSION_LEVEL_CURRENT = _G.LE_EXPANSION_LEVEL_CURRENT
-local LE_EXPANSION_BURNING_CRUSADE = _G.LE_EXPANSION_BURNING_CRUSADE
-local LE_EXPANSION_WRATH_OF_THE_LICH_KING = _G.LE_EXPANSION_WRATH_OF_THE_LICH_KING
-
--- GLOBALS: UIParent, GameTooltip, BankFrame, CloseBankFrame, TEXTURE_ITEM_QUEST_BANG, TEXTURE_ITEM_QUEST_BORDER, REAGENTBANK_CONTAINER, REPAIR_COST, SOUNDKIT
--- GLOBALS: CoinPickupFrame, ShowInspectCursor, this, CooldownFrame_Set, MerchantFrame, SetTooltipMoney, BagginsCategoryAddDropdown, error, CooldownFrame_SetTimer, StaticPopup_Show
--- GLOBALS: BagginsCopperIcon, BagginsCopperText, BagginsSilverIcon, BagginsSilverText, BagginsGoldIcon, BagginsGoldText, BagginsMoneyFrame, GetMoney, IsEquippedItem
--- GLOBALS: GetAddOnInfo, GetAddOnMetadata, GetNumAddOns, LoadAddOn, CursorUpdate, ResetCursor, ShowContainerSellCursor, UseContainerItem, SetItemButtonDesaturated, SetItemButtonTexture, SetItemButtonTextureVertexColor
--- GLOBALS: GetCursorInfo, CreateFrame, GetCursorPosition, ClearCursor, GetScreenWidth, GetScreenHeight, GetMouseButtonClicked, IsControlKeyDown, IsAltKeyDown, IsShiftKeyDown
--- GLOBALS: GameFontNormalLarge, GameFontNormal, Baggins_ItemMenuFrame, BagginsBankControlFrame, makeMenu, BagginsBagPlacement, CloseDropDownMenus, ToggleDropDownMenu
--- GLOBALS: EasyMenu, MainMenuBarBackpackButton, BackpackButton_OnClick, UIDropDownMenu_AddButton, OpenCoinPickupFrame, UIDropDownMenu_Refresh, BattlePetToolTip_Show, DropDownList1, DropDownList2
+local WOW_PROJECT_ID = WOW_PROJECT_ID
+local WOW_PROJECT_CLASSIC = WOW_PROJECT_CLASSIC
+local WOW_PROJECT_BURNING_CRUSADE_CLASSIC = WOW_PROJECT_BURNING_CRUSADE_CLASSIC
+local WOW_PROJECT_WRATH_CLASSIC = WOW_PROJECT_WRATH_CLASSIC
+local WOW_PROJECT_MAINLINE = WOW_PROJECT_MAINLINE
+local LE_EXPANSION_LEVEL_CURRENT = LE_EXPANSION_LEVEL_CURRENT
+local LE_EXPANSION_BURNING_CRUSADE = LE_EXPANSION_BURNING_CRUSADE
+local LE_EXPANSION_WRATH_OF_THE_LICH_KING = LE_EXPANSION_WRATH_OF_THE_LICH_KING
 
 -- Bank tab locals, for auto reagent deposit
 local BANK_TAB = BANK_PANELS[1].name
@@ -79,10 +71,10 @@ Baggins.hideWithoutStandby = true
 -- number of item buttons that should be kept in the pool, so that none need to be created in combat
 Baggins.minSpareItemButtons = 10
 
-_G.BINDING_HEADER_BAGGINS = L["Baggins"]
-_G.BINDING_NAME_BAGGINS_TOGGLEALL = L["Toggle All Bags"]
-_G.BINDING_NAME_BAGGINS_ITEMBUTTONMENU = "Item Menu"
-_G.BINDING_NAME_BAGGINS_TOGGLECOMPRESSALL= "Toggle " .. L["Compress All"]
+BINDING_HEADER_BAGGINS = L["Baggins"]
+BINDING_NAME_BAGGINS_TOGGLEALL = L["Toggle All Bags"]
+BINDING_NAME_BAGGINS_ITEMBUTTONMENU = "Item Menu"
+BINDING_NAME_BAGGINS_TOGGLECOMPRESSALL= "Toggle " .. L["Compress All"]
 
 local equiplocs = {
     INVTYPE_AMMO = 0,
@@ -638,7 +630,7 @@ function Baggins:OnDisable()
 end
 
 local INVSLOT_LAST_EQUIPPED, CONTAINER_BAG_OFFSET, NUM_BAG_SLOTS =
-      INVSLOT_LAST_EQUIPPED, CONTAINER_BAG_OFFSET, _G.NUM_TOTAL_EQUIPPED_BAG_SLOTS or NUM_BAG_SLOTS
+      INVSLOT_LAST_EQUIPPED, CONTAINER_BAG_OFFSET, NUM_TOTAL_EQUIPPED_BAG_SLOTS or NUM_BAG_SLOTS
 
 function Baggins:SaveItemCounts()
     local itemcounts = self.itemcounts
@@ -1987,7 +1979,7 @@ function Baggins:ReallyLayoutSection(sectionframe, cols)
         else
             title = ("- %s"):format(title)
         end
-        sectionframe.title:SetFont(LSM and LSM:Fetch("font", p.Font) or _G.STANDARD_TEXT_FONT,p.FontSize or 10)
+        sectionframe.title:SetFont(LSM and LSM:Fetch("font", p.Font) or STANDARD_TEXT_FONT,p.FontSize or 10)
         sectionframe.title:SetText(title)
         totalwidth = max(totalwidth,sectionframe.title:GetWidth())
     else
@@ -2546,7 +2538,7 @@ do
         frame.glow:SetAllPoints(frame)
 
         frame.newtext = frame.newtext or frame:CreateFontString(frame:GetName().."NewText","OVERLAY","GameFontNormal")
-        frame.newtext:SetFont(LSM and LSM:Fetch("font", Baggins.db.profile.Font) or _G.STANDARD_TEXT_FONT,Baggins.db.profile.FontSize or 10)
+        frame.newtext:SetFont(LSM and LSM:Fetch("font", Baggins.db.profile.Font) or STANDARD_TEXT_FONT,Baggins.db.profile.FontSize or 10)
         frame.newtext:SetPoint("TOP",frame,"TOP",0,0)
         frame.newtext:SetHeight(13)
         frame.newtext:SetTextColor(0,1,0,1)
@@ -2586,7 +2578,7 @@ do
 
     local function Click(_, arg1, arg2)
         Baggins:IncludeItemInCategory(arg1, arg2)
-        self:Baggins_RefreshBags()
+        Baggins:Baggins_RefreshBags()
     end
 
     local dd_categories, dd_id
@@ -2982,7 +2974,7 @@ end
 
 function Baggins:SetBagTitle(bagid,title)
     if self.bagframes[bagid] then
-        self.bagframes[bagid].title:SetFont(LSM and LSM:Fetch("font", Baggins.db.profile.Font) or _G.STANDARD_TEXT_FONT,Baggins.db.profile.FontSize or 10)
+        self.bagframes[bagid].title:SetFont(LSM and LSM:Fetch("font", Baggins.db.profile.Font) or STANDARD_TEXT_FONT,Baggins.db.profile.FontSize or 10)
         self.bagframes[bagid].title:SetText(title)
         self:UpdateBagFrameSize(bagid)
     end
@@ -3255,10 +3247,10 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
             local pawnContainerItem
             local pawnItem
             if pawnLoaded then
-                pawnContainerItem = _G.PawnIsContainerItemAnUpgrade and _G.PawnIsContainerItemAnUpgrade(bag, slot)
+                pawnContainerItem = PawnIsContainerItemAnUpgrade and PawnIsContainerItemAnUpgrade(bag, slot)
                 if pawnContainerItem == nil then
-                    pawnData = _G.PawnGetItemData and _G.PawnGetItemData(link)
-                    pawnItem = pawnData and _G.PawnIsItemAnUpgrade(pawnData, true)
+                    pawnData = PawnGetItemData and PawnGetItemData(link)
+                    pawnItem = pawnData and PawnIsItemAnUpgrade(pawnData, true)
                 end
                 itemIsUpgrade = pawnContainerItem and pawnContainerItem or pawnItem and pawnItem
             else
@@ -3318,7 +3310,7 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
 
     if Baggins:IsRetailWow() and link and p.EnablePetLevel then
         local petLeveltext = button:CreateFontString("BagginspetLeveltext", "OVERLAY", "GameFontNormal")
-        local ExtractLink = _G.LinkUtil.ExtractLink
+        local ExtractLink = LinkUtil.ExtractLink
         local linkType = ExtractLink(link) --linkType, linkOptions
         if linkType == "battlepet" then
             local _, _, petLevel, breedQuality = strsplit(":", link)
@@ -3337,14 +3329,14 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
         end
     end
 
-    if _G.Scrap and link then --  and p.EnablePetLevel
+    if Scrap and link then --  and p.EnablePetLevel
         --local scraptext = button:CreateFontString("Bagginsilvltext", "OVERLAY", "GameFontNormal")
         --scraptext:SetText("scrap")
         --button:SetFontString(scraptext)
         --local item = Item:CreateFromBagAndSlot(bag, slot)
         local id = GetContainerItemID(bag, slot)
         local icon = button:CreateTexture(nil, 'OVERLAY')
-        if _G.Scrap:IsJunk(id, bag, slot) then
+        if Scrap:IsJunk(id, bag, slot) then
             icon:SetTexture('Interface/Buttons/UI-GroupLoot-Coin-Up')
             icon:SetPoint('TOPLEFT', 2, -2)
             icon:SetSize(15, 15)
@@ -4296,7 +4288,7 @@ local function GetItemUpgradeLevel(itemLink)
  function Baggins:PlayerInteractionManager(event,typenumber) --luacheck: ignore 212
     if type(typenumber) ~= "number" then return end
     if event == "PLAYER_INTERACTION_MANAGER_FRAME_SHOW" and typenumber == 53 then
-        _G.C_Timer.After(1, function()
+        C_Timer.After(1, function()
             for _, bag in ipairs(Baggins.bagframes) do --bagid,bag
                 for _, section in ipairs(bag.sections) do --sectionid, section
                     for _, button in ipairs(section.items) do --buttonid, button

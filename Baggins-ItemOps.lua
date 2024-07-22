@@ -4,26 +4,26 @@
 -- items, etc.
 --
 
-local Baggins = _G.Baggins
+local Baggins = Baggins
 
 local pairs, ipairs, next, select, format, wipe =
-      _G.pairs, _G.ipairs, _G.next, _G.select,  _G.format, _G.wipe
-local floor = _G.floor
-local GetItemInfo = _G.C_Item and _G.C_Item.GetItemInfo or _G.GetItemInfo
-local GetContainerItemLink = _G.C_Container and _G.C_Container.GetContainerItemLink or _G.GetContainerItemLink
-local GetContainerItemInfo = _G.C_Container and _G.C_Container.GetContainerItemInfo or _G.GetContainerItemInfo
-local GetContainerNumFreeSlots = _G.C_Container and _G.C_Container.GetContainerNumFreeSlots or _G.GetContainerNumFreeSlots
-local GetContainerNumSlots = _G.C_Container and _G.C_Container.GetContainerNumSlots or _G.GetContainerNumSlots
-local GetItemFamily = _G.C_Item and _G.C_Item.GetItemFamily or _G.GetItemFamily
+      pairs, ipairs, next, select,  format, wipe
+local floor = floor
+local GetItemInfo = C_Item and C_Item.GetItemInfo or GetItemInfo
+local GetContainerItemLink = C_Container and C_Container.GetContainerItemLink or GetContainerItemLink
+local GetContainerItemInfo = C_Container and C_Container.GetContainerItemInfo or GetContainerItemInfo
+local GetContainerNumFreeSlots = C_Container and C_Container.GetContainerNumFreeSlots or GetContainerNumFreeSlots
+local GetContainerNumSlots = C_Container and C_Container.GetContainerNumSlots or GetContainerNumSlots
+local GetItemFamily = C_Item and C_Item.GetItemFamily or GetItemFamily
 local PickupContainerItem, SplitContainerItem, IsShiftKeyDown =
-_G.C_Container and _G.C_Container.PickupContainerItem or _G.PickupContainerItem, _G.SplitContainerItem, _G.IsShiftKeyDown
+C_Container and C_Container.PickupContainerItem or PickupContainerItem, SplitContainerItem, IsShiftKeyDown
 local band =
-      _G.bit.band
-local BANK_CONTAINER = _G.BANK_CONTAINER
-local NUM_BAG_SLOTS = _G.NUM_TOTAL_EQUIPPED_BAG_SLOTS or _G.NUM_BAG_SLOTS
-local NUM_BANKBAGSLOTS = _G.NUM_BANKBAGSLOTS
+      bit.band
+local BANK_CONTAINER = BANK_CONTAINER
+local NUM_BAG_SLOTS = NUM_TOTAL_EQUIPPED_BAG_SLOTS or NUM_BAG_SLOTS
+local NUM_BANKBAGSLOTS = NUM_BANKBAGSLOTS
 
-local LibStub = _G.LibStub
+local LibStub = LibStub
 local L = LibStub("AceLocale-3.0"):GetLocale("Baggins")
 local LBU = LibStub("LibBagUtils-1.0")
 
@@ -158,7 +158,7 @@ function Baggins:MoveToSpecialtyBags(bank,testonly)
                                             self:ScheduleTimer("MoveToSpecialtyBags", 0.1, bank)
                                             return
                                         end
-                                        if bag ~= 5 and C_Container.GetContainerNumFreeSlots(5) > 0 and select(17, GetItemInfo(link)) then
+                                        if bag ~= 5 and GetContainerNumFreeSlots(5) > 0 and select(17, GetItemInfo(link)) then
                                             if testonly then return true end
                                             compressLoopProtect = compressLoopProtect - 1
                                             if compressLoopProtect < 0 then return end

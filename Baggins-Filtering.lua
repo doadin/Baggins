@@ -4,33 +4,33 @@ Baggins-Filtering.lua
 
 ========================================================================== ]]--
 
-local Baggins = _G.Baggins
+local Baggins = Baggins
 
 -- TODO: Clean up this section
 -- LUA Functions
 local pairs, ipairs, type, tonumber, wipe =
-      _G.pairs, _G.ipairs, _G.type, _G.tonumber, _G.wipe
+      pairs, ipairs, type, tonumber, wipe
 local tinsert, tsort =
-      _G.tinsert, _G.table.sort
+      tinsert, table.sort
 
 -- TODO: Clean up this section
 -- WoW API
-local BANK_CONTAINER = _G.BANK_CONTAINER
-local BACKPACK_CONTAINER = _G.BACKPACK_CONTAINER
-local REAGENTBANK_CONTAINER = _G.REAGENTBANK_CONTAINER
+local BANK_CONTAINER = BANK_CONTAINER
+local BACKPACK_CONTAINER = BACKPACK_CONTAINER
+local REAGENTBANK_CONTAINER = REAGENTBANK_CONTAINER
 local KEYRING_CONTAINER = Enum.BagIndex.Keyring
 local REAGENT_CONTAINER = Baggins:IsRetailWow() and Enum.BagIndex.ReagentBag or math.huge
-local NUM_BAG_SLOTS = _G.NUM_TOTAL_EQUIPPED_BAG_SLOTS or _G.NUM_BAG_SLOTS
-local NUM_BANKBAGSLOTS = _G.NUM_BANKBAGSLOTS
+local NUM_BAG_SLOTS = NUM_TOTAL_EQUIPPED_BAG_SLOTS or NUM_BAG_SLOTS
+local NUM_BANKBAGSLOTS = NUM_BANKBAGSLOTS
 
-local GetContainerItemInfo = _G.C_Container and _G.C_Container.GetContainerItemInfo or _G.GetContainerItemInfo
-local GetContainerNumFreeSlots = _G.C_Container and _G.C_Container.GetContainerNumFreeSlots or _G.GetContainerNumFreeSlots
-local GetContainerNumSlots = _G.C_Container and _G.C_Container.GetContainerNumSlots or _G.GetContainerNumSlots
-local C_Item, ItemLocation = _G.C_Item, _G.ItemLocation
+local GetContainerItemInfo = C_Container and C_Container.GetContainerItemInfo or GetContainerItemInfo
+local GetContainerNumFreeSlots = C_Container and C_Container.GetContainerNumFreeSlots or GetContainerNumFreeSlots
+local GetContainerNumSlots = C_Container and C_Container.GetContainerNumSlots or GetContainerNumSlots
+local C_Item, ItemLocation = C_Item, ItemLocation
 
 -- Libs
 --local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
-local LibStub = _G.LibStub
+local LibStub = LibStub
 local LBU = LibStub("LibBagUtils-1.0")
 
 -- Local storage
@@ -184,9 +184,9 @@ function Baggins:IsSpecialBag(bag) --luacheck: ignore 212
         local _,fam = GetContainerNumFreeSlots(bag)
 
         if Baggins:IsClassicWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() or Baggins:IsCataWow() then
-            if type(fam)~="number" then
+            if type(fam)~="number" then --luacheck: ignore 542
                 -- assume normal bag
-            elseif fam==0 then
+            elseif fam==0 then --luacheck: ignore 542
                 -- normal bag
             elseif fam==1 or fam==2 then	-- quiver / ammo
                 return prefix.."a", fam

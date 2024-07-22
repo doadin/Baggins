@@ -11,14 +11,14 @@ local AddOn = _G[AddOnName]
 
 -- WoW API
 local pairs, type, tonumber, wipe, ceil =
-      _G.pairs, _G.type, _G.tonumber, _G.wipe, _G.ceil
-local GetContainerItemLink = _G.C_Container and _G.C_Container.GetContainerItemLink or _G.GetContainerItemLink
-local EasyMenu = _G.EasyMenu
+      pairs, type, tonumber, wipe, ceil
+local GetContainerItemLink = C_Container and C_Container.GetContainerItemLink or GetContainerItemLink
+local EasyMenu = EasyMenu
 local tinsert, tsort =
-      _G.tinsert, _G.table.sort
+      tinsert, table.sort
 
 -- Libs
-local LibStub = _G.LibStub
+local LibStub = LibStub
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
 
 local pt = LibStub("LibPeriodicTable-3.1", true)

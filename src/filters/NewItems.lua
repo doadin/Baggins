@@ -8,15 +8,15 @@ local AddOnName, _ = ...
 local AddOn = _G[AddOnName]
 
 -- WoW API
-local GetContainerItemLink = _G.C_Container and _G.C_Container.GetContainerItemLink or _G.GetContainerItemLink
-local BACKPACK_CONTAINER = _G.BACKPACK_CONTAINER
-local BANK_CONTAINER = _G.BANK_CONTAINER
-local NUM_BAG_SLOTS = _G.NUM_TOTAL_EQUIPPED_BAG_SLOTS or _G.NUM_BAG_SLOTS
-local NUM_BANKBAGSLOTS = _G.NUM_BANKBAGSLOTS
-local REAGENTBANK_CONTAINER = _G.REAGENTBANK_CONTAINER
+local GetContainerItemLink = C_Container and C_Container.GetContainerItemLink or GetContainerItemLink
+local BACKPACK_CONTAINER = BACKPACK_CONTAINER
+local BANK_CONTAINER = BANK_CONTAINER
+local NUM_BAG_SLOTS = NUM_TOTAL_EQUIPPED_BAG_SLOTS or NUM_BAG_SLOTS
+local NUM_BANKBAGSLOTS = NUM_BANKBAGSLOTS
+local REAGENTBANK_CONTAINER = REAGENTBANK_CONTAINER
 
 -- Libs
-local LibStub = _G.LibStub
+local LibStub = LibStub
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
 
 -- Local storage

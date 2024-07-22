@@ -1,20 +1,17 @@
-local Baggins = _G.Baggins
+local Baggins = Baggins
 
 local pairs, ipairs, tonumber, tostring, next, select, type, wipe, CopyTable =
-      _G.pairs, _G.ipairs, _G.tonumber, _G.tostring, _G.next, _G.select, _G.type, _G.wipe, _G.CopyTable
+      pairs, ipairs, tonumber, tostring, next, select, type, wipe, CopyTable
 
 local tinsert, tremove =
-      _G.tinsert, _G.tremove
+      tinsert, tremove
 
 local ITEM_QUALITY0_DESC, ITEM_QUALITY1_DESC, ITEM_QUALITY2_DESC, ITEM_QUALITY3_DESC, ITEM_QUALITY4_DESC, ITEM_QUALITY5_DESC, ITEM_QUALITY6_DESC =
-_G.ITEM_QUALITY0_DESC, _G.ITEM_QUALITY1_DESC, _G.ITEM_QUALITY2_DESC, _G.ITEM_QUALITY3_DESC, _G.ITEM_QUALITY4_DESC, _G.ITEM_QUALITY5_DESC, _G.ITEM_QUALITY6_DESC
+ITEM_QUALITY0_DESC, ITEM_QUALITY1_DESC, ITEM_QUALITY2_DESC, ITEM_QUALITY3_DESC, ITEM_QUALITY4_DESC, ITEM_QUALITY5_DESC, ITEM_QUALITY6_DESC
 
--- GLOBALS: LibStub, EasyMenu
--- GLOBALS: ITEM_QUALITY0_DESC, ITEM_QUALITY1_DESC, ITEM_QUALITY2_DESC, ITEM_QUALITY3_DESC, ITEM_QUALITY4_DESC, ITEM_QUALITY5_DESC, ITEM_QUALITY6_DESC
+local GetItemQualityColor = C_Item and C_Item.GetItemQualityColor or GetItemQualityColor
 
-local GetItemQualityColor = _G.C_Item and _G.C_Item.GetItemQualityColor or _G.GetItemQualityColor
-
-local LibStub = _G.LibStub
+local LibStub = LibStub
 local L = LibStub("AceLocale-3.0"):GetLocale("Baggins")
 
 local AceConfig = LibStub("AceConfig-3.0")

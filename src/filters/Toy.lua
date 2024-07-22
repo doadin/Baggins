@@ -7,8 +7,8 @@ Toy.lua
 local AddOnName, _ = ...
 local AddOn = _G[AddOnName]
 
-local C_TooltipInfoGetBagItem = _G.C_TooltipInfo.GetBagItem
-local TooltipUtil = _G.TooltipUtil
+local C_TooltipInfoGetBagItem = C_TooltipInfo.GetBagItem
+local TooltipUtil = TooltipUtil
 
 local function Matches(bag, slot, _)
     local tooltipData = C_TooltipInfoGetBagItem(bag, slot)

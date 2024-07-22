@@ -8,21 +8,21 @@ local AddOnName, _ = ...
 local AddOn = _G[AddOnName]
 
 -- WoW API
---local BankButtonIDToInvSlotID = _G.BankButtonIDToInvSlotID
-local GetContainerItemLink = _G.C_Container and _G.C_Container.GetContainerItemLink or _G.GetContainerItemLink
-local GetContainerItemInfo = _G.C_Container and _G.C_Container.GetContainerItemInfo or _G.GetContainerItemInfo
-local GetItemInfo = _G.C_Item and _G.C_Item.GetItemInfo or _G.GetItemInfo
-local DoesItemExist = _G.C_Item and _G.C_Item.DoesItemExist
-local C_ItemIsBound = _G.C_Item and _G.C_Item.IsBound
-local ItemLocation = _G.ItemLocation
-local TooltipUtil = _G.TooltipUtil
+--local BankButtonIDToInvSlotID = BankButtonIDToInvSlotID
+local GetContainerItemLink = C_Container and C_Container.GetContainerItemLink or GetContainerItemLink
+local GetContainerItemInfo = C_Container and C_Container.GetContainerItemInfo or GetContainerItemInfo
+local GetItemInfo = C_Item and C_Item.GetItemInfo or GetItemInfo
+local DoesItemExist = C_Item and C_Item.DoesItemExist
+local C_ItemIsBound = C_Item and C_Item.IsBound
+local ItemLocation = ItemLocation
+local TooltipUtil = TooltipUtil
 local C_TooltipInfoGetBagItem
 if AddOn:IsRetailWow() then
-    C_TooltipInfoGetBagItem = _G.C_TooltipInfo.GetBagItem
+    C_TooltipInfoGetBagItem = C_TooltipInfo.GetBagItem
 end
 
 -- Libs
-local LibStub = _G.LibStub
+local LibStub = LibStub
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
 
 local bindtoType = { --Account Bound
@@ -48,13 +48,13 @@ local function Matches(bag, slot, rule)
             isBound = C_ItemIsBound(ItemLocation:CreateFromBagAndSlot(bag, slot))
         end
     end
-    if status == _G.ITEM_SOULBOUND and isBound then
+    if status == ITEM_SOULBOUND and isBound then
         return true
     end
     if (status == 'unset' or status == 'unbound') and not isBound then
         return true
     end
-    if AddOn:IsRetailWow() and status == _G.ITEM_ACCOUNTBOUND then
+    if AddOn:IsRetailWow() and status == ITEM_ACCOUNTBOUND then
         local tooltipData = C_TooltipInfoGetBagItem(bag, slot)
         if not tooltipData then return false end
         TooltipUtil.SurfaceArgs(tooltipData)
@@ -84,11 +84,11 @@ AddOn:AddCustomRule("Bind", {
             type = 'select',
             values = {
                 unbound = L["Unbound"],
-                [_G.ITEM_SOULBOUND] = _G.ITEM_SOULBOUND,
-                [_G.ITEM_BIND_ON_EQUIP] = _G.ITEM_BIND_ON_EQUIP,
-                [_G.ITEM_ACCOUNTBOUND] = _G.ITEM_ACCOUNTBOUND,
-                [_G.ITEM_BIND_ON_USE] = _G.ITEM_BIND_ON_USE,
-                [_G.ITEM_BIND_ON_PICKUP] = _G.ITEM_BIND_ON_PICKUP,
+                [ITEM_SOULBOUND] = ITEM_SOULBOUND,
+                [ITEM_BIND_ON_EQUIP] = ITEM_BIND_ON_EQUIP,
+                [ITEM_ACCOUNTBOUND] = ITEM_ACCOUNTBOUND,
+                [ITEM_BIND_ON_USE] = ITEM_BIND_ON_USE,
+                [ITEM_BIND_ON_PICKUP] = ITEM_BIND_ON_PICKUP,
             }
         },
     },
