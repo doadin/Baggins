@@ -75,7 +75,7 @@ function Baggins:EnableSkin(name)
             bagframe.dirty = true
         end
         self.currentSkin = newskin
-        self:UpdateBags()
+        self:Baggins_RefreshBags()
     end
 end
 

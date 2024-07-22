@@ -9,12 +9,12 @@
 		if Baggins:getCompressAll() then
 		    Baggins.db.profile.compressall = false
 			self:RebuildSectionLayouts()
-			self:UpdateBags()
+			self:Baggins_RefreshBags()
 		end
 		if not Baggins:getCompressAll() then
 		    Baggins.db.profile.compressall = true
 			self:RebuildSectionLayouts()
-			self:UpdateBags()
+			self:Baggins_RefreshBags()
 		end
 	</Binding>
 </Bindings>
