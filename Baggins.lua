@@ -11,8 +11,8 @@ local dbIcon = LibStub("LibDBIcon-1.0")
 local console = LibStub("AceConsole-3.0")
 local iui = LibStub("LibItemUpgradeInfo-1.0")
 
-local next, unpack, pairs, ipairs, tonumber, select, strmatch, wipe, type, time, print =
-      _G.next, _G.unpack, _G.pairs, _G.ipairs, _G.tonumber, _G.select, _G.strmatch, _G.wipe, _G.type, _G.time, _G.print
+local next, pairs, ipairs, tonumber, select, strmatch, wipe, type, time, print =
+      _G.next, _G.pairs, _G.ipairs, _G.tonumber, _G.select, _G.strmatch, _G.wipe, _G.type, _G.time, _G.print
 local min, max, ceil, floor, mod  =
       _G.min, _G.max, _G.ceil, _G.floor, _G.mod
 local tinsert, tremove, tsort, tconcat =
@@ -23,6 +23,7 @@ local band =
       _G.bit.band
 
 local IsAddOnLoaded = _G.C_AddOns and _G.C_AddOns.IsAddOnLoaded and _G.C_AddOns.IsAddOnLoaded or IsAddOnLoaded
+local BlizzSortBags = _G.C_Container and _G.C_Container.SortBags
 local GetItemCount, GetItemInfo, GetInventoryItemLink, GetItemQualityColor, GetItemFamily, BankButtonIDToInvSlotID, GetNumBankSlots =
       _G.GetItemCount, _G.GetItemInfo, _G.GetInventoryItemLink, _G.GetItemQualityColor, _G.GetItemFamily, _G.BankButtonIDToInvSlotID, _G.GetNumBankSlots
 local GetContainerItemInfo, GetContainerItemLink, GetContainerNumFreeSlots, GetContainerItemCooldown =
@@ -131,15 +132,15 @@ function Baggins:Debug(str, ...) --luacheck: ignore 212
 end
 
 function Baggins:IsClassicWow() --luacheck: ignore 212
-	return WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
+    return WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
 end
 
 function Baggins:IsTBCWow() --luacheck: ignore 212
-	return WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC and LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_BURNING_CRUSADE
+    return WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC and LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_BURNING_CRUSADE
 end
 
 function Baggins:IsWrathWow() --luacheck: ignore 212
-	return WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC and LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_WRATH_OF_THE_LICH_KING
+    return WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC and LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_WRATH_OF_THE_LICH_KING
 end
 
 function Baggins:IsCataWow() --luacheck: ignore 212
@@ -147,7 +148,7 @@ function Baggins:IsCataWow() --luacheck: ignore 212
 end
 
 function Baggins:IsRetailWow() --luacheck: ignore 212
-	return WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
+    return WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
 end
 
 local timers = {}
@@ -220,7 +221,7 @@ local function initDropdownMenu()
             tooltipText = "Runs Blizzard bag Sort",
             func = function()
                     Baggins:CloseAllBags()
-                    C_Container.SortBags()
+                    BlizzSortBags()
                 end,
             notCheckable = true,
         },
@@ -821,7 +822,7 @@ function Baggins:CategoryMatchAdded(category, slot, isbank)
         if bagframe then
             for sectionid, section in pairs(bag.sections) do
                 for _, catname in pairs(section.cats) do
-                    if catname == category and (not bag.isBank == not isbank) then
+                    if catname == category and ((not bag.isBank) == (not isbank)) then
                         CheckSection(bagframe, sectionid)
                         local secframe = bagframe.sections[sectionid]
                         secframe.slots[slot] = ( secframe.slots[slot] or 0 ) + 1
@@ -881,7 +882,7 @@ function Baggins:CategoryMatchRemoved(category, slot, isbank)
         if bagframe then
             for sectionid, section in pairs(bag.sections) do
                 for _, catname in pairs(section.cats) do
-                    if catname == category and (not bag.isBank == not isbank) then
+                    if catname == category and ((not bag.isBank) == (not isbank)) then
                         CheckSection(bagframe, sectionid)
                         local secframe = bagframe.sections[sectionid]
                         secframe.slots[slot] = ( secframe.slots[slot] or 1 ) - 1
@@ -920,7 +921,7 @@ function Baggins:SlotMoved(category, slot, isbank)
         if bagframe then
             for sectionid, section in pairs(bag.sections) do
                 for _, catname in pairs(section.cats) do
-                    if catname == category and (not bag.isBank == not isbank) then
+                    if catname == category and ((not bag.isBank) == (not isbank)) then
                         CheckSection(bagframe, sectionid)
                         local secframe = bagframe.sections[sectionid]
                         secframe.needssorting = true
@@ -3144,26 +3145,26 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
             --@end-retail@
 
             --[===[@non-retail@
-			if itemFamily == 0 then
-				-- lbu is screwing this up because it doesn't support classic keyring
-				-- So we do it manually
-				freeslots = 0
-				local startslot, endslot = 0, NUM_BAG_SLOTS
-				if LBU:IsBank(bag) then
-					startslot, endslot = NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS
-				else
-					startslot, endslot = 0, NUM_BAG_SLOTS
-				end
-				for i=startslot, endslot do
-					local freeCount, bagType = GetContainerNumFreeSlots( i )
-					if bagType == 0 then
-						freeslots = freeslots + freeCount
-					end
-				end
-				count = bagtype..freeslots
-			else
-				count = bagtype..LBU:CountSlots(LBU:IsBank(bag) and "BANK" or "BAGS", itemFamily)
-			end
+            if itemFamily == 0 then
+                -- lbu is screwing this up because it doesn't support classic keyring
+                -- So we do it manually
+                freeslots = 0
+                local startslot, endslot = 0, NUM_BAG_SLOTS
+                if LBU:IsBank(bag) then
+                    startslot, endslot = NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS
+                else
+                    startslot, endslot = 0, NUM_BAG_SLOTS
+                end
+                for i=startslot, endslot do
+                    local freeCount, bagType = GetContainerNumFreeSlots( i )
+                    if bagType == 0 then
+                        freeslots = freeslots + freeCount
+                    end
+                end
+                count = bagtype..freeslots
+            else
+                count = bagtype..LBU:CountSlots(LBU:IsBank(bag) and "BANK" or "BAGS", itemFamily)
+            end
             --@end-non-retail@]===]
         else
             count = GetItemCount(itemid)
@@ -3268,7 +3269,7 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
     if Baggins:IsRetailWow() and link and p.EnablePetLevel then
         local petLeveltext = button:CreateFontString("BagginspetLeveltext", "OVERLAY", "GameFontNormal")
         local ExtractLink = _G.LinkUtil.ExtractLink
-        local linkType, linkOptions = ExtractLink(link)
+        local linkType = ExtractLink(link) --linkType, linkOptions
         if linkType == "battlepet" then
             local _, _, petLevel, breedQuality = strsplit(":", link)
             petLeveltext:SetPoint(p.ItemLevelAncor,button,p.ItemLevelAncor,0,0)
@@ -3290,7 +3291,7 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
         --local scraptext = button:CreateFontString("Bagginsilvltext", "OVERLAY", "GameFontNormal")
         --scraptext:SetText("scrap")
         --button:SetFontString(scraptext)
-        local item = Item:CreateFromBagAndSlot(bag, slot)
+        --local item = Item:CreateFromBagAndSlot(bag, slot)
         local id = GetContainerItemID(bag, slot)
         local icon = button:CreateTexture(nil, 'OVERLAY')
         if _G.Scrap:IsJunk(id, bag, slot) then
@@ -3638,159 +3639,159 @@ end
 
 local texts={}
 function Baggins:OnTextUpdate()
-	local p = self.db.profile
-	local color
+    local p = self.db.profile
+    local color
 
-	if p.combinecounts then
-		local normalempty, normaltotal = Baggins:CountNormalSlots("BAGS")
-		local specialempty, specialtotal = 0,0
-		local e, t
+    if p.combinecounts then
+        local normalempty, normaltotal = Baggins:CountNormalSlots("BAGS")
+        local specialempty, specialtotal = 0,0
+        local e, t
 
-		if p.showspecialcount then
-			e, t = Baggins:CountSpecialSlots("BAGS")
-			specialempty = specialempty + e
-			specialtotal = specialtotal + t
-		end
-		if p.showammocount then
-			e, t = Baggins:CountAmmoSlots("BAGS")
-			specialempty = specialempty + e
-			specialtotal = specialtotal + t
-		end
-		if p.showsoulcount then
-			e, t = Baggins.CountSoulSlots("BAGS")
-			specialempty = specialempty + e --luacheck: ignore 311
-			specialtotal = specialtotal + t --luacheck: ignore 311
-		end
+        if p.showspecialcount then
+            e, t = Baggins:CountSpecialSlots("BAGS")
+            specialempty = specialempty + e
+            specialtotal = specialtotal + t
+        end
+        if p.showammocount then
+            e, t = Baggins:CountAmmoSlots("BAGS")
+            specialempty = specialempty + e
+            specialtotal = specialtotal + t
+        end
+        if p.showsoulcount then
+            e, t = Baggins.CountSoulSlots("BAGS")
+            specialempty = specialempty + e --luacheck: ignore 311
+            specialtotal = specialtotal + t --luacheck: ignore 311
+        end
 
-		local empty, total = 0,0
-		empty=empty+normalempty
-		total=total+normaltotal
+        local empty, total = 0,0
+        empty=empty+normalempty
+        total=total+normaltotal
 
-		local fullness = 1 - (empty/total)
-		local r, g
-		r = min(1,fullness * 2)
-		g = min(1,(1-fullness) *2)
-		color = ("|cFF%2X%2X00"):format(r*255,g*255)
+        local fullness = 1 - (empty/total)
+        local r, g
+        r = min(1,fullness * 2)
+        g = min(1,(1-fullness) *2)
+        color = ("|cFF%2X%2X00"):format(r*255,g*255)
 
-		self:SetText(self:BuildCountString(empty,total,color))
-		return
-	end
+        self:SetText(self:BuildCountString(empty,total,color))
+        return
+    end
 
-	-- separate normal/ammo/soul/special counts
+    -- separate normal/ammo/soul/special counts
 
-	local n=0	-- count of strings in texts{}
+    local n=0	-- count of strings in texts{}
 
-	local normalempty, normaltotal = Baggins:CountNormalSlots("BAGS")
+    local normalempty, normaltotal = Baggins:CountNormalSlots("BAGS")
 
-	local fullness = 1 - (normalempty/normaltotal)
-	local r, g
-	r = min(1,fullness * 2)
-	g = min(1,(1-fullness) *2)
-	color = ("|cFF%2X%2X00"):format(r*255,g*255)
+    local fullness = 1 - (normalempty/normaltotal)
+    local r, g
+    r = min(1,fullness * 2)
+    g = min(1,(1-fullness) *2)
+    color = ("|cFF%2X%2X00"):format(r*255,g*255)
 
-	n=n+1
-	texts[n] = self:BuildCountString(normalempty,normaltotal,color)
+    n=n+1
+    texts[n] = self:BuildCountString(normalempty,normaltotal,color)
 
-	if self.db.profile.showsoulcount then
-		local soulempty, soultotal = Baggins:CountSoulSlots("BAGS")
-		if soultotal>0 then
-			color = self.colors.purple.hex
-			n=n+1
-			texts[n] = self:BuildCountString(soulempty,soultotal,color)
-		end
-	end
+    if self.db.profile.showsoulcount then
+        local soulempty, soultotal = Baggins:CountSoulSlots("BAGS")
+        if soultotal>0 then
+            color = self.colors.purple.hex
+            n=n+1
+            texts[n] = self:BuildCountString(soulempty,soultotal,color)
+        end
+    end
 
-	if self.db.profile.showammocount then
-		local ammoempty, ammototal = Baggins:CountAmmoSlots("BAGS")
-		if ammototal>0 then
-			color = self.colors.white.hex
-			n=n+1
-			texts[n] = self:BuildCountString(ammoempty,ammototal,color)
-		end
-	end
+    if self.db.profile.showammocount then
+        local ammoempty, ammototal = Baggins:CountAmmoSlots("BAGS")
+        if ammototal>0 then
+            color = self.colors.white.hex
+            n=n+1
+            texts[n] = self:BuildCountString(ammoempty,ammototal,color)
+        end
+    end
 
-	if self.db.profile.showspecialcount then
-		local specialempty, specialtotal = Baggins:CountSpecialSlots("BAGS")
-		if specialtotal>0 then
-			color = self.colors.blue.hex
-			n=n+1
-			texts[n] = self:BuildCountString(specialempty,specialtotal,color)
-		end
-	end
+    if self.db.profile.showspecialcount then
+        local specialempty, specialtotal = Baggins:CountSpecialSlots("BAGS")
+        if specialtotal>0 then
+            color = self.colors.blue.hex
+            n=n+1
+            texts[n] = self:BuildCountString(specialempty,specialtotal,color)
+        end
+    end
 
-	if n==1 then
-		self:SetText(texts[1])
-	else
-		self:SetText(tconcat(texts, " ", 1, n))
-	end
+    if n==1 then
+        self:SetText(texts[1])
+    else
+        self:SetText(tconcat(texts, " ", 1, n))
+    end
 end
 
 function Baggins:CountNormalSlots(which) --luacheck: ignore 212
-	return LBU:CountSlots(which, 0)
+    return LBU:CountSlots(which, 0)
 end
 
 function Baggins:CountAmmoSlots(which) --luacheck: ignore 212
-	--[===[@non-retail@
-	-- This version of LBU doesn't index special bags properly. but we can work around it by looking up each type individually.
-	   local qiverempty, quivertotal = LBU:CountSlots(which, 1)
-	   local ammoempty, ammototal = LBU:CountSlots(which, 2)
-	   return qiverempty+ammoempty, quivertotal+ammototal
+    --[===[@non-retail@
+    -- This version of LBU doesn't index special bags properly. but we can work around it by looking up each type individually.
+       local qiverempty, quivertotal = LBU:CountSlots(which, 1)
+       local ammoempty, ammototal = LBU:CountSlots(which, 2)
+       return qiverempty+ammoempty, quivertotal+ammototal
     --@end-non-retail@]===]
-	--@retail@
-		return LBU:CountSlots(which, 1+2)
+    --@retail@
+        return LBU:CountSlots(which, 1+2)
     --@end-retail@
 end
 
 function Baggins:CountSoulSlots(which) --luacheck: ignore 212
-	return LBU:CountSlots(which, 3)
+    return LBU:CountSlots(which, 3)
 end
 
 function Baggins:CountSpecialSlots(which) --luacheck: ignore 212
-	--[===[@non-retail@
-		local empty, total = 0,0
-		-- This version of LBU doesn't index special bags properly. but we can work around it by looking up each type individually.
-		local e, t = LBU:CountSlots(which, 4) -- leather?
-		empty = empty + e
-		total = total + t
+    --[===[@non-retail@
+        local empty, total = 0,0
+        -- This version of LBU doesn't index special bags properly. but we can work around it by looking up each type individually.
+        local e, t = LBU:CountSlots(which, 4) -- leather?
+        empty = empty + e
+        total = total + t
 
-		local e, t = LBU:CountSlots(which, 5) --luacheck: ignore 411 -- inscription?
-		empty = empty + e
-		total = total + t
+        local e, t = LBU:CountSlots(which, 5) --luacheck: ignore 411 -- inscription?
+        empty = empty + e
+        total = total + t
 
-		local e, t = LBU:CountSlots(which, 6) --luacheck: ignore 411 -- herb
-		empty = empty + e
-		total = total + t
+        local e, t = LBU:CountSlots(which, 6) --luacheck: ignore 411 -- herb
+        empty = empty + e
+        total = total + t
 
-		local e, t = LBU:CountSlots(which, 7) --luacheck: ignore 411 -- enchant
-		empty = empty + e
-		total = total + t
+        local e, t = LBU:CountSlots(which, 7) --luacheck: ignore 411 -- enchant
+        empty = empty + e
+        total = total + t
 
-		local e, t = LBU:CountSlots(which, 8) --luacheck: ignore 411 -- engineering?
-		empty = empty + e
-		total = total + t
+        local e, t = LBU:CountSlots(which, 8) --luacheck: ignore 411 -- engineering?
+        empty = empty + e
+        total = total + t
 
-		local e, t = LBU:CountSlots(which, 10) --luacheck: ignore 411 -- gems?
-		empty = empty + e
-		total = total + t
+        local e, t = LBU:CountSlots(which, 10) --luacheck: ignore 411 -- gems?
+        empty = empty + e
+        total = total + t
 
-		local e, t = LBU:CountSlots(which, 11) --luacheck: ignore 411 -- mining?
-		empty = empty + e
-		total = total + t
+        local e, t = LBU:CountSlots(which, 11) --luacheck: ignore 411 -- mining?
+        empty = empty + e
+        total = total + t
 
-		return empty, total
-	--@end-non-retail@]===]
+        return empty, total
+    --@end-non-retail@]===]
     --@retail@
-	    return LBU:CountSlots(which, 2047-256-4-2-1)
+        return LBU:CountSlots(which, 2047-256-4-2-1)
     --@end-retail@
 end
 
 function Baggins:CountKeySlots(which) --luacheck: ignore 212
-	--[===[@non-retail@
-		return LBU:CountSlots(which, 9)
+    --[===[@non-retail@
+        return LBU:CountSlots(which, 9)
     --@end-non-retail@]===]
-	--@retail@
-		return LBU:CountSlots(which,256)
-	--@end-retail@
+    --@retail@
+        return LBU:CountSlots(which,256)
+    --@end-retail@
 end
 
 ---------------------
@@ -3951,7 +3952,7 @@ do
         if not catname then return end
         if isbank == nil or catinuse[isbank][catname] == nil then
             for _, bag in ipairs(self.db.profile.bags) do
-                if isbank==nil or (not bag.isBank == not isbank) then
+                if isbank==nil or ((not bag.isBank) == (not isbank)) then
                     for _, section in ipairs(bag.sections) do
                         for _, cat in ipairs(section.cats) do
                             if cat == catname then
@@ -4135,14 +4136,14 @@ function Baggins:ToggleAllBags(forceopen)
     end
     --@retail@
     local count = 0;
-	for i = 0, NUM_BAG_FRAMES do
-		if ItemButtonUtil.GetItemContextMatchResultForContainer(i) == ItemButtonUtil.ItemContextMatchResult.Match then
-			if not IsBagOpen(i) then
-				--OpenBag(i);
-				count = count + 1;
-			end
-		end
-	end
+    for i = 0, NUM_BAG_FRAMES do
+        if ItemButtonUtil.GetItemContextMatchResultForContainer(i) == ItemButtonUtil.ItemContextMatchResult.Match then
+            if not IsBagOpen(i) then
+                --OpenBag(i);
+                count = count + 1;
+            end
+        end
+    end
 
     return count
     --@end-retail@
@@ -4277,15 +4278,15 @@ local function GetItemUpgradeLevel(itemLink)
 
     if event == "PLAYER_INTERACTION_MANAGER_FRAME_SHOW" and typenumber == 8 and self.db.profile.hidedefaultbank then
         local function NeutralizeFrame(frame)
-	    	if not frame then return end
-	    	frame:UnregisterAllEvents()
-	    	frame:SetScript("OnEvent", nil)
-	    	frame:SetScript("OnShow", nil)
-	    	frame:SetScript("OnHide", nil)
-	    	HideUIPanel(frame)
-	    	frame:ClearAllPoints()
-	    	frame:Hide()
-	    end
+            if not frame then return end
+            frame:UnregisterAllEvents()
+            frame:SetScript("OnEvent", nil)
+            frame:SetScript("OnShow", nil)
+            frame:SetScript("OnHide", nil)
+            HideUIPanel(frame)
+            frame:ClearAllPoints()
+            frame:Hide()
+        end
         NeutralizeFrame(BankFrame)
         NeutralizeFrame(ReagentBankFrame)
     end
