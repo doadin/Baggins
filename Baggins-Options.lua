@@ -3706,7 +3706,7 @@ end
 local function disableCompressionTemp()
     Baggins.tempcompressnone = not Baggins.tempcompressnone
     Baggins:RebuildSectionLayouts()
-    self:Baggins_RefreshBags()
+    Baggins:Baggins_RefreshBags()
 end
 
 local function openBagCategoryConfig()
@@ -3846,7 +3846,7 @@ end
 
 local function setBagPriority(info, value)
     Baggins:ResortSections()
-    self:Baggins_RefreshBags()
+    Baggins:Baggins_RefreshBags()
     info.arg.priority = value
 end
 
@@ -3854,7 +3854,7 @@ local function setAllowdupes(info, value)
     info.arg.allowdupes = value
     Baggins:ResortSections()
     Baggins:ForceFullRefresh()
-    self:Baggins_RefreshBags()
+    Baggins:Baggins_RefreshBags()
 end
 
 local tmp = {}
