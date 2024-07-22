@@ -231,7 +231,7 @@ local function initDropdownMenu()
                 tooltipText = L["Forces a Full Refresh of item sorting"],
                 func = function()
                         Baggins:ForceFullRefresh()
-                        self:Baggins_RefreshBags()
+                        Baggins:Baggins_RefreshBags()
                     end,
                 notCheckable = true,
             },
@@ -274,7 +274,7 @@ local function initDropdownMenu()
                 tooltipText = L["Forces a Full Refresh of item sorting"],
                 func = function()
                         Baggins:ForceFullRefresh()
-                        self:Baggins_RefreshBags()
+                        Baggins:Baggins_RefreshBags()
                     end,
                 notCheckable = true,
             },
