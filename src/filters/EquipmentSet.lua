@@ -13,6 +13,7 @@ local GetEquipmentSetInfo = C_EquipmentSet.GetEquipmentSetInfo
 local GetItemLocations = C_EquipmentSet.GetItemLocations
 local UnpackItemLocation = EquipmentManager_UnpackLocation
 local BankButtonIDToInvSlotID = BankButtonIDToInvSlotID
+local RunNextFrame = RunNextFrame
 local BANK_CONTAINER = BANK_CONTAINER
 
 local BANK_INVENTORY_OFFSET = BankButtonIDToInvSlotID(1, false) - 1
@@ -29,7 +30,7 @@ local itemCache = {}
 local function UpdateItemsCache()
     wipe(itemCache)
     for _, setId in ipairs(GetEquipmentSetIDs()) do
-        for slot, packedLoc in pairs(GetItemLocations(setId)) do
+        for _, packedLoc in pairs(GetItemLocations(setId)) do
             local player, bank, bags, slot, bag = UnpackItemLocation(packedLoc)
             -- NOTE: unlike documented, this method in Cataclysm Classic
             -- no longer returns the voidstorage field between bags and slot.
@@ -40,7 +41,7 @@ local function UpdateItemsCache()
                 slot = slot - BANK_INVENTORY_OFFSET
             end
 
-            if bag ~= nil and slot ~= nil then
+            if (player or bags or bank) and (bag ~= nil) and (slot ~= nil) then
                 if not itemCache[bag] then
                     itemCache[bag] = {}
                 end
@@ -86,7 +87,7 @@ local UpdateItemsCacheOnce = debounce(UpdateItemsCache)
 
 local function Matches(bag, slot, rule)
     UpdateItemsCacheOnce()
-    
+
     local cachedInfo
     if itemCache[bag] and itemCache[bag][slot] then
         cachedInfo = itemCache[bag][slot]
@@ -166,7 +167,7 @@ AddOn:AddCustomRule("EquipmentSet", {
 local eventFrame = CreateFrame("Frame")
 eventFrame:RegisterEvent("EQUIPMENT_SETS_CHANGED")
 eventFrame:RegisterEvent("PLAYER_LOGIN")
-eventFrame:SetScript("OnEvent", debounce(function() 
+eventFrame:SetScript("OnEvent", debounce(function()
     UpdateEquipmentSets()
     UpdateItemsCache()
 end))
