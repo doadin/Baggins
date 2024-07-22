@@ -731,7 +731,7 @@ end
 
 local function refresh()
     Baggins:ForceFullRefresh()
-    self:Baggins_RefreshBags()
+    Baggins:Baggins_RefreshBags()
 end
 
 local function getCompressAll()
