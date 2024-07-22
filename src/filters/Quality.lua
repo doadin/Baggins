@@ -5,7 +5,7 @@ Quality.lua
 ========================================================================== ]]--
 
 local AddOnName, _ = ...
-local AddOn = _G[AddOnName] --luacheck: ignore 211
+local AddOn = _G[AddOnName]
 
 -- LUA Functions
 local pairs = pairs
