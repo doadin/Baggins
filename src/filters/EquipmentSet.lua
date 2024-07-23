@@ -13,7 +13,7 @@ local GetEquipmentSetInfo = C_EquipmentSet.GetEquipmentSetInfo
 local GetItemLocations = C_EquipmentSet.GetItemLocations
 local UnpackItemLocation = EquipmentManager_UnpackLocation
 local BankButtonIDToInvSlotID = BankButtonIDToInvSlotID
-local RunNextFrame = RunNextFrame
+local RunNextFrame = _G.RunNextFrame
 local BANK_CONTAINER = BANK_CONTAINER
 
 local BANK_INVENTORY_OFFSET = BankButtonIDToInvSlotID(1, false) - 1
