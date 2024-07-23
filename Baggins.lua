@@ -558,7 +558,7 @@ function Baggins:OnEnable()
 end
 
 function Baggins:Baggins_CategoriesChanged()
-    self:Baggins_RefreshBags()
+    self:ReallyUpdateBags()
     self.doInitialBankUpdate = true
 end
 

@@ -3703,7 +3703,7 @@ end
 local function disableCompressionTemp()
     Baggins.tempcompressnone = not Baggins.tempcompressnone
     Baggins:RebuildSectionLayouts()
-    Baggins:Baggins_RefreshBags()
+    Baggins:ReallyUpdateBags()
 end
 
 local function openBagCategoryConfig()
@@ -3809,6 +3809,7 @@ end
 
 local function setArgValue(info, value)
     info.arg[info[#info]] = value
+    Baggins:ReallyUpdateBags()
 end
 
 local function moveSection(info, down)
