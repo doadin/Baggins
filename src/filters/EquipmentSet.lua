@@ -5,7 +5,7 @@ EquipmentSet.lua
 ========================================================================== ]]--
 
 local AddOnName, _ = ...
-local AddOn = _G[AddOnName]
+local Baggins = _G[AddOnName]
 
 -- WoW API
 local GetEquipmentSetIDs = C_EquipmentSet.GetEquipmentSetIDs
@@ -126,7 +126,7 @@ local function SetSelectedSetsOption(info, key, value)
     end
     info.arg.sets[key] = value
     UpdateItemsCache()
-    AddOn:OnRuleChanged()
+    Baggins:OnRuleChanged()
 end
 
 
@@ -138,11 +138,11 @@ end
 local function SetAnySetOption(info, value)
     info.arg.anyset = value
     UpdateItemsCache()
-    AddOn:OnRuleChanged()
+    Baggins:OnRuleChanged()
 end
 
 
-AddOn:AddCustomRule("EquipmentSet", {
+Baggins:AddCustomRule("EquipmentSet", {
     DisplayName = L["Equipment Set"],
     Description = L["Filter by Equipment Set"],
     Matches = Matches,
