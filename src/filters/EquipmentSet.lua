@@ -27,14 +27,20 @@ local itemCache = {}
 
 --
 
+local function SafeUnpackItemLocation(packedLoc)
+    if AddOn:IsRetailWow() then
+        local player, bank, bags, _, slot, bag = UnpackItemLocation(packedLoc)
+        return player, bank, bags, slot, bag
+    else
+        return UnpackItemLocation(packedLoc)
+    end
+end
+
 local function UpdateItemsCache()
     wipe(itemCache)
     for _, setId in ipairs(GetEquipmentSetIDs()) do
         for _, packedLoc in pairs(GetItemLocations(setId)) do
-            local player, bank, bags, slot, bag = UnpackItemLocation(packedLoc)
-            -- NOTE: unlike documented, this method in Cataclysm Classic
-            -- no longer returns the voidstorage field between bags and slot.
-            -- TODO: requires additional testing on retail!
+            local player, bank, bags, slot, bag = SafeUnpackItemLocation(packedLoc)
 
             if bank then
                 bag = BANK_CONTAINER
