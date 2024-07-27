@@ -324,7 +324,7 @@ local ldbdata = {
             if message == "RightButton" then
                 tooltip:Hide()
                 updateMenu()
-                EasyMenu(ldbDropDownMenu, ldbDropDownFrame, "cursor", 0, 0, "MENU")
+                Baggins:EasyMenu(ldbDropDownMenu, ldbDropDownFrame, "cursor", 0, 0, "MENU")
                 -- Baggins:OpenConfig()
             else
                 Baggins:OnClick()
@@ -2478,7 +2478,7 @@ do
                         return
                     end
                     makeMenu(bag, slot)
-                    EasyMenu(menu, itemDropdownFrame, "cursor", 0, 0, "MENU")
+                    Baggins:EasyMenu(menu, itemDropdownFrame, "cursor", 0, 0, "MENU")
                     -- make sure we restore the original scroll-wheel behavior for the DropdownList2-Frame
                     -- when the item-dropdown is closed
                     Baggins:SecureHookScript(DropDownList1, "OnHide", function()
@@ -2510,7 +2510,7 @@ do
                 return
             end
             makeMenu(bag, slot)
-            EasyMenu(menu, itemDropdownFrame, "cursor", 0, 0, "MENU")
+            Baggins:EasyMenu(menu, itemDropdownFrame, "cursor", 0, 0, "MENU")
             -- make sure we restore the original scroll-wheel behavior for the DropdownList2-Frame
             -- when the item-dropdown is closed
             Baggins:SecureHookScript(DropDownList1, "OnHide", function()
@@ -3604,7 +3604,7 @@ function BagginsOnAddonCompartmentClick(_,button)
     if button == "RightButton" then
         --tooltip:Hide()
         updateMenu()
-        EasyMenu(ldbDropDownMenu, ldbDropDownFrame, "cursor", 0, 0, "MENU")
+        Baggins:EasyMenu(ldbDropDownMenu, ldbDropDownFrame, "cursor", 0, 0, "MENU")
         -- Baggins:OpenConfig()
     else
         Baggins:OnClick()
@@ -4330,4 +4330,21 @@ local function GetItemUpgradeLevel(itemLink)
         NeutralizeFrame(ReagentBankFrame)
     end
 
+end
+
+local function EasyMenu_Initialize(frame, level, menuList)
+    for index = 1, #menuList do
+        local value = menuList[index]
+        if value.text then value.index = index; UIDropDownMenu_AddButton(value, level) end
+    end
+end
+
+function Baggins:EasyMenu(menuList, menuFrame, anchor, x, y, displayMode, autoHideDelay)
+    if Baggins:IsRetailWow() then
+        if displayMode=='MENU' then menuFrame.displayMode = displayMode end
+        UIDropDownMenu_Initialize(menuFrame, EasyMenu_Initialize, displayMode, nil, menuList)
+        ToggleDropDownMenu(1, nil, menuFrame, anchor, x, y, menuList, nil, autoHideDelay)
+    else
+        EasyMenu(menuList, menuFrame, anchor, x, y, displayMode, autoHideDelay)
+    end
 end

@@ -3753,7 +3753,7 @@ function Baggins:DoBagMenu()
             func = openBagCategoryConfig,
             notCheckable = true,
         })
-        EasyMenu(menu, bagDropdownMenuFrame, "cursor", 0, 0, "MENU")
+        Baggins:EasyMenu(menu, bagDropdownMenuFrame, "cursor", 0, 0, "MENU")
     end
 end
 

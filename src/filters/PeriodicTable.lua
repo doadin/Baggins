@@ -13,7 +13,6 @@ local AddOn = _G[AddOnName]
 local pairs, type, tonumber, wipe, ceil =
       pairs, type, tonumber, wipe, ceil
 local GetContainerItemLink = C_Container and C_Container.GetContainerItemLink or GetContainerItemLink
-local EasyMenu = EasyMenu
 local tinsert, tsort =
       tinsert, table.sort
 
@@ -128,7 +127,7 @@ local function showPTDropdown(info)
 	local attr = info[#info] --luacheck: ignore 211
 	currentRule = info.arg --luacheck: ignore 111
 	local menu = buildMenu(ptsets)
-	EasyMenu(menu, ptdropdownFrame, "cursor", 0, 0, "MENU")
+	AddOn:EasyMenu(menu, ptdropdownFrame, "cursor", 0, 0, "MENU")
 end
 
 -- Test for match
