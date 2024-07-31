@@ -1199,6 +1199,7 @@ function Baggins:OnBagUpdate(_,bagid)
         if bagid < -1 then return end
     else
         if bagid <= -4 then return end
+        if bagid >= 13 then return end
     end
     bagupdatebucket[bagid] = true
 
