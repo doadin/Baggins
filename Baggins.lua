@@ -24,6 +24,7 @@ local band =
 
 local IsAddOnLoaded = C_AddOns and C_AddOns.IsAddOnLoaded and C_AddOns.IsAddOnLoaded or IsAddOnLoaded
 local BlizzSortBags = C_Container and C_Container.SortBags
+local CloseBankFrame = C_Bank and C_Bank.CloseBankFrame or CloseBankFrame
 local GetItemCount, GetItemInfo, GetInventoryItemLink, GetItemQualityColor, GetItemFamily, BankButtonIDToInvSlotID, GetNumBankSlots =
       GetItemCount, GetItemInfo, GetInventoryItemLink, GetItemQualityColor, GetItemFamily, BankButtonIDToInvSlotID, GetNumBankSlots
 local GetContainerItemInfo, GetContainerItemLink, GetContainerNumFreeSlots, GetContainerItemCooldown =
