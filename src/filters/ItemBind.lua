@@ -70,9 +70,11 @@ local function Matches(bag, slot, rule)
     if AddOn:IsRetailWow() and (status == ITEM_ACCOUNTBOUND or status == ITEM_ACCOUNTBOUND_UNTIL_EQUIP) then
         local tooltipData = C_TooltipInfoGetBagItem(bag, slot)
         if not tooltipData then return false end
-        TooltipUtil.SurfaceArgs(tooltipData)
-        for _, line in ipairs(tooltipData.lines) do
-            TooltipUtil.SurfaceArgs(line)
+        if TooltipUtil and TooltipUtil.SurfaceArgs then
+            TooltipUtil.SurfaceArgs(tooltipData)
+            for _, line in ipairs(tooltipData.lines) do
+                TooltipUtil.SurfaceArgs(line)
+            end
         end
 
         -- The above SurfaceArgs calls are required to assign values to the
