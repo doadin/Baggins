@@ -576,6 +576,11 @@ function Baggins:UpdateBagHooks()
         self:RawHook("ToggleAllBags", true)
         self:RawHook('ToggleBackpack', 'ToggleAllBags', true)
         self:RawHook("CloseAllBags", true)
+
+        self:RawHook('OpenBag', 'ToggleAllBags', true)
+        self:RawHook('OpenBackpack', 'ToggleAllBags', true)
+        self:RawHook('ToggleBag', 'ToggleAllBags', true)
+
         if Baggins:IsRetailWow() then
             self:RawHook("OpenAllBagsMatchingContext", "ToggleAllBags", true)
             --self:RawHook("OpenAndFilterBags", "ToggleAllBags", true)
@@ -610,8 +615,25 @@ function Baggins:UnhookBagHooks()
 end
 
 function Baggins:UpdateBackpackHook()
-    if self.db.profile.overridebackpack and not self:IsHooked(MainMenuBarBackpackButton, "OnClick") then
-        self:RawHookScript(MainMenuBarBackpackButton, "OnClick", "MainMenuBarBackpackButtonOnClick")
+    if self.db.profile.overridebackpack then
+        if not self:IsHooked(MainMenuBarBackpackButton, "OnClick") then
+            self:RawHookScript(MainMenuBarBackpackButton, "OnClick", "MainMenuBarBackpackButtonOnClick")
+        end
+        if not self:IsHooked(CharacterBag0Slot, "OnClick") then
+            self:RawHookScript(CharacterBag0Slot, "OnClick", "MainMenuBarBackpackButtonOnClick")
+        end
+        if not self:IsHooked(CharacterBag1Slot, "OnClick") then
+            self:RawHookScript(CharacterBag1Slot, "OnClick", "MainMenuBarBackpackButtonOnClick")
+        end
+        if not self:IsHooked(CharacterBag2Slot, "OnClick") then
+            self:RawHookScript(CharacterBag2Slot, "OnClick", "MainMenuBarBackpackButtonOnClick")
+        end
+        if not self:IsHooked(CharacterBag3Slot, "OnClick") then
+            self:RawHookScript(CharacterBag3Slot, "OnClick", "MainMenuBarBackpackButtonOnClick")
+        end
+        if Baggins:IsRetailWow() and not self:IsHooked(CharacterReagentBag0Slot, "OnClick") then
+            self:RawHookScript(CharacterReagentBag0Slot, "OnClick", "MainMenuBarBackpackButtonOnClick")
+        end
     else
         self:UnhookBackpack()
     end
@@ -620,6 +642,21 @@ end
 function Baggins:UnhookBackpack()
     if self:IsHooked(MainMenuBarBackpackButton, "OnClick") then
         self:Unhook(MainMenuBarBackpackButton, "OnClick")
+    end
+    if self:IsHooked(CharacterBag0Slot, "OnClick") then
+        self:RawHookScript(CharacterBag0Slot, "OnClick")
+    end
+    if self:IsHooked(CharacterBag1Slot, "OnClick") then
+        self:RawHookScript(CharacterBag1Slot, "OnClick")
+    end
+    if self:IsHooked(CharacterBag2Slot, "OnClick") then
+        self:RawHookScript(CharacterBag2Slot, "OnClick")
+    end
+    if self:IsHooked(CharacterBag3Slot, "OnClick") then
+        self:RawHookScript(CharacterBag3Slot, "OnClick")
+    end
+    if Baggins:IsRetailWow() and self:IsHooked(CharacterReagentBag0Slot, "OnClick") then
+        self:RawHookScript(CharacterReagentBag0Slot, "OnClick")
     end
 end
 
