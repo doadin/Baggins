@@ -25,6 +25,7 @@ local itemExpansion = {
     [7] = "Battle for Azeroth",
     [8] = "Shadowlands",
     [9] = "Dragonflight",
+    [10] = "The War Within",
 }
 
 
@@ -56,6 +57,7 @@ AddOn:AddCustomRule("Expansion", {
                 ["Battle for Azeroth"] = "Battle for Azeroth",
                 ["Shadowlands"] = "Shadowlands",
                 ["Dragonflight"] = "Dragonflight",
+                ["The War Within"] = "The War Within",
             }
         },
     },
