@@ -257,37 +257,42 @@ end
 -- Item Filtering --
 --------------------
 function Baggins:CheckSlotsChanged(bag, forceupdate)
-  local itemschanged
-  for slot = 1, GetContainerNumSlots(bag) do
-    local key = bag..":"..slot
-    local iteminfo = nil
-    local itemid
-
-    local itemInfo = GetContainerItemInfo(bag, slot)
-    local count = itemInfo and itemInfo.stackCount
-    local link = itemInfo and itemInfo.hyperlink
-
-    if link then
-      itemid = C_Item.GetItemID(ItemLocation:CreateFromBagAndSlot(bag, slot))
+    local itemschanged
+    for slot = 1, GetContainerNumSlots(bag) do
+        local key = bag..":"..slot
+        local iteminfo = nil
+        local itemInfo = GetContainerItemInfo(bag, slot)
+        local count = itemInfo and itemInfo.stackCount
+        --local link = itemInfo and itemInfo.hyperlink
+        local itemid = itemInfo and itemInfo.itemID
+        if itemid then
+            -- "|cffffffff|Hitem:6948::::::::1:259::::::|h[Hearthstone]|h|r"
+            -- "|cff1eff00|Hbattlepet:261:1:2:151:11:10:0000000000000000|h[Personal World Destroyer]|h|r",
+            -- "|cffa335ee|Hkeystone:198:9:5:13:0|h[Keystone: Darkheart Thicket]|h|r"
+            iteminfo = {itemid = itemid, count = count}
+        end
+        if iteminfo then
+            if not slotcache then
+                slotcache = {}
+            end
+            if not slotcache[key] then
+                slotcache[key] = {}
+            end
+            if (slotcache[key].itemid ~= iteminfo.itemid or slotcache[key].count ~= iteminfo.count ) or forceupdate then
+                itemschanged = true
+                slotcache[key] = iteminfo
+                self:OnSlotChanged(bag, slot)
+            end
+        else
+            if slotcache[key] then
+                slotcache[key] = nil
+            end
+            itemschanged = true
+            self:OnSlotChanged(bag, slot)
+        end
     end
-    if itemid then
-      -- "|cffffffff|Hitem:6948::::::::1:259::::::|h[Hearthstone]|h|r"
-      -- "|cff1eff00|Hbattlepet:261:1:2:151:11:10:0000000000000000|h[Personal World Destroyer]|h|r",
-      -- "|cffa335ee|Hkeystone:198:9:5:13:0|h[Keystone: Darkheart Thicket]|h|r"
-      local itemstring = link:match("|H(.-)|h") or "_"
-      iteminfo = ("%s %d %s"):format(itemid, count, itemstring)
-    end
-
-    if slotcache[key] ~= iteminfo or forceupdate then
-      local olditemid = (slotcache[key] or ""):match("^(%d+)")
-      if itemid ~= olditemid then
-        itemschanged = true
-      end
-      slotcache[key] = iteminfo
-      self:OnSlotChanged(bag, slot)
-    end
-  end
-  return itemschanged
+    --print("CheckSlotsChanged", bag, forceupdate, itemschanged)
+    return itemschanged
 end
 
 local categoriesrun = { [true] = {}, [false] = {}}

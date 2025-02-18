@@ -883,7 +883,7 @@ local function GetSlotInfo(item)
     local itemID
     local cacheditem = Baggins:GetCachedItem(item)
     if cacheditem then
-        itemID = tonumber(cacheditem:match("^(%d+)"))
+        itemID = cacheditem.itemid
     end
     return bag, slot, itemID, bagType
 end
