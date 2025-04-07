@@ -38,7 +38,8 @@ end
 
 local function UpdateItemsCache()
     wipe(itemCache)
-    for _, setId in ipairs(GetEquipmentSetIDs()) do
+    local setIDs = GetEquipmentSetIDs() -- Cache result
+    for _, setId in ipairs(setIDs) do
         for _, packedLoc in pairs(GetItemLocations(setId)) do
             local player, bank, bags, slot, bag = SafeUnpackItemLocation(packedLoc)
 
@@ -48,24 +49,18 @@ local function UpdateItemsCache()
             end
 
             if (player or bags or bank) and (bag ~= nil) and (slot ~= nil) then
-                if not itemCache[bag] then
-                    itemCache[bag] = {}
-                end
-                if not itemCache[bag][slot] then
-                    itemCache[bag][slot] = { sets = {} }
-                end
-                local cachedItem = itemCache[bag][slot]
-                local cachedSets = cachedItem.sets
-                cachedSets[#cachedSets + 1] = setId
+                itemCache[bag] = itemCache[bag] or {}
+                itemCache[bag][slot] = itemCache[bag][slot] or { sets = {} }
+                table.insert(itemCache[bag][slot].sets, setId)
             end
         end
     end
 end
 
-
 local function UpdateEquipmentSets()
     wipe(equipmentSets)
-    for _, setId in ipairs(GetEquipmentSetIDs()) do
+    local setIDs = GetEquipmentSetIDs() -- Cache result
+    for _, setId in ipairs(setIDs) do
         local name = GetEquipmentSetInfo(setId)
         equipmentSets[setId] = name
     end
@@ -94,24 +89,20 @@ local UpdateItemsCacheOnce = debounce(UpdateItemsCache)
 local function Matches(bag, slot, rule)
     UpdateItemsCacheOnce()
 
-    local cachedInfo
-    if itemCache[bag] and itemCache[bag][slot] then
-        cachedInfo = itemCache[bag][slot]
-    else
+    local cachedInfo = itemCache[bag] and itemCache[bag][slot]
+    if not cachedInfo then
         return false
     end
 
     if rule.anyset then
-        -- we have a cached item, so it must belong to some set.
-        return true
+        return true -- Any set matches
     end
 
     if not rule.sets then
-        -- no sets have been selected, nothing to match.
-        return false
+        return false -- No sets selected
     end
 
-    for _,setId in ipairs(cachedInfo.sets) do
+    for _, setId in ipairs(cachedInfo.sets) do
         if rule.sets[setId] then
             return true
         end
