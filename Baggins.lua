@@ -611,6 +611,15 @@ function Baggins:UnhookBagHooks()
     if self:IsHooked("CloseAllBags") then
         self:Unhook("CloseAllBags")
     end
+    if self:IsHooked("OpenBag") then
+        self:Unhook("OpenBag")
+    end
+    if self:IsHooked("OpenBackpack") then
+        self:Unhook("OpenBackpack")
+    end
+    if self:IsHooked("ToggleBag") then
+        self:Unhook("ToggleBag")
+    end
     if Baggins:IsRetailWow() then
         if self:IsHooked("OpenAllBagsMatchingContext") then
             self:Unhook("OpenAllBagsMatchingContext")
