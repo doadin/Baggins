@@ -142,6 +142,31 @@ if AddOn:IsCataWow() then
     }
 end
 
+if AddOn:IsMistWow() then
+    -- scanned Sun July 6 03:08:26 2025 - patch 5.5.0
+    ItemTypes = {
+        [0]="Consumable",
+        [1]="Container",
+        [2]="Weapon",
+        [3]="Gem",
+        [4]="Armor",
+        [5]="Reagent",
+--        [6]="Projectile", -- named but not used
+        [7]="Trade Goods",
+        [8]="Generic(OBSOLETE)",
+        [9]="Recipe",
+        [10]="Money(OBSOLETE)",
+--        [11]="Quiver", -- named but not used
+        [12]="Quest",
+        [13]="Key",
+        [14]="Permanent(OBSOLETE)",
+        [15]="Miscellaneous",
+        [16]="Glyph",
+--        [17]="Battle Pets" -- named but not used
+--        [18]="WoW Token" -- named but not used
+    }
+end
+
   --[[
   local ItemTypes = {
    ["Weapon"] = {"One-Handed Axes", "Two-Handed Axes", "Bows", "Guns", "One-Handed Maces", "Two-Handed Maces", "Polearms", "One-Handed Swords", "Two-Handed Swords", "Staves", "Fist Weapons", "Miscellaneous", "Daggers", "Thrown", "Crossbows", "Wands", "Fishing Poles"},
@@ -240,7 +265,7 @@ AddOn:AddCustomRule("ItemType",
                                     tmp[tostring(k)] = GetItemSubClassInfo(rule.itype, k) or "UNKNOWN"
                                 end
                             end
-                            if AddOn:IsRetailWow() then
+                            if AddOn:IsRetailWow() or AddOn:IsMistWow() then -- mist now uses the retail format here
                                 for _,k in pairs(GetAuctionItemSubClasses(rule.itype)) do
                                     tmp[tostring(k)] = GetItemSubClassInfo(rule.itype, k) or "UNKNOWN"
                                 end

@@ -169,7 +169,7 @@ function Baggins:MoveToSpecialtyBags(bank,testonly)
                                         end
                                     end
 
-                                    if Baggins:IsClassicWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() or Baggins:IsCataWow() then
+                                    if Baggins:IsClassicWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() or Baggins:IsCataWow() or Baggins:IsMistWow() then
                                         if itemFamily == bagFamilySpecial then
                                             if testonly then return true end
                                             compressLoopProtect = compressLoopProtect - 1
