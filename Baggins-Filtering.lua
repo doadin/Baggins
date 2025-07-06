@@ -439,7 +439,7 @@ function Baggins:ForceFullUpdate()
     for bagid = 0, 11 do
         self:CheckSlotsChanged(bagid, true)
     end
-    if not Baggins:IsCataWow() then
+    if not Baggins:IsCataWow() and not Baggins:IsMistWow() then
         self:CheckSlotsChanged(-2,true)
     end
     self:CheckSlotsChanged(-1,true)
