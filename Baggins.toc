@@ -104,7 +104,7 @@ src\filters\EquipmentSet.lua
 #@end-version-cata@
 #@version-mists@
 src\filters\EquipmentSet.lua
-#@end-mists@
+#@end-version-mists@
 src\filters\EquipmentSlot.lua
 src\filters\Expansion.lua
 src\filters\ItemBind.lua
