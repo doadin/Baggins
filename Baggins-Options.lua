@@ -731,7 +731,7 @@ local function refresh()
     Baggins:Baggins_RefreshBags()
 end
 
-local function getCompressAll()
+function Baggins:getCompressAll()
     return Baggins.db.profile.compressall
 end
 
