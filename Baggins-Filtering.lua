@@ -183,7 +183,7 @@ function Baggins:IsSpecialBag(bag) --luacheck: ignore 212
     if bag>=1 and bag<= 11 then
         local _,fam = GetContainerNumFreeSlots(bag)
 
-        if Baggins:IsClassicWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() or Baggins:IsCataWow() then
+        if Baggins:IsClassicWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() or Baggins:IsCataWow() or Baggins:IsMistWow() then
             if type(fam)~="number" then --luacheck: ignore 542
                 -- assume normal bag
             elseif fam==0 then --luacheck: ignore 542
