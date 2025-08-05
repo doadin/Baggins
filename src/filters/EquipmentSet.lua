@@ -16,7 +16,7 @@ local BankButtonIDToInvSlotID = BankButtonIDToInvSlotID
 local RunNextFrame = _G.RunNextFrame
 local BANK_CONTAINER = BANK_CONTAINER
 
-local BANK_INVENTORY_OFFSET = BankButtonIDToInvSlotID(1, false) - 1
+local BANK_INVENTORY_OFFSET = C_Container.ContainerIDToInventoryID(1) - 1
 
 -- i18n
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
