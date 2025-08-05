@@ -21,7 +21,7 @@ local band =
       bit.band
 local BANK_CONTAINER = BANK_CONTAINER
 local NUM_BAG_SLOTS = NUM_TOTAL_EQUIPPED_BAG_SLOTS or NUM_BAG_SLOTS
-local NUM_BANKBAGSLOTS = NUM_BANKBAGSLOTS
+local NUM_BANKBAGSLOTS = NUM_BANKBAGSLOTS or 7
 
 local LibStub = LibStub
 local L = LibStub("AceLocale-3.0"):GetLocale("Baggins")

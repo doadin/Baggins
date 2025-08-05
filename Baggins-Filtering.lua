@@ -15,13 +15,13 @@ local tinsert, tsort =
 
 -- TODO: Clean up this section
 -- WoW API
-local BANK_CONTAINER = BANK_CONTAINER
+local BANK_CONTAINER = BANK_CONTAINER or 2
 local BACKPACK_CONTAINER = BACKPACK_CONTAINER
-local REAGENTBANK_CONTAINER = REAGENTBANK_CONTAINER
+local REAGENTBANK_CONTAINER = REAGENTBANK_CONTAINER or -3
 local KEYRING_CONTAINER = Enum.BagIndex.Keyring
 local REAGENT_CONTAINER = Baggins:IsRetailWow() and Enum.BagIndex.ReagentBag or math.huge
 local NUM_BAG_SLOTS = NUM_TOTAL_EQUIPPED_BAG_SLOTS or NUM_BAG_SLOTS
-local NUM_BANKBAGSLOTS = NUM_BANKBAGSLOTS
+local NUM_BANKBAGSLOTS = NUM_BANKBAGSLOTS or 7
 
 local GetContainerItemInfo = C_Container and C_Container.GetContainerItemInfo or GetContainerItemInfo
 local GetContainerNumFreeSlots = C_Container and C_Container.GetContainerNumFreeSlots or GetContainerNumFreeSlots
@@ -257,38 +257,38 @@ end
 -- Item Filtering --
 --------------------
 function Baggins:CheckSlotsChanged(bag, forceupdate)
-  local itemschanged
-  for slot = 1, GetContainerNumSlots(bag) do
-    local key = bag..":"..slot
-    local iteminfo = nil
-    local itemid
-
-    local itemInfo = GetContainerItemInfo(bag, slot)
-    local count = itemInfo and itemInfo.stackCount
-    local link = itemInfo and itemInfo.hyperlink
-
-    if link then
-      itemid = C_Item.GetItemID(ItemLocation:CreateFromBagAndSlot(bag, slot))
-    end
-    if itemid then
-      -- "|cffffffff|Hitem:6948::::::::1:259::::::|h[Hearthstone]|h|r"
-      -- "|cff1eff00|Hbattlepet:261:1:2:151:11:10:0000000000000000|h[Personal World Destroyer]|h|r",
-      -- "|cffa335ee|Hkeystone:198:9:5:13:0|h[Keystone: Darkheart Thicket]|h|r"
-      local itemstring = link:match("|H(.-)|h") or "_"
-      iteminfo = ("%s %d %s"):format(itemid, count, itemstring)
-    end
-
-    if slotcache[key] ~= iteminfo or forceupdate then
-      local olditemid = (slotcache[key] or ""):match("^(%d+)")
-      if itemid ~= olditemid then
-        itemschanged = true
+    local itemschanged
+    for slot = 1, GetContainerNumSlots(bag) do
+      local key = bag..":"..slot
+      local iteminfo = nil
+      local itemid
+  
+      local itemInfo = GetContainerItemInfo(bag, slot)
+      local count = itemInfo and itemInfo.stackCount
+      local link = itemInfo and itemInfo.hyperlink
+  
+      if link then
+        itemid = C_Item.GetItemID(ItemLocation:CreateFromBagAndSlot(bag, slot))
       end
-      slotcache[key] = iteminfo
-      self:OnSlotChanged(bag, slot)
+      if itemid then
+        -- "|cffffffff|Hitem:6948::::::::1:259::::::|h[Hearthstone]|h|r"
+        -- "|cff1eff00|Hbattlepet:261:1:2:151:11:10:0000000000000000|h[Personal World Destroyer]|h|r",
+        -- "|cffa335ee|Hkeystone:198:9:5:13:0|h[Keystone: Darkheart Thicket]|h|r"
+        local itemstring = link:match("|H(.-)|h") or "_"
+        iteminfo = ("%s %d %s"):format(itemid, count, itemstring)
+      end
+  
+      if slotcache[key] ~= iteminfo or forceupdate then
+        local olditemid = (slotcache[key] or ""):match("^(%d+)")
+        if itemid ~= olditemid then
+          itemschanged = true
+        end
+        slotcache[key] = iteminfo
+        self:OnSlotChanged(bag, slot)
+      end
     end
+    return itemschanged
   end
-  return itemschanged
-end
 
 local categoriesrun = { [true] = {}, [false] = {}}
 local recursionmagic = 12345

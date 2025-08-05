@@ -62,7 +62,8 @@ local LE_EXPANSION_CATACLYSM = LE_EXPANSION_CATACLYSM
 local LE_EXPANSION_MISTS_OF_PANDARIA = LE_EXPANSION_MISTS_OF_PANDARIA
 
 -- Bank tab locals, for auto reagent deposit
-local BANK_TAB = BANK_PANELS[1].name
+--local BANK_TAB = BANK_PANELS[1].name
+local BANK_TAB = "BankTab"
 local REAGENT_BANK_TAB = BANK_PANELS and BANK_PANELS[2] and BANK_PANELS[2].name
 
 Baggins.hasIcon = "Interface\\Icons\\INV_Jewelry_Ring_03"
@@ -511,12 +512,12 @@ function Baggins:OnEnable()
     self:RegisterEvent("QUEST_ACCEPTED", "UpdateItemButtons")
     self:RegisterEvent("UNIT_QUEST_LOG_CHANGED", "UpdateItemButtons")
     self:RegisterEvent("PLAYERBANKSLOTS_CHANGED", "OnBankChanged")
-    if Baggins:IsRetailWow() then
-        self:RegisterEvent("PLAYERREAGENTBANKSLOTS_CHANGED", "OnReagentBankChanged")
-        self:RegisterEvent("REAGENTBANK_PURCHASED", "OnReagentBankChanged")
-    end
+    --if Baggins:IsRetailWow() then
+    --    --self:RegisterEvent("PLAYERREAGENTBANKSLOTS_CHANGED", "OnReagentBankChanged")
+    --    --self:RegisterEvent("REAGENTBANK_PURCHASED", "OnReagentBankChanged")
+    --end
 
-    self:RegisterEvent("PLAYERBANKBAGSLOTS_CHANGED", "OnBankSlotPurchased")
+    --self:RegisterEvent("PLAYERBANKBAGSLOTS_CHANGED", "OnBankSlotPurchased")
     self:RegisterEvent("BANKFRAME_CLOSED", "OnBankClosed")
     self:RegisterEvent("BANKFRAME_OPENED", "OnBankOpened")
     self:RegisterEvent("PLAYER_MONEY", "UpdateMoneyFrame")
@@ -540,7 +541,7 @@ function Baggins:OnEnable()
     -- hook blizzard PLAYERBANKSLOTS_CHANGED function to filter inactive table
     -- this is required to prevent a nil error when working with a tab that the
     -- default UI is not currently showing
-    self:RawHook("BankFrameItemButton_Update", true)
+    --self:RawHook("BankFrameItemButton_Update", true)
 
     --force an update of all bags on first opening
     self.doInitialUpdate = true
@@ -2995,7 +2996,7 @@ function Baggins:UpdateBankControlFrame() --luacheck: ignore 212
     local anchorpoint = "TOPLEFT"
     local anchoryoffset = 0
 
-    local _, full = GetNumBankSlots()
+    local full = 86
     if full then
         frame.slotbuy:Hide()
     else
@@ -3009,17 +3010,10 @@ function Baggins:UpdateBankControlFrame() --luacheck: ignore 212
     end
 
     if Baggins:IsRetailWow() then
-        if IsReagentBankUnlocked() then
-            frame.radeposit:SetPoint("TOPLEFT", anchorframe, anchorpoint, 0, anchoryoffset)
-            frame.radeposit:Show()
-            frame.rabuy:Hide()
-            numbuttons = numbuttons + 1
-        else
-            frame.rabuy:SetPoint("TOPLEFT", anchorframe, anchorpoint, 0, anchoryoffset)
-            frame.rabuy:Show()
-            frame.radeposit:Hide()
-            numbuttons = numbuttons + 1
-        end
+        frame.radeposit:SetPoint("TOPLEFT", anchorframe, anchorpoint, 0, anchoryoffset)
+        frame.radeposit:Show()
+        frame.rabuy:Hide()
+        numbuttons = numbuttons + 1
     end
 
     frame:SetHeight((18 + 2) * numbuttons)
