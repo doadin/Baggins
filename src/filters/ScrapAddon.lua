@@ -41,3 +41,14 @@ AddOn:AddCustomRule("Scrap Addon", {
     Description = "Items set as junk by the Scrap Addon",
     Matches = Matches,
 })
+
+
+local eventFrame = CreateFrame("Frame")
+eventFrame:RegisterEvent("BAG_UPDATE")
+eventFrame:SetScript("OnEvent", function(self, event, bagID)
+    local numSlots = GetContainerNumSlots(bagID)
+    for slot = 1, numSlots do
+        Matches(bagID, slot, _)
+    end
+    Baggins:OnRuleChanged()
+end)
