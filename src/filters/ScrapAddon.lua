@@ -13,6 +13,7 @@ local IsAddOnLoaded = C_AddOns and C_AddOns.IsAddOnLoaded and C_AddOns.IsAddOnLo
 local GetAddOnInfo = C_AddOns and C_AddOns.GetAddOnInfo
 local GetContainerItemLink = C_Container and C_Container.GetContainerItemLink or GetContainerItemLink
 local GetContainerItemID = C_Container and C_Container.GetContainerItemID or GetContainerItemID
+local GetContainerNumSlots = C_Container and C_Container.GetContainerNumSlots or GetContainerNumSlots
 
 -- Libs
 --local LibStub = LibStub
