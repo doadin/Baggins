@@ -1186,8 +1186,12 @@ end
 function Baggins:ReallyUpdateBags()
     local p = self.db.profile
     local isVisible = false
-    BagginsMoneyFrame:Hide()
-    BagginsBankControlFrame:Hide()
+    if BagginsMoneyFrame then
+        BagginsMoneyFrame:Hide()
+    end
+    if BagginsBankControlFrame then
+        BagginsBankControlFrame:Hide()
+    end
     for bagid, _ in pairs(p.bags) do
         if self.bagframes[bagid] and self.bagframes[bagid]:IsVisible() then
             isVisible = true
