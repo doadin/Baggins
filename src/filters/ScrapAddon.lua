@@ -45,7 +45,7 @@ AddOn:AddCustomRule("Scrap Addon", {
 
 
 local eventFrame = CreateFrame("Frame")
-eventFrame:RegisterEvent("BAG_UPDATE")
+eventFrame:RegisterEvent("BAG_UPDATE_DELAYED")
 eventFrame:SetScript("OnEvent", function(self, event, bagID)
     local numSlots = GetContainerNumSlots(bagID)
     for slot = 1, numSlots do
