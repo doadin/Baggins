@@ -436,7 +436,7 @@ if Baggins:IsCataWow() or Baggins:IsMistWow() then
     }
     end
 
-if Baggins:IsClassicWow() or Baggins:IsWrathWow() then
+if Baggins:IsClassicWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() then
     templates = {
         allinone = {
             layout = "manual",
