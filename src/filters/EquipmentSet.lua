@@ -11,7 +11,6 @@ local AddOn = _G[AddOnName]
 local GetEquipmentSetIDs = C_EquipmentSet.GetEquipmentSetIDs
 local GetEquipmentSetInfo = C_EquipmentSet.GetEquipmentSetInfo
 local GetItemLocations = C_EquipmentSet.GetItemLocations
-local UnpackItemLocation = EquipmentManager_UnpackLocation
 local BankButtonIDToInvSlotID = BankButtonIDToInvSlotID
 local RunNextFrame = _G.RunNextFrame
 local BANK_CONTAINER = BANK_CONTAINER
@@ -27,13 +26,25 @@ local itemCache = {}
 
 --
 
+-- Prefer current unpack helper, with legacy fallback for older clients.
 local function SafeUnpackItemLocation(packedLoc)
-    if AddOn:IsRetailWow() then
-        local player, bank, bags, _, slot, bag = UnpackItemLocation(packedLoc)
-        return player, bank, bags, slot, bag
-    else
-        return UnpackItemLocation(packedLoc)
+    if EquipmentManager_GetLocationData then
+        local locationData = EquipmentManager_GetLocationData(packedLoc)
+        if not locationData then
+            return nil, nil, nil, nil, nil
+        end
+        return locationData.isPlayer, locationData.isBank, locationData.isBags, locationData.slot, locationData.bag
     end
+
+    if EquipmentManager_UnpackLocation then
+        if AddOn:IsRetailWow() then
+            local player, bank, bags, _, slot, bag = EquipmentManager_UnpackLocation(packedLoc)
+            return player, bank, bags, slot, bag
+        end
+        return EquipmentManager_UnpackLocation(packedLoc)
+    end
+
+    return nil, nil, nil, nil, nil
 end
 
 local function UpdateItemsCache()
