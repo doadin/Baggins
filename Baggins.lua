@@ -370,7 +370,7 @@ do
             frameType = "Button"
         end
 
-        local frame = CreateFrame(frameType,"BagginsPooledItemButton"..buttonCount,nil,"ContainerFrameItemButtonTemplate")
+        local frame = CreateFrame(frameType,"BagginsPooledItemButton"..buttonCount,nil,"ContainerFrameItemButtonTemplate", "SecureActionButtonTemplate")
 
         frame.GetItemContextMatchResult = nil
         buttonCount = buttonCount + 1
