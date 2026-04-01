@@ -36,7 +36,7 @@ local ShowInspectCursor = ShowInspectCursor
 local ShowContainerSellCursor = C_Container and C_Container.ShowContainerSellCursor or ShowContainerSellCursor
 local Enum = Enum and Enum
 
-
+local AutoDepositItemsIntoBank = C_Bank and C_Bank.AutoDepositItemsIntoBank
 local ReagentBankButtonIDToInvSlotID, GetContainerItemQuestInfo, DepositReagentBank, IsReagentBankUnlocked =
       ReagentBankButtonIDToInvSlotID, C_Container and C_Container.GetContainerItemQuestInfo or GetContainerItemQuestInfo, DepositReagentBank and DepositReagentBank, IsReagentBankUnlocked and IsReagentBankUnlocked
 local IsContainerItemAnUpgrade = IsContainerItemAnUpgrade and IsContainerItemAnUpgrade
@@ -2982,7 +2982,15 @@ function Baggins:CreateBankControlFrame() --luacheck: ignore 212
         -- this takes all your reagents and moves them into the reagent bank
         frame.radeposit = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
         frame.radeposit:SetScript("OnClick", function()
-            DepositReagentBank()
+            if AutoDepositItemsIntoBank then
+                local doesBankTypeSupportAutoDeposit = C_Bank.DoesBankTypeSupportAutoDeposit(Enum.BankType.Character)
+                if doesBankTypeSupportAutoDeposit then
+                    AutoDepositItemsIntoBank(Enum.BankType.Character)
+                end
+            end
+            if DepositReagentBank then
+                DepositReagentBank()
+            end
         end)
         frame.radeposit:SetWidth(160)
         frame.radeposit:SetHeight(18)
