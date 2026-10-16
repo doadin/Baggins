@@ -26,7 +26,7 @@ local IsAddOnLoaded = C_AddOns and C_AddOns.IsAddOnLoaded and C_AddOns.IsAddOnLo
 local BlizzSortBags = C_Container and C_Container.SortBags
 local CloseBankFrame = C_Bank and C_Bank.CloseBankFrame or CloseBankFrame
 local GetItemCount, GetItemInfo, GetInventoryItemLink, GetItemQualityColor, GetItemFamily, BankButtonIDToInvSlotID, GetNumBankSlots =
-      GetItemCount, GetItemInfo, GetInventoryItemLink, GetItemQualityColor, GetItemFamily, BankButtonIDToInvSlotID, GetNumBankSlots
+      C_Item and C_Item.GetItemCount or GetItemCount, C_Item and C_Item.GetItemInfo or GetItemInfo, GetInventoryItemLink, C_Item and C_Item.GetItemQualityColor or GetItemQualityColor, C_Item and C_Item.GetItemFamily or GetItemFamily, BankButtonIDToInvSlotID, GetNumBankSlots
 local GetContainerItemInfo, GetContainerItemLink, GetContainerNumFreeSlots, GetContainerItemCooldown =
     C_Container and C_Container.GetContainerItemInfo or GetContainerItemInfo, C_Container and C_Container.GetContainerItemLink or GetContainerItemLink, C_Container and C_Container.GetContainerNumFreeSlots or GetContainerNumFreeSlots, C_Container and C_Container.GetContainerItemCooldown or GetContainerItemCooldown
 local BANK_PANELS = BANK_PANELS
@@ -44,7 +44,7 @@ local C_ItemUpgrade = C_ItemUpgrade and C_ItemUpgrade
 
 
 local C_Item, ItemLocation, InCombatLockdown, IsModifiedClick, GetDetailedItemLevelInfo, GetContainerItemID, InRepairMode, KeyRingButtonIDToInvSlotID, C_PetJournal, C_NewItems, PlaySound =
-      C_Item, ItemLocation, InCombatLockdown, IsModifiedClick, GetDetailedItemLevelInfo, C_Container and C_Container.GetContainerItemID or GetContainerItemID, InRepairMode, KeyRingButtonIDToInvSlotID, C_PetJournal, C_NewItems, PlaySound
+      C_Item, ItemLocation, InCombatLockdown, IsModifiedClick, C_Item and C_Item.GetDetailedItemLevelInfo or GetDetailedItemLevelInfo, C_Container and C_Container.GetContainerItemID or GetContainerItemID, InRepairMode, KeyRingButtonIDToInvSlotID, C_PetJournal, C_NewItems, PlaySound
 
 local UseContainerItem = C_Container and C_Container.UseContainerItem or UseContainerItem
 
@@ -3273,7 +3273,7 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
             if LBU:IsBank(bag, true) then
                 count = GetItemCount(itemid,true) - count
             end
-            if IsEquippedItem(itemid) then
+            if (C_Item and C_Item.IsEquippedItem or IsEquippedItem)(itemid) then
                 count = count - 1
             end
         end
