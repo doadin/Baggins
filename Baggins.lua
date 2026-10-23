@@ -1499,14 +1499,14 @@ local function SlotComp(a, b)
         return baga < bagb
     end
 end
-local function IlvlComp(a, b)
+local function IlvlComp(a, b, getCachedIlvl)
     local res,linka,linkb,baga,slota,bagb,slotb=baseComp(a,b)
     if res~=nil then return res end
 
     local namea, _, quala = getCompInfo(linka)
     local nameb, _, qualb = getCompInfo(linkb)
-    local ilvla = iui:GetUpgradedItemLevel(linka)
-    local ilvlb = iui:GetUpgradedItemLevel(linkb)
+    local ilvla = getCachedIlvl(linka)
+    local ilvlb = getCachedIlvl(linkb)
     if ilvla~=ilvlb then
         return (ilvla or 0) > (ilvlb or 0)
     end
@@ -1538,7 +1538,26 @@ function Baggins:SortItemList(itemlist, sorttype) --luacheck: ignore 212
     elseif sorttype == "slot" then
         func = SlotComp
     elseif sorttype == "ilvl" then
-        func = IlvlComp
+        -- The item-level library may inspect tooltips. A comparison sort
+        -- otherwise requests the same item's level many times.
+        local ilvlCache = {}
+        local function getCachedIlvl(link)
+            local level = ilvlCache[link]
+            if level == nil then
+                -- Prefer the same effective item level used for item-button text.
+                -- LibItemUpgradeInfo can return an outdated level on Retail.
+                if GetDetailedItemLevelInfo then
+                    level = GetDetailedItemLevelInfo(link)
+                else
+                    level = iui:GetUpgradedItemLevel(link)
+                end
+                ilvlCache[link] = level or false
+            end
+            return level
+        end
+        func = function(a, b)
+            return IlvlComp(a, b, getCachedIlvl)
+        end
     else
         return
     end
