@@ -565,6 +565,7 @@ function Baggins:OnEnable()
     self:EnableSkin(self.db.profile.skin)
     self:OnProfileEnable()
     self:RunBagUpdates()
+    self:ScheduleTimer("SaveItemCounts", 2)
 end
 
 function Baggins:Baggins_CategoriesChanged()
@@ -1278,7 +1279,6 @@ end
 function Baggins:RunBagUpdates()
     if firstbagupdate then
         firstbagupdate = false
-        self:SaveItemCounts()
         self:ForceFullUpdate()
     end
 
