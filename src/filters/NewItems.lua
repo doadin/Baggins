@@ -5,7 +5,7 @@ NewItems.lua
 ========================================================================== ]]--
 
 local AddOnName, _ = ...
-local AddOn = _G[AddOnName]
+local AddOn = LibStub("AceAddon-3.0"):GetAddon("Baggins")
 
 -- WoW API
 local GetContainerItemLink = C_Container and C_Container.GetContainerItemLink or GetContainerItemLink
@@ -15,7 +15,7 @@ local LibStub = LibStub
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
 
 -- Local storage
-local BagTypes = Baggins:GetBagTypes()
+local BagTypes = AddOn:GetBagTypes()
 
 local function Matches(bag,slot)
     if not (bag and slot) then return end

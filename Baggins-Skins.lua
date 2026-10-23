@@ -1,4 +1,4 @@
-local Baggins = Baggins
+local Baggins = LibStub("AceAddon-3.0"):GetAddon("Baggins")
 
 local pairs, ipairs =
       pairs, ipairs

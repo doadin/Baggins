@@ -4,7 +4,7 @@ Baggins-Filtering.lua
 
 ========================================================================== ]]--
 
-local Baggins = Baggins
+local Baggins = LibStub("AceAddon-3.0"):GetAddon("Baggins")
 
 -- TODO: Clean up this section
 -- LUA Functions

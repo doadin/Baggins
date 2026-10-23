@@ -5,7 +5,7 @@ Category.lua
 ========================================================================== ]]--
 
 local AddOnName, _ = ...
-local AddOn = _G[AddOnName]
+local AddOn = LibStub("AceAddon-3.0"):GetAddon("Baggins")
 
 -- LUA Functions
 local pairs = pairs
@@ -15,9 +15,9 @@ local LibStub = LibStub
 local L = LibStub("AceLocale-3.0"):GetLocale(AddOnName)
 
 -- Local storage
-local BagTypes = Baggins:GetBagTypes()
-local bankcategorycache = Baggins:GetBankCategoryCache()
-local categorycache = Baggins:GetCategoryCache()
+local BagTypes = AddOn:GetBagTypes()
+local bankcategorycache = AddOn:GetBankCategoryCache()
+local categorycache = AddOn:GetCategoryCache()
 
 local function Matches(bag,slot,rule)
     if not (bag and slot and rule.category) then return end

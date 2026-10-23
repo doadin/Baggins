@@ -4,8 +4,7 @@ Empty.lua
 
 ========================================================================== ]]--
 
-local AddOnName, _ = ...
-local AddOn = _G[AddOnName]
+local AddOn = LibStub("AceAddon-3.0"):GetAddon("Baggins")
 
 -- WoW API
 local IsAddOnLoadable = C_AddOns and C_AddOns.IsAddOnLoadable and C_AddOns.IsAddOnLoadable
@@ -46,10 +45,10 @@ AddOn:AddCustomRule("Scrap Addon", {
 
 local eventFrame = CreateFrame("Frame")
 eventFrame:RegisterEvent("BAG_UPDATE")
-eventFrame:SetScript("OnEvent", function(self, event, bagID)
+eventFrame:SetScript("OnEvent", function(_self, _event, bagID) --self, event, bagID
     local numSlots = GetContainerNumSlots(bagID)
     for slot = 1, numSlots do
         Matches(bagID, slot, _)
     end
-    Baggins:OnRuleChanged()
+    AddOn:OnRuleChanged()
 end)

@@ -5,13 +5,14 @@ EquipmentSet.lua
 ========================================================================== ]]--
 
 local AddOnName, _ = ...
-local AddOn = _G[AddOnName]
+local AddOn = LibStub("AceAddon-3.0"):GetAddon("Baggins")
 
 -- WoW API
 local GetEquipmentSetIDs = C_EquipmentSet.GetEquipmentSetIDs
 local GetEquipmentSetInfo = C_EquipmentSet.GetEquipmentSetInfo
 local GetItemLocations = C_EquipmentSet.GetItemLocations
-local BankButtonIDToInvSlotID = BankButtonIDToInvSlotID
+--local BankButtonIDToInvSlotID = BankButtonIDToInvSlotID
+local EquipmentManager_GetLocationData = EquipmentManager_GetLocationData
 local RunNextFrame = _G.RunNextFrame
 local BANK_CONTAINER = BANK_CONTAINER
 
@@ -178,5 +179,5 @@ eventFrame:RegisterEvent("PLAYER_LOGIN")
 eventFrame:SetScript("OnEvent", debounce(function()
     UpdateEquipmentSets()
     UpdateItemsCache()
-    Baggins:OnRuleChanged()
+    AddOn:OnRuleChanged()
 end))

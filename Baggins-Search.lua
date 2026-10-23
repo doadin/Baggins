@@ -35,7 +35,7 @@ if NumberofAddons >= 1 then
     end
 end
 
-local Baggins = Baggins
+local Baggins = LibStub("AceAddon-3.0"):GetAddon("Baggins")
 local GetItemInfo = C_Item and C_Item.GetItemInfo or GetItemInfo
 local GetDetailedItemLevelInfo = C_Item.GetDetailedItemLevelInfo
 local strlen = strlen

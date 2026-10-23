@@ -4,7 +4,7 @@
 -- items, etc.
 --
 
-local Baggins = Baggins
+local Baggins = LibStub("AceAddon-3.0"):GetAddon("Baggins")
 
 local pairs, ipairs, next, select, format, wipe =
       pairs, ipairs, next, select,  format, wipe

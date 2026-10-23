@@ -5,7 +5,7 @@ PeriodicTable.lua
 ========================================================================== ]]--
 
 local AddOnName, _ = ...
-local AddOn = _G[AddOnName]
+local AddOn = LibStub("AceAddon-3.0"):GetAddon("Baggins")
 
 -- LUA Functions
 
