@@ -4009,7 +4009,6 @@ end
 
 function Baggins:NewSection(bagid,sectionname)
     tinsert(self.db.profile.bags[bagid].sections, { name=sectionname, cats = {} })
-    currentsection = #self.db.profile.bags[bagid].sections
     self:ResortSections()
     self:ForceFullRefresh()
     self:Baggins_RefreshBags()
