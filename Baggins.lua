@@ -3931,7 +3931,6 @@ function Baggins:NewBag(bagname)
     if not self.bagframes[#bags] then
         self:CreateBagFrame(#bags)
     end
-    currentbag = #bags
     self:ResortSections()
     self:ForceFullRefresh()
     self:Baggins_RefreshBags()
@@ -4020,7 +4019,6 @@ end
 function Baggins:NewCategory(catname)
     if not self.db.profile.categories[catname] then
         self.db.profile.categories[catname] = { name=catname }
-        currentcategory = catname
         --tablet:Refresh("BagginsEditCategories")
         self:RebuildCategoryOptions()
     end
