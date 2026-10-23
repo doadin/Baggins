@@ -510,6 +510,7 @@ function Baggins:OnEnable()
     self:RegisterEvent("QUEST_ACCEPTED", "UpdateItemButtons")
     self:RegisterEvent("UNIT_QUEST_LOG_CHANGED", "UpdateItemButtons")
     self:RegisterEvent("PLAYERBANKSLOTS_CHANGED", "OnBankChanged")
+    self:RegisterEvent("ITEM_CHANGED", "OnItemChanged")
     --if Baggins:IsRetailWow() then
     --    --self:RegisterEvent("PLAYERREAGENTBANKSLOTS_CHANGED", "OnReagentBankChanged")
     --    --self:RegisterEvent("REAGENTBANK_PURCHASED", "OnReagentBankChanged")
@@ -838,6 +839,13 @@ function Baggins:OnBankSlotPurchased()
     self:UpdateBankControlFrame()
     self:ForceFullBankUpdate()
     self:UpdateBags()
+end
+
+function Baggins:OnItemChanged(_event, previousHyperlink, newHyperlink)
+    if Baggins and Baggins.ilvlCache and Baggins.ilvlCache[previousHyperlink]  then
+        Baggins.ilvlCache[previousHyperlink] = nil
+        Baggins.ilvlCache[newHyperlink]  = self:getCachedIlvl(newHyperlink)
+    end
 end
 
 -------------------------
