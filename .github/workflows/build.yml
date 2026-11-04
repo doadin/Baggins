@@ -51,3 +51,8 @@ jobs:
         uses: BigWigsMods/packager@master
         with:
           args: -g mists
+
+      - name: Package Forever
+        uses: BigWigsMods/packager@master
+        with:
+            args: -g forever
