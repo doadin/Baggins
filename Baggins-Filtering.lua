@@ -213,7 +213,7 @@ function Baggins:IsSpecialBag(bag) --luacheck: ignore 212
             end
         end
 
-        if Baggins:IsRetailWow() then
+        if Baggins:IsRetailWow() or Baggins:IsForeverWow() then
             if type(fam)~="number" then --luacheck: ignore 542
                 -- assume normal bag
                 --Baggins:Debug('IsSpecialBag Got Normal Bag')

@@ -39,7 +39,7 @@ local function Matches(bag, slot, rule)
             text = gtext
         end
     end
-    if AddOn:IsRetailWow() then
+    if C_TooltipInfoGetBagItem then
         local tooltipData = C_TooltipInfoGetBagItem(bag, slot)
         if not tooltipData then return false end
         if TooltipUtil and TooltipUtil.SurfaceArgs then
@@ -60,7 +60,7 @@ local function Matches(bag, slot, rule)
 
         return false
     end
-    if not AddOn:IsRetailWow() then
+    if not C_TooltipInfoGetBagItem then
         if bag == -1 then
             local invId = BankButtonIDToInvSlotID(slot, false)
             tip:SetInventoryItem("player", invId)

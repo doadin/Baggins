@@ -149,6 +149,11 @@ function Baggins:IsRetailWow() --luacheck: ignore 212
     return WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
 end
 
+function Baggins:IsForeverWow() --luacheck: ignore 212
+    return WOW_PROJECT_ID == WOW_PROJECT_CAMELOT
+end
+
+
 local timers = {}
 function Baggins:ScheduleNamedTimer(name, callback, delay, arg)
     local alreadyScheduled = timers[name]
@@ -362,7 +367,7 @@ do
     local function createItemButton()
 
         local frameType
-        if Baggins:IsRetailWow() then
+        if Baggins:IsRetailWow() or Baggins:IsForeverWow() then
             frameType = "ItemButton"
         else
             frameType = "Button"
@@ -444,7 +449,7 @@ function Baggins:OnInitialize()
     self:RegisterChatCommand("baggins", "OpenConfig")
     self.OnMenuRequest = self.opts
 
-    if Baggins:IsClassicWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() or Baggins:IsCataWow() or Baggins:IsMistWow() then
+    if Baggins:IsClassicWow() or Baggins:IsForeverWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() or Baggins:IsCataWow() or Baggins:IsMistWow() then
         dbIcon:Register("Baggins", ldbdata, self.db.profile.minimap)
     end
     -- self:RegisterChatCommand({ "/baggins" }, self.opts, "BAGGINS")
@@ -763,7 +768,7 @@ function Baggins:IsCompressed(itemID)
                 end
             end
 
-            if Baggins:IsClassicWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() or Baggins:IsCataWow() or Baggins:IsMistWow() then
+            if Baggins:IsClassicWow() or Baggins:IsForeverWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() or Baggins:IsCataWow() or Baggins:IsMistWow() then
                 if p.CompressShards and itemFamily ~=3 and itemEquipLoc~="INVTYPE_BAG" then
                     return true
                 end
@@ -2180,55 +2185,111 @@ local function showBattlePetTooltip(link)
 end
 
 local function BagginsItemButton_UpdateTooltip(button)
-    if ( button:GetParent():GetID() == KEYRING_CONTAINER ) then
-        GameTooltip:SetInventoryItem("player", KeyRingButtonIDToInvSlotID(button:GetID(),button.isBag))
-        CursorUpdate(button)
+    if not button then return end
+
+    local parent = button:GetParent()
+    if not parent then return end
+
+    local bag = button.bagID or parent:GetID()
+    local slot = button:GetID()
+
+    if type(bag) ~= "number" or type(slot) ~= "number" then
         return
     end
 
-    if button:GetParent():GetID() == -1 then
-        if ( not GameTooltip:SetInventoryItem("player", BankButtonIDToInvSlotID(button:GetID(),button.isBag)) ) then
-            if ( button.isBag ) then
-                GameTooltip:SetText(button.tooltipText);
-            end
+    -- KeyRing
+    if KEYRING_CONTAINER ~= nil
+        and bag == KEYRING_CONTAINER
+        and type(KeyRingButtonIDToInvSlotID) == "function" then
+
+        GameTooltip:SetInventoryItem(
+            "player",
+            KeyRingButtonIDToInvSlotID(slot, button.isBag)
+        )
+
+        if CursorUpdate then
+            CursorUpdate(button)
         end
-        CursorUpdate(button);
         return
     end
-    if button:GetParent():GetID() == REAGENTBANK_CONTAINER then
-        if ( not GameTooltip:SetInventoryItem("player", ReagentBankButtonIDToInvSlotID(button:GetID(),button.isBag)) ) then
-            if ( button.isBag ) then
-                GameTooltip:SetText(button.tooltipText);
+
+    -- Bank：Using SetBagItem if no BankButtonIDToInvSlotID in Forever
+    if bag == -1 then
+        if type(BankButtonIDToInvSlotID) == "function" then
+            local invId = BankButtonIDToInvSlotID(slot, button.isBag)
+
+            if not GameTooltip:SetInventoryItem("player", invId) then
+                if button.isBag then
+                    GameTooltip:SetText(button.tooltipText)
+                end
             end
+        else
+            GameTooltip:SetBagItem(bag, slot)
         end
-        CursorUpdate(button);
+
+        if CursorUpdate then
+            CursorUpdate(button)
+        end
         return
     end
 
+    -- Reagent Bank
+    if REAGENTBANK_CONTAINER ~= nil
+        and bag == REAGENTBANK_CONTAINER then
 
-    local showSell = nil;
-    local itemlink = GetContainerItemLink(button:GetParent():GetID(), button:GetID())
+        if type(ReagentBankButtonIDToInvSlotID) == "function" then
+            local invId = ReagentBankButtonIDToInvSlotID(slot, button.isBag)
+
+            if not GameTooltip:SetInventoryItem("player", invId) then
+                if button.isBag then
+                    GameTooltip:SetText(button.tooltipText)
+                end
+            end
+        else
+            GameTooltip:SetBagItem(bag, slot)
+        end
+
+        if CursorUpdate then
+            CursorUpdate(button)
+        end
+        return
+    end
+
+    -- Normal Bag
+    local showSell = nil
+
+    local itemlink = GetContainerItemLink(bag, slot)
+
     if itemlink and itemlink:match("battlepet:") then
         showBattlePetTooltip(itemlink)
         return
     end
-    local _, repairCost = GameTooltip:SetBagItem(button:GetParent():GetID(), button:GetID());
-    if ( InRepairMode() and (repairCost and repairCost > 0) ) then
-        GameTooltip:AddLine(REPAIR_COST, "", 1, 1, 1);
-        SetTooltipMoney(GameTooltip, repairCost);
-        GameTooltip:Show();
-    elseif ( MerchantFrame:IsShown() and MerchantFrame.selectedTab == 1 and not button.locked ) then
-        showSell = 1;
+
+    local _, repairCost = GameTooltip:SetBagItem(bag, slot)
+
+    if InRepairMode and InRepairMode()
+        and repairCost and repairCost > 0 then
+
+        GameTooltip:AddLine(REPAIR_COST, "", 1, 1, 1)
+        SetTooltipMoney(GameTooltip, repairCost)
+        GameTooltip:Show()
+
+    elseif MerchantFrame
+        and MerchantFrame:IsShown()
+        and MerchantFrame.selectedTab == 1
+        and not button.locked then
+
+        showSell = 1
     end
 
-    if ( IsModifiedClick("DRESSUP") and button.hasItem ) then
-        ShowInspectCursor();
-    elseif ( showSell ) then
-        ShowContainerSellCursor(button:GetParent():GetID(),button:GetID());
-    elseif ( button.readable ) then
-        ShowInspectCursor();
+    if IsModifiedClick("DRESSUP") and button.hasItem then
+        ShowInspectCursor()
+    elseif showSell then
+        ShowContainerSellCursor(bag, slot)
+    elseif button.readable then
+        ShowInspectCursor()
     else
-        ResetCursor();
+        ResetCursor()
     end
 end
 

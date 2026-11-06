@@ -15,13 +15,20 @@ local GetContainerItemInfo = C_Container and C_Container.GetContainerItemInfo or
 local GetContainerNumFreeSlots = C_Container and C_Container.GetContainerNumFreeSlots or GetContainerNumFreeSlots
 local GetContainerNumSlots = C_Container and C_Container.GetContainerNumSlots or GetContainerNumSlots
 local GetItemFamily = C_Item and C_Item.GetItemFamily or GetItemFamily
-local PickupContainerItem, SplitContainerItem, IsShiftKeyDown =
-C_Container and C_Container.PickupContainerItem or PickupContainerItem, SplitContainerItem, IsShiftKeyDown
+local PickupContainerItem =
+    C_Container and C_Container.PickupContainerItem
+    or PickupContainerItem
+local SplitContainerItem =
+    C_Container and C_Container.SplitContainerItem
+    or SplitContainerItem
+local IsShiftKeyDown = IsShiftKeyDown
 local band =
       bit.band
 local BANK_CONTAINER = BANK_CONTAINER
 local NUM_BAG_SLOTS = NUM_TOTAL_EQUIPPED_BAG_SLOTS or NUM_BAG_SLOTS
-local NUM_BANKBAGSLOTS = NUM_BANKBAGSLOTS or 7
+local NUM_BANKBAGSLOTS = NUM_BANKBAGSLOTS
+    or (GetNumBankSlots and GetNumBankSlots())
+    or 7
 
 local LibStub = LibStub
 local L = LibStub("AceLocale-3.0"):GetLocale("Baggins")
@@ -41,6 +48,18 @@ if Baggins:IsClassicWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() then
     tinsert(charBags, KEYRING_CONTAINER)
 end
 
+-- compatible function between new API and old
+-- new API：return a table that contains `stackCount` and`isLocked`
+-- old API：return multiple values
+local function GetContainerItemCountAndLock(bag, slot)
+    local icon, count, locked = GetContainerItemInfo(bag, slot)
+
+    if type(icon) == "table" then
+        return icon.stackCount, icon.isLocked
+    end
+
+    return count, locked
+end
 
 ------------------------------------------------------
 -- Compress stacks and move stuff to specialty bags --
@@ -68,9 +87,8 @@ function Baggins:DoCompressBags(bank,testonly)
 
     for _,bag in ipairs(bags) do
         for slot=1,(GetContainerNumSlots(bag) or 0) do
-            local itemInfo = GetContainerItemInfo(bag, slot)
-            local itemCount = itemInfo and itemInfo.stackCount
-            local locked = itemInfo and itemInfo.isLocked
+            local itemCount, locked = GetContainerItemCountAndLock(bag, slot)
+
             local link = GetContainerItemLink(bag, slot)
             lockedSlots = lockedSlots or locked
             if link and (testonly or not locked) then
@@ -138,7 +156,7 @@ function Baggins:MoveToSpecialtyBags(bank,testonly)
             end
             if bagFamily==0 then	-- only examine stuff in normal bags
                 for slot=1, (GetContainerNumSlots(bag) or 0) do
-                    local _, _, locked, _, _ = GetContainerItemInfo(bag, slot)
+                    local _, locked = GetContainerItemCountAndLock(bag, slot)
                     local link = GetContainerItemLink(bag, slot)
                     lockedSlots = lockedSlots or locked
                     if link and (testonly or not locked) then
@@ -148,7 +166,7 @@ function Baggins:MoveToSpecialtyBags(bank,testonly)
                                 --Baggins:Debug('specialtyTargetBags Item Info', select(9, GetItemInfo(link))=="INVTYPE_BAG")
                             else
                                 for bagFamilySpecial,dest in pairs(specialtyTargetBags) do
-                                    if Baggins:IsRetailWow() then
+                                    if Baggins:IsRetailWow() or Baggins:IsForeverWow() then
                                         if band(itemFamily,bagFamilySpecial) ~= 0 then
                                             if testonly then return true end
                                             compressLoopProtect = compressLoopProtect - 1
@@ -330,7 +348,7 @@ Baggins:RegisterSignal("Baggins_ItemButtonMenu",
         local slot = button:GetID();
         local link = GetContainerItemLink(bag,slot)
         if not link then return; end
-        local _, itemCount = GetContainerItemInfo(bag, slot);
+        local itemCount = GetContainerItemCountAndLock(bag, slot)
         local itemstring = link:match("(item:[-%d:]+)");
 
         if level==1 then

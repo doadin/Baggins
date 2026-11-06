@@ -436,7 +436,7 @@ if Baggins:IsCataWow() or Baggins:IsMistWow() then
     }
     end
 
-if Baggins:IsClassicWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() then
+if Baggins:IsClassicWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() or Baggins:IsForeverWow() then
     templates = {
         allinone = {
             layout = "manual",
@@ -1734,7 +1734,7 @@ if Baggins:IsRetailWow() then
     }
 end
 
-if Baggins:IsClassicWow() then
+if Baggins:IsClassicWow() or Baggins:IsForeverWow() then
     itemTypeReverse = {
         ["Quiver"] = {
             ["id"] = 11,
@@ -2919,7 +2919,7 @@ if Baggins:IsRetailWow() then
     }
 end
 
-if Baggins:IsClassicWow() then
+if Baggins:IsClassicWow() or Baggins:IsForeverWow() then
     Baggins.defaultcategories = {
         [L["Consumables"]] = {
             name=L["Consumables"],
