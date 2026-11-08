@@ -53,6 +53,7 @@ local WOW_PROJECT_WRATH_CLASSIC = WOW_PROJECT_WRATH_CLASSIC
 local WOW_PROJECT_CATACLYSM_CLASSIC = WOW_PROJECT_CATACLYSM_CLASSIC
 local WOW_PROJECT_MISTS_CLASSIC = WOW_PROJECT_MISTS_CLASSIC
 local WOW_PROJECT_MAINLINE = WOW_PROJECT_MAINLINE
+local WOW_PROJECT_CAMELOT = WOW_PROJECT_CAMELOT
 local LE_EXPANSION_LEVEL_CURRENT = LE_EXPANSION_LEVEL_CURRENT
 local LE_EXPANSION_BURNING_CRUSADE = LE_EXPANSION_BURNING_CRUSADE
 local LE_EXPANSION_WRATH_OF_THE_LICH_KING = LE_EXPANSION_WRATH_OF_THE_LICH_KING
@@ -148,6 +149,92 @@ end
 function Baggins:IsRetailWow() --luacheck: ignore 212
     return WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
 end
+
+function Baggins:IsForeverWow() --luacheck: ignore 212
+    return WOW_PROJECT_ID == WOW_PROJECT_CAMELOT
+end
+
+
+--
+local BagIndex = Enum and Enum.BagIndex or {}
+
+local BACKPACK_CONTAINER =
+    _G.BACKPACK_CONTAINER or BagIndex.Backpack or 0
+
+local BANK_CONTAINER = Baggins:IsForeverWow()
+    and (BagIndex.Characterbanktab or -2)
+    or (_G.BANK_CONTAINER or -1)
+
+local KEYRING_CONTAINER =
+    BagIndex.Keyring or _G.KEYRING_CONTAINER
+
+local REAGENT_CONTAINER =
+    BagIndex.ReagentBag or _G.REAGENTBANK_CONTAINER
+
+local ACCOUNT_BANK_CONTAINER =
+    Baggins:IsForeverWow() and BagIndex.Accountbanktab or nil
+
+local NUM_BAG_SLOTS =
+    _G.NUM_BAG_SLOTS or 4
+
+local NUM_BANKBAGSLOTS = Baggins:IsForeverWow()
+    and 8
+    or (_G.NUM_BANKBAGSLOTS or 7)
+
+-- Compatible with old API and new
+local function GetBagginsContainerItemInfo(bag, slot)
+    if C_Container and C_Container.GetContainerItemInfo then
+        return C_Container.GetContainerItemInfo(bag, slot)
+    end
+
+    if not GetContainerItemInfo then
+        return nil
+    end
+
+    -- Classic API return multiple results
+    local texture, count, locked, quality, readable,
+        lootable, link, isFiltered, noValue, itemID =
+        GetContainerItemInfo(bag, slot)
+
+    if not texture then
+        return nil
+    end
+
+    return {
+        iconFileID = texture,
+        stackCount = count,
+        isLocked = locked,
+        quality = quality,
+        isReadable = readable,
+        hyperlink = link,
+        itemID = itemID,
+    }
+end
+
+local function GetBagginsContainerNumFreeSlots(bag)
+    if C_Container and C_Container.GetContainerNumFreeSlots then
+        return C_Container.GetContainerNumFreeSlots(bag)
+    end
+
+    if GetContainerNumFreeSlots then
+        return GetContainerNumFreeSlots(bag)
+    end
+
+    return 0, 0
+end
+
+local function GetBagginsContainerItemID(bag, slot)
+    if C_Container and C_Container.GetContainerItemID then
+        return C_Container.GetContainerItemID(bag, slot)
+    end
+
+    if GetContainerItemID then
+        return GetContainerItemID(bag, slot)
+    end
+
+    return nil
+end
+
 
 local timers = {}
 function Baggins:ScheduleNamedTimer(name, callback, delay, arg)
@@ -362,7 +449,7 @@ do
     local function createItemButton()
 
         local frameType
-        if Baggins:IsRetailWow() then
+        if Baggins:IsRetailWow() or Baggins:IsForeverWow() then
             frameType = "ItemButton"
         else
             frameType = "Button"
@@ -444,7 +531,7 @@ function Baggins:OnInitialize()
     self:RegisterChatCommand("baggins", "OpenConfig")
     self.OnMenuRequest = self.opts
 
-    if Baggins:IsClassicWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() or Baggins:IsCataWow() or Baggins:IsMistWow() then
+    if Baggins:IsClassicWow() or Baggins:IsForeverWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() or Baggins:IsCataWow() or Baggins:IsMistWow() then
         dbIcon:Register("Baggins", ldbdata, self.db.profile.minimap)
     end
     -- self:RegisterChatCommand({ "/baggins" }, self.opts, "BAGGINS")
@@ -763,7 +850,7 @@ function Baggins:IsCompressed(itemID)
                 end
             end
 
-            if Baggins:IsClassicWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() or Baggins:IsCataWow() or Baggins:IsMistWow() then
+            if Baggins:IsClassicWow() or Baggins:IsForeverWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() or Baggins:IsCataWow() or Baggins:IsMistWow() then
                 if p.CompressShards and itemFamily ~=3 and itemEquipLoc~="INVTYPE_BAG" then
                     return true
                 end
@@ -778,7 +865,7 @@ function Baggins:IsCompressed(itemID)
             --for i=0, NUM_BAG_SLOTS do
             --    tinsert(charBags, i);
             --end
-            --if Baggins:IsClassicWow() or Baggins:IsTBCWow() then
+            --if Baggins:IsClassicWow() or Baggins:IsForeverWow() or Baggins:IsTBCWow() then
             --    tinsert(charBags, KEYRING_CONTAINER)
             --end
             ----local bankBags = { BANK_CONTAINER }
@@ -2180,55 +2267,111 @@ local function showBattlePetTooltip(link)
 end
 
 local function BagginsItemButton_UpdateTooltip(button)
-    if ( button:GetParent():GetID() == KEYRING_CONTAINER ) then
-        GameTooltip:SetInventoryItem("player", KeyRingButtonIDToInvSlotID(button:GetID(),button.isBag))
-        CursorUpdate(button)
+    if not button then return end
+
+    local parent = button:GetParent()
+    if not parent then return end
+
+    local bag = button.bagID or parent:GetID()
+    local slot = button:GetID()
+
+    if type(bag) ~= "number" or type(slot) ~= "number" then
         return
     end
 
-    if button:GetParent():GetID() == -1 then
-        if ( not GameTooltip:SetInventoryItem("player", BankButtonIDToInvSlotID(button:GetID(),button.isBag)) ) then
-            if ( button.isBag ) then
-                GameTooltip:SetText(button.tooltipText);
-            end
+    -- KeyRing
+    if KEYRING_CONTAINER ~= nil
+        and bag == KEYRING_CONTAINER
+        and type(KeyRingButtonIDToInvSlotID) == "function" then
+
+        GameTooltip:SetInventoryItem(
+            "player",
+            KeyRingButtonIDToInvSlotID(slot, button.isBag)
+        )
+
+        if CursorUpdate then
+            CursorUpdate(button)
         end
-        CursorUpdate(button);
         return
     end
-    if button:GetParent():GetID() == REAGENTBANK_CONTAINER then
-        if ( not GameTooltip:SetInventoryItem("player", ReagentBankButtonIDToInvSlotID(button:GetID(),button.isBag)) ) then
-            if ( button.isBag ) then
-                GameTooltip:SetText(button.tooltipText);
+
+    -- Bank：Using SetBagItem if no BankButtonIDToInvSlotID in Forever
+    if bag == -1 then
+        if type(BankButtonIDToInvSlotID) == "function" then
+            local invId = BankButtonIDToInvSlotID(slot, button.isBag)
+
+            if not GameTooltip:SetInventoryItem("player", invId) then
+                if button.isBag then
+                    GameTooltip:SetText(button.tooltipText)
+                end
             end
+        else
+            GameTooltip:SetBagItem(bag, slot)
         end
-        CursorUpdate(button);
+
+        if CursorUpdate then
+            CursorUpdate(button)
+        end
         return
     end
 
+    -- Reagent Bank
+    if REAGENTBANK_CONTAINER ~= nil
+        and bag == REAGENTBANK_CONTAINER then
 
-    local showSell = nil;
-    local itemlink = GetContainerItemLink(button:GetParent():GetID(), button:GetID())
+        if type(ReagentBankButtonIDToInvSlotID) == "function" then
+            local invId = ReagentBankButtonIDToInvSlotID(slot, button.isBag)
+
+            if not GameTooltip:SetInventoryItem("player", invId) then
+                if button.isBag then
+                    GameTooltip:SetText(button.tooltipText)
+                end
+            end
+        else
+            GameTooltip:SetBagItem(bag, slot)
+        end
+
+        if CursorUpdate then
+            CursorUpdate(button)
+        end
+        return
+    end
+
+    -- Normal Bag
+    local showSell = nil
+
+    local itemlink = GetContainerItemLink(bag, slot)
+
     if itemlink and itemlink:match("battlepet:") then
         showBattlePetTooltip(itemlink)
         return
     end
-    local _, repairCost = GameTooltip:SetBagItem(button:GetParent():GetID(), button:GetID());
-    if ( InRepairMode() and (repairCost and repairCost > 0) ) then
-        GameTooltip:AddLine(REPAIR_COST, "", 1, 1, 1);
-        SetTooltipMoney(GameTooltip, repairCost);
-        GameTooltip:Show();
-    elseif ( MerchantFrame:IsShown() and MerchantFrame.selectedTab == 1 and not button.locked ) then
-        showSell = 1;
+
+    local _, repairCost = GameTooltip:SetBagItem(bag, slot)
+
+    if InRepairMode and InRepairMode()
+        and repairCost and repairCost > 0 then
+
+        GameTooltip:AddLine(REPAIR_COST, "", 1, 1, 1)
+        SetTooltipMoney(GameTooltip, repairCost)
+        GameTooltip:Show()
+
+    elseif MerchantFrame
+        and MerchantFrame:IsShown()
+        and MerchantFrame.selectedTab == 1
+        and not button.locked then
+
+        showSell = 1
     end
 
-    if ( IsModifiedClick("DRESSUP") and button.hasItem ) then
-        ShowInspectCursor();
-    elseif ( showSell ) then
-        ShowContainerSellCursor(button:GetParent():GetID(),button:GetID());
-    elseif ( button.readable ) then
-        ShowInspectCursor();
+    if IsModifiedClick("DRESSUP") and button.hasItem then
+        ShowInspectCursor()
+    elseif showSell then
+        ShowContainerSellCursor(bag, slot)
+    elseif button.readable then
+        ShowInspectCursor()
     else
-        ResetCursor();
+        ResetCursor()
     end
 end
 
@@ -3135,7 +3278,7 @@ function Baggins:SetItemButtonCount(button, count, realcount) --luacheck: ignore
     if not count then
         count = 0
     end
-    local counttext = _G[button:GetName().."Count"]
+    local counttext = button.Count or _G[button:GetName() .. "Count"]
     if button.countoverride then
         button.count = realcount
     else
@@ -3191,7 +3334,7 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
         end
     end
 
-    local itemInfo = GetContainerItemInfo(bag, slot)
+    local itemInfo = GetBagginsContainerItemInfo(bag, slot)
     local texture = itemInfo and itemInfo.iconFileID
     local itemCount = itemInfo and itemInfo.stackCount
     local locked = itemInfo and itemInfo.isLocked
@@ -3278,15 +3421,24 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
                     -- So we do it manually
                     freeslots = 0
                     local startslot, endslot
-                    if LBU:IsBank(bag) then
-                        startslot, endslot = NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS
+                    if Baggins:IsForeverWow() then
+                        if LBU:IsBank(bag) then
+                            -- Forever 角色银行标签页：6～14
+                            startslot, endslot = 6, 14
+                        else
+                            -- 主背包 + 4 个普通背包 + ReagentBag
+                            startslot, endslot = 0, 5
+                        end
+                    elseif LBU:IsBank(bag) then
+                        startslot, endslot = NUM_BAG_SLOTS + 1,
+                        NUM_BAG_SLOTS + NUM_BANKBAGSLOTS
                     else
                         startslot, endslot = 0, NUM_BAG_SLOTS
                     end
-                    for i=startslot, endslot do
-                        local freeCount, bagType = GetContainerNumFreeSlots( i )
+                    for i = startslot, endslot do
+                        local freeCount, bagType = GetBagginsContainerNumFreeSlots(i)
                         if bagType == 0 then
-                            freeslots = freeslots + freeCount
+                            freeslots = freeslots + (freeCount or 0)
                         end
                     end
                     count = bagtype..freeslots
@@ -3420,7 +3572,7 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
         --scraptext:SetText("scrap")
         --button:SetFontString(scraptext)
         --local item = Item:CreateFromBagAndSlot(bag, slot)
-        local id = GetContainerItemID(bag, slot)
+        local id = GetBagginsContainerItemID(bag, slot)
         local icon = button:CreateTexture(nil, 'OVERLAY')
         if Scrap:IsJunk(id, bag, slot) then
             icon:SetTexture('Interface/Buttons/UI-GroupLoot-Coin-Up')
@@ -4369,7 +4521,7 @@ local function GetItemUpgradeLevel(itemLink)
 
  function Baggins:PlayerInteractionManager(event,typenumber) --luacheck: ignore 212
     if type(typenumber) ~= "number" then return end
-    if event == "PLAYER_INTERACTION_MANAGER_FRAME_SHOW" and typenumber == 53 then
+    if event == "PLAYER_INTERACTION_MANAGER_FRAME_SHOW" and typenumber == 53 and self.db.profile.hidedefaultbank and not self:IsForeverWow() then
         C_Timer.After(1, function()
             for _, bag in ipairs(Baggins.bagframes) do --bagid,bag
                 for _, section in ipairs(bag.sections) do --sectionid, section

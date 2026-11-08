@@ -37,7 +37,7 @@ for i=0, NUM_BAG_SLOTS do
     tinsert(charBags, i);
 end
 
-if Baggins:IsClassicWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() then
+if Baggins:IsClassicWow() or Baggins:IsForeverWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() then
     tinsert(charBags, KEYRING_CONTAINER)
 end
 
@@ -169,7 +169,7 @@ function Baggins:MoveToSpecialtyBags(bank,testonly)
                                         end
                                     end
 
-                                    if Baggins:IsClassicWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() or Baggins:IsCataWow() or Baggins:IsMistWow() then
+                                    if Baggins:IsClassicWow() or Baggins:IsForeverWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() or Baggins:IsCataWow() or Baggins:IsMistWow() then
                                         if itemFamily == bagFamilySpecial then
                                             if testonly then return true end
                                             compressLoopProtect = compressLoopProtect - 1
