@@ -300,7 +300,7 @@ local ldbDropDownFrame = CreateFrame("Frame", "Baggins_DropDownFrame", UIParent,
 local ldbDropDownMenu
 local spacer = { text = "", disabled = true, notCheckable = true, notClickable = true}
 local function initDropdownMenu()
-    if Baggins:IsRetailWow() then
+    if Baggins:IsRetailWow() or Baggins:IsForeverWow() then
         ldbDropDownMenu = {
             {
                 text = "Run Blizzard Bag Sort",
@@ -403,7 +403,7 @@ local function updateMenu()
         initDropdownMenu()
         return
     end
-    if Baggins:IsRetailWow() then
+    if Baggins:IsRetailWow() or Baggins:IsForeverWow() then
         ldbDropDownMenu[4].checked = Baggins.db.profile.hidedefaultbank
         ldbDropDownMenu[5].checked = Baggins.db.profile.overridedefaultbags
     else
@@ -531,7 +531,7 @@ function Baggins:OnInitialize()
     self:RegisterChatCommand("baggins", "OpenConfig")
     self.OnMenuRequest = self.opts
 
-    if Baggins:IsClassicWow() or Baggins:IsForeverWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() or Baggins:IsCataWow() or Baggins:IsMistWow() then
+    if Baggins:IsClassicWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() or Baggins:IsCataWow() or Baggins:IsMistWow() or Baggins:IsForeverWow() then
         dbIcon:Register("Baggins", ldbdata, self.db.profile.minimap)
     end
     -- self:RegisterChatCommand({ "/baggins" }, self.opts, "BAGGINS")
@@ -668,13 +668,32 @@ end
 function Baggins:UpdateBagHooks()
     if self.db.profile.overridedefaultbags then
         self:UnhookBagHooks()
+        --TODO: Bank purchage will trigger protected functions
+
+        -- 27x [ADDON_ACTION_FORBIDDEN] Addons 'Baggins' tried to call protected functions 'PurchaseBankTab()'.
+        -- [C]: in function 'PurchaseBankTab'
+        -- [Blizzard_UIPanels_Game/Camelot/BankFrame.lua]:14: in function 'OnAccept'
+        -- [Blizzard_StaticPopup/StaticPopup.lua]:731: in function 'StaticPopup_OnClick'
+        -- [Blizzard_StaticPopup_Game/GameDialog.lua]:56: in function <...face/AddOns/      Blizzard_StaticPopup_Game/GameDialog.lua:54>
+
+
+        -- Locals:
+        -- self=<table>
+        -- event="ADDON_ACTION_FORBIDDEN"
+        -- addonName="Baggins"
+        -- addonFunc="PurchaseBankTab()"
+        -- name="Baggins"
+        -- badAddons=<table>{
+        --  Baggins=true
+        -- }
         self:RawHook("OpenAllBags", "ToggleAllBags", true)
+        self:RawHook('OpenBag', 'ToggleAllBags', true)
+        self:RawHook('OpenBackpack', 'ToggleAllBags', true)
+        ----------------------------------------------------------------
         self:RawHook("ToggleAllBags", true)
         self:RawHook('ToggleBackpack', 'ToggleAllBags', true)
         self:RawHook("CloseAllBags", true)
 
-        self:RawHook('OpenBag', 'ToggleAllBags', true)
-        self:RawHook('OpenBackpack', 'ToggleAllBags', true)
         self:RawHook('ToggleBag', 'ToggleAllBags', true)
 
         if Baggins:IsRetailWow() then
@@ -841,7 +860,7 @@ function Baggins:IsCompressed(itemID)
         local itemFamily = GetItemFamily(itemID)
         local _, _, _, _, _, _, _, itemStackCount, itemEquipLoc = GetItemInfo(itemID)
         if itemFamily then	-- likes to be nil during login
-            if Baggins:IsRetailWow() then
+            if Baggins:IsRetailWow() or Baggins:IsForeverWow() then
                 if p.CompressShards and band(itemFamily,4)~=0 and itemEquipLoc~="INVTYPE_BAG" then
                     return true
                 end
@@ -850,7 +869,7 @@ function Baggins:IsCompressed(itemID)
                 end
             end
 
-            if Baggins:IsClassicWow() or Baggins:IsForeverWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() or Baggins:IsCataWow() or Baggins:IsMistWow() then
+            if Baggins:IsClassicWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() or Baggins:IsCataWow() or Baggins:IsMistWow() then
                 if p.CompressShards and itemFamily ~=3 and itemEquipLoc~="INVTYPE_BAG" then
                     return true
                 end
@@ -2665,7 +2684,7 @@ do
 
             local target = BagginsItemButton_GetTargetBankTab(bag, slot)
 
-            if target == REAGENT_BANK_TAB then
+            if target == REAGENT_BANK_TAB and not Baggins:IsForeverWow() then
                 BankFrame.selectedTab = 2
                 button.origOnClick = button:GetScript("OnClick")
                 button:SetScript("OnClick",BagginsItemButton_OnClick)
@@ -4519,9 +4538,12 @@ local function GetItemUpgradeLevel(itemLink)
     end
  end
 
- function Baggins:PlayerInteractionManager(event,typenumber) --luacheck: ignore 212
+ function Baggins:PlayerInteractionManager(event,typenumber) 
+    if self:IsForeverWow() then
+        return
+    end--luacheck: ignore 212
     if type(typenumber) ~= "number" then return end
-    if event == "PLAYER_INTERACTION_MANAGER_FRAME_SHOW" and typenumber == 53 and self.db.profile.hidedefaultbank and not self:IsForeverWow() then
+    if event == "PLAYER_INTERACTION_MANAGER_FRAME_SHOW" and typenumber == 53 and self.db.profile.hidedefaultbank and not Baggins:IsForeverWow() then
         C_Timer.After(1, function()
             for _, bag in ipairs(Baggins.bagframes) do --bagid,bag
                 for _, section in ipairs(bag.sections) do --sectionid, section
@@ -4564,7 +4586,9 @@ local function GetItemUpgradeLevel(itemLink)
             frame:Hide()
         end
         NeutralizeFrame(BankFrame)
-        NeutralizeFrame(ReagentBankFrame)
+        if not Baggins:IsForeverWow() then
+            NeutralizeFrame(ReagentBankFrame)
+        end
     end
 
 end
