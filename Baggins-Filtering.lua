@@ -15,14 +15,16 @@ local tinsert, tsort =
 
 -- TODO: Clean up this section
 -- WoW API
-local BANK_CONTAINER = BANK_CONTAINER or 2
-local BACKPACK_CONTAINER = BACKPACK_CONTAINER
-local REAGENTBANK_CONTAINER = REAGENTBANK_CONTAINER or -3
-local KEYRING_CONTAINER = Enum.BagIndex.Keyring
-local REAGENT_CONTAINER = Baggins:IsRetailWow() and Enum.BagIndex.ReagentBag or math.huge
-local NUM_BAG_SLOTS = NUM_TOTAL_EQUIPPED_BAG_SLOTS or NUM_BAG_SLOTS
-local NUM_BANKBAGSLOTS = NUM_BANKBAGSLOTS or 7
+local BagIndex = Enum and Enum.BagIndex or {}
 
+local BACKPACK_CONTAINER = _G.BACKPACK_CONTAINER or BagIndex.Backpack or 0
+local BANK_CONTAINER = Baggins:IsForeverWow() and (BagIndex.Characterbanktab or -2)or (_G.BANK_CONTAINER or -1)
+local REAGENTBANK_CONTAINER = Baggins:IsForeverWow() and (BagIndex.Accountbanktab or -3) or (_G.REAGENTBANK_CONTAINER or -3)
+local KEYRING_CONTAINER = BagIndex.Keyring or _G.KEYRING_CONTAINER or -1
+local REAGENT_CONTAINER = Baggins:IsForeverWow() and (BagIndex.ReagentBag or 5) or (Baggins:IsRetailWow() and BagIndex.ReagentBag or math.huge)
+local ACCOUNT_BANK_CONTAINER = Baggins:IsForeverWow() and (BagIndex.Accountbanktab or -3) or nil
+local NUM_BAG_SLOTS = _G.NUM_BAG_SLOTS or _G.NUM_TOTAL_EQUIPPED_BAG_SLOTS or 4
+local NUM_BANKBAGSLOTS = Baggins:IsForeverWow() and 8 or (_G.NUM_BANKBAGSLOTS or 7)
 local GetContainerItemInfo = C_Container and C_Container.GetContainerItemInfo or GetContainerItemInfo
 local GetContainerNumFreeSlots = C_Container and C_Container.GetContainerNumFreeSlots or GetContainerNumFreeSlots
 local GetContainerNumSlots = C_Container and C_Container.GetContainerNumSlots or GetContainerNumSlots
@@ -36,35 +38,85 @@ local LBU = LibStub("LibBagUtils-1.0")
 -- Local storage
 local BagTypes = {}
 
+-- compatible with new and old API
+local GetContainerNumSlotsCompat = (C_Container and C_Container.GetContainerNumSlots) or _G.GetContainerNumSlots
+
+local GetContainerNumFreeSlotsCompat = (C_Container and C_Container.GetContainerNumFreeSlots) or _G.GetContainerNumFreeSlots
+
+local GetContainerItemInfoCompat = (C_Container and C_Container.GetContainerItemInfo) or _G.GetContainerItemInfo
+
+local function GetBagginsContainerItemInfo(bag, slot)
+    if C_Container and C_Container.GetContainerItemInfo then
+        return C_Container.GetContainerItemInfo(bag, slot)
+    end
+
+    if not GetContainerItemInfo then
+        return nil
+    end
+
+    local texture, count, locked, quality, readable,
+        lootable, link, isFiltered, noValue, itemID =
+        GetContainerItemInfo(bag, slot)
+
+    if not texture then
+        return nil
+    end
+
+    return {
+        iconFileID = texture,
+        stackCount = count,
+        isLocked = locked,
+        quality = quality,
+        isReadable = readable,
+        hyperlink = link,
+        itemID = itemID,
+    }
+end
+
 -- Build list of bag types
 local function BuildBagTypes()
-
     -- Common bags
     BagTypes[BACKPACK_CONTAINER] = 1
     BagTypes[BANK_CONTAINER] = 2
 
-    for i = 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS do
-
-        if i <= NUM_BAG_SLOTS then
-            BagTypes[i] = 1 -- Bags
-        else
-            BagTypes[i] = 2 -- Bank bags
+    if Baggins:IsForeverWow() then
+        -- Backpack：1～4
+        for i = 1, 4 do
+            BagTypes[i] = 1
         end
 
+        BagTypes[REAGENT_CONTAINER] = 1
+        BagTypes[KEYRING_CONTAINER] = 1
+        BagTypes[BANK_CONTAINER] = 2
+
+        -- bankpack
+        for i = 6, 14 do
+            BagTypes[i] = 2
+        end
+
+        -- exclude Accountbanktab
+    else
+        -- old logic
+        for i = 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS do
+            if i <= NUM_BAG_SLOTS then
+                BagTypes[i] = 1
+            else
+                BagTypes[i] = 2
+            end
+        end
+
+        -- Classic specific bag
+        if Baggins:IsClassicWow() or Baggins:IsForeverWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() then
+            BagTypes[KEYRING_CONTAINER] = 3
+        end
+
+
+        -- Retail specific bag
+        if Baggins:IsRetailWow() then
+            BagTypes[REAGENTBANK_CONTAINER] = 4
+            BagTypes[REAGENT_CONTAINER] = 5
+        end
     end
-
-    -- Classic specific bag
-    if Baggins:IsClassicWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() then
-        BagTypes[KEYRING_CONTAINER] = 3
-    end
-
-
-    -- Retail specific bag
-    if Baggins:IsRetailWow() then
-        BagTypes[REAGENTBANK_CONTAINER] = 4
-        BagTypes[REAGENT_CONTAINER] = 5
-    end
-
 end
 
 -- TODO: Lots of cleaning up belopw this line :)
@@ -183,7 +235,7 @@ function Baggins:IsSpecialBag(bag) --luacheck: ignore 212
     if bag>=1 and bag<= 11 then
         local _,fam = GetContainerNumFreeSlots(bag)
 
-        if Baggins:IsClassicWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() or Baggins:IsCataWow() or Baggins:IsMistWow() then
+        if Baggins:IsClassicWow() or Baggins:IsForeverWow() or Baggins:IsTBCWow() or Baggins:IsWrathWow() or Baggins:IsCataWow() or Baggins:IsMistWow() then
             if type(fam)~="number" then --luacheck: ignore 542
                 -- assume normal bag
             elseif fam==0 then --luacheck: ignore 542
@@ -258,37 +310,55 @@ end
 --------------------
 function Baggins:CheckSlotsChanged(bag, forceupdate)
     local itemschanged
-    for slot = 1, GetContainerNumSlots(bag) do
-      local key = bag..":"..slot
-      local iteminfo = nil
-      local itemid
-  
-      local itemInfo = GetContainerItemInfo(bag, slot)
-      local count = itemInfo and itemInfo.stackCount
-      local link = itemInfo and itemInfo.hyperlink
-  
-      if link then
-        itemid = C_Item.GetItemID(ItemLocation:CreateFromBagAndSlot(bag, slot))
-      end
-      if itemid then
-        -- "|cffffffff|Hitem:6948::::::::1:259::::::|h[Hearthstone]|h|r"
-        -- "|cff1eff00|Hbattlepet:261:1:2:151:11:10:0000000000000000|h[Personal World Destroyer]|h|r",
-        -- "|cffa335ee|Hkeystone:198:9:5:13:0|h[Keystone: Darkheart Thicket]|h|r"
-        local itemstring = link:match("|H(.-)|h") or "_"
-        iteminfo = ("%s %d %s"):format(itemid, count, itemstring)
-      end
-  
-      if slotcache[key] ~= iteminfo or forceupdate then
-        local olditemid = (slotcache[key] or ""):match("^(%d+)")
-        if itemid ~= olditemid then
-          itemschanged = true
+    local numSlots = GetContainerNumSlotsCompat and GetContainerNumSlotsCompat(bag) or 0
+
+    for slot = 1, numSlots do
+        local key = bag..":"..slot
+        local iteminfo = nil
+        local itemid
+        
+        local itemInfo = GetBagginsContainerItemInfo(bag, slot)
+
+        local count = itemInfo and itemInfo.stackCount
+        local link = itemInfo and itemInfo.hyperlink
+        local itemid = itemInfo and itemInfo.itemID
+
+        if link and not itemid then
+            if C_Item and C_Item.GetItemID
+                and ItemLocation
+                and ItemLocation.CreateFromBagAndSlot then
+                
+                local location =
+                    ItemLocation:CreateFromBagAndSlot(bag, slot)
+                
+                if location then
+                    itemid = C_Item.GetItemID(location)
+                end
+            end
+        
+            if not itemid then
+                itemid = tonumber(link:match("|Hitem:(%d+)"))
+            end
         end
+        if itemid then
+            -- "|cffffffff|Hitem:6948::::::::1:259::::::|h[Hearthstone]|h|r"
+            -- "|cff1eff00|Hbattlepet:261:1:2:151:11:10:0000000000000000|h[Personal World Destroyer]|h|r",
+            -- "|cffa335ee|Hkeystone:198:9:5:13:0|h[Keystone: Darkheart Thicket]|h|r"
+            local itemstring = link:match("|H(.-)|h") or "_"
+            iteminfo = ("%s %d %s"):format(itemid, count, itemstring)
+        end
+  
+        if slotcache[key] ~= iteminfo or forceupdate then
+            local olditemid = (slotcache[key] or ""):match("^(%d+)")
+            if itemid ~= olditemid then
+            itemschanged = true
+            end
         slotcache[key] = iteminfo
         self:OnSlotChanged(bag, slot)
-      end
+        end
     end
     return itemschanged
-  end
+end
 
 local categoriesrun = { [true] = {}, [false] = {}}
 local recursionmagic = 12345
@@ -436,7 +506,9 @@ end
 
 function Baggins:ForceFullUpdate()
     --local start = GetTime()
-    for bagid = 0, 11 do
+    local maxBagID = Baggins:IsForeverWow() and 14 or 11
+
+    for bagid = 0, maxBagID do
         self:CheckSlotsChanged(bagid, true)
     end
     if not Baggins:IsCataWow() and not Baggins:IsMistWow() then
