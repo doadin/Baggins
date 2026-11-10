@@ -4590,7 +4590,6 @@ local function GetItemUpgradeLevel(itemLink)
             NeutralizeFrame(ReagentBankFrame)
         end
     end
-
 end
 
 local function EasyMenu_Initialize(frame, level, menuList)
