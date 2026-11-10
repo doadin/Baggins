@@ -4541,9 +4541,6 @@ local function GetItemUpgradeLevel(itemLink)
  -- check: https://warcraft.wiki.gg/wiki/Event:PLAYER_INTERACTION_MANAGER_FRAME_SHOW
  -- Enum.PlayerInteractionType
  function Baggins:PlayerInteractionManager(event,typenumber) 
-    if self:IsForeverWow() then
-        return
-    end--luacheck: ignore 212
     if type(typenumber) ~= "number" then return end
     if event == "PLAYER_INTERACTION_MANAGER_FRAME_SHOW" and typenumber == 53 and self.db.profile.hidedefaultbank and not Baggins:IsForeverWow() then
         C_Timer.After(1, function()
