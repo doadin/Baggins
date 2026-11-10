@@ -831,6 +831,8 @@ function Baggins:SaveItemCounts()
             end
         end
     end
+
+    Baggins:ForceFullUpdate()
 end
 
 function Baggins:RunItemCountUpdates()
