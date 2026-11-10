@@ -4537,6 +4537,8 @@ local function GetItemUpgradeLevel(itemLink)
     end
  end
 
+ -- check: https://warcraft.wiki.gg/wiki/Event:PLAYER_INTERACTION_MANAGER_FRAME_SHOW
+ -- Enum.PlayerInteractionType
  function Baggins:PlayerInteractionManager(event,typenumber) 
     if type(typenumber) ~= "number" then return end
     if event == "PLAYER_INTERACTION_MANAGER_FRAME_SHOW" and typenumber == 53 and self.db.profile.hidedefaultbank and not Baggins:IsForeverWow() then
@@ -4569,8 +4571,8 @@ local function GetItemUpgradeLevel(itemLink)
     if event == "PLAYER_INTERACTION_MANAGER_FRAME_SHOW" and type == 26 or type == 39 or type == 40 or type == 44 or type == 48 or type == 56 then
         self:OpenAllBags()
     end
-
-    if event == "PLAYER_INTERACTION_MANAGER_FRAME_SHOW" and typenumber == 8 and self.db.profile.hidedefaultbank then
+    -- from 11.0 typenumber = 67 is characterBank
+    if event == "PLAYER_INTERACTION_MANAGER_FRAME_SHOW" and (typenumber == 8 or typenumber == 67) and self.db.profile.hidedefaultbank then
         local function NeutralizeFrame(frame)
             if not frame then return end
             frame:UnregisterAllEvents()
@@ -4586,7 +4588,6 @@ local function GetItemUpgradeLevel(itemLink)
             NeutralizeFrame(ReagentBankFrame)
         end
     end
-
 end
 
 local function EasyMenu_Initialize(frame, level, menuList)
