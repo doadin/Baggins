@@ -4529,7 +4529,7 @@ local function GetItemUpgradeLevel(itemLink)
     end
  end
 
- function Baggins:PlayerInteractionManager(event,typenumber) 
+ function Baggins:PlayerInteractionManager(event,typenumber)
     if self:IsForeverWow() then
         return
     end--luacheck: ignore 212
@@ -4584,7 +4584,7 @@ local function GetItemUpgradeLevel(itemLink)
 
 end
 
-local function EasyMenu_Initialize(frame, level, menuList)
+local function EasyMenu_Initialize(frame, level, menuList) -- luacheck: ignore 212
     for index = 1, #menuList do
         local value = menuList[index]
         if value.text then value.index = index; UIDropDownMenu_AddButton(value, level) end
