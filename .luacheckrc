@@ -506,4 +506,5 @@ globals = {
 	"makeMenu",
 	"MerchantFrame",
 	"SetTooltipMoney",
+    UIDropDownMenu_Initialize,
 }
