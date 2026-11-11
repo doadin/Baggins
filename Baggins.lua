@@ -4584,7 +4584,7 @@ local function GetItemUpgradeLevel(itemLink)
     end
 end
 
-local function EasyMenu_Initialize(frame, level, menuList)
+local function EasyMenu_Initialize(frame, level, menuList) -- luacheck: ignore 212
     for index = 1, #menuList do
         local value = menuList[index]
         if value.text then value.index = index; UIDropDownMenu_AddButton(value, level) end
