@@ -12,7 +12,7 @@ local GetEquipmentSetIDs = C_EquipmentSet.GetEquipmentSetIDs
 local GetEquipmentSetInfo = C_EquipmentSet.GetEquipmentSetInfo
 local GetItemLocations = C_EquipmentSet.GetItemLocations
 --local BankButtonIDToInvSlotID = BankButtonIDToInvSlotID
-local EquipmentManager_GetLocationData = EquipmentManager_GetLocationData
+local EquipmentManager_GetLocationData = EquipmentManager_GetLocationData -- luacheck: ignore 113
 local RunNextFrame = _G.RunNextFrame
 local BANK_CONTAINER = BANK_CONTAINER
 
