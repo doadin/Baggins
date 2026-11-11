@@ -48,7 +48,7 @@ eventFrame:RegisterEvent("BAG_UPDATE")
 eventFrame:SetScript("OnEvent", function(_self, _event, bagID) --self, event, bagID
     local numSlots = GetContainerNumSlots(bagID)
     for slot = 1, numSlots do
-        Matches(bagID, slot, _)
+        Matches(bagID, slot)
     end
     AddOn:OnRuleChanged()
 end)

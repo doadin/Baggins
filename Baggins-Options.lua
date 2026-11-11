@@ -732,7 +732,7 @@ local function refresh()
 end
 
 function Baggins:getCompressAll()
-    return Baggins.db.profile.compressall
+    return self.db.profile.compressall
 end
 
 function Baggins:RebuildOptions()
@@ -780,7 +780,9 @@ function Baggins:RebuildOptions()
                             type = "toggle",
                             desc = L["Show all items as a single button with a count on it"],
                             order = 10,
-                            get = getCompressAll,
+                            get = function()
+                                return self:getCompressAll()
+                            end,
                             set = function(info, value) --luacheck: ignore 212
                                 p.compressall = value
                                 self:RebuildSectionLayouts()
@@ -792,7 +794,9 @@ function Baggins:RebuildOptions()
                             type = "toggle",
                             desc = L["Show stackable items as a single button with a count on it"],
                             order = 20,
-                            disabled = getCompressAll,
+                            disabled = function()
+                                return self:getCompressAll()
+                            end,
                             get = function() return p.compressstackable or p.compressall end,
                             set = function(info, value) --luacheck: ignore 212
                                 p.compressstackable = value
@@ -805,7 +809,9 @@ function Baggins:RebuildOptions()
                             type = "toggle",
                             desc = L["Show all soul shards as a single button with a count on it"],
                             order = 20,
-                            disabled = getCompressAll,
+                            disabled = function()
+                                return self:getCompressAll()
+                            end,
                             get = function() return p.CompressShards or p.compressall end,
                             set = function(info, value) --luacheck: ignore 212
                                 p.CompressShards = value
@@ -819,7 +825,9 @@ function Baggins:RebuildOptions()
                             type = "toggle",
                             desc = L["Show all ammo as a single button with a count on it"],
                             order = 20,
-                            disabled = getCompressAll,
+                            disabled = function()
+                                return self:getCompressAll()
+                            end,
                             get = function() return p.CompressAmmo or p.compressall end,
                             set = function(info, value) --luacheck: ignore 212
                                 p.CompressAmmo = value
@@ -833,7 +841,9 @@ function Baggins:RebuildOptions()
                             type = "toggle",
                             desc = L["Show all empty slots as a single button with a count on it"],
                             order = 100,
-                            disabled = getCompressAll,
+                            disabled = function()
+                                return self:getCompressAll()
+                            end,
                             get = function() return p.compressempty or p.compressall end,
                             set = function(info, value) --luacheck: ignore 212
                                 p.compressempty = value
