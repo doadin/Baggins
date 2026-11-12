@@ -831,6 +831,7 @@ function Baggins:SaveItemCounts()
             end
         end
     end
+    Baggins:ForceFullUpdate()
 end
 
 function Baggins:RunItemCountUpdates()
@@ -4537,6 +4538,8 @@ local function GetItemUpgradeLevel(itemLink)
     end
  end
 
+ -- check: https://warcraft.wiki.gg/wiki/Event:PLAYER_INTERACTION_MANAGER_FRAME_SHOW
+ -- Enum.PlayerInteractionType
  function Baggins:PlayerInteractionManager(event,typenumber) 
     if self:IsForeverWow() then
         return
@@ -4573,7 +4576,8 @@ local function GetItemUpgradeLevel(itemLink)
         self:OpenAllBags()
     end
 
-    if event == "PLAYER_INTERACTION_MANAGER_FRAME_SHOW" and typenumber == 8 and self.db.profile.hidedefaultbank then
+    -- 8 Banker, 67 is characterBank, 68 AccountBanker
+    if event == "PLAYER_INTERACTION_MANAGER_FRAME_SHOW" and (typenumber == 8 or typenumber == 67 or typenumber == 68) and self.db.profile.hidedefaultbank then
         local function NeutralizeFrame(frame)
             if not frame then return end
             frame:UnregisterAllEvents()
