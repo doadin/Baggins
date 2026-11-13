@@ -22,12 +22,12 @@ local BANK_CONTAINER = Baggins:IsForeverWow() and (BagIndex.Characterbanktab or 
 local REAGENTBANK_CONTAINER = Baggins:IsForeverWow() and (BagIndex.Accountbanktab or -3) or (_G.REAGENTBANK_CONTAINER or -3)
 local KEYRING_CONTAINER = BagIndex.Keyring or _G.KEYRING_CONTAINER or -1
 local REAGENT_CONTAINER = Baggins:IsForeverWow() and (BagIndex.ReagentBag or 5) or (Baggins:IsRetailWow() and BagIndex.ReagentBag or math.huge)
-local ACCOUNT_BANK_CONTAINER = Baggins:IsForeverWow() and (BagIndex.Accountbanktab or -3) or nil
+-- local ACCOUNT_BANK_CONTAINER = Baggins:IsForeverWow() and (BagIndex.Accountbanktab or -3) or nil
 local NUM_BAG_SLOTS = _G.NUM_BAG_SLOTS or _G.NUM_TOTAL_EQUIPPED_BAG_SLOTS or 4
 local NUM_BANKBAGSLOTS = Baggins:IsForeverWow() and 8 or (_G.NUM_BANKBAGSLOTS or 7)
 local GetContainerItemInfo = C_Container and C_Container.GetContainerItemInfo or GetContainerItemInfo
 local GetContainerNumFreeSlots = C_Container and C_Container.GetContainerNumFreeSlots or GetContainerNumFreeSlots
-local GetContainerNumSlots = C_Container and C_Container.GetContainerNumSlots or GetContainerNumSlots
+-- local GetContainerNumSlots = C_Container and C_Container.GetContainerNumSlots or GetContainerNumSlots
 local C_Item, ItemLocation = C_Item, ItemLocation
 
 -- Libs
@@ -41,9 +41,9 @@ local BagTypes = {}
 -- compatible with new and old API
 local GetContainerNumSlotsCompat = (C_Container and C_Container.GetContainerNumSlots) or _G.GetContainerNumSlots
 
-local GetContainerNumFreeSlotsCompat = (C_Container and C_Container.GetContainerNumFreeSlots) or _G.GetContainerNumFreeSlots
+-- local GetContainerNumFreeSlotsCompat = (C_Container and C_Container.GetContainerNumFreeSlots) or _G.GetContainerNumFreeSlots
 
-local GetContainerItemInfoCompat = (C_Container and C_Container.GetContainerItemInfo) or _G.GetContainerItemInfo
+-- local GetContainerItemInfoCompat = (C_Container and C_Container.GetContainerItemInfo) or _G.GetContainerItemInfo
 
 local function GetBagginsContainerItemInfo(bag, slot)
     if C_Container and C_Container.GetContainerItemInfo then
@@ -55,7 +55,7 @@ local function GetBagginsContainerItemInfo(bag, slot)
     end
 
     local texture, count, locked, quality, readable,
-        lootable, link, isFiltered, noValue, itemID =
+        _, link, _, _, itemID =
         GetContainerItemInfo(bag, slot)
 
     if not texture then
@@ -315,8 +315,7 @@ function Baggins:CheckSlotsChanged(bag, forceupdate)
     for slot = 1, numSlots do
         local key = bag..":"..slot
         local iteminfo = nil
-        local itemid
-        
+
         local itemInfo = GetBagginsContainerItemInfo(bag, slot)
 
         local count = itemInfo and itemInfo.stackCount
@@ -327,15 +326,15 @@ function Baggins:CheckSlotsChanged(bag, forceupdate)
             if C_Item and C_Item.GetItemID
                 and ItemLocation
                 and ItemLocation.CreateFromBagAndSlot then
-                
+
                 local location =
                     ItemLocation:CreateFromBagAndSlot(bag, slot)
-                
+
                 if location then
                     itemid = C_Item.GetItemID(location)
                 end
             end
-        
+
             if not itemid then
                 itemid = tonumber(link:match("|Hitem:(%d+)"))
             end
@@ -347,7 +346,7 @@ function Baggins:CheckSlotsChanged(bag, forceupdate)
             local itemstring = link:match("|H(.-)|h") or "_"
             iteminfo = ("%s %d %s"):format(itemid, count, itemstring)
         end
-  
+
         if slotcache[key] ~= iteminfo or forceupdate then
             local olditemid = (slotcache[key] or ""):match("^(%d+)")
             if itemid ~= olditemid then
