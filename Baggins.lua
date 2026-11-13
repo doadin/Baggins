@@ -23,8 +23,9 @@ local band =
 local IsAddOnLoaded = C_AddOns and C_AddOns.IsAddOnLoaded and C_AddOns.IsAddOnLoaded or IsAddOnLoaded
 local BlizzSortBags = C_Container and C_Container.SortBags
 local CloseBankFrame = C_Bank and C_Bank.CloseBankFrame or CloseBankFrame
-local GetItemCount, GetItemInfo, GetInventoryItemLink, GetItemQualityColor, GetItemFamily, BankButtonIDToInvSlotID, GetNumBankSlots =
-      C_Item and C_Item.GetItemCount or GetItemCount, C_Item and C_Item.GetItemInfo or GetItemInfo, GetInventoryItemLink, C_Item and C_Item.GetItemQualityColor or GetItemQualityColor, C_Item and C_Item.GetItemFamily or GetItemFamily, BankButtonIDToInvSlotID, GetNumBankSlots
+local GetItemCount, GetItemInfo, GetInventoryItemLink, GetItemQualityColor, GetItemFamily, BankButtonIDToInvSlotID =
+      C_Item and C_Item.GetItemCount or GetItemCount, C_Item and C_Item.GetItemInfo or GetItemInfo, GetInventoryItemLink, C_Item and C_Item.GetItemQualityColor or GetItemQualityColor, C_Item and C_Item.GetItemFamily or GetItemFamily, BankButtonIDToInvSlotID
+-- local GetNumBankSlots = GetNumBankSlots
 local GetContainerItemInfo, GetContainerItemLink, GetContainerNumFreeSlots, GetContainerItemCooldown =
     C_Container and C_Container.GetContainerItemInfo or GetContainerItemInfo, C_Container and C_Container.GetContainerItemLink or GetContainerItemLink, C_Container and C_Container.GetContainerNumFreeSlots or GetContainerNumFreeSlots, C_Container and C_Container.GetContainerItemCooldown or GetContainerItemCooldown
 local BANK_PANELS = BANK_PANELS
@@ -35,8 +36,13 @@ local ShowContainerSellCursor = C_Container and C_Container.ShowContainerSellCur
 local Enum = Enum and Enum
 
 local AutoDepositItemsIntoBank = C_Bank and C_Bank.AutoDepositItemsIntoBank
-local ReagentBankButtonIDToInvSlotID, GetContainerItemQuestInfo, DepositReagentBank, IsReagentBankUnlocked =
-      ReagentBankButtonIDToInvSlotID, C_Container and C_Container.GetContainerItemQuestInfo or GetContainerItemQuestInfo, DepositReagentBank and DepositReagentBank, IsReagentBankUnlocked and IsReagentBankUnlocked
+local ReagentBankButtonIDToInvSlotID = ReagentBankButtonIDToInvSlotID
+local GetContainerItemQuestInfo =
+    (C_Container and C_Container.GetContainerItemQuestInfo)
+    or GetContainerItemQuestInfo
+
+local DepositReagentBank = DepositReagentBank
+-- local IsReagentBankUnlocked = IsReagentBankUnlocked
 local IsContainerItemAnUpgrade = IsContainerItemAnUpgrade and IsContainerItemAnUpgrade
 local C_ItemUpgrade = C_ItemUpgrade and C_ItemUpgrade
 
@@ -158,24 +164,15 @@ end
 --
 local BagIndex = Enum and Enum.BagIndex or {}
 
-local BACKPACK_CONTAINER =
-    _G.BACKPACK_CONTAINER or BagIndex.Backpack or 0
+-- local BACKPACK_CONTAINER = _G.BACKPACK_CONTAINER or BagIndex.Backpack or 0
 
-local BANK_CONTAINER = Baggins:IsForeverWow()
-    and (BagIndex.Characterbanktab or -2)
-    or (_G.BANK_CONTAINER or -1)
+-- local BANK_CONTAINER = Baggins:IsForeverWow() and (BagIndex.Characterbanktab or -2) or (_G.BANK_CONTAINER or -1)
 
 local KEYRING_CONTAINER =
     BagIndex.Keyring or _G.KEYRING_CONTAINER
 
-local REAGENT_CONTAINER =
-    BagIndex.ReagentBag or _G.REAGENTBANK_CONTAINER
-
-local ACCOUNT_BANK_CONTAINER =
-    Baggins:IsForeverWow() and BagIndex.Accountbanktab or nil
-
-local NUM_BAG_SLOTS =
-    _G.NUM_BAG_SLOTS or 4
+-- local REAGENT_CONTAINER = BagIndex.ReagentBag or _G.REAGENTBANK_CONTAINER
+-- local ACCOUNT_BANK_CONTAINER =Baggins:IsForeverWow() and BagIndex.Accountbanktab or nil
 
 local NUM_BANKBAGSLOTS = Baggins:IsForeverWow()
     and 8
@@ -193,7 +190,7 @@ local function GetBagginsContainerItemInfo(bag, slot)
 
     -- Classic API return multiple results
     local texture, count, locked, quality, readable,
-        lootable, link, isFiltered, noValue, itemID =
+        _, link, _, _, itemID =
         GetContainerItemInfo(bag, slot)
 
     if not texture then
@@ -764,23 +761,22 @@ function Baggins:UpdateBackpackHook()
 end
 
 function Baggins:UnhookBackpack()
-    if self:IsHooked(MainMenuBarBackpackButton, "OnClick") then
-        self:Unhook(MainMenuBarBackpackButton, "OnClick")
+    local buttons = {
+        MainMenuBarBackpackButton,
+        CharacterBag0Slot,
+        CharacterBag1Slot,
+        CharacterBag2Slot,
+        CharacterBag3Slot,
+    }
+
+    if self:IsRetailWow() then
+        table.insert(buttons, CharacterReagentBag0Slot)
     end
-    if self:IsHooked(CharacterBag0Slot, "OnClick") then
-        self:RawHookScript(CharacterBag0Slot, "OnClick")
-    end
-    if self:IsHooked(CharacterBag1Slot, "OnClick") then
-        self:RawHookScript(CharacterBag1Slot, "OnClick")
-    end
-    if self:IsHooked(CharacterBag2Slot, "OnClick") then
-        self:RawHookScript(CharacterBag2Slot, "OnClick")
-    end
-    if self:IsHooked(CharacterBag3Slot, "OnClick") then
-        self:RawHookScript(CharacterBag3Slot, "OnClick")
-    end
-    if Baggins:IsRetailWow() and self:IsHooked(CharacterReagentBag0Slot, "OnClick") then
-        self:RawHookScript(CharacterReagentBag0Slot, "OnClick")
+
+    for _, button in ipairs(buttons) do
+        if button and self:IsHooked(button, "OnClick") then
+            self:Unhook(button, "OnClick")
+        end
     end
 end
 
@@ -1513,7 +1509,7 @@ local function getBattlePetInfoFromLink(link)
 end
 
 Baggins.ilvlCache = {}
-function Baggins:getCachedIlvl(link)
+function Baggins:getCachedIlvl(link) -- luacheck: ignore 212
     local level = Baggins.ilvlCache[link]
     if level == nil then
         -- Prefer the same effective item level used for item-button text.
@@ -2278,8 +2274,6 @@ local function BagginsItemButton_OnEnter(button)
     button:UpdateTooltip()
 
 end
-
-local KEYRING_CONTAINER = KEYRING_CONTAINER
 
 local function showBattlePetTooltip(link)
     local speciesID, level, quality, maxHealth, power, speed = getBattlePetInfoFromLink(link)
@@ -3443,14 +3437,12 @@ function Baggins:UpdateItemButton(bagframe,button,bag,slot)
                     local startslot, endslot
                     if Baggins:IsForeverWow() then
                         if LBU:IsBank(bag) then
-                        startslot, endslot = NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS
-                            startslot, endslot = 6, 14
+                            startslot, endslot = NUM_BAG_SLOTS + 1,NUM_BAG_SLOTS + NUM_BANKBAGSLOTS
                         else
                             startslot, endslot = 0, 5
                         end
                     elseif LBU:IsBank(bag) then
-                        startslot, endslot = NUM_BAG_SLOTS + 1,
-                        NUM_BAG_SLOTS + NUM_BANKBAGSLOTS
+                        startslot, endslot = NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS
                     else
                         startslot, endslot = 0, NUM_BAG_SLOTS
                     end
@@ -4540,10 +4532,7 @@ local function GetItemUpgradeLevel(itemLink)
 
  -- check: https://warcraft.wiki.gg/wiki/Event:PLAYER_INTERACTION_MANAGER_FRAME_SHOW
  -- Enum.PlayerInteractionType
- function Baggins:PlayerInteractionManager(event,typenumber) 
-    if self:IsForeverWow() then
-        return
-    end--luacheck: ignore 212
+ function Baggins:PlayerInteractionManager(event,typenumber)
     if type(typenumber) ~= "number" then return end
     if event == "PLAYER_INTERACTION_MANAGER_FRAME_SHOW" and typenumber == 53 and self.db.profile.hidedefaultbank and not Baggins:IsForeverWow() then
         C_Timer.After(1, function()
@@ -4575,9 +4564,8 @@ local function GetItemUpgradeLevel(itemLink)
     if event == "PLAYER_INTERACTION_MANAGER_FRAME_SHOW" and type == 26 or type == 39 or type == 40 or type == 44 or type == 48 or type == 56 then
         self:OpenAllBags()
     end
-
-    -- 8 Banker, 67 is characterBank, 68 AccountBanker
-    if event == "PLAYER_INTERACTION_MANAGER_FRAME_SHOW" and (typenumber == 8 or typenumber == 67 or typenumber == 68) and self.db.profile.hidedefaultbank then
+    -- from 11.0 typenumber = 67 is characterBank
+    if event == "PLAYER_INTERACTION_MANAGER_FRAME_SHOW" and (typenumber == 8 or typenumber == 67) and self.db.profile.hidedefaultbank then
         local function NeutralizeFrame(frame)
             if not frame then return end
             frame:UnregisterAllEvents()
@@ -4593,17 +4581,16 @@ local function GetItemUpgradeLevel(itemLink)
             NeutralizeFrame(ReagentBankFrame)
         end
     end
-
 end
 
-local function EasyMenu_Initialize(frame, level, menuList)
+local function EasyMenu_Initialize(frame, level, menuList) -- luacheck: ignore 212
     for index = 1, #menuList do
         local value = menuList[index]
         if value.text then value.index = index; UIDropDownMenu_AddButton(value, level) end
     end
 end
 
-function Baggins:EasyMenu(menuList, menuFrame, anchor, x, y, displayMode, autoHideDelay)
+function Baggins:EasyMenu(menuList, menuFrame, anchor, x, y, displayMode, autoHideDelay) -- luacheck: ignore 212
     if displayMode=='MENU' then menuFrame.displayMode = displayMode end
     UIDropDownMenu_Initialize(menuFrame, EasyMenu_Initialize, displayMode, nil, menuList)
     ToggleDropDownMenu(1, nil, menuFrame, anchor, x, y, menuList, nil, autoHideDelay)

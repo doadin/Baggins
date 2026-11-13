@@ -506,4 +506,10 @@ globals = {
 	"makeMenu",
 	"MerchantFrame",
 	"SetTooltipMoney",
+    "UIDropDownMenu_Initialize",
+    "CharacterBag0Slot",
+    "CharacterBag1Slot",
+    "CharacterBag2Slot",
+    "CharacterBag3Slot",
+    "CharacterReagentBag0Slot",
 }
