@@ -324,8 +324,14 @@ local function initDropdownMenu()
                 checked = Baggins.db.profile.hidedefaultbank,
                 keepShownOnClick = true,
                 func = function()
-                        Baggins.db.profile.hidedefaultbank = not Baggins.db.profile.hidedefaultbank
-                    end,
+                    local shouldHide = not Baggins.db.profile.hidedefaultbank
+                    Baggins.db.profile.hidedefaultbank = shouldHide
+                    if shouldHide then
+                        Baggins:HideBlizzardBankUI()
+                    else
+                        Baggins:RestoreBlizzardBankUI()
+                    end
+                end,
             },
             {
                 text = L["Override Default Bags"],
@@ -333,9 +339,9 @@ local function initDropdownMenu()
                 checked = Baggins.db.profile.overridedefaultbags,
                 keepShownOnClick = true,
                 func = function()
-                        Baggins.db.profile.overridedefaultbags = not Baggins.db.profile.overridedefaultbags
-                        Baggins:UpdateBagHooks()
-                    end,
+                    Baggins.db.profile.overridedefaultbags = not Baggins.db.profile.overridedefaultbags
+                    Baggins:UpdateBagHooks()
+                end,
             },
             spacer,
             {
@@ -367,8 +373,9 @@ local function initDropdownMenu()
                 checked = Baggins.db.profile.hidedefaultbank,
                 keepShownOnClick = true,
                 func = function()
-                        Baggins.db.profile.hidedefaultbank = not Baggins.db.profile.hidedefaultbank
-                    end,
+                    Baggins.db.profile.overridedefaultbags = not Baggins.db.profile.overridedefaultbags
+                    Baggins:UpdateBagHooks()
+                end,
             },
             {
                 text = L["Override Default Bags"],
@@ -649,6 +656,18 @@ function Baggins:OnEnable()
     self:OnProfileEnable()
     self:RunBagUpdates()
     self:ScheduleTimer("SaveItemCounts", 2)
+
+    if self.db.profile.overridedefaultbags then
+        Baggins:HideBlizzardBagUI()
+    else
+        Baggins:RestoreBlizzardBagUI()
+    end
+
+    if self.db.profile.hidedefaultbank then
+        Baggins:HideBlizzardBankUI()
+    else
+        Baggins:RestoreBlizzardBankUI()
+    end
 end
 
 function Baggins:Baggins_CategoriesChanged()
@@ -665,31 +684,19 @@ end
 function Baggins:UpdateBagHooks()
     if self.db.profile.overridedefaultbags then
         self:UnhookBagHooks()
-        --TODO: Bank purchage will trigger protected functions
-
-        -- 27x [ADDON_ACTION_FORBIDDEN] Addons 'Baggins' tried to call protected functions 'PurchaseBankTab()'.
-        -- [C]: in function 'PurchaseBankTab'
-        -- [Blizzard_UIPanels_Game/Camelot/BankFrame.lua]:14: in function 'OnAccept'
-        -- [Blizzard_StaticPopup/StaticPopup.lua]:731: in function 'StaticPopup_OnClick'
-        -- [Blizzard_StaticPopup_Game/GameDialog.lua]:56: in function <...face/AddOns/      Blizzard_StaticPopup_Game/GameDialog.lua:54>
-
-
-        -- Locals:
-        -- self=<table>
-        -- event="ADDON_ACTION_FORBIDDEN"
-        -- addonName="Baggins"
-        -- addonFunc="PurchaseBankTab()"
-        -- name="Baggins"
-        -- badAddons=<table>{
-        --  Baggins=true
-        -- }
-        self:RawHook("OpenAllBags", "ToggleAllBags", true)
-        self:RawHook('OpenBag', 'ToggleAllBags', true)
-        self:RawHook('OpenBackpack', 'ToggleAllBags', true)
+        -- Open bank will trigger protected functions
+        -- If use RawHook to replace blizzard methods:
+        --     - OpenAllBags
+        --     - OpenBag
+        --     - OpenBackpack
+        -- Blizzard would treat those replaced functions as taint method.
+        self:SecureHook("OpenAllBags", "ToggleAllBags")
+        self:SecureHook("OpenBag", "ToggleAllBags")
+        self:SecureHook("OpenBackpack", "ToggleAllBags")
         ----------------------------------------------------------------
         self:RawHook("ToggleAllBags", true)
         self:RawHook('ToggleBackpack', 'ToggleAllBags', true)
-        self:RawHook("CloseAllBags", true)
+        self:SecureHook("CloseAllBags", 'CloseAllBags')
 
         self:RawHook('ToggleBag', 'ToggleAllBags', true)
 
@@ -4309,6 +4316,11 @@ function Baggins:CloseBag(bagid)
 end
 
 function Baggins:CloseAllBags()
+    if self.db.profile.overridedefaultbags then
+        Baggins:HideBlizzardBagUI()
+    else
+        Baggins:RestoreBlizzardBagUI()
+    end
     for bagid, _ in ipairs(self.db.profile.bags) do
         Baggins:CloseBag(bagid)
     end
@@ -4387,6 +4399,13 @@ function Baggins:OpenAllBags()
     if not self:IsActive() then
         return
     end
+
+    -- if p.overridedefaultbags then
+        Baggins:HideBlizzardBagUI()
+    -- else
+    --     Baggins:RestoreBlizzardBagUI()
+    -- end
+
     for bagid, bag in ipairs(p.bags) do
         if bag.openWithAll then
             Baggins:OpenBag(bagid,true)
@@ -4404,6 +4423,78 @@ function Baggins:AuctionHouse()
      end
 end
 
+local function ReparentFrame(frame, hiddenParent, key)
+    if not frame then return end
+
+    -- save the first parent. only save once
+    if not Baggins[key] then
+        Baggins[key] = frame:GetParent()
+    end
+
+    frame:SetParent(hiddenParent)
+end
+
+local function RestoreFrame(frame, key)
+    if not frame then return end
+
+    local originalParent = Baggins[key]
+    if originalParent then
+        frame:SetParent(originalParent)
+        Baggins[key] = nil
+    end
+end
+
+function Baggins:HideBlizzardBagUI()
+    if not self.HiddenBagParent then
+        self.HiddenBagParent = CreateFrame("Frame", nil, UIParent)
+        self.HiddenBagParent:Hide()
+    end
+    -- every single bag
+    for i = 1, NUM_CONTAINER_FRAMES do
+        local frame = _G["ContainerFrame" .. i]
+        if frame then
+            ReparentFrame(frame, self.HiddenBagParent, "OriginalBagParent" .. i)
+        end
+    end
+    -- conbined
+    if ContainerFrameCombinedBags then
+        ReparentFrame(ContainerFrameCombinedBags, self.HiddenBagParent, "OriginalCombinedBagParent")
+    end
+
+    if BackpackTokenFrame then
+        ReparentFrame(BackpackTokenFrame, self.HiddenBagParent, "OriginalTokenParent")
+    end
+end
+
+function Baggins:HideBlizzardBankUI()
+
+    if not self.HiddenBankParent then
+        self.HiddenBankParent = CreateFrame("Frame", nil, UIParent)
+        self.HiddenBankParent:Hide()
+    end
+
+    if BankFrame then
+        ReparentFrame(BankFrame, self.HiddenBankParent, "OriginalBankParent")
+    end
+end
+
+function Baggins:RestoreBlizzardBagUI()
+    for i = 1, NUM_CONTAINER_FRAMES do
+        local frame = _G["ContainerFrame" .. i]
+        RestoreFrame(frame, "OriginalBagParent" .. i)
+    end
+    RestoreFrame(ContainerFrameCombinedBags, "OriginalCombinedBagParent")
+
+    if BackpackTokenFrame then
+        RestoreFrame(BackpackTokenFrame, "OriginalTokenParent")
+    end
+end
+
+function Baggins:RestoreBlizzardBankUI()
+    if BankFrame then
+        RestoreFrame(BankFrame, "OriginalBankParent")
+    end
+end
 
 function Baggins:ToggleAllBags(forceopen)
     local p = self.db.profile
