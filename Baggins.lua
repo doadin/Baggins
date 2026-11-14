@@ -4478,7 +4478,7 @@ function Baggins:HideBlizzardBankUI()
     end
 end
 
-function Baggins:RestoreBlizzardBagUI()
+function Baggins:RestoreBlizzardBagUI() -- luacheck: ignore 212
     for i = 1, NUM_CONTAINER_FRAMES do
         local frame = _G["ContainerFrame" .. i]
         RestoreFrame(frame, "OriginalBagParent" .. i)
@@ -4490,7 +4490,7 @@ function Baggins:RestoreBlizzardBagUI()
     end
 end
 
-function Baggins:RestoreBlizzardBankUI()
+function Baggins:RestoreBlizzardBankUI() -- luacheck: ignore 212
     if BankFrame then
         RestoreFrame(BankFrame, "OriginalBankParent")
     end
