@@ -512,4 +512,6 @@ globals = {
     "CharacterBag2Slot",
     "CharacterBag3Slot",
     "CharacterReagentBag0Slot",
+    "ContainerFrameCombinedBags",
+    "BackpackTokenFrame",
 }
