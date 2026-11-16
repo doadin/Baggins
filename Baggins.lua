@@ -300,8 +300,8 @@ local function initDropdownMenu()
     if Baggins:IsRetailWow() or Baggins:IsForeverWow() then
         ldbDropDownMenu = {
             {
-                text = "Run Blizzard Bag Sort",
-                tooltipText = "Runs Blizzard bag Sort",
+                text = L["Run Blizzard Bag Sort"],
+                tooltipText = L["Run Blizzard Bag Sort"],
                 func = function()
                         Baggins:CloseAllBags()
                         BlizzSortBags()

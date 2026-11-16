@@ -387,6 +387,7 @@ L["Keeps Items sorted always, this will cause items to jump around when selling 
 L["Force Full Refresh"] = "Forzar refresco total"
 L["Forces a Full Refresh of item sorting"] = "Fuerza un refresco total respecto a la ordenación de objetos"
 
+L["Run Blizzard Bag Sort"] = "Usar la clasificación de bolsas de Blizzard"
 L["Override Default Bags"] = "Anular bolsas por defecto"
 L["Baggins will open instead of the default bags"] = "Baggins se abrirá en lugar de las bolsas por defecto"
 L["Sort New First"] = "Ordena *nuevos* primero"

@@ -387,6 +387,7 @@ L["Keeps Items sorted always, this will cause items to jump around when selling 
 L["Force Full Refresh"] = "Полностью Обновить"
 L["Forces a Full Refresh of item sorting"] = "Поностью обновляют и пересортировывают предметы"
 
+L["Run Blizzard Bag Sort"] = "Использовать сортировку сумок от Blizzard"
 L["Override Default Bags"] = "Отменяют сумки по умолчанию"
 L["Baggins will open instead of the default bags"] = "Baggins откроется вместо сумок по умолчанию"
 L["Sort New First"] = "Сортировать новые"
