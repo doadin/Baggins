@@ -379,8 +379,13 @@ local function initDropdownMenu()
                 checked = Baggins.db.profile.hidedefaultbank,
                 keepShownOnClick = true,
                 func = function()
-                    Baggins.db.profile.overridedefaultbags = not Baggins.db.profile.overridedefaultbags
-                    Baggins:UpdateBagHooks()
+                    local shouldHide = not Baggins.db.profile.hidedefaultbank
+                    Baggins.db.profile.hidedefaultbank = shouldHide
+                    if shouldHide then
+                        Baggins:HideBlizzardBankUI()
+                    else
+                        Baggins:RestoreBlizzardBankUI()
+                    end
                 end,
             },
             {
@@ -389,9 +394,15 @@ local function initDropdownMenu()
                 checked = Baggins.db.profile.overridedefaultbags,
                 keepShownOnClick = true,
                 func = function()
-                        Baggins.db.profile.overridedefaultbags = not Baggins.db.profile.overridedefaultbags
-                        Baggins:UpdateBagHooks()
-                    end,
+                    local overridedefaultbags = not Baggins.db.profile.overridedefaultbags
+                    Baggins.db.profile.overridedefaultbags = overridedefaultbags
+                    Baggins:UpdateBagHooks()
+                    if overridedefaultbags then
+                        Baggins:HideBlizzardBagUI()
+                    else
+                        Baggins:RestoreBlizzardBagUI()
+                    end
+                end,
             },
             spacer,
             {
