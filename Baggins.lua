@@ -343,9 +343,9 @@ local function initDropdownMenu()
                     Baggins.db.profile.overridedefaultbags = overridedefaultbags
                     Baggins:UpdateBagHooks()
                     if overridedefaultbags then
-                        Baggins:HideBlizzardBankUI()
+                        Baggins:HideBlizzardBagUI()
                     else
-                        Baggins:RestoreBlizzardBankUI()
+                        Baggins:RestoreBlizzardBagUI()
                     end
                 end,
             },
