@@ -514,4 +514,8 @@ globals = {
     "CharacterReagentBag0Slot",
     "ContainerFrameCombinedBags",
     "BackpackTokenFrame",
+    "BagginsHonorIcon",
+    "BagginsHonorText",
+    "BagginsMerchantFavorIcon",
+    "BagginsMerchantFavorText",
 }
