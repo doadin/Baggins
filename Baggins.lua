@@ -628,6 +628,10 @@ function Baggins:OnEnable()
     self:RegisterEvent("BANKFRAME_CLOSED", "OnBankClosed")
     self:RegisterEvent("BANKFRAME_OPENED", "OnBankOpened")
     self:RegisterEvent("PLAYER_MONEY", "UpdateMoneyFrame")
+    if self:IsForeverWow() then
+        self:RegisterEvent("CURRENCY_DISPLAY_UPDATE", "UpdateMoneyFrame")
+    end
+
     self:RegisterEvent('AUCTION_HOUSE_SHOW', "AuctionHouse")
     self:RegisterEvent('AUCTION_HOUSE_CLOSED', "CloseAllBags")
 
@@ -3110,7 +3114,31 @@ function Baggins:CreateMoneyFrame() --luacheck: ignore 212
     copperText:SetPoint("RIGHT", copperIcon, "LEFT", 0, 1)
     copperText:SetFontObject(GameFontNormal)
 
-    copperIcon:SetPoint("RIGHT", frame, "RIGHT")
+    -- Forever Honor currency
+    if Baggins:IsForeverWow() then
+        local merchantFavorIcon = frame:CreateTexture("BagginsMerchantFavorIcon", "ARTWORK")
+        merchantFavorIcon:SetSize(16, 16)
+
+        local merchantFavorText = frame:CreateFontString("BagginsMerchantFavorText", "OVERLAY")
+        merchantFavorText:SetJustifyH("RIGHT")
+        merchantFavorText:SetFontObject(GameFontNormal)
+
+        local honorIcon = frame:CreateTexture("BagginsHonorIcon", "ARTWORK")
+        honorIcon:SetSize(16, 16)
+
+        local honorText = frame:CreateFontString("BagginsHonorText", "OVERLAY")
+        honorText:SetJustifyH("RIGHT")
+        honorText:SetFontObject(GameFontNormal)
+
+        merchantFavorIcon:SetPoint("RIGHT", frame, "RIGHT")
+        merchantFavorText:SetPoint("RIGHT", merchantFavorIcon, "LEFT")
+        honorIcon:SetPoint("RIGHT", merchantFavorText, "LEFT", -16, 0)
+        honorText:SetPoint("RIGHT", honorIcon, "LEFT")
+        copperIcon:SetPoint("RIGHT", honorText, "LEFT", -16, 0)
+    else
+        copperIcon:SetPoint("RIGHT", frame, "RIGHT")
+    end
+
     silverIcon:SetPoint("RIGHT", copperText, "LEFT")
     goldIcon:SetPoint("RIGHT", silverText, "LEFT")
     frame:Hide()
@@ -3150,6 +3178,38 @@ function Baggins:UpdateMoneyFrame() --luacheck: ignore 212
     BagginsCopperText:SetWidth(0)
     BagginsCopperText:SetText(copper)
     width = width + BagginsCopperIcon:GetWidth() + BagginsCopperText:GetWidth()
+    if Baggins:IsForeverWow() then
+        local merchantFavorInfo = C_CurrencyInfo.GetCurrencyInfo(3402)
+        if merchantFavorInfo and merchantFavorInfo.iconFileID and merchantFavorInfo.quantity > 0 then
+            BagginsMerchantFavorIcon:SetTexture(merchantFavorInfo.iconFileID)
+
+            BagginsMerchantFavorText:SetWidth(0)
+            BagginsMerchantFavorText:SetText(merchantFavorInfo.quantity)
+
+            BagginsMerchantFavorIcon:Show()
+            BagginsMerchantFavorText:Show()
+
+            width = width + 16 + BagginsMerchantFavorIcon:GetWidth() + BagginsMerchantFavorText:GetWidth()
+        else
+            BagginsMerchantFavorIcon:Hide()
+        end
+
+        local honorInfo = C_CurrencyInfo.GetCurrencyInfo(1792)
+        if honorInfo and honorInfo.iconFileID and honorInfo.quantity > 0 then
+            BagginsHonorIcon:SetTexture(honorInfo.iconFileID)
+
+            BagginsHonorText:SetWidth(0)
+            BagginsHonorText:SetText(honorInfo.quantity)
+
+            BagginsHonorIcon:Show()
+            BagginsHonorText:Show()
+
+            width = width + 16 + BagginsHonorIcon:GetWidth() + BagginsHonorText:GetWidth()
+        else
+            BagginsHonorIcon:Hide()
+            BagginsHonorText:Hide()
+        end
+    end
     BagginsMoneyFrame:SetWidth(width)
 end
 
