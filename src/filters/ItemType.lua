@@ -48,6 +48,29 @@ if AddOn:IsRetailWow() then
         [18]="WoW Token"
     }
 end
+if AddOn:IsForeverWow() then
+    ItemTypes = {
+        [0]="Consumable",
+        [1]="Container",
+        [2]="Weapon",
+        [3]="Gem",
+        [4]="Armor",
+        [5]="Reagent",
+        [6]="Projectile",
+        [7]="Tradeskill",
+        [8]="Item Enhancement",
+        [9]="Recipe",
+        [10]="Money(OBSOLETE)",
+        [11]="Quiver",
+        [12]="Quest",
+        [13]="Key",
+        [14]="Permanent(OBSOLETE)",
+        [15]="Miscellaneous",
+        -- [16]="Glyph",
+        -- [17]="Battle Pets",
+        -- [18]="WoW Token"
+    }
+end
 if AddOn:IsClassicWow() then
     -- scanned Thu Jul 1 15:27:04 2021 - patch 1.13.7
     ItemTypes = {
