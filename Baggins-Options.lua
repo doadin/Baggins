@@ -4666,6 +4666,7 @@ function Baggins:RebuildCategoryRules(categoryname)
                     type = 'select',
                     name = L["Type"],
                     desc = "",
+                    width = 1.5,
                     set = setRuleType,
                     values = getRuleTypeChoices,
                     arg = rule,
